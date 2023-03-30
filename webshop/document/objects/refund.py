@@ -11,7 +11,7 @@ from borb.pdf.page.page import Page
 from webshop import config
 from webshop.database.model import Order, Invoice, Refund
 from webshop.document._base import FONT_BOLD, FONT_SIZE_TITLE, Paragraph, TableCell
-from webshop.document._utils import save_pdf, num_to_string, cells_to_tables
+from webshop.document._utils import save_pdf, num_to_str, cells_to_tables
 
 
 def gen_refund(order: Order, invoice: Invoice, refund: Refund) -> tuple[str, str]:
@@ -143,7 +143,7 @@ def _build_refund_lines(order: Order, refund: Refund) -> list[FixedColumnWidthTa
     quantity_p = Paragraph(quantity_text)
     cells.append(TableCell(quantity_p, background_color))
 
-    price_text = f"{num_to_string(refund.total_price, 2)} {order.currency.code}"
+    price_text = f"{num_to_str(refund.total_price, 2)} {order.currency.code}"
     price_p = Paragraph(price_text)
     cells.append(TableCell(price_p, background_color))
 
@@ -158,7 +158,7 @@ def _build_refund_lines(order: Order, refund: Refund) -> list[FixedColumnWidthTa
         "Subtotal", font=FONT_BOLD, horizontal_alignment=Alignment.RIGHT
     )
     subtotal_value_text = (
-        f"{num_to_string(refund.subtotal_price, 2)} {order.currency.code}"
+        f"{num_to_str(refund.subtotal_price, 2)} {order.currency.code}"
     )
     subtotal_value_p = Paragraph(subtotal_value_text)
     cells.append(TableCell(subtotal_head_p, col_span=h_count - 1))
@@ -170,7 +170,7 @@ def _build_refund_lines(order: Order, refund: Refund) -> list[FixedColumnWidthTa
         font=FONT_BOLD,
         horizontal_alignment=Alignment.RIGHT,
     )
-    vat_value_text = f"{num_to_string(refund.vat_amount, 2)} {order.currency.code}"
+    vat_value_text = f"{num_to_str(refund.vat_amount, 2)} {order.currency.code}"
     vat_p = Paragraph(vat_value_text)
     cells.append(TableCell(vat_head_p, col_span=h_count - 1))
     cells.append(TableCell(vat_p, col_span=1))
@@ -179,9 +179,7 @@ def _build_refund_lines(order: Order, refund: Refund) -> list[FixedColumnWidthTa
     total_head_p = Paragraph(
         "Total", font=FONT_BOLD, horizontal_alignment=Alignment.RIGHT
     )
-    total_value_text = (
-        f"{num_to_string(refund.total_price_vat, 2)} {order.currency.code}"
-    )
+    total_value_text = f"{num_to_str(refund.total_price_vat, 2)} {order.currency.code}"
     total_value_p = Paragraph(total_value_text)
     cells.append(TableCell(total_head_p, col_span=h_count - 1))
     cells.append(TableCell(total_value_p, col_span=1))

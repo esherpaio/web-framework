@@ -9,7 +9,7 @@ from borb.pdf.pdf import PDF
 DIR = os.path.dirname(os.path.realpath(__file__))
 
 
-def num_to_string(number: float, decimals: int) -> str:
+def num_to_str(number: float, decimals: int) -> str:
     return f"{number:.{decimals}f}"
 
 
