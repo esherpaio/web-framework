@@ -21,7 +21,7 @@ def render_email(**kwargs) -> str:
     # Render with Jinja2.
     loader = jinja2.FileSystemLoader(_DIR)
     environment = jinja2.Environment(loader=loader)
-    html_path = os.path.join(_DIR, "template", "template.html")
+    html_path = "template/template.html"  # Jinja requires relative path
     html = environment.get_template(html_path).render(kwargs)
 
     return html
