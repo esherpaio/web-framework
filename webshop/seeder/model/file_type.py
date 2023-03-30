@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from webshop.database.client import Conn
 from webshop.database.model import FileType
 from webshop.database.seeds import file_type_seeds
-from webshop.helper.seeder import Syncer
+from webshop.seeder.abc import Syncer
 
 
 class FileTypeSyncer(Syncer):

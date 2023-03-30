@@ -4,7 +4,7 @@ from flask import Response
 from pyvat import check_vat_number
 
 from webshop.blueprint.api_v1 import api_v1_bp
-from webshop.blueprint.api_v1.resources.order import get_resource
+from webshop.blueprint.api_v1.resource.order import get_resource
 from webshop.blueprint.api_v1.utils.order_refund import create_refund
 from webshop.database.client import Conn
 from webshop.database.model import Cart, Order, OrderLine

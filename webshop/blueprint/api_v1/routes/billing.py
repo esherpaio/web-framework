@@ -1,7 +1,7 @@
 from flask import Response
 
 from webshop.blueprint.api_v1 import api_v1_bp
-from webshop.blueprint.api_v1.resources.billing import get_resource
+from webshop.blueprint.api_v1.resource.billing import get_resource
 from webshop.database.client import Conn
 from webshop.database.model import Billing, Cart, User
 from webshop.helper.api import response, ApiText, json_get, json_empty_str_to_none

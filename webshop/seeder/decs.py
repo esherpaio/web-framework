@@ -1,38 +1,9 @@
-from abc import ABCMeta, abstractmethod
-from typing import Callable, Type
+from typing import Type, Callable
 
 from flask import Response
-from sqlalchemy.orm import Session
 
-from webshop import config
 from webshop.database.client import Conn
-
-
-class Syncer(metaclass=ABCMeta):
-    @staticmethod
-    @abstractmethod
-    def sync(s: Session) -> None:
-        """Run a synchronizing function"""
-
-        pass
-
-
-class Seeder(metaclass=ABCMeta):
-    @abstractmethod
-    def seed(self, s: Session, count: int = 1) -> None:
-        """Run a seeding function"""
-
-        pass
-
-
-def external_seed(f: Callable) -> Callable[..., None]:
-    def wrap(*args, **kwargs) -> None:
-        if not config.SEED_EXTERNAL:
-            return
-        return f(*args, **kwargs)
-
-    wrap.__name__ = f.__name__
-    return wrap
+from webshop.seeder.abc import Syncer
 
 
 def sync_before(

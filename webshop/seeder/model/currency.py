@@ -7,7 +7,8 @@ from webshop.database.client import Conn
 from webshop.database.model import Currency
 from webshop.database.seeds import currency_seeds
 from webshop.helper.logger import logger
-from webshop.helper.seeder import external_seed, Syncer
+from webshop.seeder.abc import Syncer
+from webshop.seeder.utils import external_seed
 
 
 class CurrencySyncer(Syncer):

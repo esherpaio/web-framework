@@ -4,7 +4,7 @@ from flask import Response
 from sqlalchemy.orm import Session
 
 from webshop.blueprint.api_v1 import api_v1_bp
-from webshop.blueprint.api_v1.resources.cart_item import get_resource
+from webshop.blueprint.api_v1.resource.cart_item import get_resource
 from webshop.database.client import Conn
 from webshop.database.model import CartItem, Cart
 from webshop.helper.api import response, json_get, ApiText

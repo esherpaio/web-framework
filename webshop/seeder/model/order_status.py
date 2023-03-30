@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from webshop.database.client import Conn
 from webshop.database.model import OrderStatus
 from webshop.database.seeds import order_status_seeds
-from webshop.helper.seeder import Syncer
+from webshop.seeder.abc import Syncer
 
 
 class OrderStatusSyncer(Syncer):

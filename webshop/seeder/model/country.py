@@ -6,7 +6,8 @@ from webshop.database.client import Conn
 from webshop.database.model import Country, Currency, Region
 from webshop.database.model.currency import CurrencyId
 from webshop.helper.logger import logger
-from webshop.helper.seeder import external_seed, Syncer
+from webshop.seeder.abc import Syncer
+from webshop.seeder.utils import external_seed
 
 
 class CountrySyncer(Syncer):

@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from webshop.database.client import Conn
 from webshop.database.model import ProductLinkType
 from webshop.database.seeds import product_link_type_seeds
-from webshop.helper.seeder import Syncer
+from webshop.seeder.abc import Syncer
 
 
 class ProductLinkeTypeSyncer(Syncer):

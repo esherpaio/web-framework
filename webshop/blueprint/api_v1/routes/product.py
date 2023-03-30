@@ -8,9 +8,9 @@ from webshop.database.model.product_type import ProductTypeId
 from webshop.database.model.user_role import UserRoleLevel
 from webshop.helper.api import response, ApiText, json_get
 from webshop.helper.security import authorize
-from webshop.helper.seeder import sync_after
 from webshop.helper.validation import gen_slug
-from webshop.seeder.sku import SkuSyncer
+from webshop.seeder.decs import sync_after
+from webshop.seeder.model.sku import SkuSyncer
 
 
 @authorize(UserRoleLevel.ADMIN)

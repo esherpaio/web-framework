@@ -2,7 +2,7 @@ from sqlalchemy.orm import joinedload, Session
 
 from webshop.database.client import Conn
 from webshop.database.model import Sku, SkuDetail
-from webshop.helper.seeder import Syncer
+from webshop.seeder.abc import Syncer
 
 
 class SkuSyncer(Syncer):

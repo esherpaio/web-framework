@@ -2,7 +2,7 @@ from flask import Response
 from flask_login import current_user
 
 from webshop.blueprint.api_v1 import api_v1_bp
-from webshop.blueprint.api_v1.resources.cart import get_resource
+from webshop.blueprint.api_v1.resource.cart import get_resource
 from webshop.database.client import Conn
 from webshop.database.model import Cart, ShipmentMethod
 from webshop.database.model.coupon import Coupon
