@@ -13,6 +13,6 @@ setup(
     author="H.P. Mertens",
     python_requires=">=3.11",
     install_requires=requires,
-    package_data={"": ["*.css"]},
+    package_data={"": ["webshop/mail/template/template.css"]},
     include_package_data=True,
 )
