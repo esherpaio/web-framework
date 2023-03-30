@@ -3,11 +3,11 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
 
 from webshop.database.model._utils import FKRestrict, price
+from webshop.helper.operator import none_aware_attrgetter
 from . import Base
 from ._validation import set_slug
 from .product_media import ProductMedia
 from .product_type import ProductTypeId
-from ...helper.operator import none_aware_attrgetter
 
 
 class Product(Base):
