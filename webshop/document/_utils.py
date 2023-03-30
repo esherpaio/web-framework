@@ -14,9 +14,16 @@ def num_to_string(number: float, decimals: int) -> str:
 
 
 def save_pdf(pdf: Document, pdf_name: str) -> str:
-    pdf_path = os.path.join(DIR, "output", pdf_name)
+    # Create output dir
+    pdf_dir = os.path.join(DIR, "output")
+    if not os.path.isdir(pdf_dir):
+        os.makedirs(pdf_dir)
+
+    # Export PDF
+    pdf_path = os.path.join(pdf_dir, pdf_name)
     with open(pdf_path, "wb") as file:
         PDF.dumps(file, pdf)  # noqa
+
     return pdf_path
 
 
