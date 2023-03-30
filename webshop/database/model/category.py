@@ -1,0 +1,28 @@
+from sqlalchemy import Column, String, Boolean, Integer
+from sqlalchemy.orm import relationship
+
+from . import Base
+from ._validation import set_slug
+from ..utils import FKRestrict
+
+
+class Category(Base):
+    __tablename__ = "category"
+
+    in_header = Column(Boolean, nullable=False, default=False)
+    is_deleted = Column(Boolean, nullable=False, default=False)
+    is_locked = Column(Boolean, nullable=False, default=False)
+    name = Column(String(64), nullable=False, unique=True)
+    order = Column(Integer)
+    slug = Column(String(64), nullable=False, unique=True)
+
+    child_id = Column(FKRestrict("category.id"))
+
+    child = relationship("Category", remote_side="Category.id")
+    items = relationship("CategoryItem", back_populates="category")
+
+    # Validations
+
+    @set_slug("name")
+    def validate_slug(self, *args) -> str:
+        pass

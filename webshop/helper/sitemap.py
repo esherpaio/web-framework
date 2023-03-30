@@ -1,0 +1,60 @@
+from datetime import datetime
+from xml.dom import minidom
+from xml.dom.minidom import Node
+
+from flask import url_for, current_app, request
+
+from webshop.database.model import Page
+
+
+class SitemapUrl:
+    def __init__(self, endpoint: str, updated_at: datetime = None, **kwargs) -> None:
+        self._endpoint = endpoint
+        self._updated_at = updated_at
+        self._kwargs = kwargs
+
+    @property
+    def loc(self) -> str:
+        return url_for(self._endpoint, **self._kwargs, _external=True)
+
+    @property
+    def lastmod(self) -> str | None:
+        if self._updated_at:
+            return self._updated_at.strftime("%Y-%m-%d")
+
+
+def str_to_xml(string: str) -> minidom:
+    """Convert a string to an XML object."""
+
+    def _remove_blanks(node_: Node) -> None:
+        for x in node_.childNodes:
+            if x.nodeType == Node.TEXT_NODE:
+                if x.nodeValue:
+                    x.nodeValue = x.nodeValue.strip()
+            elif x.nodeType == Node.ELEMENT_NODE:
+                _remove_blanks(x)
+
+    # Parse to DOM object
+    node = minidom.parseString(string)
+    # Remove empty XML elements
+    _remove_blanks(node)
+    # Prettify
+    node.normalize()
+    xml = node.toprettyxml(indent="  ", encoding="UTF-8")
+
+    return xml
+
+
+def is_endpoint(endpoint: str) -> bool:
+    try:
+        current_app.url_map.iter_rules(endpoint)
+    except KeyError:
+        return False
+    else:
+        return True
+
+
+def get_page(pages: list[Page]) -> Page | None:
+    for page in pages:
+        if page.endpoint == request.endpoint:
+            return page
