@@ -1,8 +1,8 @@
 from sqlalchemy import Column, String, CheckConstraint
 from sqlalchemy.orm import relationship
 
-from webshop.database.model._utils import FKCascade
 from . import Base
+from ._utils import FKCascade
 
 
 class Access(Base):

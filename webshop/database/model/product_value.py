@@ -8,8 +8,8 @@ from sqlalchemy import (
 )
 from sqlalchemy.orm import relationship
 
-from webshop.database.model._utils import FKRestrict, FKSetNull, price
 from . import Base
+from ._utils import FKRestrict, FKSetNull, price
 from ._validation import set_slug
 
 

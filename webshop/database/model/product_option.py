@@ -1,8 +1,8 @@
 from sqlalchemy import Column, String, Boolean, UniqueConstraint, Integer
 from sqlalchemy.orm import relationship
 
-from webshop.database.model._utils import FKCascade
 from . import Base
+from ._utils import FKCascade
 from ._validation import set_slug
 
 

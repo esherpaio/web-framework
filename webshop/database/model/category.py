@@ -1,8 +1,8 @@
 from sqlalchemy import Column, String, Boolean, Integer
 from sqlalchemy.orm import relationship
 
-from webshop.database.model._utils import FKRestrict
 from . import Base
+from ._utils import FKRestrict
 from ._validation import set_slug
 
 

@@ -1,8 +1,8 @@
 from sqlalchemy import Column, String
 from sqlalchemy.orm import relationship
 
-from webshop.database.model._utils import FKRestrict
 from . import Base
+from ._utils import FKRestrict
 
 
 class Country(Base):

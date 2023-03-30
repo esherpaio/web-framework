@@ -1,8 +1,8 @@
 from sqlalchemy import Column, String
 from sqlalchemy.ext.hybrid import hybrid_property
 
-from webshop.database.model._utils import FKRestrict
 from . import Base
+from ._utils import FKRestrict
 from .file_type import FileTypeId
 
 

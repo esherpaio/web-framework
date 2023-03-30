@@ -1,8 +1,8 @@
 from sqlalchemy import Column, Integer, CheckConstraint, Boolean
 from sqlalchemy.orm import relationship
 
-from webshop.database.model._utils import FKRestrict
 from . import Base
+from ._utils import FKRestrict
 
 
 class ShipmentZone(Base):

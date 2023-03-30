@@ -2,8 +2,8 @@ from sqlalchemy import Column, UniqueConstraint
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
 
-from webshop.database.model._utils import FKCascade, FKRestrict
 from . import Base
+from ._utils import FKCascade, FKRestrict
 from .product_link_type import ProductLinkTypeId
 
 

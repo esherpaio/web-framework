@@ -1,8 +1,8 @@
 from sqlalchemy import Column, String, Boolean, CheckConstraint
 from sqlalchemy.orm import relationship
 
-from webshop.database.model._utils import price, FKRestrict
 from . import Base
+from ._utils import price, FKRestrict
 
 
 class ShipmentMethod(Base):

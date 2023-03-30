@@ -1,8 +1,8 @@
 from sqlalchemy import Column, UniqueConstraint, Integer
 from sqlalchemy.orm import relationship
 
-from webshop.database.model._utils import FKRestrict, FKCascade
 from . import Base
+from ._utils import FKRestrict, FKCascade
 
 
 class CategoryItem(Base):

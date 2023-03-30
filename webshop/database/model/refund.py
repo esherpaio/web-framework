@@ -2,8 +2,8 @@ from sqlalchemy import Column, String, CheckConstraint
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
 
-from webshop.database.model._utils import price, FKRestrict
 from . import Base
+from ._utils import price, FKRestrict
 
 
 class Refund(Base):

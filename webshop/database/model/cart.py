@@ -2,8 +2,8 @@ from sqlalchemy import Column, Boolean, CheckConstraint
 from sqlalchemy.ext.hybrid import hybrid_method, hybrid_property
 from sqlalchemy.orm import relationship
 
-from webshop.database.model._utils import price, vat, FKCascade, FKRestrict
 from . import Base
+from ._utils import price, vat, FKCascade, FKRestrict
 
 
 class Cart(Base):

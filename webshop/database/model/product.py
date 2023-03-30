@@ -2,9 +2,9 @@ from sqlalchemy import Column, String, Boolean, Text
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
 
-from webshop.database.model._utils import FKRestrict, price
 from webshop.helper.operator import none_aware_attrgetter
 from . import Base
+from ._utils import FKRestrict, price
 from ._validation import set_slug
 from .product_media import ProductMedia
 from .product_type import ProductTypeId
