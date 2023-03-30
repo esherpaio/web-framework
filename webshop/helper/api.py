@@ -73,3 +73,15 @@ def json_empty_str_to_none(f: Callable) -> Callable[..., Response]:
 
     wrap.__name__ = f.__name__
     return wrap
+
+
+def create_links(mapping: dict[str, Callable], links: dict = None) -> dict:
+    if links is None:
+        links = {}
+
+    for _name, func in mapping.items():
+        if f".{_name}" in request.endpoint:
+            func_links = {**func(**request.view_args)}
+            links.update(func_links)
+
+    return links
