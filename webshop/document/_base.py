@@ -1,12 +1,9 @@
-import os
 from decimal import Decimal
 
 from borb.pdf.canvas.color.color import HexColor
 from borb.pdf.canvas.layout.layout_element import LayoutElement
 from borb.pdf.canvas.layout.table.table import TableCell as TableCell_
 from borb.pdf.canvas.layout.text.paragraph import Paragraph as Paragraph_
-
-DIR = os.path.dirname(os.path.realpath(__file__))
 
 FONT_NORMAL = "Helvetica"
 FONT_BOLD = "Helvetica Bold"

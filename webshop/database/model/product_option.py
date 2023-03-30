@@ -1,9 +1,9 @@
 from sqlalchemy import Column, String, Boolean, UniqueConstraint, Integer
 from sqlalchemy.orm import relationship
 
+from webshop.database.model._utils import FKCascade
 from . import Base
 from ._validation import set_slug
-from ..utils import FKCascade
 
 
 class ProductOption(Base):

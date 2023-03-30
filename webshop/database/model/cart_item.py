@@ -3,8 +3,8 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
 
 from webshop import config
+from webshop.database.model._utils import FKCascade, FKRestrict
 from . import Base
-from ..utils import FKCascade, FKRestrict
 
 
 class CartItem(Base):

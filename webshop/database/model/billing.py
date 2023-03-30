@@ -2,9 +2,9 @@ from sqlalchemy import Column, String
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
 
+from webshop.database.model._utils import FKRestrict
 from . import Base
 from ._validation import check_str_len, check_email, check_phone
-from ..utils import FKRestrict
 
 
 class Billing(Base):

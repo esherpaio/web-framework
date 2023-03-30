@@ -1,8 +1,8 @@
 from sqlalchemy import Column, String
 from sqlalchemy.orm import relationship
 
+from webshop.database.model._utils import FKCascade
 from . import Base
-from ..utils import FKCascade
 
 
 class UserVerification(Base):

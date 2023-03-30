@@ -1,9 +1,9 @@
 from sqlalchemy import Column, String, Boolean, Integer
 from sqlalchemy.orm import relationship
 
+from webshop.database.model._utils import FKRestrict
 from . import Base
 from ._validation import set_slug
-from ..utils import FKRestrict
 
 
 class Category(Base):

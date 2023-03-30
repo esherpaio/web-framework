@@ -2,8 +2,8 @@ from sqlalchemy import Column, Integer, UniqueConstraint, CheckConstraint
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
 
+from webshop.database.model._utils import price, FKCascade, FKRestrict
 from . import Base
-from ..utils import price, FKCascade, FKRestrict
 
 
 class OrderLine(Base):

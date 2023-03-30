@@ -6,7 +6,7 @@ from borb.pdf.canvas.layout.table.fixed_column_width_table import FixedColumnWid
 from borb.pdf.canvas.layout.table.table import TableCell
 from borb.pdf.pdf import PDF
 
-from webshop.document._base import DIR
+DIR = os.path.dirname(os.path.realpath(__file__))
 
 
 def num_to_string(number: float, decimals: int) -> str:
@@ -56,7 +56,10 @@ def cells_to_tables(
 
     tables = []
     for cell_group_num, cell_group in enumerate(cell_groups):
-        margin_top = first_top_margin if cell_group_num == 0 else other_top_margin
+        if cell_group_num == 0:
+            margin_top = first_top_margin
+        else:
+            margin_top = other_top_margin
         table = FixedColumnWidthTable(
             number_of_rows=len(cell_group),
             number_of_columns=column_count,

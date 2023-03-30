@@ -2,9 +2,9 @@ from sqlalchemy import Column, String, Boolean, CheckConstraint
 from sqlalchemy.ext.hybrid import hybrid_property, hybrid_method
 from sqlalchemy.orm import relationship
 
+from webshop.database.model._utils import price, vat, FKCascade, FKRestrict
 from . import Base
 from .order_status import OrderStatusId
-from ..utils import price, vat, FKCascade, FKRestrict
 
 
 class Order(Base):

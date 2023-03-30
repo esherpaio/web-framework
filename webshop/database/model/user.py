@@ -2,10 +2,10 @@ from sqlalchemy import Column, String, Boolean
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
 
+from webshop.database.model._utils import FKRestrict, FKSetNull
 from . import Base
 from ._validation import check_email
 from .user_role import UserRoleId
-from ..utils import FKRestrict, FKSetNull
 
 
 class User(Base):

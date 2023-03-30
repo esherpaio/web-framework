@@ -3,21 +3,13 @@ from typing import Callable
 
 from flask import request, Response
 
+from webshop.helper.operator import Singleton
+
 CACHE_MIMETYPE = [
     ("text/css", 31536000),
     ("application/javascript", 31536000),
     ("font/woff2", 31536000),
 ]
-
-
-class Singleton(type):
-    _instances = {}
-
-    def __call__(cls, *args, **kwargs) -> dict:
-        if cls not in cls._instances:
-            class_ = super(Singleton, cls).__call__(*args, **kwargs)
-            cls._instances[cls] = class_
-        return cls._instances[cls]
 
 
 class Cache(dict, metaclass=Singleton):

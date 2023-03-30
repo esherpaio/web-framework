@@ -1,8 +1,8 @@
 from sqlalchemy import Column, String, Boolean, CheckConstraint
 from sqlalchemy.ext.hybrid import hybrid_property
 
+from webshop.database.model._utils import price, rate
 from . import Base
-from ..utils import price, rate
 
 
 class Coupon(Base):

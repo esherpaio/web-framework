@@ -2,8 +2,8 @@ from enum import IntEnum
 
 from sqlalchemy import Column, String
 
+from webshop.database.model._utils import rate
 from . import Base
-from ..utils import rate
 
 
 class Currency(Base):

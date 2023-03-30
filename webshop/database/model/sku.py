@@ -2,8 +2,8 @@ from sqlalchemy import Column, String, Boolean, CheckConstraint
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
 
+from webshop.database.model._utils import FKCascade, price
 from . import Base
-from ..utils import FKCascade, price
 
 
 class Sku(Base):
