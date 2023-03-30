@@ -13,4 +13,5 @@ setup(
     author="H.P. Mertens",
     python_requires=">=3.11",
     install_requires=requires,
+    include_package_data=True,
 )
