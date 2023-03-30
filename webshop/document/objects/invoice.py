@@ -114,13 +114,11 @@ def _build_order_info(order: Order, invoice: Invoice) -> FixedColumnWidthTable:
 
 def _build_order_lines(order: Order) -> list[FixedColumnWidthTable]:
     cells = []
-    row_count = 0
     h_texts = ["Description", "Quantity", "Price"]
     h_widths = [Decimal(64), Decimal(10), Decimal(16)]
     h_count = len(h_texts)
 
     # headers
-    row_count += 1
     for h_text in h_texts:
         h_paragraph = Paragraph(h_text, color=HexColor("ffffff"))
         h_cell = TableCell(h_paragraph, HexColor("646464"))
@@ -128,7 +126,6 @@ def _build_order_lines(order: Order) -> list[FixedColumnWidthTable]:
 
     # lines
     for num, order_line in enumerate(order.lines):
-        row_count += 1
         background_color = HexColor("f0f0f0") if num % 2 else HexColor("ffffff")
 
         name_text = f"{order_line.sku.product.name}"
@@ -144,26 +141,23 @@ def _build_order_lines(order: Order) -> list[FixedColumnWidthTable]:
         cells.append(TableCell(price_p, background_color))
 
     # empty line
-    row_count += 1
     empty_p = Paragraph(" ")
     cells.append(
         TableCell(empty_p, col_span=h_count, background_color=HexColor("ffffff"))
     )
 
     # subtotal
-    row_count += 1
     subtotal_head_p = Paragraph(
-        "Subtotal", font=FONT_BOLD, horizontal_alignment=Alignment.RIGHT
+        "Items", font=FONT_BOLD, horizontal_alignment=Alignment.RIGHT
     )
     subtotal_value_text = (
         f"{num_to_string(order.subtotal_price, 2)} {order.currency.code}"
     )
     subtotal_value_p = Paragraph(subtotal_value_text)
-    cells.append(TableCell(subtotal_head_p, col_span=h_count - 1))
-    cells.append(TableCell(subtotal_value_p, col_span=1))
+    cells.append(TableCell(subtotal_head_p, col_span=h_count - 1, border_color="eeeeee"))
+    cells.append(TableCell(subtotal_value_p, col_span=1, border_color="eeeeee"))
 
     # discount
-    row_count += 1
     subtotal_head_p = Paragraph(
         "Discount", font=FONT_BOLD, horizontal_alignment=Alignment.RIGHT
     )
@@ -175,7 +169,6 @@ def _build_order_lines(order: Order) -> list[FixedColumnWidthTable]:
     cells.append(TableCell(subtotal_value_p, col_span=1))
 
     # shipment
-    row_count += 1
     subtotal_head_p = Paragraph(
         "Shipment", font=FONT_BOLD, horizontal_alignment=Alignment.RIGHT
     )
@@ -187,7 +180,6 @@ def _build_order_lines(order: Order) -> list[FixedColumnWidthTable]:
     cells.append(TableCell(subtotal_value_p, col_span=1))
 
     # VAT
-    row_count += 1
     vat_head_p = Paragraph(
         f"VAT {order.vat_percentage}%",
         font=FONT_BOLD,
@@ -199,7 +191,6 @@ def _build_order_lines(order: Order) -> list[FixedColumnWidthTable]:
     cells.append(TableCell(vat_p, col_span=1))
 
     # total
-    row_count += 1
     total_head_p = Paragraph(
         "Total", font=FONT_BOLD, horizontal_alignment=Alignment.RIGHT
     )
@@ -211,14 +202,12 @@ def _build_order_lines(order: Order) -> list[FixedColumnWidthTable]:
     cells.append(TableCell(total_value_p, col_span=1))
 
     # empty line
-    row_count += 1
     empty_p = Paragraph(" ")
     cells.append(
         TableCell(empty_p, col_span=h_count, background_color=HexColor("ffffff"))
     )
 
     # note
-    row_count += 1
     note_1_text = "Please follow the payment instructions from Mollie."
     note_1_p = Paragraph(note_1_text, horizontal_alignment=Alignment.RIGHT)
     cells.append(TableCell(note_1_p, col_span=h_count))
@@ -228,7 +217,7 @@ def _build_order_lines(order: Order) -> list[FixedColumnWidthTable]:
         h_count,
         h_widths,
         first_row_count=30,
-        other_row_count=43,
+        other_row_count=42,
         first_top_margin=Decimal(24),
         other_top_margin=Decimal(0),
     )

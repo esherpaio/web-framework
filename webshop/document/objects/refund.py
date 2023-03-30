@@ -122,20 +122,17 @@ def _build_refund_info(
 
 def _build_refund_lines(order: Order, refund: Refund) -> list[FixedColumnWidthTable]:
     cells = []
-    row_count = 0
     h_texts = ["Description", "Quantity", "Price"]
     h_widths = [Decimal(64), Decimal(10), Decimal(16)]
     h_count = len(h_texts)
 
     # headers
-    row_count += 1
     for h_text in h_texts:
         h_paragraph = Paragraph(h_text, color=HexColor("ffffff"))
         h_cell = TableCell(h_paragraph, HexColor("646464"))
         cells.append(h_cell)
 
     # line
-    row_count += 1
     background_color = HexColor("f0f0f0")
 
     name_text = "Refund"
@@ -151,14 +148,12 @@ def _build_refund_lines(order: Order, refund: Refund) -> list[FixedColumnWidthTa
     cells.append(TableCell(price_p, background_color))
 
     # empty line
-    row_count += 1
     empty_p = Paragraph(" ")
     cells.append(
         TableCell(empty_p, col_span=h_count, background_color=HexColor("ffffff"))
     )
 
     # subtotal
-    row_count += 1
     subtotal_head_p = Paragraph(
         "Subtotal", font=FONT_BOLD, horizontal_alignment=Alignment.RIGHT
     )
@@ -170,7 +165,6 @@ def _build_refund_lines(order: Order, refund: Refund) -> list[FixedColumnWidthTa
     cells.append(TableCell(subtotal_value_p, col_span=1))
 
     # VAT
-    row_count += 1
     vat_head_p = Paragraph(
         f"VAT {refund.vat_percentage}%",
         font=FONT_BOLD,
@@ -182,7 +176,6 @@ def _build_refund_lines(order: Order, refund: Refund) -> list[FixedColumnWidthTa
     cells.append(TableCell(vat_p, col_span=1))
 
     # total
-    row_count += 1
     total_head_p = Paragraph(
         "Total", font=FONT_BOLD, horizontal_alignment=Alignment.RIGHT
     )
