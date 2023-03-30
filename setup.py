@@ -2,17 +2,20 @@ from setuptools import setup, find_packages
 
 from version import __version__
 
-with open("requirements.txt") as f:
-    requires = f.read().splitlines()
+
+def find_requirements() -> list[str]:
+    with open("requirements.txt") as f:
+        return f.read().splitlines()
+
 
 setup(
-    name="webshop",
-    version=__version__,
-    packages=find_packages(include=["webshop", "webshop.*"]),
-    url="https://github.com/enlarge-online/webshop-frame",
     author="H.P. Mertens",
-    python_requires=">=3.11",
-    install_requires=requires,
-    package_data={"": ["mail/template/*"]},
     include_package_data=True,
+    install_requires=find_requirements(),
+    name="webshop",
+    package_data={"": ["mail/template/*"]},
+    packages=find_packages(include=["webshop", "webshop.*"]),
+    python_requires=">=3.11",
+    url="https://github.com/enlarge-online/webshop-frame",
+    version=__version__,
 )
