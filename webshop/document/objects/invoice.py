@@ -155,9 +155,9 @@ def _build_order_lines(order: Order) -> list[FixedColumnWidthTable]:
     )
     subtotal_value_p = Paragraph(subtotal_value_text)
     cells.append(
-        TableCell(subtotal_head_p, col_span=h_count - 1, border_color="eeeeee")
+        TableCell(subtotal_head_p, col_span=h_count - 1, border_color="000000", border_bottom=True)
     )
-    cells.append(TableCell(subtotal_value_p, col_span=1, border_color="eeeeee"))
+    cells.append(TableCell(subtotal_value_p, col_span=1, border_color="000000"))
 
     # discount
     subtotal_head_p = Paragraph(
