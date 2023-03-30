@@ -1,4 +1,3 @@
-from helper.operator import none_aware_attrgetter
 from sqlalchemy import Column, String, Boolean, Text
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
@@ -8,6 +7,7 @@ from ._validation import set_slug
 from .product_media import ProductMedia
 from .product_type import ProductTypeId
 from ..utils import FKRestrict, price
+from ...helper.operator import none_aware_attrgetter
 
 
 class Product(Base):
