@@ -154,7 +154,9 @@ def _build_order_lines(order: Order) -> list[FixedColumnWidthTable]:
         f"{num_to_string(order.subtotal_price, 2)} {order.currency.code}"
     )
     subtotal_value_p = Paragraph(subtotal_value_text)
-    cells.append(TableCell(subtotal_head_p, col_span=h_count - 1, border_color="eeeeee"))
+    cells.append(
+        TableCell(subtotal_head_p, col_span=h_count - 1, border_color="eeeeee")
+    )
     cells.append(TableCell(subtotal_value_p, col_span=1, border_color="eeeeee"))
 
     # discount
