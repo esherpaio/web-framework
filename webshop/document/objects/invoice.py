@@ -21,7 +21,7 @@ def gen_invoice(order: Order, invoice: Invoice) -> tuple[str, str]:
     margin = Decimal(30)
     layout = SingleColumnLayout(page, margin, margin)
 
-    layout.add(Image(config.EMAIL_LOGO, width=Decimal(300), height=Decimal(35)))
+    layout.add(Image(config.EMAIL_LOGO_URL, width=Decimal(300), height=Decimal(35)))
     layout.add(Paragraph("Invoice", font=FONT_BOLD, font_size=FONT_SIZE_TITLE))
     layout.add(_build_order_info(order, invoice))
 

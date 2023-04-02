@@ -5,7 +5,7 @@ from flask import current_app, request
 from webshop import config
 
 
-def set_locale(values: dict, locale: str = config.BUSINESS_LOCALE) -> None:
+def set_locale(values: dict, locale: str = config.WEBSITE_LOCALE) -> None:
     """Sets the locale on the values."""
 
     values["_locale"] = locale
@@ -45,7 +45,7 @@ def match_locale(locale: str) -> tuple[str | None, str | None]:
 
 
 def gen_locale(
-    language_code: str = config.BUSINESS_LANGUAGE_CODE,
+    language_code: str = config.WEBSITE_LANGUAGE_CODE,
     country_code: str = config.BUSINESS_COUNTRY_CODE,
 ) -> str:
     """Generate a locale using a language code and country code.

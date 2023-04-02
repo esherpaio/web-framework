@@ -7,9 +7,9 @@ from webshop.database.model import Page
 class Meta:
     def __init__(
         self,
-        title: str = None,
-        description: str = None,
-        robots: str = None,
+        title: str | None = None,
+        description: str | None = None,
+        robots: str | None = None,
     ) -> None:
         self._title = title
         self._description = description
@@ -27,22 +27,22 @@ class Meta:
         return self._description
 
     @property
-    def favicon(self) -> str:
-        return config.WEBSITE_FAVICON
+    def favicon_url(self) -> str:
+        return config.WEBSITE_FAVICON_URL
 
     @property
-    def theme_color(self) -> str:
+    def hex_color(self) -> str:
         return config.WEBSITE_HEX_COLOR
 
     @property
     def robots(self) -> str:
-        if self._robots:
+        if isinstance(self._robots, str):
             return self._robots
         else:
             return config.ROBOT_DEFAULT_TAGS
 
     @property
-    def canonical(self) -> str:
+    def canonical_url(self) -> str:
         return request.base_url
 
 

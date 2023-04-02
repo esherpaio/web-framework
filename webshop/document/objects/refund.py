@@ -21,7 +21,7 @@ def gen_refund(order: Order, invoice: Invoice, refund: Refund) -> tuple[str, str
     margin = Decimal(30)
     layout = SingleColumnLayout(page, margin, margin)
 
-    layout.add(Image(config.EMAIL_LOGO, width=Decimal(300), height=Decimal(35)))
+    layout.add(Image(config.EMAIL_LOGO_URL, width=Decimal(300), height=Decimal(35)))
     layout.add(Paragraph("Refund", font=FONT_BOLD, font_size=FONT_SIZE_TITLE))
     layout.add(_build_refund_info(order, invoice, refund))
 

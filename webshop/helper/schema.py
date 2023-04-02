@@ -1,6 +1,7 @@
 import json
 
 from flask import request, url_for
+from flask_login import current_user
 from markupsafe import Markup
 
 from webshop import config
@@ -8,7 +9,7 @@ from webshop.database.model import Page
 
 
 class Schema:
-    def __init__(self):
+    def __init__(self) -> None:
         self._data = None
 
     @property
@@ -28,12 +29,15 @@ class Schema:
 
 
 class SchemaWebPage(Schema):
-    def __init__(self, title: str, description: str = None) -> None:
+    def __init__(
+        self,
+        title: str,
+        description: str | None = None,
+    ) -> None:
         super().__init__()
         self.data = {
             "@context": "https://schema.org",
             "@type": "WebPage",
-            "@id": f"{request.base_url}#webpage",
             "url": request.base_url,
             "name": title,
             "description": description,
@@ -41,45 +45,101 @@ class SchemaWebPage(Schema):
 
 
 class SchemaWebsite(Schema):
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
-        home_url = url_for(config.ENDPOINT_HOME, _external=True)
+        home_url = url_for(
+            config.ENDPOINT_HOME,
+            _locale=current_user.locale,
+            _external=True,
+        )
         self.data = {
             "@context": "https://schema.org",
             "@type": "WebSite",
-            "@id": f"{home_url}#website",
             "url": home_url,
             "name": config.WEBSITE_NAME,
-            "inLanguage": config.WEBSITE_LANGUAGE,
+            "inLanguage": config.WEBSITE_LANGUAGE_CODE,
         }
 
 
 class SchemaOrganization(Schema):
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
-        home_url = url_for(config.ENDPOINT_HOME, _external=True)
+        home_url = url_for(
+            config.ENDPOINT_HOME,
+            _locale=current_user.locale,
+            _external=True,
+        )
+        social_urls = [
+            config.SOCIAL_FACEBOOK,
+            config.SOCIAL_INSTAGRAM,
+            config.SOCIAL_TWITTER,
+            config.SOCIAL_YOUTUBE,
+            config.SOCIAL_DISCORD,
+        ]
         self.data = {
             "@context": "https://schema.org",
-            "@type": "Organization",
-            "@id": f"{home_url}#organization",
-            "name": f"{config.WEBSITE_NAME}",
+            "@type": "Corporation",
+            "name": config.WEBSITE_NAME,
             "url": home_url,
-            "logo": config.WEBSITE_FAVICON,
-            "sameAs": [
-                config.SOCIAL_FACEBOOK,
-                config.SOCIAL_INSTAGRAM,
-                config.SOCIAL_TWITTER,
-                config.SOCIAL_YOUTUBE,
-                config.SOCIAL_DISCORD,
-            ],
-            "contactPoint": [
-                {
-                    "@type": "ContactPoint",
-                    "email": config.BUSINESS_EMAIL,
-                    "contactType": "Sales",
-                }
-            ],
+            "logo": config.WEBSITE_FAVICON_URL,
+            "sameAs": [x for x in social_urls if x],
         }
+
+
+class SchemaPerson(Schema):
+    def __init__(
+        self,
+        name: str,
+        title: str,
+        image_url: str | None = None,
+        social_urls: list[str] | None = None,
+    ) -> None:
+        super().__init__()
+        data = {
+            "@context": "https://schema.org/",
+            "@type": "Person",
+            "name": name,
+            "url": request.base_url,
+            "jobTitle": title,
+            "worksFor": SchemaOrganization().markup,
+        }
+        if image_url:
+            data["image"] = image_url
+        if social_urls:
+            data["sameAs"] = social_urls
+        self.data = data
+
+
+class SchemaProduct(Schema):
+    def __init__(
+        self,
+        name: str,
+        price: float,
+        image_url: str | None = None,
+        description: str | None = None,
+    ) -> None:
+        super().__init__()
+        data = {
+            "@context": "https://schema.org/",
+            "@type": "Product",
+            "name": name,
+            "brand": {
+                "@type": "Brand",
+                "name": config.BUSINESS_NAME,
+            },
+            "offers": {
+                "@type": "Offer",
+                "url": request.base_url,
+                "priceCurrency": current_user.currency.code,
+                "price": price,
+                "itemCondition": "https://schema.org/NewCondition",
+            },
+        }
+        if image_url:
+            data["image"] = image_url
+        if description:
+            data["description"] = description
+        self.data = data
 
 
 def gen_schemas(page: Page = None) -> list[Schema]:

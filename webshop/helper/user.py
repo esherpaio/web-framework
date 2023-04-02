@@ -28,7 +28,7 @@ class UserAttrs:
     def locale(self) -> str:
         view_locale = cur_locale()
         session_locale = session.get(Session.LOCALE)
-        locale = view_locale or session_locale or config.BUSINESS_LOCALE
+        locale = view_locale or session_locale or config.WEBSITE_LOCALE
         session[Session.LOCALE] = locale
         return locale
 
@@ -40,7 +40,7 @@ class UserAttrs:
             header_country = request.headers.get(Header.COUNTRY)
             country = header_country or config.BUSINESS_COUNTRY_CODE
         if not language:
-            language = config.BUSINESS_LANGUAGE_CODE
+            language = config.WEBSITE_LANGUAGE_CODE
 
         country = country.upper()
         language = language.lower()

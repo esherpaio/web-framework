@@ -54,9 +54,9 @@ def post_product_id_media(product_id: int) -> Response:
             cdn_path = os.path.join(*cdn_path_parts)
 
             # Get media type
-            if extension in config.EXTENSIONS_IMAGE:
+            if extension in config.CDN_IMAGE_EXTS:
                 type_id = FileTypeId.IMAGE
-            elif extension in config.EXTENSIONS_VIDEO:
+            elif extension in config.CDN_VIDEO_EXTS:
                 type_id = FileTypeId.VIDEO
             else:
                 continue
