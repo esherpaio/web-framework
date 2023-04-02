@@ -142,8 +142,9 @@ class SchemaProduct(Schema):
         self.data = data
 
 
-def gen_schemas(page: Page = None) -> list[Schema]:
-    schemas = []
+def gen_schemas(page: Page = None, schemas: list[Schema] | None = None) -> list[Schema]:
+    if schemas is None:
+        schemas = []
     if isinstance(page, Page):
         if page.endpoint == config.ENDPOINT_HOME:
             schemas.append(SchemaWebsite())
