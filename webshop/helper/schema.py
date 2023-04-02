@@ -131,7 +131,7 @@ class SchemaProduct(Schema):
                 "@type": "Offer",
                 "url": request.base_url,
                 "priceCurrency": current_user.currency.code,
-                "price": price,
+                "price": round(price, 2),
                 "itemCondition": "https://schema.org/NewCondition",
             },
         }
