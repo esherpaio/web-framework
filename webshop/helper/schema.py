@@ -101,7 +101,7 @@ class SchemaPerson(Schema):
             "name": name,
             "url": request.base_url,
             "jobTitle": title,
-            "worksFor": SchemaOrganization().markup,
+            "worksFor": SchemaOrganization().data,
         }
         if image_url:
             data["image"] = image_url
