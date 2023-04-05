@@ -1,7 +1,11 @@
 from webshop.mail.base import render_email, send_email, pdf_to_string
 
 
-def send_order_received(order_id: int, billing_email: str, shipping_email: str) -> None:
+def send_order_received(
+    order_id: int,
+    billing_email: str,
+    shipping_email: str,
+) -> None:
     to = [billing_email, shipping_email]
     subject = f"Costronica Order #{order_id}"
     title = f"Order #{order_id}"
@@ -15,7 +19,10 @@ def send_order_received(order_id: int, billing_email: str, shipping_email: str) 
 
 
 def send_order_paid(
-    order_id: int, billing_email: str, invoice_id: int, pdf_path: str
+    order_id: int,
+    billing_email: str,
+    invoice_id: int,
+    pdf_path: str,
 ) -> None:
     to = [billing_email]
     subject = f"Costronica Order #{order_id}"
@@ -32,7 +39,10 @@ def send_order_paid(
 
 
 def send_order_shipped(
-    order_id: int, billing_email: str, shipping_email: str, shipping_address: str
+    order_id: int,
+    billing_email: str,
+    shipping_email: str,
+    shipping_address: str,
 ) -> None:
     to = [billing_email, shipping_email]
     subject = f"Costronica Order #{order_id}"
@@ -47,7 +57,10 @@ def send_order_shipped(
 
 
 def send_order_refund(
-    order_id: int, billing_email: str, refund_id: int, pdf_path: str
+    order_id: int,
+    billing_email: str,
+    refund_id: int,
+    pdf_path: str,
 ) -> None:
     to = [billing_email]
     subject = f"Costronica Order #{order_id}"

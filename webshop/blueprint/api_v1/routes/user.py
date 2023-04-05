@@ -3,7 +3,6 @@ import uuid
 from enum import StrEnum
 
 from flask import Response, url_for, request
-from flask_login import current_user
 from sqlalchemy import func
 from werkzeug.security import generate_password_hash
 
@@ -72,7 +71,6 @@ def post_users() -> Response:
     # Send email
     verification_url = url_for(
         config.ENDPOINT_LOGIN,
-        _locale=current_user.locale,
         verification_key=user_verification.key,
         _external=True,
     )
@@ -139,7 +137,6 @@ def patch_users_id(user_id: int) -> Response:
             s.flush()
             reset_url = url_for(
                 "auth.password_reset",
-                _locale=current_user.locale,
                 verification_key=verification.key,
                 _external=True,
             )

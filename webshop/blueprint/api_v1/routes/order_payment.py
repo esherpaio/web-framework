@@ -1,7 +1,6 @@
 from datetime import datetime, timedelta
 
 from flask import Response, url_for
-from flask_login import current_user
 
 from webshop import config
 from webshop.blueprint.api_v1 import api_v1_bp
@@ -28,7 +27,6 @@ def post_orders_id_payments(order_id: int) -> Response:
         description = f"Order {order.id}"
         redirect = url_for(
             "checkout.confirmation",
-            _locale=current_user.locale,
             order_id=order.id,
             _external=True,
         )

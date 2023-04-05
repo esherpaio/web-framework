@@ -1,7 +1,10 @@
 from webshop.mail.base import render_email, send_email
 
 
-def send_verification_url(to: str, verification_url: str) -> None:
+def send_verification_url(
+    to: str,
+    verification_url: str,
+) -> None:
     subject = "Costronica Welcome"
     title = "Welcome"
     paragraphs = [
@@ -14,7 +17,10 @@ def send_verification_url(to: str, verification_url: str) -> None:
     send_email([to], subject, html)
 
 
-def send_new_password(to: str, reset_url: str) -> None:
+def send_new_password(
+    to: str,
+    reset_url: str,
+) -> None:
     subject = "Costronica Password"
     title = "Password"
     paragraphs = [
