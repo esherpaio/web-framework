@@ -1,3 +1,4 @@
+from webshop import config
 from webshop.mail.base import render_email, send_email
 
 
@@ -5,10 +6,10 @@ def send_verification_url(
     to: str,
     verification_url: str,
 ) -> None:
-    subject = "Costronica Welcome"
+    subject = f"{config.BUSINESS_NAME} Welcome"
     title = "Welcome"
     paragraphs = [
-        "Welcome to Constronica.",
+        f"Welcome to {config.BUSINESS_NAME}.",
         f"Please activate your account with the following URL: {verification_url}",
         "You can sign in after your account has been activated.",
     ]
@@ -21,7 +22,7 @@ def send_new_password(
     to: str,
     reset_url: str,
 ) -> None:
-    subject = "Costronica Password"
+    subject = f"{config.BUSINESS_NAME} Password"
     title = "Password"
     paragraphs = [
         "We have received a request to reset your account password. "

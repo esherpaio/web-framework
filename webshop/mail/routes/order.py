@@ -1,3 +1,4 @@
+from webshop import config
 from webshop.mail.base import render_email, send_email, pdf_to_string
 
 
@@ -7,10 +8,10 @@ def send_order_received(
     shipping_email: str,
 ) -> None:
     to = [billing_email, shipping_email]
-    subject = f"Costronica Order #{order_id}"
+    subject = f"{config.BUSINESS_NAME} Order #{order_id}"
     title = f"Order #{order_id}"
     paragraphs = [
-        f"Thank you for your order at Costronica.",
+        f"Thank you for your order at {config.BUSINESS_NAME}.",
         f"Once your payment is fully processed, you will receive the invoice.",
     ]
 
@@ -25,7 +26,7 @@ def send_order_paid(
     pdf_path: str,
 ) -> None:
     to = [billing_email]
-    subject = f"Costronica Order #{order_id}"
+    subject = f"{config.BUSINESS_NAME} Order #{order_id}"
     title = f"Order #{order_id}"
     paragraphs = [
         f"We have succesfully processed your payment.",
@@ -46,7 +47,7 @@ def send_order_shipped(
     shipping_address: str,
 ) -> None:
     to = [billing_email, shipping_email]
-    subject = f"Costronica Order #{order_id}"
+    subject = f"{config.BUSINESS_NAME} Order #{order_id}"
     title = f"Order #{order_id}"
     paragraphs = [
         f"We have handed the order to our carrier.",
@@ -65,7 +66,7 @@ def send_order_refund(
     pdf_path: str,
 ) -> None:
     to = [billing_email]
-    subject = f"Costronica Order #{order_id}"
+    subject = f"{config.BUSINESS_NAME} Order #{order_id}"
     title = f"Order #{order_id}"
     paragraphs = [
         f"We have created a refund for your order.",

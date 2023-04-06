@@ -9,7 +9,7 @@ def send_contact(
     company: str | None = None,
     phone: str | None = None,
 ) -> None:
-    subject = "Costronica Contact"
+    subject = f"{config.BUSINESS_NAME} Contact"
     title = "Contact Form"
     paragraphs = [
         f"Email: {email}<br>Name: {name}<br>Company: {company}<br>Phone: {phone}",
