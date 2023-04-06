@@ -40,6 +40,7 @@ class Order(Base):
     lines = relationship("OrderLine", back_populates="order")
     refunds = relationship("Refund", back_populates="order")
     shipment_method = relationship("ShipmentMethod")
+    shipments = relationship("Shipment", back_populates="order")
     shipping = relationship("Shipping")
     status = relationship("OrderStatus")
 

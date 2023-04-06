@@ -74,7 +74,10 @@ def post_users() -> Response:
         verification_key=user_verification.key,
         _external=True,
     )
-    send_verification_url(email, verification_url)
+    send_verification_url(
+        to=email,
+        verification_url=verification_url,
+    )
 
     return response(message=_Text.REGISTER_SUCCESS)
 
@@ -140,7 +143,7 @@ def patch_users_id(user_id: int) -> Response:
                 verification_key=verification.key,
                 _external=True,
             )
-            send_new_password(user.email, reset_url)
+            send_new_password(to=user.email, reset_url=reset_url)
             return response(200, _Text.PASSWORD_REQUEST_SEND)
 
         # Authorize request with verification_key

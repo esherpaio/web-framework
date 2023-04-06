@@ -25,6 +25,7 @@ from .product_type import ProductType, ProductTypeId
 from .product_value import ProductValue
 from .refund import Refund
 from .region import Region
+from .shipment import Shipment
 from .shipment_class import ShipmentClass
 from .shipment_method import ShipmentMethod
 from .shipment_zone import ShipmentZone

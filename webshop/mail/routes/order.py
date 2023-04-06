@@ -40,6 +40,7 @@ def send_order_paid(
 
 def send_order_shipped(
     order_id: int,
+    shipment_url: str,
     billing_email: str,
     shipping_email: str,
     shipping_address: str,
@@ -49,6 +50,7 @@ def send_order_shipped(
     title = f"Order #{order_id}"
     paragraphs = [
         f"We have handed the order to our carrier.",
+        f"You can follow your shipment with this URL: {shipment_url}."
         f"Your order will be delivered to {shipping_address}.",
     ]
 

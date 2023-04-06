@@ -13,6 +13,12 @@ def post_emails_contact() -> Response:
     name, _ = json_get("name", str, nullable=False)
     phone, _ = json_get("phone", str)
 
-    send_contact(email, name, message, company, phone)
+    send_contact(
+        email=email,
+        name=name,
+        message=message,
+        company=company,
+        phone=phone,
+    )
 
     return response()

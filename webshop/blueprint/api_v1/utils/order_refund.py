@@ -34,5 +34,10 @@ def create_refund(
 
     # Send email
     _, pdf_path = gen_refund(order, order.invoice, refund)
-    send_order_refund(order.id, order.billing.email, refund.id, pdf_path)
+    send_order_refund(
+        order_id=order.id,
+        billing_email=order.billing.email,
+        refund_id=refund.id,
+        pdf_path=pdf_path,
+    )
     remove_file(pdf_path)

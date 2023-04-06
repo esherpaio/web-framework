@@ -112,7 +112,11 @@ def post_orders() -> Response:
             s.flush()
 
         # Send email
-        send_order_received(order.id, order.billing.email, order.shipping.email)
+        send_order_received(
+            order_id=order.id,
+            billing_email=order.billing.email,
+            shipping_email=order.shipping.email,
+        )
 
     resource = get_resource(order.id)
     return response(data=resource)
