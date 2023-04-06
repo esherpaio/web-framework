@@ -10,6 +10,7 @@ from .routes import (
     order,
     order_payment,
     order_refund,
+    order_shipment,
     product,
     product_link,
     product_media,
