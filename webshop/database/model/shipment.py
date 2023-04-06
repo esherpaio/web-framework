@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String
+from sqlalchemy import Column, String, UniqueConstraint
 from sqlalchemy.orm import relationship
 
 from . import Base
@@ -7,6 +7,7 @@ from ._utils import FKRestrict
 
 class Shipment(Base):
     __tablename__ = "shipment"
+    __table_args__ = (UniqueConstraint("url", "order_id"),)
 
     url = Column(String(256), nullable=False)
 
