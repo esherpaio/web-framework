@@ -15,10 +15,10 @@ class _ToSet:
 
 
 # Type annotations for _ToSet
-Str = Union[str, Type[_ToSet]]
-Int = Union[int, Type[_ToSet]]
-Float = Union[float, Type[_ToSet]]
-Bool = Union[bool, Type[_ToSet]]
+Str = Union[str, None, Type[_ToSet]]
+Int = Union[int, None, Type[_ToSet]]
+Float = Union[float, None, Type[_ToSet]]
+Bool = Union[bool, None, Type[_ToSet]]
 ListStr = Union[list[str], Type[_ToSet]]
 
 
@@ -78,6 +78,7 @@ ROBOT_DISALLOW_URLS: ListStr = _ToSet
 SOCIAL_DISCORD: Str = _ToSet
 SOCIAL_FACEBOOK: Str = _ToSet
 SOCIAL_INSTAGRAM: Str = _ToSet
+SOCIAL_PINTEREST: Str = _ToSet
 SOCIAL_TWITTER: Str = _ToSet
 SOCIAL_YOUTUBE: Str = _ToSet
 

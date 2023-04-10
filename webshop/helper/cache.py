@@ -25,6 +25,7 @@ class Cache(dict, metaclass=Singleton):
             self[request.full_path] = compressed
             return response
 
+        wrap.__name__ = f.__name__
         return wrap
 
     def __setattr__(self, key: str, value: any) -> None:
