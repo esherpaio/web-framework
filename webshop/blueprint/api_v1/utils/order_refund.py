@@ -22,10 +22,9 @@ def create_refund(
     s.flush()
 
     # Create Mollie refund
-    mollie_refund = (
-        Mollie()
-        .payment_refunds.on(mollie_payment)
-        .create({"amount": mollie_amount(price_vat, order.currency.code)})
+    mollie_payment = Mollie().payments.get(order.mollie_id)
+    mollie_refund = mollie_payment.refunds.create(
+        {"amount": mollie_amount(price_vat, order.currency.code)}
     )
 
     # Update refund
