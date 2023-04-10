@@ -7,6 +7,15 @@ from flask import url_for, current_app, request
 from webshop.database.model import Page
 
 
+class Sitemap:
+    def __init__(self, endpoint: str) -> None:
+        self._endpoint = endpoint
+
+    @property
+    def loc(self) -> str:
+        return url_for(self._endpoint, _external=True)
+
+
 class SitemapUrl:
     def __init__(self, endpoint: str, updated_at: datetime = None, **kwargs) -> None:
         self._endpoint = endpoint
