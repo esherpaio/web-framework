@@ -70,11 +70,12 @@ class SchemaOrganization(Schema):
             _external=True,
         )
         social_urls = [
+            config.SOCIAL_DISCORD,
             config.SOCIAL_FACEBOOK,
             config.SOCIAL_INSTAGRAM,
+            config.SOCIAL_PINTEREST,
             config.SOCIAL_TWITTER,
             config.SOCIAL_YOUTUBE,
-            config.SOCIAL_DISCORD,
         ]
         self.data = {
             "@context": "https://schema.org",
