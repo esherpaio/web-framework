@@ -1,7 +1,7 @@
 import json
 import os
 import sys
-from typing import Type
+from typing import Type, Union
 
 from dotenv import load_dotenv
 
@@ -15,11 +15,11 @@ class _ToSet:
 
 
 # Type annotations for _ToSet
-Str = str | Type[_ToSet]
-Int = int | Type[_ToSet]
-Float = float | Type[_ToSet]
-Bool = bool | Type[_ToSet]
-ListStr = list[str] | Type[_ToSet]
+Str = Union[str, Type[_ToSet]]
+Int = Union[int, Type[_ToSet]]
+Float = Union[float, Type[_ToSet]]
+Bool = Union[bool, Type[_ToSet]]
+ListStr = Union[list[str], Type[_ToSet]]
 
 
 def load_config(path: str) -> None:
