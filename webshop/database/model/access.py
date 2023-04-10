@@ -7,7 +7,7 @@ from ._utils import FKCascade
 
 class Access(Base):
     __tablename__ = "access"
-    __table_args__ = (CheckConstraint("COALESCE(session_key, user_id) IS NOT NULL"),)
+    __table_args__ = (CheckConstraint("session_key IS NULL OR user_id IS NULL"),)
 
     session_key = Column(String(64), unique=True)
 
