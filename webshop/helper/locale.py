@@ -28,10 +28,10 @@ def expects_locale(endpoint: str | None) -> bool:
     return False
 
 
-def requires_locale(endpoint: str | None) -> bool:
+def requires_locale(endpoint: str | None, values: dict) -> bool:
     """Determines whether a locale is expected and not present."""
 
-    return expects_locale(endpoint) and not cur_locale()
+    return expects_locale(endpoint) and "_locale" not in values
 
 
 def match_locale(locale: str) -> tuple[str | None, str | None]:
