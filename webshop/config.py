@@ -103,3 +103,4 @@ MOLLIE_KEY: str = os.getenv("MOLLIE_KEY")
 MOLLIE_TEST: bool = MOLLIE_KEY.startswith("test")
 SEED_EXTERNAL: bool = os.getenv("SEED_EXTERNAL") in ["true", "1"]
 SENDGRID_KEY: str = os.getenv("SENDGRID_KEY")
+WEBSHOP_MODE: Bool = _ToSet
