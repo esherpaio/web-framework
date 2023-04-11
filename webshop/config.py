@@ -1,7 +1,7 @@
 import json
 import os
 import sys
-from typing import Type, Union
+from typing import Union
 
 from dotenv import load_dotenv
 
@@ -11,15 +11,16 @@ load_dotenv()
 # Type to indicate a config attribute,
 # that needs to be set from a JSON file
 class _ToSet:
-    pass
+    def __bool__(self) -> bool:
+        return False
 
 
 # Type annotations for _ToSet
-Str = Union[str, None, Type[_ToSet]]
-Int = Union[int, None, Type[_ToSet]]
-Float = Union[float, None, Type[_ToSet]]
-Bool = Union[bool, None, Type[_ToSet]]
-ListStr = Union[list[str], Type[_ToSet]]
+Str = Union[str, None, _ToSet]
+Int = Union[int, None, _ToSet]
+Float = Union[float, None, _ToSet]
+Bool = Union[bool, None, _ToSet]
+ListStr = Union[list[str], _ToSet]
 
 
 def load_config(path: str) -> None:
@@ -33,7 +34,7 @@ def load_config(path: str) -> None:
     config_len = 0
     for x in dir(sys.modules[__name__]):
         attr = getattr(sys.modules[__name__], x)
-        if attr == _ToSet:
+        if isinstance(attr, _ToSet):
             config_len += 1
 
     # Check if all attributes are set
@@ -48,39 +49,39 @@ def load_config(path: str) -> None:
             raise KeyError(f"Config key {k} does not exist")
 
 
-BUSINESS_CC: Str = _ToSet
-BUSINESS_CITY: Str = _ToSet
-BUSINESS_COUNTRY: Str = _ToSet
-BUSINESS_COUNTRY_CODE: Str = _ToSet
-BUSINESS_EMAIL: Str = _ToSet
-BUSINESS_NAME: Str = _ToSet
-BUSINESS_STREET: Str = _ToSet
-BUSINESS_VAT: Str = _ToSet
-BUSINESS_VAT_RATE: Float = _ToSet
-BUSINESS_VAT_REVERSE_CHARGE: Bool = _ToSet
-BUSINESS_ZIP_CODE: Str = _ToSet
+BUSINESS_CC: Str = _ToSet()
+BUSINESS_CITY: Str = _ToSet()
+BUSINESS_COUNTRY: Str = _ToSet()
+BUSINESS_COUNTRY_CODE: Str = _ToSet()
+BUSINESS_EMAIL: Str = _ToSet()
+BUSINESS_NAME: Str = _ToSet()
+BUSINESS_STREET: Str = _ToSet()
+BUSINESS_VAT: Str = _ToSet()
+BUSINESS_VAT_RATE: Float = _ToSet()
+BUSINESS_VAT_REVERSE_CHARGE: Bool = _ToSet()
+BUSINESS_ZIP_CODE: Str = _ToSet()
 
-WEBSITE_COUNTRY_CODE: Str = _ToSet
-WEBSITE_FAVICON_URL: Str = _ToSet
-WEBSITE_HEX_COLOR: Str = _ToSet
-WEBSITE_LANGUAGE_CODE: Str = _ToSet
-WEBSITE_LOCALE: Str = _ToSet
-WEBSITE_NAME: Str = _ToSet
+WEBSITE_COUNTRY_CODE: Str = _ToSet()
+WEBSITE_FAVICON_URL: Str = _ToSet()
+WEBSITE_HEX_COLOR: Str = _ToSet()
+WEBSITE_LANGUAGE_CODE: Str = _ToSet()
+WEBSITE_LOCALE: Str = _ToSet()
+WEBSITE_NAME: Str = _ToSet()
 
-ENDPOINT_ERROR: Str = _ToSet
-ENDPOINT_HOME: Str = _ToSet
-ENDPOINT_LOGIN: Str = _ToSet
-ENDPOINT_USER: Str = _ToSet
+ENDPOINT_ERROR: Str = _ToSet()
+ENDPOINT_HOME: Str = _ToSet()
+ENDPOINT_LOGIN: Str = _ToSet()
+ENDPOINT_USER: Str = _ToSet()
 
-ROBOT_DEFAULT_TAGS: Str = _ToSet
-ROBOT_DISALLOW_URLS: ListStr = _ToSet
+ROBOT_DEFAULT_TAGS: Str = _ToSet()
+ROBOT_DISALLOW_URLS: ListStr = _ToSet()
 
-SOCIAL_DISCORD: Str = _ToSet
-SOCIAL_FACEBOOK: Str = _ToSet
-SOCIAL_INSTAGRAM: Str = _ToSet
-SOCIAL_PINTEREST: Str = _ToSet
-SOCIAL_TWITTER: Str = _ToSet
-SOCIAL_YOUTUBE: Str = _ToSet
+SOCIAL_DISCORD: Str = _ToSet()
+SOCIAL_FACEBOOK: Str = _ToSet()
+SOCIAL_INSTAGRAM: Str = _ToSet()
+SOCIAL_PINTEREST: Str = _ToSet()
+SOCIAL_TWITTER: Str = _ToSet()
+SOCIAL_YOUTUBE: Str = _ToSet()
 
 APP_DEBUG: bool = os.getenv("APP_DEBUG") in ["true", "1"]
 APP_SECRET: str = os.getenv("APP_SECRET")
@@ -94,8 +95,8 @@ CDN_VIDEO_EXTS: list[str] = ["mp4"]
 CDN_ZONE: str = os.getenv("CDN_ZONE")
 
 EMAIL_FROM: str = os.getenv("EMAIL_FROM")
-EMAIL_LOGO_URL: Str = _ToSet
-EMAIL_UNSUBSCRIBE_URL: Str = _ToSet
+EMAIL_LOGO_URL: Str = _ToSet()
+EMAIL_UNSUBSCRIBE_URL: Str = _ToSet()
 
 DATABASE_URL: str = os.getenv("DATABASE_URL")
 LOCALHOST: str = os.getenv("LOCALHOST")
@@ -103,4 +104,4 @@ MOLLIE_KEY: str = os.getenv("MOLLIE_KEY")
 MOLLIE_TEST: bool = MOLLIE_KEY.startswith("test")
 SEED_EXTERNAL: bool = os.getenv("SEED_EXTERNAL") in ["true", "1"]
 SENDGRID_KEY: str = os.getenv("SENDGRID_KEY")
-WEBSHOP_MODE: Bool = _ToSet
+WEBSHOP_MODE: Bool = _ToSet()
