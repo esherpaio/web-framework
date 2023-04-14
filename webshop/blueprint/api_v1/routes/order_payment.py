@@ -31,13 +31,14 @@ def post_orders_id_payments(order_id: int) -> Response:
             _external=True,
         )
         due_date = (datetime.utcnow() + timedelta(days=100)).strftime("%Y-%m-%d")
+        is_test = config.MOLLIE_KEY.startswith("test")
         mollie_payment = Mollie().payments.create(
             {
                 "amount": amount,
                 "description": description,
                 "redirectUrl": redirect,
                 "webhookUrl": mollie_webhook(),
-                "metadata": {"order_id": order.id, "is_test": config.MOLLIE_TEST},
+                "metadata": {"order_id": order.id, "is_test": is_test},
                 "dueDate": due_date,
             }
         )

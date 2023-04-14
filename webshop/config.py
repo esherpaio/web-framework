@@ -16,11 +16,11 @@ class _ToSet:
 
 
 # Type annotations for _ToSet
-Str = Union[str, None, _ToSet]
-Int = Union[int, None, _ToSet]
-Float = Union[float, None, _ToSet]
-Bool = Union[bool, None, _ToSet]
-ListStr = Union[list[str], _ToSet]
+_Str = Union[str, None, _ToSet]
+_Int = Union[int, None, _ToSet]
+_Float = Union[float, None, _ToSet]
+_Bool = Union[bool, None, _ToSet]
+_ListStr = Union[list[str], _ToSet]
 
 
 def load_config(path: str) -> None:
@@ -49,44 +49,22 @@ def load_config(path: str) -> None:
             raise KeyError(f"Config key {k} does not exist")
 
 
-BUSINESS_CC: Str = _ToSet()
-BUSINESS_CITY: Str = _ToSet()
-BUSINESS_COUNTRY: Str = _ToSet()
-BUSINESS_COUNTRY_CODE: Str = _ToSet()
-BUSINESS_EMAIL: Str = _ToSet()
-BUSINESS_NAME: Str = _ToSet()
-BUSINESS_STREET: Str = _ToSet()
-BUSINESS_VAT: Str = _ToSet()
-BUSINESS_VAT_RATE: Float = _ToSet()
-BUSINESS_VAT_REVERSE_CHARGE: Bool = _ToSet()
-BUSINESS_ZIP_CODE: Str = _ToSet()
-
-WEBSITE_COUNTRY_CODE: Str = _ToSet()
-WEBSITE_FAVICON_URL: Str = _ToSet()
-WEBSITE_HEX_COLOR: Str = _ToSet()
-WEBSITE_LANGUAGE_CODE: Str = _ToSet()
-WEBSITE_LOCALE: Str = _ToSet()
-WEBSITE_NAME: Str = _ToSet()
-
-ENDPOINT_ERROR: Str = _ToSet()
-ENDPOINT_HOME: Str = _ToSet()
-ENDPOINT_LOGIN: Str = _ToSet()
-ENDPOINT_USER: Str = _ToSet()
-
-ROBOT_DEFAULT_TAGS: Str = _ToSet()
-ROBOT_DISALLOW_URLS: ListStr = _ToSet()
-
-SOCIAL_DISCORD: Str = _ToSet()
-SOCIAL_FACEBOOK: Str = _ToSet()
-SOCIAL_INSTAGRAM: Str = _ToSet()
-SOCIAL_PINTEREST: Str = _ToSet()
-SOCIAL_TWITTER: Str = _ToSet()
-SOCIAL_YOUTUBE: Str = _ToSet()
-
 APP_DEBUG: bool = os.getenv("APP_DEBUG") in ["true", "1"]
 APP_SECRET: str = os.getenv("APP_SECRET")
 
-CDN_AUTO_NAMING: Bool = _ToSet()
+BUSINESS_CC: _Str = _ToSet()
+BUSINESS_CITY: _Str = _ToSet()
+BUSINESS_COUNTRY: _Str = _ToSet()
+BUSINESS_COUNTRY_CODE: _Str = _ToSet()
+BUSINESS_EMAIL: _Str = _ToSet()
+BUSINESS_NAME: _Str = _ToSet()
+BUSINESS_STREET: _Str = _ToSet()
+BUSINESS_VAT: _Str = _ToSet()
+BUSINESS_VAT_RATE: _Float = _ToSet()
+BUSINESS_VAT_REVERSE_CHARGE: _Bool = _ToSet()
+BUSINESS_ZIP_CODE: _Str = _ToSet()
+
+CDN_AUTO_NAMING: _Bool = _ToSet()
 CDN_HOSTNAME: str = os.getenv("CDN_HOSTNAME")
 CDN_IMAGE_EXTS: list[str] = ["jpg", "jpeg", "png", "webp"]
 CDN_PASSWORD: str = os.getenv("CDN_PASSWORD")
@@ -95,15 +73,41 @@ CDN_USERNAME: str = os.getenv("CDN_USERNAME")
 CDN_VIDEO_EXTS: list[str] = ["mp4"]
 CDN_ZONE: str = os.getenv("CDN_ZONE")
 
-EMAIL_FROM: str = os.getenv("EMAIL_FROM")
-EMAIL_LOGO_URL: Str = _ToSet()
-EMAIL_TO: str = os.getenv("EMAIL_TO")
-EMAIL_UNSUBSCRIBE_URL: Str = _ToSet()
-
 DATABASE_URL: str = os.getenv("DATABASE_URL")
+
+EMAIL_FROM: str = os.getenv("EMAIL_FROM")
+EMAIL_LOGO_URL: _Str = _ToSet()
+EMAIL_TO: str = os.getenv("EMAIL_TO")
+EMAIL_UNSUBSCRIBE_URL: _Str = _ToSet()
+
+ENDPOINT_ERROR: _Str = _ToSet()
+ENDPOINT_HOME: _Str = _ToSet()
+ENDPOINT_LOGIN: _Str = _ToSet()
+ENDPOINT_USER: _Str = _ToSet()
+
 LOCALHOST: str = os.getenv("LOCALHOST")
+
 MOLLIE_KEY: str = os.getenv("MOLLIE_KEY")
-MOLLIE_TEST: bool = MOLLIE_KEY.startswith("test")
+
+ROBOT_DEFAULT_TAGS: _Str = _ToSet()
+ROBOT_DISALLOW_URLS: _ListStr = _ToSet()
+
 SEED_EXTERNAL: bool = os.getenv("SEED_EXTERNAL") in ["true", "1"]
+
 SENDGRID_KEY: str = os.getenv("SENDGRID_KEY")
-WEBSHOP_MODE: Bool = os.getenv("WEBSHOP_MODE") in ["true", "1"]
+
+SOCIAL_DISCORD: _Str = _ToSet()
+SOCIAL_FACEBOOK: _Str = _ToSet()
+SOCIAL_INSTAGRAM: _Str = _ToSet()
+SOCIAL_PINTEREST: _Str = _ToSet()
+SOCIAL_TWITTER: _Str = _ToSet()
+SOCIAL_YOUTUBE: _Str = _ToSet()
+
+WEBSHOP_MODE: _Bool = os.getenv("WEBSHOP_MODE") in ["true", "1"]
+
+WEBSITE_COUNTRY_CODE: _Str = _ToSet()
+WEBSITE_FAVICON_URL: _Str = _ToSet()
+WEBSITE_HEX_COLOR: _Str = _ToSet()
+WEBSITE_LANGUAGE_CODE: _Str = _ToSet()
+WEBSITE_LOCALE: _Str = _ToSet()
+WEBSITE_NAME: _Str = _ToSet()
