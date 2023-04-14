@@ -7,7 +7,9 @@ from werkzeug.utils import secure_filename
 from webshop import config
 from webshop.blueprint.api_v1 import api_v1_bp
 from webshop.database.client import Conn
-from webshop.database.model import Product, ProductMedia, File
+from webshop.database.model import File
+from webshop.database.model.article import Article
+from webshop.database.model.article_media import ArticleMedia
 from webshop.database.model.file_type import FileTypeId
 from webshop.database.model.user_role import UserRoleLevel
 from webshop.helper import cdn
@@ -16,22 +18,22 @@ from webshop.helper.security import authorize
 
 
 @authorize(UserRoleLevel.ADMIN)
-@api_v1_bp.post("/products/<int:product_id>/media")
-def post_products_id_media(product_id: int) -> Response:
+@api_v1_bp.post("/articles/<int:article_id>/media")
+def post_articles_id_media(article_id: int) -> Response:
     with Conn.begin() as s:
-        # Get product
-        # Raise if product doesn't exist
-        product = s.query(Product).filter_by(id=product_id).first()
-        if not product:
+        # Get article
+        # Raise if article doesn't exist
+        article = s.query(Article).filter_by(id=article_id).first()
+        if not article:
             return response(404, ApiText.HTTP_404)
 
         # Generate sequence number for CDN_AUTO_NAMING
         sequence = 1
         if config.CDN_AUTO_NAMING:
             last_media = (
-                s.query(ProductMedia)
-                .filter_by(product_id=product_id)
-                .order_by(ProductMedia.id.desc())
+                s.query(ArticleMedia)
+                .filter_by(article_id=article_id)
+                .order_by(ArticleMedia.id.desc())
                 .first()
             )
             if last_media:
@@ -42,14 +44,14 @@ def post_products_id_media(product_id: int) -> Response:
             # Create details
             name, extension = os.path.splitext(request_file.filename)
             if config.CDN_AUTO_NAMING:
-                name = f"{product.slug}-{sequence}"
+                name = f"{article.slug}-{sequence}"
             else:
                 name = secure_filename(name)
             extension = extension.lstrip(".").lower()
             filename = f"{name}.{extension}"
 
             # Create path
-            cdn_path_parts = ["product", product.slug, filename]
+            cdn_path_parts = ["article", article.slug, filename]
             if config.APP_DEBUG:
                 cdn_path_parts.insert(0, "_development")
             cdn_path = os.path.join(*cdn_path_parts)
@@ -69,9 +71,9 @@ def post_products_id_media(product_id: int) -> Response:
             s.add(file)
             s.flush()
 
-            # Insert product_media
-            product_media = ProductMedia(product_id=product_id, file_id=file.id)
-            s.add(product_media)
+            # Insert article_media
+            article_media = ArticleMedia(article_id=article_id, file_id=file.id)
+            s.add(article_media)
             s.flush()
 
             # Increment sequence for CDN_AUTO_NAMING
@@ -81,29 +83,29 @@ def post_products_id_media(product_id: int) -> Response:
 
 
 @authorize(UserRoleLevel.ADMIN)
-@api_v1_bp.patch("/products/<int:product_id>/media/<int:media_id>")
-def patch_products_id_media_id(product_id: int, media_id: int) -> Response:
+@api_v1_bp.patch("/articles/<int:article_id>/media/<int:media_id>")
+def patch_articles_id_media_id(article_id: int, media_id: int) -> Response:
     desc, has_desc = json_get("desc", str)
     order, has_order = json_get("order", int)
 
     with Conn.begin() as s:
-        # Get product_media
-        # Raise if product_media doesn't exist
-        product_media = (
-            s.query(ProductMedia).filter_by(id=media_id, product_id=product_id).first()
+        # Get article_media
+        # Raise if article_media doesn't exist
+        article_media = (
+            s.query(ArticleMedia).filter_by(id=media_id, article_id=article_id).first()
         )
-        if not product_media:
+        if not article_media:
             return response(404, ApiText.HTTP_404)
 
         # Get file
         # Raise if file doesn't exist
-        file = s.query(File).filter_by(id=product_media.file_id).first()
+        file = s.query(File).filter_by(id=article_media.file_id).first()
         if not file:
             return response(404, ApiText.HTTP_404)
 
         # Update order
         if has_order:
-            product_media.order_ = order
+            article_media.order_ = order
 
         # Update desc
         if has_desc:
@@ -113,27 +115,27 @@ def patch_products_id_media_id(product_id: int, media_id: int) -> Response:
 
 
 @authorize(UserRoleLevel.ADMIN)
-@api_v1_bp.delete("/products/<int:product_id>/media/<int:media_id>")
-def delete_products_id_media_id(product_id: int, media_id) -> Response:
+@api_v1_bp.delete("/articles/<int:article_id>/media/<int:media_id>")
+def delete_articles_id_media_id(article_id: int, media_id: int) -> Response:
     with Conn.begin() as s:
-        # Get product_media
-        # Raise if product_media doesn't exist
-        product_media = (
-            s.query(ProductMedia).filter_by(id=media_id, product_id=product_id).first()
+        # Get article_media
+        # Raise if article_media doesn't exist
+        article_media = (
+            s.query(ArticleMedia).filter_by(id=media_id, article_id=article_id).first()
         )
-        if not product_media:
+        if not article_media:
             return response(404, ApiText.HTTP_404)
 
         # Get file
         # Raise if file doesn't exist
-        file = s.query(File).filter_by(id=product_media.file_id).first()
+        file = s.query(File).filter_by(id=article_media.file_id).first()
         if not file:
             return response(404, ApiText.HTTP_404)
 
         # Remove file
-        # Delete file and product_media
+        # Delete file and article_media
         cdn.delete(file.path)
         s.delete(file)
-        s.delete(product_media)
+        s.delete(article_media)
 
     return response()

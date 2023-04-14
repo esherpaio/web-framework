@@ -86,6 +86,7 @@ SOCIAL_YOUTUBE: Str = _ToSet()
 APP_DEBUG: bool = os.getenv("APP_DEBUG") in ["true", "1"]
 APP_SECRET: str = os.getenv("APP_SECRET")
 
+CDN_AUTO_NAMING: Bool = _ToSet()
 CDN_HOSTNAME: str = os.getenv("CDN_HOSTNAME")
 CDN_IMAGE_EXTS: list[str] = ["jpg", "jpeg", "png", "webp"]
 CDN_PASSWORD: str = os.getenv("CDN_PASSWORD")

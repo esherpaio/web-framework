@@ -1,5 +1,7 @@
 from ._bp import api_v1_bp
 from .routes import (
+    article,
+    article_media,
     billing,
     cart,
     cart_item,
