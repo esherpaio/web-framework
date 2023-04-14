@@ -1,8 +1,7 @@
-import os
-
+from webshop import config
 from ._base import Base
 
-if os.getenv("WEBSHOP_MODE") in ["true", "1"]:
+if config.WEBSHOP_MODE:
     from .cart import Cart
     from .cart_item import CartItem
     from .category import Category
