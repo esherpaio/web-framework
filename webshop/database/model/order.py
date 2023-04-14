@@ -3,43 +3,45 @@ from sqlalchemy.ext.hybrid import hybrid_property, hybrid_method
 from sqlalchemy.orm import relationship
 
 from . import Base
-from ._utils import price, vat, FKCascade, FKRestrict
+from ._utils import price, vat, FKCascade, FKRestrict, rate
 from .order_status import OrderStatusId
 
 
 class Order(Base):
     __tablename__ = "order"
     __table_args__ = (
+        CheckConstraint("amount IS NULL OR rate IS NULL"),
         CheckConstraint("shipment_price >= 0"),
         CheckConstraint("total_price >= 0"),
         CheckConstraint("vat_rate >= 1"),
     )
 
+    coupon_amount = Column(price)
+    coupon_code = Column(String(16))
+    coupon_rate = Column(rate)
     mollie_id = Column(String(64), unique=True)
-    shipment_price = Column(price, nullable=False, default=0)
+    shipment_method_name = Column(String(64))
+    shipment_price = Column(price, nullable=False)
     total_price = Column(price, nullable=False)
     vat_rate = Column(vat, nullable=False)
-    vat_reverse = Column(Boolean, nullable=False, default=False)
+    vat_reverse = Column(Boolean, nullable=False)
+
+    # Todo: check if billing/shipping is in use by order in API
+    #  because they should not be changeable.
 
     access_id = Column(FKRestrict("access.id"), nullable=False)
     billing_id = Column(FKCascade("billing.id"))
-    coupon_id = Column(FKRestrict("coupon.id"))
     currency_id = Column(FKRestrict("currency.id"), nullable=False)
     invoice_id = Column(FKRestrict("invoice.id"))
-    shipment_method_id = Column(FKRestrict("shipment_method.id"))
     shipping_id = Column(FKCascade("shipping.id"))
-    status_id = Column(
-        FKRestrict("order_status.id"), nullable=False, default=OrderStatusId.PENDING
-    )
+    status_id = Column(FKRestrict("order_status.id"), nullable=False)
 
     access = relationship("Access")
     billing = relationship("Billing")
-    coupon = relationship("Coupon")
     currency = relationship("Currency")
     invoice = relationship("Invoice")
     lines = relationship("OrderLine", back_populates="order")
     refunds = relationship("Refund", back_populates="order")
-    shipment_method = relationship("ShipmentMethod")
     shipments = relationship("Shipment", back_populates="order")
     shipping = relationship("Shipping")
     status = relationship("OrderStatus")
@@ -134,14 +136,14 @@ class Order(Base):
             else:
                 price_ += line.total_price
         # Add coupon
-        if with_coupon and self.coupon:
-            if self.coupon.rate:
-                price_ *= self.coupon.rate
-            if self.coupon.amount:
+        if with_coupon:
+            if self.coupon_rate:
+                price_ *= self.coupon_rate
+            if self.coupon_amount:
                 if include_vat:
-                    price_ -= self.coupon.amount * self.vat_rate
+                    price_ -= self.coupon_amount * self.vat_rate
                 else:
-                    price_ -= self.coupon.amount
+                    price_ -= self.coupon_amount
         # Add shipment
         if with_shipment:
             if include_vat:

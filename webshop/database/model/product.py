@@ -22,11 +22,8 @@ class Product(Base):
     summary = Column(String(64))
     unit_price = Column(price, nullable=False)
 
-    category_id = Column(FKRestrict("category.id"))
     shipment_class_id = Column(FKRestrict("shipment_class.id"))
     type_id = Column(FKRestrict("product_type.id"), nullable=False)
-
-    category = relationship("Category")
     links = relationship("ProductLink", back_populates="product")
     medias = relationship("ProductMedia", back_populates="product")
     options = relationship("ProductOption", back_populates="product")

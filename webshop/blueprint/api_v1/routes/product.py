@@ -43,7 +43,6 @@ def post_products() -> Response:
 @api_v1_bp.patch("/products/<int:product_id>")
 @sync_after(SkuSyncer)
 def patch_products_id(product_id: int) -> Response:
-    category_id, has_category_id = json_get("category_id", int)
     file_url, has_file_url = json_get("file_url", str)
     html, has_html = json_get("html", str)
     name, has_name = json_get("name", str)
@@ -63,8 +62,6 @@ def patch_products_id(product_id: int) -> Response:
         # Update product
         if has_type_id:
             product.type_id = type_id
-        if has_category_id:
-            product.category_id = category_id
         if has_shipment_class_id:
             product.shipment_class_id = shipment_class_id
         if has_name:
