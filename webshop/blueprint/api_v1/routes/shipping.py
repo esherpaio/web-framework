@@ -3,7 +3,7 @@ from flask import Response
 from webshop.blueprint.api_v1 import api_v1_bp
 from webshop.blueprint.api_v1.resource.shipping import get_resource
 from webshop.database.client import Conn
-from webshop.database.model import Shipping, Cart, User
+from webshop.database.model import Shipping, Cart, User, Order
 from webshop.helper.api import response, ApiText, json_get, json_empty_str_to_none
 from webshop.helper.security import get_access
 
@@ -93,6 +93,11 @@ def patch_shippings_id(shipping_id: int) -> Response:
             s.query(User).filter_by(id=access.user_id, shipping_id=shipping_id).first()
         )
         if cart is None and user is None:
+            return response(403, ApiText.HTTP_403)
+
+        # Check if billing is in use by an order
+        order = s.query(Order).filter_by(shipping_id=shipping_id).first()
+        if order:
             return response(403, ApiText.HTTP_403)
 
         # Get shipping

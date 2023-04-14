@@ -26,9 +26,6 @@ class Order(Base):
     vat_rate = Column(vat, nullable=False)
     vat_reverse = Column(Boolean, nullable=False)
 
-    # Todo: check if billing/shipping is in use by order in API
-    #  because they should not be changeable.
-
     access_id = Column(FKRestrict("access.id"), nullable=False)
     billing_id = Column(FKCascade("billing.id"))
     currency_id = Column(FKRestrict("currency.id"), nullable=False)
