@@ -32,10 +32,12 @@ def send_order_paid(
         f"We have succesfully processed your payment.",
         f"Please see the attachment for your order details.",
     ]
-    html = render_email(title=title, paragraphs=paragraphs)
+
     pdf_str = pdf_to_string(pdf_path)
     pdf_name = f"Invoice #{invoice_id}.pdf"
     pdf_type = "application/docs"
+
+    html = render_email(title=title, paragraphs=paragraphs)
     send_email(to, subject, html, pdf_str, pdf_name, pdf_type)
 
 
@@ -50,7 +52,7 @@ def send_order_shipped(
     subject = f"{config.BUSINESS_NAME} Order #{order_id}"
     title = f"Order #{order_id}"
     paragraphs = [
-        f"We have handed the order to our carrier.",
+        f"We have handed your order to our carrier.",
         f"You can follow your shipment with this URL: {shipment_url}.",
         f"Your order will be delivered to {shipping_address}.",
     ]

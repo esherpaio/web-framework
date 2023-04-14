@@ -96,6 +96,7 @@ CDN_ZONE: str = os.getenv("CDN_ZONE")
 
 EMAIL_FROM: str = os.getenv("EMAIL_FROM")
 EMAIL_LOGO_URL: Str = _ToSet()
+EMAIL_TO: str = os.getenv("EMAIL_TO")
 EMAIL_UNSUBSCRIBE_URL: Str = _ToSet()
 
 DATABASE_URL: str = os.getenv("DATABASE_URL")

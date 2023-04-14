@@ -17,4 +17,4 @@ def send_contact(
     ]
 
     html = render_email(title=title, paragraphs=paragraphs)
-    send_email(config.BUSINESS_EMAIL, subject, html)
+    send_email([config.EMAIL_TO], subject, html)
