@@ -136,7 +136,7 @@ def delete_orders_id(order_id: int) -> Response:
             return response(404, ApiText.HTTP_404)
 
         # Try to cancel the Mollie payment
-        # Update order
+        # Update order status
         mollie_payment = Mollie().payments.get(order.mollie_id)
         if mollie_payment.is_cancelable:
             Mollie().payments.delete(order.mollie_id)
