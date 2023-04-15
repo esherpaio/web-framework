@@ -27,7 +27,7 @@ def post_carts_id_items(cart_id: int) -> Response:
         # Get cart
         # Raise if cart doesn't exist
         access = get_access(s)
-        cart = s.query(Cart).filter_by(access_id=access.id, cart_id=cart_id).first()
+        cart = s.query(Cart).filter_by(access_id=access.id, id=cart_id).first()
         if not cart:
             return response(403, ApiText.HTTP_403)
 
@@ -63,7 +63,7 @@ def patch_cart_id_items_id(cart_id: int, cart_item_id: int) -> Response:
         # Get cart
         # Raise if cart doesn't exist
         access = get_access(s)
-        cart = s.query(Cart).filter_by(access_id=access.id, cart_id=cart_id).first()
+        cart = s.query(Cart).filter_by(access_id=access.id, id=cart_id).first()
         if not cart:
             return response(403, ApiText.HTTP_403)
 
