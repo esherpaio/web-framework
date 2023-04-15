@@ -14,8 +14,9 @@ def num_to_str(number: float, decimals: int) -> str:
 
 
 def save_pdf(pdf: Document, pdf_name: str) -> str:
-    # Create output dir
-    pdf_dir = os.path.join(DIR, "output")
+    # Create tmp dir
+    curr_dir = os.path.dirname(os.path.realpath(__file__))
+    pdf_dir = os.path.join(curr_dir, "tmp")
     if not os.path.isdir(pdf_dir):
         os.makedirs(pdf_dir)
 

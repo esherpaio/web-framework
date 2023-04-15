@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 
 from webshop.blueprint.api_v1 import api_v1_bp
 from webshop.blueprint.api_v1.resource.cart_item import get_resource
-from webshop.database.client import Conn
+from webshop.database.client import conn
 from webshop.database.model import CartItem, Cart
 from webshop.helper.api import response, json_get, ApiText
 from webshop.helper.cart import get_shipment_methods, update_cart_count
@@ -22,12 +22,12 @@ def post_carts_id_items(cart_id: int) -> Response:
 
     data = {}
 
-    with Conn.begin() as s:
+    with conn.begin() as s:
         # Authorize request
         # Get cart
         # Raise if cart doesn't exist
         access = get_access(s)
-        cart = s.query(Cart).filter_by(access_id=access.id, id=cart_id).first()
+        cart = s.query(Cart).filter_by(access_id=access.id, cart_id=cart_id).first()
         if not cart:
             return response(403, ApiText.HTTP_403)
 
@@ -58,12 +58,12 @@ def post_carts_id_items(cart_id: int) -> Response:
 def patch_cart_id_items_id(cart_id: int, cart_item_id: int) -> Response:
     quantity, has_quantity = json_get("quantity", int)
 
-    with Conn.begin() as s:
+    with conn.begin() as s:
         # Authorize request
         # Get cart
         # Raise if cart doesn't exist
         access = get_access(s)
-        cart = s.query(Cart).filter_by(access_id=access.id, id=cart_id).first()
+        cart = s.query(Cart).filter_by(access_id=access.id, cart_id=cart_id).first()
         if not cart:
             return response(403, ApiText.HTTP_403)
 
@@ -87,7 +87,7 @@ def patch_cart_id_items_id(cart_id: int, cart_item_id: int) -> Response:
 
 @api_v1_bp.delete("/carts/<int:cart_id>/items/<int:cart_item_id>")
 def delete_cart_id_items_id(cart_id: int, cart_item_id: int) -> Response:
-    with Conn.begin() as s:
+    with conn.begin() as s:
         # Authorize request
         # Get cart
         # Raise if cart doesn't exist

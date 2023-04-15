@@ -1,11 +1,11 @@
 from sqlalchemy.orm import Session
 
-from webshop.database.client import Conn
+from webshop.database.client import conn
 from webshop.database.model import Shipping
 
 
 def get_resource(shipping_id: int) -> dict:
-    with Conn.begin() as s:
+    with conn.begin() as s:
         shipping = s.query(Shipping).filter_by(id=shipping_id).first()
         return _build(s, shipping)
 

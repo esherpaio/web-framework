@@ -2,8 +2,8 @@ import requests
 from requests import RequestException
 from sqlalchemy.orm import Session
 
-from webshop.database.client import Conn
-from webshop.database.model.region import Region
+from webshop.database.client import conn
+from webshop.database.model import Region
 from webshop.helper.logger import logger
 from webshop.seeder.abc import Syncer
 from webshop.seeder.utils import external_seed
@@ -32,14 +32,12 @@ class RegionSyncer(Syncer):
 
         # Insert regions
         for region_name in region_names:
-            region_is_europe = region_name == "Europe"
             region = next((x for x in regions if x.name == region_name), None)
             if not region:
-                region = Region(name=region_name, is_europe=region_is_europe)
-                s.add(region)
+                s.add(Region(name=region_name))
                 s.flush()
 
 
 if __name__ == "__main__":
-    with Conn.begin() as s_:
+    with conn.begin() as s_:
         RegionSyncer().sync(s_)

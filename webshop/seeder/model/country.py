@@ -2,9 +2,8 @@ import requests
 from requests import RequestException
 from sqlalchemy.orm import Session
 
-from webshop.database.client import Conn
-from webshop.database.model import Country, Currency, Region
-from webshop.database.model.currency import CurrencyId
+from webshop.database.client import conn
+from webshop.database.model import Country, Currency, Region, CurrencyId
 from webshop.helper.logger import logger
 from webshop.seeder.abc import Syncer
 from webshop.seeder.utils import external_seed
@@ -37,7 +36,7 @@ class CountrySyncer(Syncer):
                 country_currency_codes = list(resource["currencies"].keys())
             except KeyError as error:
                 logger.critical(error)
-                return
+                continue
 
             # Get currency, fallback to USD
             for currency in currencies:
@@ -51,7 +50,7 @@ class CountrySyncer(Syncer):
                 region = next(x for x in regions if x.name == region_name)
             except StopIteration as error:
                 logger.critical(error)
-                return
+                continue
 
             # Update or insert country
             country = next((x for x in countries if x.code == country_code), None)
@@ -71,5 +70,5 @@ class CountrySyncer(Syncer):
 
 
 if __name__ == "__main__":
-    with Conn.begin() as s_:
+    with conn.begin() as s_:
         CountrySyncer().sync(s_)

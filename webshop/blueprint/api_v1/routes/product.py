@@ -2,10 +2,8 @@ from flask import Response
 
 from webshop.blueprint.api_v1 import api_v1_bp
 from webshop.blueprint.api_v1.utils.product import clean_html
-from webshop.database.client import Conn
-from webshop.database.model import Product, Sku
-from webshop.database.model.product_type import ProductTypeId
-from webshop.database.model.user_role import UserRoleLevel
+from webshop.database.client import conn
+from webshop.database.model import Product, Sku, ProductTypeId, UserRoleLevel
 from webshop.helper.api import response, ApiText, json_get
 from webshop.helper.security import authorize
 from webshop.helper.validation import gen_slug
@@ -19,7 +17,7 @@ from webshop.seeder.model.sku import SkuSyncer
 def post_products() -> Response:
     name, _ = json_get("name", str, nullable=False)
 
-    with Conn.begin() as s:
+    with conn.begin() as s:
         # Get product
         # Restore if product is deleted
         # Raise if product is not deleted
@@ -52,7 +50,7 @@ def patch_products_id(product_id: int) -> Response:
     type_id, has_type_id = json_get("type_id", int)
     unit_price, has_unit_price = json_get("unit_price", int | float)
 
-    with Conn.begin() as s:
+    with conn.begin() as s:
         # Get product
         # Raise if product doesn't exist
         product = s.query(Product).filter_by(id=product_id).first()
@@ -84,7 +82,7 @@ def patch_products_id(product_id: int) -> Response:
 @authorize(UserRoleLevel.ADMIN)
 @api_v1_bp.delete("/products/<int:product_id>")
 def delete_products_id(product_id: int) -> Response:
-    with Conn.begin() as s:
+    with conn.begin() as s:
         # Get product
         # Raise if product doesn't exist
         product = s.query(Product).filter_by(id=product_id).first()

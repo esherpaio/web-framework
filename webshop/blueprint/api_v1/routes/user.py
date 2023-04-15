@@ -8,9 +8,8 @@ from werkzeug.security import generate_password_hash
 
 from webshop import config
 from webshop.blueprint.api_v1 import api_v1_bp
-from webshop.database.client import Conn
-from webshop.database.model.user import User
-from webshop.database.model.user_verification import UserVerification
+from webshop.database.client import conn
+from webshop.database.model import User, UserVerification
 from webshop.helper.api import response, ApiText, json_get
 from webshop.helper.security import get_access
 from webshop.mail.routes.user import send_new_password, send_verification_url
@@ -50,7 +49,7 @@ def post_users() -> Response:
     password_hash = generate_password_hash(password, method="pbkdf2:sha256:1000000")
     verification_key = str(uuid.uuid4())
 
-    with Conn.begin() as s:
+    with conn.begin() as s:
         # Get user
         # Raise if it exists
         user = s.query(User).filter(func.lower(User.email) == func.lower(email)).first()
@@ -89,7 +88,7 @@ def get_users() -> Response:
     verification_key = request.args.get("verification_key", type=str)
     has_verification_key = "verification_key" in request.args
 
-    with Conn.begin() as s:
+    with conn.begin() as s:
         # Get user_id by verification_key
         # Raise if verification doesn't exist
         if has_verification_key:
@@ -126,7 +125,7 @@ def patch_users_id(user_id: int) -> Response:
     shipping_id, has_shipping_id = json_get("shipping_id", int)
     verification_key, has_verification_key = json_get("verification_key", str)
 
-    with Conn.begin() as s:
+    with conn.begin() as s:
         # Get user
         user = s.query(User).filter_by(id=user_id).first()
 

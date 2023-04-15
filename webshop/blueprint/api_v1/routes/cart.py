@@ -3,9 +3,8 @@ from flask_login import current_user
 
 from webshop.blueprint.api_v1 import api_v1_bp
 from webshop.blueprint.api_v1.resource.cart import get_resource
-from webshop.database.client import Conn
-from webshop.database.model import Cart, ShipmentMethod
-from webshop.database.model.coupon import Coupon
+from webshop.database.client import conn
+from webshop.database.model import Cart, ShipmentMethod, Coupon
 from webshop.helper.api import response, json_get, ApiText
 from webshop.helper.cart import update_cart_count, get_vat
 from webshop.helper.security import get_access
@@ -13,7 +12,7 @@ from webshop.helper.security import get_access
 
 @api_v1_bp.post("/carts")
 def post_carts() -> Response:
-    with Conn.begin() as s:
+    with conn.begin() as s:
         # Authorize request
         # Get or insert cart
         access = get_access(s)
@@ -36,7 +35,7 @@ def post_carts() -> Response:
 
 @api_v1_bp.get("/carts")
 def get_carts() -> Response:
-    with Conn.begin() as s:
+    with conn.begin() as s:
         # Authorize request
         # Get cart
         # Raise if cart doesn't exist
@@ -56,7 +55,7 @@ def patch_carts_id(cart_id: int) -> Response:
     shipment_method_id, has_shipment_method_id = json_get("shipment_method_id", int)
     shipping_id, has_shipping_id = json_get("shipping_id", int)
 
-    with Conn.begin() as s:
+    with conn.begin() as s:
         # Authorize request
         # Get cart
         # Raise if cart doesn't exist

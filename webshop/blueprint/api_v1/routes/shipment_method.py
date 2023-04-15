@@ -1,9 +1,8 @@
 from flask import Response
 
 from webshop.blueprint.api_v1 import api_v1_bp
-from webshop.database.client import Conn
-from webshop.database.model import ShipmentMethod
-from webshop.database.model.user_role import UserRoleLevel
+from webshop.database.client import conn
+from webshop.database.model import ShipmentMethod, UserRoleLevel
 from webshop.helper.api import response, ApiText, json_get
 from webshop.helper.security import authorize
 
@@ -17,7 +16,7 @@ def post_shipment_methods() -> Response:
     unit_price, _ = json_get("unit_price", int | float, nullable=False)
     zone_id, _ = json_get("zone_id", int, nullable=False)
 
-    with Conn.begin() as s:
+    with conn.begin() as s:
         # Insert shipment_method
         shipment_method = ShipmentMethod(
             name=name,
@@ -38,7 +37,7 @@ def patch_shipment_methods_id(shipment_method_id: int) -> Response:
     phone_required, has_phone_required = json_get("phone_required", bool)
     unit_price, has_unit_price = json_get("unit_price", int | float)
 
-    with Conn.begin() as s:
+    with conn.begin() as s:
         # Get shipment_method
         # Raise if shipment_method doesn't exist
         shipment_method = (
@@ -65,7 +64,7 @@ def patch_shipment_methods_id(shipment_method_id: int) -> Response:
 @authorize(UserRoleLevel.ADMIN)
 @api_v1_bp.delete("/shipment-methods/<int:shipment_method_id>")
 def delete_shipment_methods_id(shipment_method_id: int) -> Response:
-    with Conn.begin() as s:
+    with conn.begin() as s:
         # Get shipment_method
         # Raise if shipment_method doesn't exist
         shipment_method = (

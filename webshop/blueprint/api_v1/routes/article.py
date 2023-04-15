@@ -2,9 +2,8 @@ from flask import Response
 
 from webshop.blueprint.api_v1 import api_v1_bp
 from webshop.blueprint.api_v1.utils.article import clean_html
-from webshop.database.client import Conn
-from webshop.database.model.article import Article
-from webshop.database.model.user_role import UserRoleLevel
+from webshop.database.client import conn
+from webshop.database.model import Article, UserRoleLevel
 from webshop.helper.api import response, ApiText, json_get
 from webshop.helper.security import authorize
 from webshop.helper.validation import gen_slug
@@ -15,7 +14,7 @@ from webshop.helper.validation import gen_slug
 def post_articles() -> Response:
     name, _ = json_get("name", str, nullable=False)
 
-    with Conn.begin() as s:
+    with conn.begin() as s:
         # Get article
         # Restore if article is deleted
         # Raise if article is not deleted
@@ -43,7 +42,7 @@ def patch_articles_id(article_id: int) -> Response:
     summary, has_summary = json_get("summary", str)
     is_visible, has_is_visible = json_get("is_visible", bool)
 
-    with Conn.begin() as s:
+    with conn.begin() as s:
         # Get article
         # Raise if article doesn't exist
         article = s.query(Article).filter_by(id=article_id).first()
@@ -66,7 +65,7 @@ def patch_articles_id(article_id: int) -> Response:
 @authorize(UserRoleLevel.ADMIN)
 @api_v1_bp.delete("/articles/<int:article_id>")
 def delete_articles_id(article_id: int) -> Response:
-    with Conn.begin() as s:
+    with conn.begin() as s:
         # Get article
         # Raise if article doesn't exist
         article = s.query(Article).filter_by(id=article_id).first()

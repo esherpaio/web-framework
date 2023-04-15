@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 from requests import RequestException
 from sqlalchemy.orm import Session
 
-from webshop.database.client import Conn
+from webshop.database.client import conn
 from webshop.database.model import Currency
 from webshop.database.seeds import currency_seeds
 from webshop.helper.logger import logger
@@ -51,5 +51,5 @@ class CurrencySyncer(Syncer):
 
 
 if __name__ == "__main__":
-    with Conn.begin() as s_:
+    with conn.begin() as s_:
         CurrencySyncer().sync(s_)

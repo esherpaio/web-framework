@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 
-from webshop.database.client import Conn
+from webshop.database.client import conn
 from webshop.database.model import OrderStatus
 from webshop.database.seeds import order_status_seeds
 from webshop.seeder.abc import Syncer
@@ -17,5 +17,5 @@ class OrderStatusSyncer(Syncer):
 
 
 if __name__ == "__main__":
-    with Conn.begin() as s_:
+    with conn.begin() as s_:
         OrderStatusSyncer().sync(s_)

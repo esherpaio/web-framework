@@ -3,9 +3,8 @@ import itertools
 from flask import Response
 
 from webshop.blueprint.api_v1 import api_v1_bp
-from webshop.database.client import Conn
-from webshop.database.model import Sku, Product, SkuDetail, ProductValue
-from webshop.database.model.user_role import UserRoleLevel
+from webshop.database.client import conn
+from webshop.database.model import Sku, Product, SkuDetail, ProductValue, UserRoleLevel
 from webshop.helper.api import response, json_get, ApiText
 from webshop.helper.security import authorize
 from webshop.helper.validation import gen_slug
@@ -19,7 +18,7 @@ from webshop.seeder.model.sku import SkuSyncer
 def post_skus() -> Response:
     product_id, _ = json_get("product_id", int, nullable=False)
 
-    with Conn.begin() as s:
+    with conn.begin() as s:
         product = s.query(Product).filter_by(id=product_id).first()
         skus = s.query(Sku).filter_by(product_id=product_id).all()
 
@@ -75,7 +74,7 @@ def post_skus() -> Response:
 def patch_skus_id(sku_id: int) -> Response:
     is_visible, has_is_visible = json_get("is_visible", bool)
 
-    with Conn.begin() as s:
+    with conn.begin() as s:
         # Get sku
         # Raise if sku exists
         sku = s.query(Sku).filter_by(id=sku_id).first()
@@ -92,7 +91,7 @@ def patch_skus_id(sku_id: int) -> Response:
 @authorize(UserRoleLevel.ADMIN)
 @api_v1_bp.delete("/skus/<int:sku_id>")
 def delete_skus_id(sku_id: int) -> Response:
-    with Conn.begin() as s:
+    with conn.begin() as s:
         # Get sku
         # Raise if sku exists
         sku = s.query(Sku).filter_by(id=sku_id).first()

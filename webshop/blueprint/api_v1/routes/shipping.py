@@ -1,9 +1,14 @@
 from flask import Response
 
+from webshop import config
 from webshop.blueprint.api_v1 import api_v1_bp
 from webshop.blueprint.api_v1.resource.shipping import get_resource
-from webshop.database.client import Conn
-from webshop.database.model import Shipping, Cart, User, Order
+from webshop.database.client import conn
+
+if config.WEBSHOP_MODE:
+    from webshop.database.model import Cart, Order
+
+from webshop.database.model import Shipping, User
 from webshop.helper.api import response, ApiText, json_get, json_empty_str_to_none
 from webshop.helper.security import get_access
 
@@ -14,14 +19,14 @@ def post_shippings() -> Response:
     address, _ = json_get("address", str)
     city, _ = json_get("city", str)
     company, _ = json_get("company", str)
+    country_id, _ = json_get("country_id", int)
     email, _ = json_get("email", str)
     first_name, _ = json_get("first_name", str)
     last_name, _ = json_get("last_name", str)
     phone, _ = json_get("phone", str)
     zip_code, _ = json_get("zip_code", str)
-    country_id, _ = json_get("country_id", int)
 
-    with Conn.begin() as s:
+    with conn.begin() as s:
         # Insert shipping
         shipping = Shipping(
             address=address,
@@ -43,15 +48,18 @@ def post_shippings() -> Response:
 
 @api_v1_bp.get("/shippings/<int:shipping_id>")
 def get_shippings_id(shipping_id: int) -> Response:
-    with Conn.begin() as s:
+    with conn.begin() as s:
         # Authorize request
         # Raise if shipping_id not in use by user
         access = get_access(s)
-        cart = (
-            s.query(Cart)
-            .filter_by(access_id=access.id, shipping_id=shipping_id)
-            .first()
-        )
+        if config.WEBSHOP_MODE:
+            cart = (
+                s.query(Cart)
+                .filter_by(access_id=access.id, shipping_id=shipping_id)
+                .first()
+            )
+        else:
+            cart = None
         user = (
             s.query(User).filter_by(id=access.user_id, shipping_id=shipping_id).first()
         )
@@ -73,22 +81,25 @@ def patch_shippings_id(shipping_id: int) -> Response:
     address, has_address = json_get("address", str)
     city, has_city = json_get("city", str)
     company, has_company = json_get("company", str)
+    country_id, has_country_id = json_get("country_id", int)
     email, has_email = json_get("email", str)
     first_name, has_first_name = json_get("first_name", str)
     last_name, has_last_name = json_get("last_name", str)
     phone, has_phone = json_get("phone", str)
     zip_code, has_zip_code = json_get("zip_code", str)
-    country_id, has_country_id = json_get("country_id", int)
 
-    with Conn.begin() as s:
+    with conn.begin() as s:
         # Authorize request
         # Raise if shipping_id not in use by user
         access = get_access(s)
-        cart = (
-            s.query(Cart)
-            .filter_by(access_id=access.id, shipping_id=shipping_id)
-            .first()
-        )
+        if config.WEBSHOP_MODE:
+            cart = (
+                s.query(Cart)
+                .filter_by(access_id=access.id, shipping_id=shipping_id)
+                .first()
+            )
+        else:
+            cart = None
         user = (
             s.query(User).filter_by(id=access.user_id, shipping_id=shipping_id).first()
         )
@@ -96,9 +107,10 @@ def patch_shippings_id(shipping_id: int) -> Response:
             return response(403, ApiText.HTTP_403)
 
         # Check if billing is in use by an order
-        order = s.query(Order).filter_by(shipping_id=shipping_id).first()
-        if order:
-            return response(403, ApiText.HTTP_403)
+        if config.WEBSHOP_MODE:
+            order = s.query(Order).filter_by(shipping_id=shipping_id).first()
+            if order:
+                return response(403, ApiText.HTTP_403)
 
         # Get shipping
         shipping = s.query(Shipping).filter_by(id=shipping_id).first()

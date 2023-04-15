@@ -10,9 +10,12 @@ from werkzeug.security import check_password_hash
 
 from webshop import config
 from webshop.blueprint.api_v1 import api_v1_bp
-from webshop.database.client import Conn
-from webshop.database.model import Cart
-from webshop.database.model.user import User
+from webshop.database.client import conn
+
+if config.WEBSHOP_MODE:
+    from webshop.database.model import Cart
+
+from webshop.database.model import User
 from webshop.helper.api import response, json_get
 from webshop.helper.cart import transfer_cart, update_cart_count
 from webshop.helper.security import get_access
@@ -31,7 +34,7 @@ def post_session() -> Response:
     password, _ = json_get("password", str, nullable=False)
 
     # Get user
-    with Conn.begin() as s:
+    with conn.begin() as s:
         user = s.query(User).filter(func.lower(User.email) == func.lower(email)).first()
 
     # Raise if user doesn't exist
@@ -67,12 +70,11 @@ def delete_session() -> Response:
     flask_login.logout_user()
 
     # Update cart_count
-    with Conn.begin() as s:
-        access = get_access(s)
-        cart = s.query(Cart).filter_by(access_id=access.id).first()
-
-        # Update cart count
-        update_cart_count(s, cart)
+    if config.WEBSHOP_MODE:
+        with conn.begin() as s:
+            access = get_access(s)
+            cart = s.query(Cart).filter_by(access_id=access.id).first()
+            update_cart_count(s, cart)
 
     links = {"redirect": url_for(config.ENDPOINT_HOME, _locale=current_user.locale)}
     return response(links=links)

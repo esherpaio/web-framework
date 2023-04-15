@@ -7,19 +7,19 @@ from sendgrid import Mail, Attachment, SendGridAPIClient
 from webshop import config
 from webshop.helper.logger import logger
 
-_DIR = os.path.dirname(os.path.realpath(__file__))
-
 
 def render_email(**kwargs) -> str:
+    curr_dir = os.path.dirname(os.path.realpath(__file__))
+
     # Add CSS and config to kwargs.
-    css_path = os.path.join(_DIR, "template", "template.css")
+    css_path = os.path.join(curr_dir, "template", "template.css")
     with open(css_path, "r") as file:
         css = file.read()
     kwargs.update({"css": css})
     kwargs.update({"config": config})
 
     # Render with Jinja2.
-    loader = jinja2.FileSystemLoader(_DIR)
+    loader = jinja2.FileSystemLoader(curr_dir)
     environment = jinja2.Environment(loader=loader)
     html_path = "template/template.html"  # Jinja requires relative path
     html = environment.get_template(html_path).render(kwargs)

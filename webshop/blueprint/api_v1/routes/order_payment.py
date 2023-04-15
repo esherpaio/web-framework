@@ -4,7 +4,7 @@ from flask import Response, url_for
 
 from webshop import config
 from webshop.blueprint.api_v1 import api_v1_bp
-from webshop.database.client import Conn
+from webshop.database.client import conn
 from webshop.database.model import Order
 from webshop.helper.api import response, ApiText
 from webshop.helper.mollie_api import Mollie, mollie_amount, mollie_webhook
@@ -13,7 +13,7 @@ from webshop.helper.security import get_access
 
 @api_v1_bp.post("/orders/<int:order_id>/payments")
 def post_orders_id_payments(order_id: int) -> Response:
-    with Conn.begin() as s:
+    with conn.begin() as s:
         # Authorize request
         # Get order
         # Raise if order doesn't exist

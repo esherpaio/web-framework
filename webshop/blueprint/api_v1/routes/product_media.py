@@ -6,10 +6,14 @@ from werkzeug.utils import secure_filename
 
 from webshop import config
 from webshop.blueprint.api_v1 import api_v1_bp
-from webshop.database.client import Conn
-from webshop.database.model import Product, ProductMedia, File
-from webshop.database.model.file_type import FileTypeId
-from webshop.database.model.user_role import UserRoleLevel
+from webshop.database.client import conn
+from webshop.database.model import (
+    Product,
+    ProductMedia,
+    File,
+    FileTypeId,
+    UserRoleLevel,
+)
 from webshop.helper import cdn
 from webshop.helper.api import response, ApiText, json_get
 from webshop.helper.security import authorize
@@ -18,7 +22,7 @@ from webshop.helper.security import authorize
 @authorize(UserRoleLevel.ADMIN)
 @api_v1_bp.post("/products/<int:product_id>/media")
 def post_products_id_media(product_id: int) -> Response:
-    with Conn.begin() as s:
+    with conn.begin() as s:
         # Get product
         # Raise if product doesn't exist
         product = s.query(Product).filter_by(id=product_id).first()
@@ -86,7 +90,7 @@ def patch_products_id_media_id(product_id: int, media_id: int) -> Response:
     desc, has_desc = json_get("desc", str)
     order, has_order = json_get("order", int)
 
-    with Conn.begin() as s:
+    with conn.begin() as s:
         # Get product_media
         # Raise if product_media doesn't exist
         product_media = (
@@ -115,7 +119,7 @@ def patch_products_id_media_id(product_id: int, media_id: int) -> Response:
 @authorize(UserRoleLevel.ADMIN)
 @api_v1_bp.delete("/products/<int:product_id>/media/<int:media_id>")
 def delete_products_id_media_id(product_id: int, media_id) -> Response:
-    with Conn.begin() as s:
+    with conn.begin() as s:
         # Get product_media
         # Raise if product_media doesn't exist
         product_media = (

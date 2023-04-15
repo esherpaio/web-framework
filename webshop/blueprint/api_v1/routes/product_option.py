@@ -2,9 +2,8 @@ from flask import Response
 from sqlalchemy.orm import contains_eager
 
 from webshop.blueprint.api_v1 import api_v1_bp
-from webshop.database.client import Conn
-from webshop.database.model import ProductOption, Sku, SkuDetail
-from webshop.database.model.user_role import UserRoleLevel
+from webshop.database.client import conn
+from webshop.database.model import ProductOption, Sku, SkuDetail, UserRoleLevel
 from webshop.helper.api import response, ApiText, json_get
 from webshop.helper.security import authorize
 from webshop.helper.validation import gen_slug
@@ -16,7 +15,7 @@ def post_products_id_options(product_id: int) -> Response:
     name, _ = json_get("name", str, nullable=False)
     order, _ = json_get("order", int)
 
-    with Conn.begin() as s:
+    with conn.begin() as s:
         # Get option
         # Restore if option is deleted
         # Raise if option is not deleted
@@ -46,7 +45,7 @@ def post_products_id_options(product_id: int) -> Response:
 def patch_products_id_options_id(product_id: int, option_id: int) -> Response:
     order, has_order = json_get("order", int)
 
-    with Conn.begin() as s:
+    with conn.begin() as s:
         # Get value
         # Raise if value doesn't exist
         product_option = (
@@ -67,7 +66,7 @@ def patch_products_id_options_id(product_id: int, option_id: int) -> Response:
 @authorize(UserRoleLevel.ADMIN)
 @api_v1_bp.delete("/products/<int:product_id>/options/<int:option_id>")
 def delete_products_id_options_id(product_id: int, option_id: int) -> Response:
-    with Conn.begin() as s:
+    with conn.begin() as s:
         # Get option
         # Raise if option doesn't exist
         product_option = (

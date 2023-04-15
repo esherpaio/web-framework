@@ -1,9 +1,8 @@
 from flask import Response
 
 from webshop.blueprint.api_v1 import api_v1_bp
-from webshop.database.client import Conn
-from webshop.database.model import CategoryItem
-from webshop.database.model.user_role import UserRoleLevel
+from webshop.database.client import conn
+from webshop.database.model import CategoryItem, UserRoleLevel
 from webshop.helper.api import response, ApiText, json_get
 from webshop.helper.security import authorize
 
@@ -12,14 +11,15 @@ from webshop.helper.security import authorize
 @api_v1_bp.post("/categories/<int:category_id>/items")
 def post_categories_id_items(category_id: int) -> Response:
     order, _ = json_get("order", int)
-    sku_id, _ = json_get("sku_id", int, nullable=False)
+    sku_id, _ = json_get("sku_id", int)
+    article_id, _ = json_get("article_id", int)
 
-    with Conn.begin() as s:
+    with conn.begin() as s:
         # Get category_item
         # Raise if category_item exists
         category_item = (
             s.query(CategoryItem)
-            .filter_by(category_id=category_id, sku_id=sku_id)
+            .filter_by(article_id=article_id, category_id=category_id, sku_id=sku_id)
             .first()
         )
         if category_item:
@@ -27,7 +27,7 @@ def post_categories_id_items(category_id: int) -> Response:
 
         # Insert category_item
         category_item = CategoryItem(
-            category_id=category_id, sku_id=sku_id, order=order
+            article_id=article_id, category_id=category_id, sku_id=sku_id, order=order
         )
         s.add(category_item)
 
@@ -39,7 +39,7 @@ def post_categories_id_items(category_id: int) -> Response:
 def patch_categories_id_items_id(category_id: int, item_id: int) -> Response:
     order, has_order = json_get("order", int)
 
-    with Conn.begin() as s:
+    with conn.begin() as s:
         # Get category_item
         # Raise if category_item doesn't exist
         category_item = (
@@ -58,7 +58,7 @@ def patch_categories_id_items_id(category_id: int, item_id: int) -> Response:
 @authorize(UserRoleLevel.ADMIN)
 @api_v1_bp.delete("/categories/<int:category_id>/items/<int:item_id>")
 def delete_categories_id_items_id(category_id: int, item_id: int) -> Response:
-    with Conn.begin() as s:
+    with conn.begin() as s:
         # Get category_item
         # Raise if category_item doesn't exist
         category_item = (

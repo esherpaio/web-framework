@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 
-from webshop.database.client import Conn
+from webshop.database.client import conn
 from webshop.database.model import ProductLinkType
 from webshop.database.seeds import product_link_type_seeds
 from webshop.seeder.abc import Syncer
@@ -17,5 +17,5 @@ class ProductLinkeTypeSyncer(Syncer):
 
 
 if __name__ == "__main__":
-    with Conn.begin() as s_:
+    with conn.begin() as s_:
         ProductLinkeTypeSyncer().sync(s_)

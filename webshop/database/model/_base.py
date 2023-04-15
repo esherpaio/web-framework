@@ -1,7 +1,7 @@
 from sqlalchemy import Column, Integer, DateTime
 from sqlalchemy.orm import declarative_base
 
-from webshop.database.model._utils import current_time
+from ._utils import current_time
 
 
 class _Model:

@@ -2,9 +2,8 @@ from flask import Response
 from sqlalchemy.orm import contains_eager
 
 from webshop.blueprint.api_v1 import api_v1_bp
-from webshop.database.client import Conn
-from webshop.database.model import ProductValue, Sku, SkuDetail
-from webshop.database.model.user_role import UserRoleLevel
+from webshop.database.client import conn
+from webshop.database.model import ProductValue, Sku, SkuDetail, UserRoleLevel
 from webshop.helper.api import response, ApiText, json_get
 from webshop.helper.security import authorize
 from webshop.helper.validation import gen_slug
@@ -20,7 +19,7 @@ def post_products_id_values(product_id: int) -> Response:
     order, _ = json_get("order", int)
     unit_price, _ = json_get("unit_price", int | float, nullable=True)
 
-    with Conn.begin() as s:
+    with conn.begin() as s:
         # Get value
         # Restore if value is deleted
         # Raise if value is not deleted
@@ -53,7 +52,7 @@ def patch_products_id_values_id(product_id: int, value_id: int) -> Response:
     order, has_order = json_get("order", int)
     unit_price, has_unit_price = json_get("unit_price", int | float)
 
-    with Conn.begin() as s:
+    with conn.begin() as s:
         # Get value
         # Raise if value doesn't exist
         product_value = s.query(ProductValue).filter_by(id=value_id).first()
@@ -78,7 +77,7 @@ def patch_products_id_values_id(product_id: int, value_id: int) -> Response:
 @authorize(UserRoleLevel.ADMIN)
 @api_v1_bp.delete("/products/<int:product_id>/values/<int:value_id>")
 def delete_products_id_values_id(product_id: int, value_id: int) -> Response:
-    with Conn.begin() as s:
+    with conn.begin() as s:
         # Get value
         # Raise if value doesn't exist
         product_value = s.query(ProductValue).filter_by(id=value_id).first()

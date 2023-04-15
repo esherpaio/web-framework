@@ -2,7 +2,7 @@ from typing import Type, Callable
 
 from flask import Response
 
-from webshop.database.client import Conn
+from webshop.database.client import conn
 from webshop.seeder.abc import Syncer
 
 
@@ -11,7 +11,7 @@ def sync_before(
 ) -> Callable[[Callable[..., Response]], Callable[..., Response]]:
     def decorate(f: Callable) -> Callable[..., Response]:
         def wrap(*args, **kwargs) -> Response:
-            with Conn.begin() as s:
+            with conn.begin() as s:
                 syncer().sync(s)
             return f(*args, **kwargs)
 
@@ -27,7 +27,7 @@ def sync_after(
     def decorate(f: Callable) -> Callable[..., Response]:
         def wrap(*args, **kwargs) -> Response:
             result = f(*args, **kwargs)
-            with Conn.begin() as s:
+            with conn.begin() as s:
                 syncer().sync(s)
             return result
 

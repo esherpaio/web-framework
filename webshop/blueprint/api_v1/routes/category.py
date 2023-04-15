@@ -3,9 +3,8 @@ from enum import StrEnum
 from flask import Response
 
 from webshop.blueprint.api_v1 import api_v1_bp
-from webshop.database.client import Conn
-from webshop.database.model import Category
-from webshop.database.model.user_role import UserRoleLevel
+from webshop.database.client import conn
+from webshop.database.model import Category, UserRoleLevel
 from webshop.helper.api import response, ApiText, json_get
 from webshop.helper.security import authorize
 from webshop.helper.validation import gen_slug
@@ -21,7 +20,7 @@ def post_categories() -> Response:
     name, _ = json_get("name", str, nullable=False)
     order, _ = json_get("order", int)
 
-    with Conn.begin() as s:
+    with conn.begin() as s:
         # Get category
         # Raise if category exists
         category = s.query(Category).filter_by(slug=gen_slug(name)).first()
@@ -46,7 +45,7 @@ def patch_categories_id(category_id: int) -> Response:
     in_header, has_in_header = json_get("in_header", bool)
     order, has_order = json_get("order", int)
 
-    with Conn.begin() as s:
+    with conn.begin() as s:
         # Get category
         # Raise if category doesn't exist
         category = s.query(Category).filter_by(id=category_id, is_deleted=False).first()
@@ -67,7 +66,7 @@ def patch_categories_id(category_id: int) -> Response:
 @authorize(UserRoleLevel.ADMIN)
 @api_v1_bp.delete("/categories/<int:category_id>")
 def delete_categories_id(category_id: int) -> Response:
-    with Conn.begin() as s:
+    with conn.begin() as s:
         # Get category
         # Raise if category doesn't exist
         category = s.query(Category).filter_by(id=category_id, is_deleted=False).first()

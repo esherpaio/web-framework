@@ -3,5 +3,5 @@ from sqlalchemy.orm import sessionmaker
 
 from webshop import config
 
-Engine = create_engine(config.DATABASE_URL, echo=False)
-Conn = sessionmaker(Engine, autoflush=False, expire_on_commit=False)
+engine = create_engine(config.DATABASE_URL, echo=False)
+conn = sessionmaker(engine, autoflush=False, expire_on_commit=False)

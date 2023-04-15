@@ -6,10 +6,8 @@ from pyvat import check_vat_number
 from webshop.blueprint.api_v1 import api_v1_bp
 from webshop.blueprint.api_v1.resource.order import get_resource
 from webshop.blueprint.api_v1.utils.order_refund import create_refund
-from webshop.database.client import Conn
-from webshop.database.model import Cart, Order, OrderLine
-from webshop.database.model.order_status import OrderStatusId
-from webshop.database.model.user_role import UserRoleLevel
+from webshop.database.client import conn
+from webshop.database.model import Cart, Order, OrderLine, OrderStatusId, UserRoleLevel
 from webshop.helper.api import response, ApiText, json_get
 from webshop.helper.cart import get_shipment_methods
 from webshop.helper.mollie_api import Mollie
@@ -32,7 +30,7 @@ class _Text(StrEnum):
 def post_orders() -> Response:
     cart_id, has_cart_id = json_get("cart_id", int)
 
-    with Conn.begin() as s:
+    with conn.begin() as s:
         # Authorize request
         # Get cart
         # Raise if cart doesn't exist
@@ -128,7 +126,7 @@ def post_orders() -> Response:
 @authorize(UserRoleLevel.ADMIN)
 @api_v1_bp.delete("/orders/<int:order_id>")
 def delete_orders_id(order_id: int) -> Response:
-    with Conn.begin() as s:
+    with conn.begin() as s:
         # Get order
         # Raise if order doesn't exist
         order = s.query(Order).filter_by(id=order_id).first()

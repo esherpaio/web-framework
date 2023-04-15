@@ -1,9 +1,8 @@
 from flask import Response
 
 from webshop.blueprint.api_v1 import api_v1_bp
-from webshop.database.client import Conn
-from webshop.database.model import ShipmentClass
-from webshop.database.model.user_role import UserRoleLevel
+from webshop.database.client import conn
+from webshop.database.model import ShipmentClass, UserRoleLevel
 from webshop.helper.api import json_get, response, ApiText
 from webshop.helper.security import authorize
 
@@ -14,7 +13,7 @@ def post_shipment_classes() -> Response:
     name, _ = json_get("name", str, nullable=False)
     order, _ = json_get("order", int, nullable=False)
 
-    with Conn.begin() as s:
+    with conn.begin() as s:
         # Raise if shipment_class exists
         shipment_class = (
             s.query(ShipmentClass).filter_by(name=name, is_deleted=False).first()
@@ -34,7 +33,7 @@ def post_shipment_classes() -> Response:
 def patch_shipment_classes_id(shipment_class_id: int) -> Response:
     order, has_order = json_get("order", int)
 
-    with Conn.begin() as s:
+    with conn.begin() as s:
         # Get shipment_zone
         # Raise if shipment_zone doesn't exist
         shipment_zone = s.query(ShipmentClass).filter_by(id=shipment_class_id).first()
@@ -51,7 +50,7 @@ def patch_shipment_classes_id(shipment_class_id: int) -> Response:
 @authorize(UserRoleLevel.ADMIN)
 @api_v1_bp.delete("/shipment-classes/<int:shipment_class_id>")
 def delete_shipment_classes_id(shipment_class_id: int) -> Response:
-    with Conn.begin() as s:
+    with conn.begin() as s:
         # Get shipment_class
         # Raise if shipment_class doesn't exist
         shipment_class = s.query(ShipmentClass).filter_by(id=shipment_class_id).first()

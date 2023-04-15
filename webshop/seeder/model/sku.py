@@ -1,6 +1,6 @@
 from sqlalchemy.orm import joinedload, Session
 
-from webshop.database.client import Conn
+from webshop.database.client import conn
 from webshop.database.model import Sku, SkuDetail
 from webshop.seeder.abc import Syncer
 
@@ -8,7 +8,7 @@ from webshop.seeder.abc import Syncer
 class SkuSyncer(Syncer):
     def sync(self, s: Session) -> None:
         # Query all skus
-        with Conn.begin() as s:
+        with conn.begin() as s:
             skus = (
                 s.query(Sku)
                 .options(
@@ -30,5 +30,5 @@ class SkuSyncer(Syncer):
 
 
 if __name__ == "__main__":
-    with Conn.begin() as s_:
+    with conn.begin() as s_:
         SkuSyncer().sync(s_)

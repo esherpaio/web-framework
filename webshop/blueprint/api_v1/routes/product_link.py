@@ -1,9 +1,8 @@
 from flask import Response
 
 from webshop.blueprint.api_v1 import api_v1_bp
-from webshop.database.client import Conn
-from webshop.database.model import ProductLink
-from webshop.database.model.user_role import UserRoleLevel
+from webshop.database.client import conn
+from webshop.database.model import ProductLink, UserRoleLevel
 from webshop.helper.api import response, ApiText, json_get
 from webshop.helper.security import authorize
 
@@ -14,7 +13,7 @@ def post_products_id_links(product_id: int) -> Response:
     sku_id, _ = json_get("sku_id", int, nullable=False)
     type_id, _ = json_get("type_id", int, nullable=False)
 
-    with Conn.begin() as s:
+    with conn.begin() as s:
         # Get product_link
         # Raise if product_link exists
         product_link = (
@@ -41,7 +40,7 @@ def post_products_id_links(product_id: int) -> Response:
 @authorize(UserRoleLevel.ADMIN)
 @api_v1_bp.delete("/products/<int:product_id>/links/<int:link_id>")
 def delete_products_id_links_id(product_id: int, link_id: int) -> Response:
-    with Conn.begin() as s:
+    with conn.begin() as s:
         # Get product_link
         # Raise if product_link doesn't exist
         product_link = (

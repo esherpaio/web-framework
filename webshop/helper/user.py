@@ -6,7 +6,7 @@ from flask_login import AnonymousUserMixin
 from sqlalchemy.orm import joinedload
 
 from webshop import config
-from webshop.database.client import Conn
+from webshop.database.client import conn
 from webshop.database.model import Country, Currency, Language, User
 from webshop.helper.cache import cache
 from webshop.helper.locale import cur_locale, match_locale
@@ -121,7 +121,7 @@ class GuestUser(AnonymousUserMixin, UserAttrs):
 
 
 def load_user(user_id: int) -> KnownUser | None:
-    with Conn.begin() as s:
+    with conn.begin() as s:
         user = (
             s.query(User)
             .options(joinedload(User.role))

@@ -2,9 +2,8 @@ from flask import Response
 from sqlalchemy import or_, and_
 
 from webshop.blueprint.api_v1 import api_v1_bp
-from webshop.database.client import Conn
-from webshop.database.model import ShipmentZone
-from webshop.database.model.user_role import UserRoleLevel
+from webshop.database.client import conn
+from webshop.database.model import ShipmentZone, UserRoleLevel
 from webshop.helper.api import response, ApiText, json_get
 from webshop.helper.security import authorize
 
@@ -16,7 +15,7 @@ def post_shipment_zones() -> Response:
     order, _ = json_get("order", int, nullable=False)
     region_id, _ = json_get("region_id", int)
 
-    with Conn.begin() as s:
+    with conn.begin() as s:
         # Get shipment_zone
         # Raise if shipment_zone exists
         shipment_zone = (
@@ -58,7 +57,7 @@ def patch_shipment_zones_id(shipment_zone_id: int) -> Response:
     order, has_order = json_get("order", int)
     region_id, has_region_id = json_get("region_id", int)
 
-    with Conn.begin() as s:
+    with conn.begin() as s:
         # Get shipment_zone
         # Raise if shipment_zone doesn't exist
         shipment_zone = s.query(ShipmentZone).filter_by(id=shipment_zone_id).first()
@@ -83,7 +82,7 @@ def patch_shipment_zones_id(shipment_zone_id: int) -> Response:
 @authorize(UserRoleLevel.ADMIN)
 @api_v1_bp.delete("/shipment-zones/<int:shipment_zone_id>")
 def delete_shipment_zones_id(shipment_zone_id: int) -> Response:
-    with Conn.begin() as s:
+    with conn.begin() as s:
         # Get shipment_zone
         # Raise if shipment_zone doesn't exist
         shipment_zone = s.query(ShipmentZone).filter_by(id=shipment_zone_id).first()
