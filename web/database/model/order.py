@@ -20,7 +20,7 @@ class Order(Base):
     coupon_code = Column(String(16))
     coupon_rate = Column(rate)
     mollie_id = Column(String(64), unique=True)
-    shipment_method_name = Column(String(64))
+    shipment_name = Column(String(64))
     shipment_price = Column(price, nullable=False)
     total_price = Column(price, nullable=False)
     vat_rate = Column(vat, nullable=False)
