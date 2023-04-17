@@ -11,10 +11,7 @@ from werkzeug.security import check_password_hash
 from web import config
 from web.blueprint.api_v1 import api_v1_bp
 from web.database.client import conn
-
-if config.WEBSHOP_MODE:
-    from web.database.model import Cart
-
+from web.database.model import Cart
 from web.database.model import User
 from web.helper.api import response, json_get
 from web.helper.cart import transfer_cart, update_cart_count
@@ -70,11 +67,10 @@ def delete_session() -> Response:
     flask_login.logout_user()
 
     # Update cart_count
-    if config.WEBSHOP_MODE:
-        with conn.begin() as s:
-            access = get_access(s)
-            cart = s.query(Cart).filter_by(access_id=access.id).first()
-            update_cart_count(s, cart)
+    with conn.begin() as s:
+        access = get_access(s)
+        cart = s.query(Cart).filter_by(access_id=access.id).first()
+        update_cart_count(s, cart)
 
     links = {"redirect": url_for(config.ENDPOINT_HOME, _locale=current_user.locale)}
     return response(links=links)

@@ -1,13 +1,9 @@
 from flask import Response
 
-from web import config
 from web.blueprint.api_v1 import api_v1_bp
 from web.blueprint.api_v1.resource.shipping import get_resource
 from web.database.client import conn
-
-if config.WEBSHOP_MODE:
-    from web.database.model import Cart, Order
-
+from web.database.model import Cart, Order
 from web.database.model import Shipping, User
 from web.helper.api import response, ApiText, json_get, json_empty_str_to_none
 from web.helper.security import get_access
@@ -52,14 +48,11 @@ def get_shippings_id(shipping_id: int) -> Response:
         # Authorize request
         # Raise if shipping_id not in use by user
         access = get_access(s)
-        if config.WEBSHOP_MODE:
-            cart = (
-                s.query(Cart)
-                .filter_by(access_id=access.id, shipping_id=shipping_id)
-                .first()
-            )
-        else:
-            cart = None
+        cart = (
+            s.query(Cart)
+            .filter_by(access_id=access.id, shipping_id=shipping_id)
+            .first()
+        )
         user = (
             s.query(User).filter_by(id=access.user_id, shipping_id=shipping_id).first()
         )
@@ -92,14 +85,11 @@ def patch_shippings_id(shipping_id: int) -> Response:
         # Authorize request
         # Raise if shipping_id not in use by user
         access = get_access(s)
-        if config.WEBSHOP_MODE:
-            cart = (
-                s.query(Cart)
-                .filter_by(access_id=access.id, shipping_id=shipping_id)
-                .first()
-            )
-        else:
-            cart = None
+        cart = (
+            s.query(Cart)
+            .filter_by(access_id=access.id, shipping_id=shipping_id)
+            .first()
+        )
         user = (
             s.query(User).filter_by(id=access.user_id, shipping_id=shipping_id).first()
         )
@@ -107,10 +97,9 @@ def patch_shippings_id(shipping_id: int) -> Response:
             return response(403, ApiText.HTTP_403)
 
         # Check if billing is in use by an order
-        if config.WEBSHOP_MODE:
-            order = s.query(Order).filter_by(shipping_id=shipping_id).first()
-            if order:
-                return response(403, ApiText.HTTP_403)
+        order = s.query(Order).filter_by(shipping_id=shipping_id).first()
+        if order:
+            return response(403, ApiText.HTTP_403)
 
         # Get shipping
         shipping = s.query(Shipping).filter_by(id=shipping_id).first()

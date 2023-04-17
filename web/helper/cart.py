@@ -11,10 +11,7 @@ from sqlalchemy.sql.expression import false
 
 from web import config
 from web.database.client import conn
-
-if config.WEBSHOP_MODE:
-    from web.database.model import Cart, ShipmentMethod, ShipmentClass, ShipmentZone
-
+from web.database.model import Cart, ShipmentMethod, ShipmentClass, ShipmentZone
 from web.database.model import Shipping, Billing, User
 from web.helper.security import get_access
 
@@ -28,10 +25,6 @@ def transfer_cart(
     """
 
     def wrap(*args, **kwargs) -> Response:
-        # Only required in webshop mode
-        if not config.WEBSHOP_MODE:
-            return f(*args, **kwargs)
-
         with conn.begin() as s:
             # Get before and after access objects
             prev_access = get_access(s)

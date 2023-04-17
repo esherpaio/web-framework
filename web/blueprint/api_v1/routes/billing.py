@@ -1,14 +1,10 @@
 from flask import Response
 
-from web import config
 from web.blueprint.api_v1 import api_v1_bp
 from web.blueprint.api_v1.resource.billing import get_resource
 from web.database.client import conn
-
-if config.WEBSHOP_MODE:
-    from web.database.model import Cart, Order
-
 from web.database.model import Billing, User
+from web.database.model import Cart, Order
 from web.helper.api import response, ApiText, json_get, json_empty_str_to_none
 from web.helper.cart import get_vat
 from web.helper.security import get_access
@@ -67,23 +63,17 @@ def patch_billings(billing_id: int) -> Response:
         # Authorize request
         # Raise if id not in use by user
         access = get_access(s)
-        if config.WEBSHOP_MODE:
-            cart = (
-                s.query(Cart)
-                .filter_by(access_id=access.id, billing_id=billing_id)
-                .first()
-            )
-        else:
-            cart = None
+        cart = (
+            s.query(Cart).filter_by(access_id=access.id, billing_id=billing_id).first()
+        )
         user = s.query(User).filter_by(id=access.user_id, billing_id=billing_id).first()
         if cart is None and user is None:
             return response(403, ApiText.HTTP_403)
 
         # Check if billing is in use by an order
-        if config.WEBSHOP_MODE:
-            order = s.query(Order).filter_by(billing_id=billing_id).first()
-            if order:
-                return response(403, ApiText.HTTP_403)
+        order = s.query(Order).filter_by(billing_id=billing_id).first()
+        if order:
+            return response(403, ApiText.HTTP_403)
 
         # Get billing
         billing = s.query(Billing).filter_by(id=billing_id).first()
@@ -114,16 +104,15 @@ def patch_billings(billing_id: int) -> Response:
         s.flush()
 
         # Sync carts
-        if config.WEBSHOP_MODE:
-            carts = s.query(Cart).filter_by(billing_id=billing.id).all()
-            for cart in carts:
-                country_code = billing.country.code
-                is_business = billing.company is not None
-                vat_rate, vat_reverse = get_vat(country_code, is_business)
-                cart.currency_id = billing.country.currency_id
-                cart.vat_rate = vat_rate
-                cart.vat_reverse = vat_reverse
-                s.flush()
+        carts = s.query(Cart).filter_by(billing_id=billing.id).all()
+        for cart in carts:
+            country_code = billing.country.code
+            is_business = billing.company is not None
+            vat_rate, vat_reverse = get_vat(country_code, is_business)
+            cart.currency_id = billing.country.currency_id
+            cart.vat_rate = vat_rate
+            cart.vat_reverse = vat_reverse
+            s.flush()
 
     resource = get_resource(billing_id)
     return response(data=resource)

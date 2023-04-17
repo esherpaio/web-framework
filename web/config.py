@@ -103,8 +103,6 @@ SOCIAL_PINTEREST: _Str = _ToSet()
 SOCIAL_TWITTER: _Str = _ToSet()
 SOCIAL_YOUTUBE: _Str = _ToSet()
 
-WEBSHOP_MODE: _Bool = os.getenv("WEBSHOP_MODE") in ["true", "1"]
-
 WEBSITE_COUNTRY_CODE: _Str = _ToSet()
 WEBSITE_FAVICON_URL: _Str = _ToSet()
 WEBSITE_HEX_COLOR: _Str = _ToSet()
