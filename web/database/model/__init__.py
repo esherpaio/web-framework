@@ -25,6 +25,7 @@ from .product_media import ProductMedia
 from .product_option import ProductOption
 from .product_type import ProductType, ProductTypeId
 from .product_value import ProductValue
+from .redirect import Redirect
 from .refund import Refund
 from .region import Region
 from .shipment import Shipment
