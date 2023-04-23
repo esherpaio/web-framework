@@ -1,8 +1,9 @@
+import urllib.parse
 from typing import Callable, Type
 
 from sqlalchemy.orm import validates
 
-from web.database.errors import DbLengthError, DbEmailError, DbPhoneError
+from web.database.errors import DbLengthError, DbEmailError, DbPhoneError, DbSlugError
 from web.database.model import Base
 from web.helper.validation import is_email, is_phone, gen_slug
 
@@ -55,14 +56,15 @@ def check_phone(*names: str) -> Callable[[Callable[..., any]], Callable[..., any
     return decorate
 
 
-def check_vat(*names: str) -> Callable[[Callable[..., any]], Callable[..., any]]:
+def check_slug(*names: str) -> Callable[[Callable[..., any]], Callable[..., any]]:
     def decorate(f: Callable) -> Callable[..., any]:
         @validates(*names)
         def wrap(self: Type[Base], key: str, value: any) -> any:
             if isinstance(value, str):
-                value = value.strip()
-                if not is_phone(value):
-                    raise DbPhoneError
+                url = urllib.parse.urlsplit(value)
+                if not url.path:
+                    raise DbSlugError
+                value = url.path.rstrip("/")
             return value
 
         return wrap

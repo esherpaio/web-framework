@@ -15,10 +15,14 @@ class DbEmailError(DbError):
 
     MESSAGE = "Please check your email address."
 
-    pass
-
 
 class DbPhoneError(DbError):
     """Raised when a phone number cannot be validated."""
 
     MESSAGE = "Please check your phone number."
+
+
+class DbSlugError(DbError):
+    """Raised when a slug cannot be validated."""
+
+    pass
