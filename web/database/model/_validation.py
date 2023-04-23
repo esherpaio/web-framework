@@ -61,12 +61,12 @@ def check_slug(*names: str) -> Callable[[Callable[..., any]], Callable[..., any]
         @validates(*names)
         def wrap(self: Type[Base], key: str, value: any) -> any:
             if isinstance(value, str):
-                url = urllib.parse.urlsplit(value)
-                if not url.path:
+                value = urllib.parse.urlsplit(value).path
+                if not value:
                     raise DbSlugError
-                if not url.path.startswith("/"):
-                    value = f"/{url.path}"
-                value = url.path.rstrip("/")
+                if not value.startswith("/"):
+                    value = f"/{value}"
+                value = value.rstrip("/")
             return value
 
         return wrap
