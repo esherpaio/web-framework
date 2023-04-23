@@ -64,6 +64,8 @@ def check_slug(*names: str) -> Callable[[Callable[..., any]], Callable[..., any]
                 url = urllib.parse.urlsplit(value)
                 if not url.path:
                     raise DbSlugError
+                if not url.path.startswith("/"):
+                    value = f"/{url.path}"
                 value = url.path.rstrip("/")
             return value
 
