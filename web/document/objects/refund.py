@@ -1,12 +1,15 @@
 from decimal import Decimal
 from itertools import zip_longest
 
-from borb.pdf import Document, Image
-from borb.pdf.canvas.color.color import HexColor
-from borb.pdf.canvas.layout.layout_element import Alignment
-from borb.pdf.canvas.layout.page_layout.multi_column_layout import SingleColumnLayout
-from borb.pdf.canvas.layout.table.fixed_column_width_table import FixedColumnWidthTable
-from borb.pdf.page.page import Page
+from doc.pdf import (
+    Document,
+    Page,
+    SingleColumnLayout,
+    Image,
+    FixedColumnWidthTable,
+    Alignment,
+    HexColor,
+)
 
 from web import config
 from web.database.model import Order, Invoice, Refund

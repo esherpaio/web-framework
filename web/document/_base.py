@@ -1,9 +1,7 @@
 from decimal import Decimal
 
-from borb.pdf.canvas.color.color import HexColor
-from borb.pdf.canvas.layout.layout_element import LayoutElement
-from borb.pdf.canvas.layout.table.table import TableCell as TableCell_
-from borb.pdf.canvas.layout.text.paragraph import Paragraph as Paragraph_
+from doc.pdf import Paragraph as Paragraph_, TableCell as TableCell_, HexColor
+from doc.pdf.canvas.layout.layout_element import LayoutElement
 
 FONT_NORMAL = "Helvetica"
 FONT_BOLD = "Helvetica Bold"

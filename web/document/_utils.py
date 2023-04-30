@@ -1,10 +1,10 @@
 import os
 from decimal import Decimal
 
-from borb.pdf import Document
-from borb.pdf.canvas.layout.table.fixed_column_width_table import FixedColumnWidthTable
-from borb.pdf.canvas.layout.table.table import TableCell
-from borb.pdf.pdf import PDF
+from doc.pdf import Document
+from doc.pdf.canvas.layout.table.fixed_column_width_table import FixedColumnWidthTable
+from doc.pdf.canvas.layout.table.table import TableCell
+from doc.pdf.pdf import PDF
 
 DIR = os.path.dirname(os.path.realpath(__file__))
 
