@@ -4,35 +4,65 @@
 <!doctype html>
 <html lang="en">
 
-    <head>
-        <meta name="viewport"
-              content="width=device-width, initial-scale=1.0">
-        <meta http-equiv="Content-Type"
-              content="text/html; charset=UTF-8">
-        <title>Simple Transactional Email</title>
-        <style>{{ css }}</style>
-    </head>
+<head>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Type"
+          content="text/html; charset=UTF-8">
+    <title>Simple Transactional Email</title>
+    <style>{{ css }}</style>
+</head>
 
-    <body style="background-color: #f6f6f6; font-family: sans-serif; -webkit-font-smoothing: antialiased; font-size: 14px; line-height: 1.4; margin: 0; padding: 0; -ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%;">
-        <table role="presentation"
-               border="0"
-               cellpadding="0"
-               cellspacing="0"
-               class="body"
-               style="border-collapse: separate; mso-table-lspace: 0; mso-table-rspace: 0; background-color: #f6f6f6; width: 100%;"
-               width="100%"
-               bgcolor="#f6f6f6">
-            <tr>
-                <td class="container"
-                    style="font-family: sans-serif; font-size: 14px; vertical-align: top; display: block; max-width: 580px; padding: 10px; width: 580px; margin: 0 auto;"
-                    width="580"
-                    valign="top">
-                    <div class="content"
-                         style="box-sizing: border-box; display: block; margin: 0 auto; max-width: 580px; padding: 10px;">
+<body style="background-color: #f6f6f6; font-family: sans-serif; -webkit-font-smoothing: antialiased; font-size: 14px; line-height: 1.4; margin: 0; padding: 0; -ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%;">
+<table role="presentation"
+       border="0"
+       cellpadding="0"
+       cellspacing="0"
+       class="body"
+       style="border-collapse: separate; mso-table-lspace: 0; mso-table-rspace: 0; background-color: #f6f6f6; width: 100%;"
+       width="100%"
+       bgcolor="#f6f6f6">
+    <tr>
+        <td class="container"
+            style="font-family: sans-serif; font-size: 14px; vertical-align: top; display: block; max-width: 580px; padding: 10px; width: 580px; margin: 0 auto;"
+            width="580"
+            valign="top">
+            <div class="content"
+                 style="box-sizing: border-box; display: block; margin: 0 auto; max-width: 580px; padding: 10px;">
 
-                        <!-- header -->
-                        <div class="header"
-                             style="clear: both; margin-top: 10px; text-align: center; width: 100%;">
+                <!-- header -->
+                <div class="header"
+                     style="clear: both; margin-top: 10px; text-align: center; width: 100%;">
+                    <table role="presentation"
+                           border="0"
+                           cellpadding="0"
+                           cellspacing="0"
+                           style="border-collapse: separate; mso-table-lspace: 0; mso-table-rspace: 0; width: 100%;"
+                           width="100%">
+                        <tr>
+                            <td class="content-block"
+                                style="font-family: sans-serif; vertical-align: top; padding-bottom: 20px; padding-top: 10px; color: #999999; font-size: 12px; text-align: center;"
+                                valign="top"
+                                align="center">
+                                <img src="{{ config.EMAIL_LOGO_URL }}"
+                                     alt="{{ config.BUSINESS_NAME }}"
+                                     height="35"
+                                     border="0"
+                                     style="border:0; outline:none; text-decoration:none; display:block; margin: auto;">
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+
+                <!-- content -->
+                <table role="presentation"
+                       class="main"
+                       style="border-collapse: separate; mso-table-lspace: 0; mso-table-rspace: 0; background: #ffffff; border-radius: 3px; width: 100%;"
+                       width="100%">
+                    <tr>
+                        <td class="wrapper"
+                            style="font-family: sans-serif; font-size: 14px; vertical-align: top; box-sizing: border-box; padding: 20px;"
+                            valign="top">
                             <table role="presentation"
                                    border="0"
                                    cellpadding="0"
@@ -40,89 +70,59 @@
                                    style="border-collapse: separate; mso-table-lspace: 0; mso-table-rspace: 0; width: 100%;"
                                    width="100%">
                                 <tr>
-                                    <td class="content-block"
-                                        style="font-family: sans-serif; vertical-align: top; padding-bottom: 20px; padding-top: 10px; color: #999999; font-size: 12px; text-align: center;"
-                                        valign="top"
-                                        align="center">
-                                        <img src="{{ config.EMAIL_LOGO_URL }}"
-                                             alt="{{ config.BUSINESS_NAME }}"
-                                             height="35"
-                                             border="0"
-                                             style="border:0; outline:none; text-decoration:none; display:block; margin: auto;">
+                                    <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
+                                        valign="top">
+                                        <h1 style="font-family: sans-serif; font-size: 28px; font-weight: 700; margin: 0 0 15px;">
+                                            {{ title }}
+                                        </h1>
+                                        {% for paragraph in paragraphs %}
+                                            <p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0 0 15px;">
+                                                {{ paragraph }}
+                                            </p>
+                                        {% endfor %}
+                                        <p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0;">
+                                            Kind regards,<br>
+                                            {{ config.BUSINESS_NAME }}
+                                        </p>
                                     </td>
                                 </tr>
                             </table>
-                        </div>
+                        </td>
+                    </tr>
+                </table>
 
-                        <!-- content -->
-                        <table role="presentation"
-                               class="main"
-                               style="border-collapse: separate; mso-table-lspace: 0; mso-table-rspace: 0; background: #ffffff; border-radius: 3px; width: 100%;"
-                               width="100%">
-                            <tr>
-                                <td class="wrapper"
-                                    style="font-family: sans-serif; font-size: 14px; vertical-align: top; box-sizing: border-box; padding: 20px;"
-                                    valign="top">
-                                    <table role="presentation"
-                                           border="0"
-                                           cellpadding="0"
-                                           cellspacing="0"
-                                           style="border-collapse: separate; mso-table-lspace: 0; mso-table-rspace: 0; width: 100%;"
-                                           width="100%">
-                                        <tr>
-                                            <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
-                                                valign="top">
-                                                <h1 style="font-family: sans-serif; font-size: 28px; font-weight: 700; margin: 0 0 15px;">
-                                                    {{ title }}
-                                                </h1>
-                                                {% for paragraph in paragraphs %}
-                                                    <p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0 0 15px;">
-                                                        {{ paragraph }}
-                                                    </p>
-                                                {% endfor %}
-                                                <p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0;">
-                                                    Kind regards,<br>
-                                                    {{ config.BUSINESS_NAME }}
-                                                </p>
-                                            </td>
-                                        </tr>
-                                    </table>
-                                </td>
-                            </tr>
-                        </table>
-
-                        <!-- footer -->
-                        <div class="footer"
-                             style="clear: both; margin-top: 10px; text-align: center; width: 100%;">
-                            <table role="presentation"
-                                   border="0"
-                                   cellpadding="0"
-                                   cellspacing="0"
-                                   style="border-collapse: separate; mso-table-lspace: 0; mso-table-rspace: 0; width: 100%;"
-                                   width="100%">
-                                <tr>
-                                    <td class="content-block"
-                                        style="font-family: sans-serif; vertical-align: top; padding-bottom: 10px; padding-top: 10px; color: #999999; font-size: 12px; text-align: center;"
-                                        valign="top"
-                                        align="center">
+                <!-- footer -->
+                <div class="footer"
+                     style="clear: both; margin-top: 10px; text-align: center; width: 100%;">
+                    <table role="presentation"
+                           border="0"
+                           cellpadding="0"
+                           cellspacing="0"
+                           style="border-collapse: separate; mso-table-lspace: 0; mso-table-rspace: 0; width: 100%;"
+                           width="100%">
+                        <tr>
+                            <td class="content-block"
+                                style="font-family: sans-serif; vertical-align: top; padding-bottom: 10px; padding-top: 10px; color: #999999; font-size: 12px; text-align: center;"
+                                valign="top"
+                                align="center">
                                     <span class="apple-link"
                                           style="color: #999999; font-size: 12px; text-align: center;">
                                         © {{ config.BUSINESS_NAME }}
                                     </span>
-                                        <br>
-                                        Click here to
-                                        <a href="{{ config.EMAIL_UNSUBSCRIBE_URL }}"
-                                           style="text-decoration: underline; color: #999999; font-size: 12px; text-align: center;">
-                                            unsubscribe</a>.
-                                    </td>
-                                </tr>
-                            </table>
-                        </div>
+                                <br>
+                                Click here to
+                                <a href="{{ config.EMAIL_UNSUBSCRIBE_URL }}"
+                                   style="text-decoration: underline; color: #999999; font-size: 12px; text-align: center;">
+                                    unsubscribe</a>.
+                            </td>
+                        </tr>
+                    </table>
+                </div>
 
-                    </div>
-                </td>
-            </tr>
-        </table>
-    </body>
+            </div>
+        </td>
+    </tr>
+</table>
+</body>
 
 </html>
