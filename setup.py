@@ -10,9 +10,11 @@ def find_requirements() -> list[str]:
     with open("requirements.txt") as f:
         lines = f.read().splitlines()
     for line in lines:
-        match = re.fullmatch(r"^git\+https://\w+@github\.com/[\w-]+/([\w-]+)\.git@v([\d.]*)$", line)
-        if match:
-            line = f"{match.group(1)}=={match.group(2)}"
+        if re.fullmatch(
+            r"^git\+https://\w+@github\.com/[\w-]+/([\w-]+)\.git@v([\d.]*)$",
+            line,
+        ):
+            continue
         requirements.append(line)
     return requirements
 
