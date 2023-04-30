@@ -1,11 +1,20 @@
+import re
+
 from setuptools import setup, find_packages
 
 from version import __version__
 
 
 def find_requirements() -> list[str]:
+    requirements = []
     with open("requirements.txt") as f:
-        return f.read().splitlines()
+        lines = f.read().splitlines()
+    for line in lines:
+        match = re.fullmatch(r"^git\+https://\w+@github\.com/[\w-]+/([\w-]+)\.git@v([\d.]*)$", line)
+        if match:
+            line = f"{match.group(1)}=={match.group(2)}"
+        requirements.append(line)
+    return requirements
 
 
 setup(
