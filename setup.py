@@ -12,7 +12,7 @@ setup(
     author="H.P. Mertens",
     include_package_data=True,
     install_requires=find_requirements(),
-    name="web",
+    name="Web Framework",
     package_data={"": ["mail/template/*"]},
     packages=find_packages(include=["web", "web.*"]),
     python_requires=">=3.11",
