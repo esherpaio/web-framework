@@ -2,19 +2,19 @@ from decimal import Decimal
 from itertools import zip_longest
 
 from doc.pdf import (
+    Alignment,
     Document,
+    FixedColumnWidthTable,
+    HexColor,
+    Image,
     Page,
     SingleColumnLayout,
-    Image,
-    FixedColumnWidthTable,
-    Alignment,
-    HexColor,
 )
 
 from web import config
-from web.database.model import Order, Invoice
+from web.database.model import Invoice, Order
 from web.document._base import FONT_BOLD, FONT_SIZE_TITLE, Paragraph, TableCell
-from web.document._utils import save_pdf, num_to_str, cells_to_tables
+from web.document._utils import cells_to_tables, num_to_str, save_pdf
 
 
 def gen_invoice(order: Order, invoice: Invoice) -> tuple[str, str]:

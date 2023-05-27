@@ -4,7 +4,7 @@ from sqlalchemy.orm import relationship
 
 from . import Base
 from ._utils import FKRestrict
-from ._validation import check_str_len, check_email, check_phone
+from ._validation import check_email, check_phone, check_str_len
 
 
 class Shipping(Base):

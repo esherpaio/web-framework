@@ -2,7 +2,7 @@ import re
 import uuid
 from enum import StrEnum
 
-from flask import Response, url_for, request
+from flask import Response, request, url_for
 from sqlalchemy import func
 from werkzeug.security import generate_password_hash
 
@@ -10,7 +10,7 @@ from web import config
 from web.blueprint.api_v1 import api_v1_bp
 from web.database.client import conn
 from web.database.model import User, UserVerification
-from web.helper.api import response, ApiText, json_get
+from web.helper.api import ApiText, json_get, response
 from web.helper.security import get_access
 from web.mail.routes.user import send_new_password, send_verification_url
 

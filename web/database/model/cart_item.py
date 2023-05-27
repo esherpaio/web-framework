@@ -1,8 +1,9 @@
-from sqlalchemy import Column, Integer, CheckConstraint, UniqueConstraint
+from sqlalchemy import CheckConstraint, Column, Integer, UniqueConstraint
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
 
 from web import config
+
 from . import Base
 from ._utils import FKCascade, FKRestrict
 

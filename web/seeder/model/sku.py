@@ -1,4 +1,4 @@
-from sqlalchemy.orm import joinedload, Session
+from sqlalchemy.orm import Session, joinedload
 
 from web.database.client import conn
 from web.database.model import Sku, SkuDetail

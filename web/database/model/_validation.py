@@ -3,9 +3,9 @@ from typing import Callable, Type
 
 from sqlalchemy.orm import validates
 
-from web.database.errors import DbLengthError, DbEmailError, DbPhoneError, DbSlugError
+from web.database.errors import DbEmailError, DbLengthError, DbPhoneError, DbSlugError
 from web.database.model import Base
-from web.helper.validation import is_email, is_phone, gen_slug
+from web.helper.validation import gen_slug, is_email, is_phone
 
 
 def check_str_len(

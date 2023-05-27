@@ -2,8 +2,8 @@ from flask import Response
 
 from web.blueprint.api_v1 import api_v1_bp
 from web.database.client import conn
-from web.database.model import Order, Shipment, OrderStatusId, UserRoleLevel
-from web.helper.api import response, json_get
+from web.database.model import Order, OrderStatusId, Shipment, UserRoleLevel
+from web.helper.api import json_get, response
 from web.helper.security import authorize
 from web.mail.routes.order import send_order_shipped
 

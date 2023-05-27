@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, Boolean, CheckConstraint
+from sqlalchemy import Boolean, CheckConstraint, Column, String
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
 

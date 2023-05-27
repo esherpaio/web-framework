@@ -1,4 +1,4 @@
-from sqlalchemy import func, Numeric, ForeignKey
+from sqlalchemy import ForeignKey, Numeric, func
 
 current_time = func.now()
 price = Numeric(10, 4, asdecimal=False)

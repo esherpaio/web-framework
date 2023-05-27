@@ -2,7 +2,7 @@ from datetime import datetime
 from xml.dom import minidom
 from xml.dom.minidom import Node
 
-from flask import url_for, current_app, request
+from flask import current_app, request, url_for
 
 from web.database.model import Page
 

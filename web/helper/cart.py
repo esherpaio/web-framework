@@ -11,8 +11,15 @@ from sqlalchemy.sql.expression import false
 
 from web import config
 from web.database.client import conn
-from web.database.model import Cart, ShipmentMethod, ShipmentClass, ShipmentZone
-from web.database.model import Shipping, Billing, User
+from web.database.model import (
+    Billing,
+    Cart,
+    ShipmentClass,
+    ShipmentMethod,
+    ShipmentZone,
+    Shipping,
+    User,
+)
 from web.helper.security import get_access
 
 

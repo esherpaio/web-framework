@@ -7,15 +7,9 @@ from werkzeug.utils import secure_filename
 from web import config
 from web.blueprint.api_v1 import api_v1_bp
 from web.database.client import conn
-from web.database.model import (
-    Product,
-    ProductMedia,
-    File,
-    FileTypeId,
-    UserRoleLevel,
-)
+from web.database.model import File, FileTypeId, Product, ProductMedia, UserRoleLevel
 from web.helper import cdn
-from web.helper.api import response, ApiText, json_get
+from web.helper.api import ApiText, json_get, response
 from web.helper.security import authorize
 
 

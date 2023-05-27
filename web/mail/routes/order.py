@@ -1,5 +1,5 @@
 from web import config
-from web.mail.base import render_email, send_email, pdf_to_string
+from web.mail.base import pdf_to_string, render_email, send_email
 
 
 def send_order_received(

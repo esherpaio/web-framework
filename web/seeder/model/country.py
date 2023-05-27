@@ -3,7 +3,7 @@ from requests import RequestException
 from sqlalchemy.orm import Session
 
 from web.database.client import conn
-from web.database.model import Country, Currency, Region, CurrencyId
+from web.database.model import Country, Currency, CurrencyId, Region
 from web.helper.logger import logger
 from web.seeder.abc import Syncer
 from web.seeder.utils import external_seed
