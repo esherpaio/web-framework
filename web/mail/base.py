@@ -2,7 +2,7 @@ import base64
 import os
 
 import jinja2
-from sendgrid import Mail, Attachment, SendGridAPIClient
+from sendgrid import Attachment, Mail, SendGridAPIClient
 
 from web import config
 from web.helper.logger import logger

@@ -3,7 +3,7 @@ from flask import Response
 from web.blueprint.api_v1 import api_v1_bp
 from web.database.client import conn
 from web.database.model import ShipmentClass, UserRoleLevel
-from web.helper.api import json_get, response, ApiText
+from web.helper.api import ApiText, json_get, response
 from web.helper.security import authorize
 
 

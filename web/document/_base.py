@@ -1,6 +1,8 @@
 from decimal import Decimal
 
-from doc.pdf import Paragraph as Paragraph_, TableCell as TableCell_, HexColor
+from doc.pdf import HexColor
+from doc.pdf import Paragraph as Paragraph_
+from doc.pdf import TableCell as TableCell_
 from doc.pdf.canvas.layout.layout_element import LayoutElement
 
 FONT_NORMAL = "Helvetica"
@@ -17,7 +19,7 @@ class Paragraph(Paragraph_):
         font: str = FONT_NORMAL,
         font_size: Decimal = FONT_SIZE_NORMAL,
         color: HexColor = FONT_COLOR,
-        **kwargs
+        **kwargs,
     ) -> None:
         super().__init__(
             text,
@@ -33,7 +35,7 @@ class TableCell(TableCell_):
         self,
         element: LayoutElement,
         background_color: HexColor = HexColor("ffffff"),
-        **kwargs
+        **kwargs,
     ) -> None:
         super().__init__(
             element,

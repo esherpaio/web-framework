@@ -1,9 +1,9 @@
-from sqlalchemy import Column, String, Boolean, CheckConstraint
-from sqlalchemy.ext.hybrid import hybrid_property, hybrid_method
+from sqlalchemy import Boolean, CheckConstraint, Column, String
+from sqlalchemy.ext.hybrid import hybrid_method, hybrid_property
 from sqlalchemy.orm import relationship
 
 from . import Base
-from ._utils import price, vat, FKCascade, FKRestrict, rate
+from ._utils import FKCascade, FKRestrict, price, rate, vat
 from .order_status import OrderStatusId
 
 

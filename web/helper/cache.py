@@ -1,7 +1,7 @@
 import zlib
 from typing import Callable
 
-from flask import request, Response
+from flask import Response, request
 
 from web.helper.operator import Singleton
 

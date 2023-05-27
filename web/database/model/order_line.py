@@ -1,9 +1,9 @@
-from sqlalchemy import Column, Integer, UniqueConstraint, CheckConstraint
+from sqlalchemy import CheckConstraint, Column, Integer, UniqueConstraint
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
 
 from . import Base
-from ._utils import price, FKCascade, FKRestrict
+from ._utils import FKCascade, FKRestrict, price
 
 
 class OrderLine(Base):

@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, CheckConstraint, Boolean
+from sqlalchemy import Boolean, CheckConstraint, Column, Integer
 from sqlalchemy.orm import relationship
 
 from . import Base

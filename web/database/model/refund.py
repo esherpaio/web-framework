@@ -1,9 +1,9 @@
-from sqlalchemy import Column, String, CheckConstraint
+from sqlalchemy import CheckConstraint, Column, String
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
 
 from . import Base
-from ._utils import price, FKRestrict
+from ._utils import FKRestrict, price
 
 
 class Refund(Base):

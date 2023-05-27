@@ -1,8 +1,9 @@
-from sqlalchemy import Column, String, Boolean, Text
+from sqlalchemy import Boolean, Column, String, Text
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
 
 from web.helper.operator import none_aware_attrgetter
+
 from . import Base
 from ._utils import FKRestrict, price
 from ._validation import set_slug

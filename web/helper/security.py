@@ -1,13 +1,13 @@
 import uuid
 from typing import Callable
 
-from flask import request, redirect, url_for, Response
+from flask import Response, redirect, request, url_for
 from flask_login import current_user
 from sqlalchemy.orm import Session
 
 from web import config
 from web.database.model import Access, UserRoleLevel
-from web.helper.api import response, ApiText
+from web.helper.api import ApiText, response
 
 
 def get_access(s: Session) -> Access:

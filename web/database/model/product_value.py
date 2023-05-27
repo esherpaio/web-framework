@@ -1,10 +1,10 @@
 from sqlalchemy import (
-    Column,
-    String,
     Boolean,
-    UniqueConstraint,
-    Integer,
     CheckConstraint,
+    Column,
+    Integer,
+    String,
+    UniqueConstraint,
 )
 from sqlalchemy.orm import relationship
 

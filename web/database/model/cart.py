@@ -1,9 +1,9 @@
-from sqlalchemy import Column, Boolean, CheckConstraint
+from sqlalchemy import Boolean, CheckConstraint, Column
 from sqlalchemy.ext.hybrid import hybrid_method, hybrid_property
 from sqlalchemy.orm import relationship
 
 from . import Base
-from ._utils import price, vat, FKCascade, FKRestrict
+from ._utils import FKCascade, FKRestrict, price, vat
 
 
 class Cart(Base):

@@ -4,8 +4,8 @@ from flask import Response
 
 from web.blueprint.api_v1 import api_v1_bp
 from web.database.client import conn
-from web.database.model import Sku, Product, SkuDetail, ProductValue, UserRoleLevel
-from web.helper.api import response, json_get, ApiText
+from web.database.model import Product, ProductValue, Sku, SkuDetail, UserRoleLevel
+from web.helper.api import ApiText, json_get, response
 from web.helper.security import authorize
 from web.helper.validation import gen_slug
 from web.seeder.decs import sync_after
