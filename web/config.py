@@ -85,8 +85,8 @@ ENDPOINT_HOME: _Str = _ToSet()
 ENDPOINT_LOGIN: _Str = _ToSet()
 ENDPOINT_USER: _Str = _ToSet()
 
-GOOGLE_API_KEY: _Str = _ToSet()
-GOOGLE_PLACE_ID: _Str = _ToSet()
+GOOGLE_API_KEY: _Str = os.getenv("GOOGLE_API_KEY")
+GOOGLE_PLACE_ID: _Str = os.getenv("GOOGLE_PLACE_ID")
 
 LOCALHOST: str = os.getenv("LOCALHOST")
 
