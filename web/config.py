@@ -85,6 +85,9 @@ ENDPOINT_HOME: _Str = _ToSet()
 ENDPOINT_LOGIN: _Str = _ToSet()
 ENDPOINT_USER: _Str = _ToSet()
 
+GOOGLE_API_KEY: _Str = _ToSet()
+GOOGLE_PLACE_ID: _Str = _ToSet()
+
 LOCALHOST: str = os.getenv("LOCALHOST")
 
 MOLLIE_KEY: str = os.getenv("MOLLIE_KEY")
