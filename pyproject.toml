@@ -3,6 +3,16 @@ line-length = 88
 target-version = ['py311']
 
 [tool.isort]
+line_length = 88
 profile = "black"
 skip_gitignore = true
-line_length = 88
+
+[tool.djlint]
+close_void_tags=true
+custom_blocks="pack"
+format_attribute_template_tags=true
+line_break_after_multiline_tag=true
+max_attribute_length=10
+max_line_length=100
+profile="jinja"
+use_gitignore=true
