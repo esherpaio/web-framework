@@ -19,3 +19,5 @@ jobs:
       - run: |
           pycodestyle .
           black . --check --quiet --diff --color
+          isort . --check-only
+          djlint . --check
