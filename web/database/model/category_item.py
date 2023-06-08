@@ -19,6 +19,6 @@ class CategoryItem(Base):
     category_id = Column(FKCascade("category.id"), nullable=False)
     sku_id = Column(FKRestrict("sku.id"))
 
-    article = relationship("Article")
+    article = relationship("Article", back_populates="category_items")
     category = relationship("Category", back_populates="items")
     sku = relationship("Sku")

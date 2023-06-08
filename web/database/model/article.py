@@ -19,6 +19,7 @@ class Article(Base):
     slug = Column(String(64), unique=True, nullable=False)
     summary = Column(String(64))
 
+    category_items = relationship("CategoryItem", back_populates="article")
     medias = relationship("ArticleMedia", back_populates="article")
 
     # Validation
