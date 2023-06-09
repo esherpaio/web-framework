@@ -6,6 +6,7 @@ from flask import Response, request
 
 
 class ApiText(StrEnum):
+    # Todo: add translations
     HTTP_200 = "We have processed your request."
     HTTP_202 = "We are processing your request."
     HTTP_400 = "We could not process your request."

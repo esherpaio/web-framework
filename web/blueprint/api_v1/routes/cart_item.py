@@ -13,6 +13,7 @@ from web.helper.security import get_access
 
 
 class _Text(StrEnum):
+    # Todo: add translations
     ADDED = "The product has been added to your cart."
 
 

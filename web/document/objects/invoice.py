@@ -16,6 +16,8 @@ from web.database.model import Invoice, Order
 from web.document._base import FONT_BOLD, FONT_SIZE_TITLE, Paragraph, TableCell
 from web.document._utils import cells_to_tables, num_to_str, save_pdf
 
+# Todo: add translations
+
 
 def gen_invoice(order: Order, invoice: Invoice) -> tuple[str, str]:
     pdf = Document()

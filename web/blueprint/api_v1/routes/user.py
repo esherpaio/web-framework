@@ -16,6 +16,7 @@ from web.mail.routes.user import send_new_password, send_verification_url
 
 
 class _Text(StrEnum):
+    # Todo: add translations
     PASSWORD_LENGTH = "Please enter at least 8 password characters."
     PASSWORD_NO_MATCH = "The passwords do not match."
     EMAIL_INVALID = "Please enter a valid email address."

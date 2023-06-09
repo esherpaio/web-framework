@@ -11,6 +11,7 @@ from web.helper.validation import gen_slug
 
 
 class _Text(StrEnum):
+    # Todo: add translations
     REBOOT_REQUIRED = "The changes will be reflected after the server has rebooted."
 
 

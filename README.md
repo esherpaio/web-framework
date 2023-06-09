@@ -8,7 +8,8 @@ This repository is a custom web framework for clients of Enlarge.
 
 Additions:
 - Added a changelog
-- Started on translations module
+- Translations module
+- Example config for testing purposes
 
 Deprecated:
 - CACHE_MIMETYPE is removed due to big variations between projects

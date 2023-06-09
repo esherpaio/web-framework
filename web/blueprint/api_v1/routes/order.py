@@ -16,6 +16,7 @@ from web.mail.routes.order import send_order_received
 
 
 class _Text(StrEnum):
+    # Todo: add translations
     VAT_NO_CONNECTION = "We are currently unable to verify your VAT number. Please try again in one hour."  # noqa: E501
     VAT_INVALID = "Your VAT number seems to be invalid. If you believe this is a mistake, please contact us."  # noqa: E501
     VAT_REQUIRED = "Your VAT number is required."
