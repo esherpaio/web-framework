@@ -48,6 +48,7 @@ def config_var(
     return value
 
 
+APP_DEBUG: str = env_var("APP_DEBUG")
 APP_SECRET: str = env_var("APP_SECRET")
 
 BUSINESS_CC: str = config_var("BUSINESS_CC")

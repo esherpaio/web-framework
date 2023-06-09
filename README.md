@@ -11,4 +11,3 @@ Additions
 
 Improvements
 - New way to load config, no need to call load_config() anymore
-- Removed environment variable FLASK_DEBUG
