@@ -1,114 +1,107 @@
 import json
 import os
-import sys
-from typing import Union
+from functools import lru_cache
 
 from dotenv import load_dotenv
 
 load_dotenv()
 
 
-# Type to indicate a config attribute,
-# that needs to be set from a JSON file
-class _ToSet:
-    def __bool__(self) -> bool:
-        return False
+def env_var(
+    key: str,
+    true_if_in: list[str] | None = None,
+    optional: bool = False,
+) -> str:
+    """Get an environment variable."""
+
+    # Get value from environment
+    value = os.getenv(key)
+    # Check if key is set
+    if (value is None or value == "") and not optional:
+        raise KeyError(f"Environment variable {key} is not set")
+    # Check if value is contained
+    if true_if_in is not None:
+        return True if value in true_if_in else False
+    # Set value
+    return value
 
 
-# Type annotations for _ToSet
-_Str = Union[str, None, _ToSet]
-_Int = Union[int, None, _ToSet]
-_Float = Union[float, None, _ToSet]
-_Bool = Union[bool, None, _ToSet]
-_ListStr = Union[list[str], _ToSet]
+@lru_cache
+def config_var(
+    key: str,
+    optional: bool = False,
+) -> any:
+    """Get a config variable."""
 
-
-def load_config(path: str) -> None:
-    """Load and check the config."""
-
-    # Read config JSON
+    # Get config path
+    path = env_var("CONFIG_PATH")
+    if not os.path.isfile(path):
+        raise FileNotFoundError(f"Config file {path} does not exist")
+    # Get value from config file
     with open(path, "r") as file:
         data = json.loads(file.read())
-
-    # Count config attributes
-    config_len = 0
-    for x in dir(sys.modules[__name__]):
-        attr = getattr(sys.modules[__name__], x)
-        if isinstance(attr, _ToSet):
-            config_len += 1
-
-    # Check if all attributes are set
-    if config_len != len(data.keys()):
-        raise KeyError("Not all config attributes are set")
-
-    # Check if all config keys exist
-    for k, v in data.items():
-        if hasattr(sys.modules[__name__], k):
-            setattr(sys.modules[__name__], k, v)
-        else:
-            raise KeyError(f"Config key {k} does not exist")
+    value = data.get(key)
+    # Check if key is set
+    if value is None and not optional:
+        raise KeyError(f"Config variable {key} is not set")
+    # Set value
+    return value
 
 
-APP_DEBUG: bool = os.getenv("APP_DEBUG") in ["true", "1"]
-APP_SECRET: str = os.getenv("APP_SECRET")
+APP_SECRET: str = env_var("APP_SECRET")
 
-BUSINESS_CC: _Str = _ToSet()
-BUSINESS_CITY: _Str = _ToSet()
-BUSINESS_COUNTRY: _Str = _ToSet()
-BUSINESS_COUNTRY_CODE: _Str = _ToSet()
-BUSINESS_EMAIL: _Str = _ToSet()
-BUSINESS_NAME: _Str = _ToSet()
-BUSINESS_STREET: _Str = _ToSet()
-BUSINESS_VAT: _Str = _ToSet()
-BUSINESS_VAT_RATE: _Float = _ToSet()
-BUSINESS_VAT_REVERSE_CHARGE: _Bool = _ToSet()
-BUSINESS_ZIP_CODE: _Str = _ToSet()
+BUSINESS_CC: str = config_var("BUSINESS_CC")
+BUSINESS_CITY: str = config_var("BUSINESS_CITY")
+BUSINESS_COUNTRY_CODE: str = config_var("BUSINESS_COUNTRY_CODE")
+BUSINESS_COUNTRY: str = config_var("BUSINESS_COUNTRY")
+BUSINESS_EMAIL: str = config_var("BUSINESS_EMAIL")
+BUSINESS_NAME: str = config_var("BUSINESS_NAME")
+BUSINESS_STREET: str = config_var("BUSINESS_STREET")
+BUSINESS_VAT_RATE: float = config_var("BUSINESS_VAT_RATE")
+BUSINESS_VAT_REVERSE_CHARGE: bool = config_var("BUSINESS_VAT_REVERSE_CHARGE")
+BUSINESS_VAT: str = config_var("BUSINESS_VAT")
+BUSINESS_ZIP_CODE: str = config_var("BUSINESS_ZIP_CODE")
 
-CDN_AUTO_NAMING: _Bool = _ToSet()
-CDN_HOSTNAME: str = os.getenv("CDN_HOSTNAME")
+CDN_AUTO_NAMING: bool = config_var("CDN_AUTO_NAMING")
+CDN_HOSTNAME: str = env_var("CDN_HOSTNAME")
 CDN_IMAGE_EXTS: list[str] = ["jpg", "jpeg", "png", "webp"]
-CDN_PASSWORD: str = os.getenv("CDN_PASSWORD")
-CDN_URL: str = os.getenv("CDN_URL")
-CDN_USERNAME: str = os.getenv("CDN_USERNAME")
+CDN_PASSWORD: str = env_var("CDN_PASSWORD")
+CDN_URL: str = env_var("CDN_URL")
+CDN_USERNAME: str = env_var("CDN_USERNAME")
 CDN_VIDEO_EXTS: list[str] = ["mp4"]
-CDN_ZONE: str = os.getenv("CDN_ZONE")
+CDN_ZONE: str = env_var("CDN_ZONE")
 
-DATABASE_URL: str = os.getenv("DATABASE_URL")
+EMAIL_FROM: str | None = env_var("EMAIL_FROM")
+EMAIL_LOGO_URL: str | None = config_var("EMAIL_LOGO_URL")
+EMAIL_TO: str | None = env_var("EMAIL_TO")
+EMAIL_UNSUBSCRIBE_URL: str | None = config_var("EMAIL_UNSUBSCRIBE_URL")
 
-EMAIL_FROM: str = os.getenv("EMAIL_FROM")
-EMAIL_LOGO_URL: _Str = _ToSet()
-EMAIL_TO: str = os.getenv("EMAIL_TO")
-EMAIL_UNSUBSCRIBE_URL: _Str = _ToSet()
+ENDPOINT_ERROR: str = config_var("ENDPOINT_ERROR", optional=True)
+ENDPOINT_HOME: str = config_var("ENDPOINT_HOME", optional=True)
+ENDPOINT_LOGIN: str = config_var("ENDPOINT_LOGIN", optional=True)
+ENDPOINT_USER: str = config_var("ENDPOINT_USER", optional=True)
 
-ENDPOINT_ERROR: _Str = _ToSet()
-ENDPOINT_HOME: _Str = _ToSet()
-ENDPOINT_LOGIN: _Str = _ToSet()
-ENDPOINT_USER: _Str = _ToSet()
+DATABASE_URL: str = env_var("DATABASE_URL")
+GOOGLE_API_KEY: str = env_var("GOOGLE_API_KEY", optional=True)
+GOOGLE_PLACE_ID: str = env_var("GOOGLE_PLACE_ID", optional=True)
+LOCALHOST: str = env_var("LOCALHOST", optional=True)
+MOLLIE_KEY: str = env_var("MOLLIE_KEY", optional=True)
+SEED_EXTERNAL: bool = env_var("SEED_EXTERNAL", true_if_in=["true", "1"])
+SENDGRID_KEY: str = env_var("SENDGRID_KEY")
 
-GOOGLE_API_KEY: _Str = os.getenv("GOOGLE_API_KEY")
-GOOGLE_PLACE_ID: _Str = os.getenv("GOOGLE_PLACE_ID")
+ROBOT_DEFAULT_TAGS: str = config_var("ROBOT_DEFAULT_TAGS")
+ROBOT_DISALLOW_URLS: list[str] = config_var("ROBOT_DISALLOW_URLS")
 
-LOCALHOST: str = os.getenv("LOCALHOST")
+SOCIAL_DISCORD: str | None = config_var("SOCIAL_DISCORD", optional=True)
+SOCIAL_FACEBOOK: str | None = config_var("SOCIAL_FACEBOOK", optional=True)
+SOCIAL_INSTAGRAM: str | None = config_var("SOCIAL_INSTAGRAM", optional=True)
+SOCIAL_PINTEREST: str | None = config_var("SOCIAL_PINTEREST", optional=True)
+SOCIAL_TWITTER: str | None = config_var("SOCIAL_TWITTER", optional=True)
+SOCIAL_YOUTUBE: str | None = config_var("SOCIAL_YOUTUBE", optional=True)
 
-MOLLIE_KEY: str = os.getenv("MOLLIE_KEY")
-
-ROBOT_DEFAULT_TAGS: _Str = _ToSet()
-ROBOT_DISALLOW_URLS: _ListStr = _ToSet()
-
-SEED_EXTERNAL: bool = os.getenv("SEED_EXTERNAL") in ["true", "1"]
-
-SENDGRID_KEY: str = os.getenv("SENDGRID_KEY")
-
-SOCIAL_DISCORD: _Str = _ToSet()
-SOCIAL_FACEBOOK: _Str = _ToSet()
-SOCIAL_INSTAGRAM: _Str = _ToSet()
-SOCIAL_PINTEREST: _Str = _ToSet()
-SOCIAL_TWITTER: _Str = _ToSet()
-SOCIAL_YOUTUBE: _Str = _ToSet()
-
-WEBSITE_COUNTRY_CODE: _Str = _ToSet()
-WEBSITE_FAVICON_URL: _Str = _ToSet()
-WEBSITE_HEX_COLOR: _Str = _ToSet()
-WEBSITE_LANGUAGE_CODE: _Str = _ToSet()
-WEBSITE_LOCALE: _Str = _ToSet()
-WEBSITE_NAME: _Str = _ToSet()
+WEBSITE_COUNTRY_CODE: str = config_var("WEBSITE_COUNTRY_CODE")
+WEBSITE_FAVICON_URL: str = config_var("WEBSITE_FAVICON_URL")
+WEBSITE_HEX_COLOR: str = config_var("WEBSITE_HEX_COLOR")
+WEBSITE_LANGUAGE_CODE: str = config_var("WEBSITE_LANGUAGE_CODE")
+WEBSITE_LOCALE: str = config_var("WEBSITE_LOCALE")
+WEBSITE_NAME: str = config_var("WEBSITE_NAME")
