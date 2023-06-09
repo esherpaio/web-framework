@@ -6,11 +6,14 @@ This repository is a custom web framework for clients of Enlarge.
 
 ### 2023-06-09
 
-Additions
+Additions:
 - Added a changelog
 - Started on translations module
 
-Improvements
+Deprecated:
+- CACHE_MIMETYPE is removed due to big variations between projects
+
+Improvements:
 - New way to load config
     - No need to call load_config() anymore
     - Config variables are cached

@@ -5,12 +5,6 @@ from flask import Response, request
 
 from web.helper.operator import Singleton
 
-CACHE_MIMETYPE = [
-    ("text/css", 31536000),
-    ("application/javascript", 31536000),
-    ("font/woff2", 31536000),
-]
-
 
 class Cache(dict, metaclass=Singleton):
     def route(self, f: Callable) -> Callable[..., Response]:
