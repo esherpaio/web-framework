@@ -10,15 +10,13 @@ load_dotenv()
 @lru_cache
 def env_var(
     key: str,
-    true_if_in: list[str] | None = None,
+    true_if_in: tuple[str] | None = None,
     optional: bool = False,
 ) -> str:
     """Get an environment variable."""
 
     # Get value from environment
     value = os.getenv(key)
-    if isinstance(value, list):
-        value = tuple(value)
     # Check if key is set
     if (value is None or value == "") and not optional:
         raise KeyError(f"Environment variable {key} is not set")
@@ -51,7 +49,7 @@ def config_var(
     return value
 
 
-APP_DEBUG: bool = env_var("APP_DEBUG", true_if_in=["true", "1"])
+APP_DEBUG: bool = env_var("APP_DEBUG", true_if_in=("true", "1"))
 APP_SECRET: str = env_var("APP_SECRET")
 
 BUSINESS_CC: str = config_var("BUSINESS_CC")
@@ -90,7 +88,7 @@ GOOGLE_API_KEY: str = env_var("GOOGLE_API_KEY", optional=True)
 GOOGLE_PLACE_ID: str = env_var("GOOGLE_PLACE_ID", optional=True)
 LOCALHOST: str = env_var("LOCALHOST", optional=True)
 MOLLIE_KEY: str = env_var("MOLLIE_KEY", optional=True)
-SEED_EXTERNAL: bool = env_var("SEED_EXTERNAL", true_if_in=["true", "1"])
+SEED_EXTERNAL: bool = env_var("SEED_EXTERNAL", true_if_in=("true", "1"))
 SENDGRID_KEY: str = env_var("SENDGRID_KEY")
 
 ROBOT_DEFAULT_TAGS: str = config_var("ROBOT_DEFAULT_TAGS")
