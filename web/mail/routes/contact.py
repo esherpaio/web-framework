@@ -16,7 +16,7 @@ def send_contact(
         f"Message: {message}",
     ]
 
-    html = render_email(title=title, paragraphs=paragraphs)
+    html = render_email(title=title, paragraphs=paragraphs, show_unsubscribe=False)
     send_email([config.EMAIL_TO], subject, html)
 
 
@@ -31,5 +31,5 @@ def send_contact_confirmation(
         f"Message: {message}",
     ]
 
-    html = render_email(title=title, paragraphs=paragraphs)
+    html = render_email(title=title, paragraphs=paragraphs, show_unsubscribe=False)
     send_email([to], subject, html)

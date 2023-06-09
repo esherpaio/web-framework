@@ -180,14 +180,16 @@
                                                      text-align: center">
                                             © {{ config.BUSINESS_NAME }}
                                         </span>
-                                        <br />
-                                        Click here to
-                                        <a href="{{ config.EMAIL_UNSUBSCRIBE_URL }}"
-                                           style="text-decoration: underline;
-                                                  color: #999999;
-                                                  font-size: 12px;
-                                                  text-align: center">
-                                            unsubscribe</a>.
+                                        {% if show_unsubscribe %}
+                                            <br />
+                                            Click here to
+                                            <a href="{{ config.EMAIL_UNSUBSCRIBE_URL }}"
+                                               style="text-decoration: underline;
+                                                      color: #999999;
+                                                      font-size: 12px;
+                                                      text-align: center">
+                                                unsubscribe</a>.
+                                            {% endif %}
                                         </td>
                                     </tr>
                                 </table>
