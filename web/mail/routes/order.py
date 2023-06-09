@@ -15,7 +15,7 @@ def send_order_received(
         f"Once your payment is fully processed, you will receive the invoice.",
     ]
 
-    html = render_email(title=title, paragraphs=paragraphs)
+    html = render_email(title=title, paragraphs=paragraphs, show_unsubscribe=False)
     send_email(to, subject, html)
 
 
@@ -37,7 +37,7 @@ def send_order_paid(
     pdf_name = f"Invoice #{invoice_id}.pdf"
     pdf_type = "application/docs"
 
-    html = render_email(title=title, paragraphs=paragraphs)
+    html = render_email(title=title, paragraphs=paragraphs, show_unsubscribe=False)
     send_email(to, subject, html, pdf_str, pdf_name, pdf_type)
 
 
@@ -57,7 +57,7 @@ def send_order_shipped(
         f"Your order will be delivered to {shipping_address}.",
     ]
 
-    html = render_email(title=title, paragraphs=paragraphs)
+    html = render_email(title=title, paragraphs=paragraphs, show_unsubscribe=False)
     send_email(to, subject, html)
 
 
@@ -79,5 +79,5 @@ def send_order_refund(
     pdf_name = f"Refund #{refund_id}.pdf"
     pdf_type = "application/docs"
 
-    html = render_email(title=title, paragraphs=paragraphs)
+    html = render_email(title=title, paragraphs=paragraphs, show_unsubscribe=False)
     send_email(to, subject, html, pdf_str, pdf_name, pdf_type)

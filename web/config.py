@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
+@lru_cache
 def env_var(
     key: str,
     true_if_in: list[str] | None = None,
@@ -16,6 +17,8 @@ def env_var(
 
     # Get value from environment
     value = os.getenv(key)
+    if isinstance(value, list):
+        value = tuple(value)
     # Check if key is set
     if (value is None or value == "") and not optional:
         raise KeyError(f"Environment variable {key} is not set")
@@ -48,7 +51,7 @@ def config_var(
     return value
 
 
-APP_DEBUG: str = env_var("APP_DEBUG")
+APP_DEBUG: bool = env_var("APP_DEBUG", true_if_in=["true", "1"])
 APP_SECRET: str = env_var("APP_SECRET")
 
 BUSINESS_CC: str = config_var("BUSINESS_CC")

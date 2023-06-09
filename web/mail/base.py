@@ -8,17 +8,29 @@ from web import config
 from web.helper.logger import logger
 
 
-def render_email(**kwargs) -> str:
+def render_email(
+    title: str,
+    paragraphs: list[str],
+    show_unsubscribe: bool = True,
+    **kwargs,
+) -> str:
     curr_dir = os.path.dirname(os.path.realpath(__file__))
 
-    # Add CSS and config to kwargs.
+    # Add CSS and config to kwargs
     css_path = os.path.join(curr_dir, "template", "template.css")
     with open(css_path, "r") as file:
         css = file.read()
-    kwargs.update({"css": css})
-    kwargs.update({"config": config})
+    kwargs.update(
+        {
+            "css": css,
+            "config": config,
+            "title": title,
+            "paragraphs": paragraphs,
+            "show_unsubscribe": show_unsubscribe,
+        }
+    )
 
-    # Render with Jinja2.
+    # Render with Jinja2
     loader = jinja2.FileSystemLoader(curr_dir)
     environment = jinja2.Environment(loader=loader)
     html_path = "template/template.html"  # Jinja requires relative path

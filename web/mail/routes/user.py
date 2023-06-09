@@ -14,7 +14,7 @@ def send_verification_url(
         "You can sign in after your account has been activated.",
     ]
 
-    html = render_email(title=title, paragraphs=paragraphs)
+    html = render_email(title=title, paragraphs=paragraphs, show_unsubscribe=False)
     send_email([to], subject, html)
 
 
@@ -31,5 +31,5 @@ def send_new_password(
         f"To reset your password, please visit the following url: {reset_url}.",
     ]
 
-    html = render_email(title=title, paragraphs=paragraphs)
+    html = render_email(title=title, paragraphs=paragraphs, show_unsubscribe=False)
     send_email([to], subject, html)
