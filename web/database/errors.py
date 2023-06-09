@@ -1,3 +1,6 @@
+# Todo: add translations
+
+
 class DbError(Exception):
     """Base class for database errors."""
 

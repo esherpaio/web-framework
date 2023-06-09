@@ -73,15 +73,15 @@ CDN_USERNAME: str = env_var("CDN_USERNAME")
 CDN_VIDEO_EXTS: list[str] = ["mp4"]
 CDN_ZONE: str = env_var("CDN_ZONE")
 
-EMAIL_FROM: str | None = env_var("EMAIL_FROM")
-EMAIL_LOGO_URL: str | None = config_var("EMAIL_LOGO_URL")
-EMAIL_TO: str | None = env_var("EMAIL_TO")
-EMAIL_UNSUBSCRIBE_URL: str | None = config_var("EMAIL_UNSUBSCRIBE_URL")
+EMAIL_FROM: str = env_var("EMAIL_FROM")
+EMAIL_LOGO_URL: str = config_var("EMAIL_LOGO_URL")
+EMAIL_TO: str = env_var("EMAIL_TO")
+EMAIL_UNSUBSCRIBE_URL: str = config_var("EMAIL_UNSUBSCRIBE_URL")
 
-ENDPOINT_ERROR: str = config_var("ENDPOINT_ERROR", optional=True)
-ENDPOINT_HOME: str = config_var("ENDPOINT_HOME", optional=True)
-ENDPOINT_LOGIN: str = config_var("ENDPOINT_LOGIN", optional=True)
-ENDPOINT_USER: str = config_var("ENDPOINT_USER", optional=True)
+ENDPOINT_ERROR: str | None = config_var("ENDPOINT_ERROR", optional=True)
+ENDPOINT_HOME: str | None = config_var("ENDPOINT_HOME", optional=True)
+ENDPOINT_LOGIN: str | None = config_var("ENDPOINT_LOGIN", optional=True)
+ENDPOINT_USER: str | None = config_var("ENDPOINT_USER", optional=True)
 
 DATABASE_URL: str = env_var("DATABASE_URL")
 GOOGLE_API_KEY: str = env_var("GOOGLE_API_KEY", optional=True)

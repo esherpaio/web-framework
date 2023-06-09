@@ -1,5 +1,8 @@
 from web import config
+from web.i18n.base import _
 from web.mail.base import render_email, send_email
+
+# Todo: add translations
 
 
 def send_contact(
@@ -10,7 +13,7 @@ def send_contact(
     phone: str | None = None,
 ) -> None:
     subject = f"{config.BUSINESS_NAME} Contact"
-    title = "Contact Form"
+    title = _("MAIL_CONTACT_TITLE")
     paragraphs = [
         f"Email: {email}<br>Name: {name}<br>Company: {company}<br>Phone: {phone}",
         f"Message: {message}",

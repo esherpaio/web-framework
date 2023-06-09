@@ -1,6 +1,8 @@
 from web import config
 from web.mail.base import pdf_to_string, render_email, send_email
 
+# Todo: add translations
+
 
 def send_order_received(
     order_id: int,

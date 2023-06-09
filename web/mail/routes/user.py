@@ -1,6 +1,8 @@
 from web import config
 from web.mail.base import render_email, send_email
 
+# Todo: add translations
+
 
 def send_verification_url(
     to: str,

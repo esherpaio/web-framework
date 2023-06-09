@@ -19,6 +19,7 @@ from web.helper.user import KnownUser
 
 
 class _Text(StrEnum):
+    # Todo: add translations
     CHECK_DETAILS = "Please check your login details."
     CHECK_ACTIVATION = "Please activate your account."
 
