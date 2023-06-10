@@ -13,7 +13,7 @@ setup(
     include_package_data=True,
     install_requires=find_requirements(),
     name="Web Framework",
-    package_data={"": ["mail/template/*"]},
+    package_data={"": ["mail/template/*", "i18n/translations/*"]},
     packages=find_packages(include=["web", "web.*"]),
     python_requires=">=3.11",
     url="https://github.com/enlarge-online/web-framework",
