@@ -1,3 +1,10 @@
 {
-    "MAIL_CONTACT_TITLE": "Contact Formulier"
+    "COMMON_EMAIL": "Email",
+    "COMMON_NAME": "Naam",
+    "COMMON_COMPANY": "Bedrijf",
+    "COMMON_PHONE": "Telefoon",
+    "COMMON_MESSAGE": "Bericht",
+    "MAIL_CONTACT_SUBJECT": "Contact",
+    "MAIL_CONTACT_TITLE": "Contact Formulier",
+    "MAIL_CONTACT_CONFIRMATION": "We hebben uw bericht ontvangen en nemen zo snel mogelijk contact met u op."
 }

@@ -1,3 +1,10 @@
 {
-    "MAIL_CONTACT_TITLE": "Contact Form"
+    "COMMON_EMAIL": "Email",
+    "COMMON_NAME": "Name",
+    "COMMON_COMPANY": "Company",
+    "COMMON_PHONE": "Phone",
+    "COMMON_MESSAGE": "Message",
+    "MAIL_CONTACT_SUBJECT": "Contact",
+    "MAIL_CONTACT_TITLE": "Contact Form",
+    "MAIL_CONTACT_CONFIRMATION": "We have received your message and will get back to you as soon as possible."
 }

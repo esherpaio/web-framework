@@ -2,8 +2,6 @@ from web import config
 from web.i18n.base import _
 from web.mail.base import render_email, send_email
 
-# Todo: add translations
-
 
 def send_contact(
     email: str,
@@ -12,13 +10,15 @@ def send_contact(
     company: str | None = None,
     phone: str | None = None,
 ) -> None:
-    subject = f"{config.BUSINESS_NAME} Contact"
+    subject = f"{config.BUSINESS_NAME} {_('MAIL_CONTACT_SUBJECT')}"
     title = _("MAIL_CONTACT_TITLE")
     paragraphs = [
-        f"Email: {email}<br>Name: {name}<br>Company: {company}<br>Phone: {phone}",
-        f"Message: {message}",
+        f"{_('COMMON_EMAIL')}: {email}",
+        f"{_('COMMON_NAME')}: {name}",
+        f"{_('COMMON_COMPANY')}: {company}",
+        f"{_('COMMON_PHONE')}: {phone}",
+        f"{_('COMMON_MESSAGE')}: {message}",
     ]
-
     html = render_email(title=title, paragraphs=paragraphs, show_unsubscribe=False)
     send_email([config.EMAIL_TO], subject, html)
 
@@ -27,12 +27,11 @@ def send_contact_confirmation(
     to: str,
     message: str,
 ) -> None:
-    subject = f"{config.BUSINESS_NAME} Contact"
-    title = "Contact Form"
+    subject = f"{config.BUSINESS_NAME} {_('MAIL_CONTACT_SUBJECT')}"
+    title = _("MAIL_CONTACT_TITLE")
     paragraphs = [
-        f"We have received your message and will get back to you as soon as possible.",
-        f"Message: {message}",
+        _("MAIL_CONTACT_CONFIRMATION"),
+        f"{_('COMMON_MESSAGE')}: {message}",
     ]
-
     html = render_email(title=title, paragraphs=paragraphs, show_unsubscribe=False)
     send_email([to], subject, html)
