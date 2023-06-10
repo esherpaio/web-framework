@@ -26,7 +26,7 @@ class Translator:
                     self.translations[name] = json.loads(file.read())
 
     @property
-    def language_code() -> str:
+    def language_code(self) -> str:
         if has_request_context():
             return current_user.language.code
         elif config.WEBSITE_LANGUAGE_CODE:
