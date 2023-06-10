@@ -44,3 +44,7 @@ class Translator:
 
 translator = Translator()
 _ = translator.translate
+
+
+if __name__ == "__main__":
+    print(_('MAIL_CONTACT_TITLE'))
