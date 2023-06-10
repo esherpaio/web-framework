@@ -4,12 +4,18 @@ This repository is a custom web framework for clients of Enlarge.
 
 ## Changelog
 
+### 2023-06-10
+
+Improvements:
+- Mail automatically recognizes language
+- Mail contact translations
+
 ### 2023-06-09
 
 Additions:
-- Added a changelog
+- A changelog
 - Translations module
-- Example config for testing purposes
+- Example config
 
 Deprecated:
 - CACHE_MIMETYPE is removed due to big variations between projects
