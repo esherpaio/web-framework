@@ -15,11 +15,13 @@ from web import config
 from web.database.model import Invoice, Order
 from web.document._base import FONT_BOLD, FONT_SIZE_TITLE, Paragraph, TableCell
 from web.document._utils import cells_to_tables, num_to_str, save_pdf
+from web.i18n.base import _
 
-# Todo: add translations
 
-
-def gen_invoice(order: Order, invoice: Invoice) -> tuple[str, str]:
+def gen_invoice(
+    order: Order,
+    invoice: Invoice,
+) -> tuple[str, str]:
     pdf = Document()
     page = Page()
     pdf.add_page(page)
@@ -27,7 +29,7 @@ def gen_invoice(order: Order, invoice: Invoice) -> tuple[str, str]:
     layout = SingleColumnLayout(page, margin, margin)
 
     layout.add(Image(config.EMAIL_LOGO_URL, width=Decimal(300), height=Decimal(35)))
-    layout.add(Paragraph("Invoice", font=FONT_BOLD, font_size=FONT_SIZE_TITLE))
+    layout.add(Paragraph(_("PDF_INVOICE"), font=FONT_BOLD, font_size=FONT_SIZE_TITLE))
     layout.add(_build_order_info(order, invoice))
 
     tables = _build_order_lines(order)
@@ -38,19 +40,20 @@ def gen_invoice(order: Order, invoice: Invoice) -> tuple[str, str]:
             layout = SingleColumnLayout(page, margin, margin)
         layout.add(table)
 
-    pdf_name_ext = f"Invoice number {invoice.number}.pdf"
+    pdf_name_ext = _("PDF_INVOICE_FILENAME", invoice_number=invoice.number)
     pdf_path = save_pdf(pdf, pdf_name_ext)
     return pdf_name_ext, pdf_path
 
 
-def _build_order_info(order: Order, invoice: Invoice) -> FixedColumnWidthTable:
+def _build_order_info(
+    order: Order,
+    invoice: Invoice,
+) -> FixedColumnWidthTable:
     # Left 1 column.
     left_items = []
     if order.billing.company:
         left_items.append(Paragraph(order.billing.company))
-    left_items.append(
-        Paragraph(f"{order.billing.first_name} {order.billing.last_name}")
-    )
+    left_items.append(Paragraph(order.billing.full_name))
     left_items.append(Paragraph(order.billing.address))
     left_items.append(Paragraph(f"{order.billing.zip_code} {order.billing.city}"))
     left_items.append(Paragraph(order.billing.country.name))
@@ -62,25 +65,33 @@ def _build_order_info(order: Order, invoice: Invoice) -> FixedColumnWidthTable:
         Paragraph(config.BUSINESS_STREET),
         Paragraph(f"{config.BUSINESS_ZIP_CODE} {config.BUSINESS_CITY}"),
         Paragraph(config.BUSINESS_COUNTRY),
-        Paragraph(f"CC: {config.BUSINESS_CC}"),
-        Paragraph(f"VAT: {config.BUSINESS_VAT}"),
+        Paragraph(_("PDF_CC_NUMBER", CC=config.BUSINESS_CC)),
+        Paragraph(_("PDF_VAT_NUMBER", CC=config.BUSINESS_VAT)),
     ]
 
     # Right 2 columns.
     right_groups = [
         [
-            Paragraph("Order ID", font=FONT_BOLD, horizontal_alignment=Alignment.RIGHT),
-            Paragraph(f"{order.id}"),
-        ],
-        [
             Paragraph(
-                "Invoice number", font=FONT_BOLD, horizontal_alignment=Alignment.RIGHT
+                _("PDF_ORDER_ID"),
+                font=FONT_BOLD,
+                horizontal_alignment=Alignment.RIGHT,
             ),
-            Paragraph(f"{invoice.number}"),
+            Paragraph(str(order.id)),
         ],
         [
             Paragraph(
-                "Order date", font=FONT_BOLD, horizontal_alignment=Alignment.RIGHT
+                _("PDF_INVOICE_NUMBER"),
+                font=FONT_BOLD,
+                horizontal_alignment=Alignment.RIGHT,
+            ),
+            Paragraph(invoice.number),
+        ],
+        [
+            Paragraph(
+                _("PDF_ORDER_DATE"),
+                font=FONT_BOLD,
+                horizontal_alignment=Alignment.RIGHT,
             ),
             Paragraph(order.created_at.strftime("%Y-%m-%d")),
         ],
@@ -117,9 +128,11 @@ def _build_order_info(order: Order, invoice: Invoice) -> FixedColumnWidthTable:
     return table
 
 
-def _build_order_lines(order: Order) -> list[FixedColumnWidthTable]:
+def _build_order_lines(
+    order: Order,
+) -> list[FixedColumnWidthTable]:
     cells = []
-    h_texts = ["Description", "Quantity", "Price"]
+    h_texts = [_("PDF_DESCRIPTION"), _("PDF_QUANTITY"), _("PDF_PRICE")]
     h_widths = [Decimal(64), Decimal(10), Decimal(16)]
     h_count = len(h_texts)
 
@@ -129,18 +142,15 @@ def _build_order_lines(order: Order) -> list[FixedColumnWidthTable]:
         h_cell = TableCell(h_paragraph, HexColor("646464"))
         cells.append(h_cell)
 
-    # lines
+    # order lines
     for num, order_line in enumerate(order.lines):
         background_color = HexColor("f0f0f0") if num % 2 else HexColor("ffffff")
-
         name_text = f"{order_line.sku.product.name}"
         name_p = Paragraph(name_text)
         cells.append(TableCell(name_p, background_color))
-
         quantity_text = f"{order_line.quantity}"
         quantity_p = Paragraph(quantity_text)
         cells.append(TableCell(quantity_p, background_color))
-
         price_text = f"{num_to_str(order_line.total_price, 2)} {order.currency.code}"
         price_p = Paragraph(price_text)
         cells.append(TableCell(price_p, background_color))
@@ -153,7 +163,9 @@ def _build_order_lines(order: Order) -> list[FixedColumnWidthTable]:
 
     # subtotal
     subtotal_head_p = Paragraph(
-        "Items", font=FONT_BOLD, horizontal_alignment=Alignment.RIGHT
+        _("PDF_ITEMS"),
+        font=FONT_BOLD,
+        horizontal_alignment=Alignment.RIGHT,
     )
     subtotal_value_text = f"{num_to_str(order.subtotal_price, 2)} {order.currency.code}"
     subtotal_value_p = Paragraph(subtotal_value_text)
@@ -162,7 +174,9 @@ def _build_order_lines(order: Order) -> list[FixedColumnWidthTable]:
 
     # discount
     subtotal_head_p = Paragraph(
-        "Discount", font=FONT_BOLD, horizontal_alignment=Alignment.RIGHT
+        _("PDF_DISCOUNT"),
+        font=FONT_BOLD,
+        horizontal_alignment=Alignment.RIGHT,
     )
     subtotal_value_text = f"{num_to_str(order.discount_price, 2)} {order.currency.code}"
     subtotal_value_p = Paragraph(subtotal_value_text)
@@ -171,7 +185,9 @@ def _build_order_lines(order: Order) -> list[FixedColumnWidthTable]:
 
     # shipment
     subtotal_head_p = Paragraph(
-        "Shipment", font=FONT_BOLD, horizontal_alignment=Alignment.RIGHT
+        _("PDF_SHIPMENT"),
+        font=FONT_BOLD,
+        horizontal_alignment=Alignment.RIGHT,
     )
     subtotal_value_text = f"{num_to_str(order.shipment_price, 2)} {order.currency.code}"
     subtotal_value_p = Paragraph(subtotal_value_text)
@@ -180,7 +196,7 @@ def _build_order_lines(order: Order) -> list[FixedColumnWidthTable]:
 
     # VAT
     vat_head_p = Paragraph(
-        f"VAT {order.vat_percentage}%",
+        _("PDF_VAT_PERCENTAGE", vat_percentage=order.vat_percentage),
         font=FONT_BOLD,
         horizontal_alignment=Alignment.RIGHT,
     )
@@ -191,7 +207,9 @@ def _build_order_lines(order: Order) -> list[FixedColumnWidthTable]:
 
     # total
     total_head_p = Paragraph(
-        "Total", font=FONT_BOLD, horizontal_alignment=Alignment.RIGHT
+        _("PDF_TOTAL"),
+        font=FONT_BOLD,
+        horizontal_alignment=Alignment.RIGHT,
     )
     total_value_text = f"{num_to_str(order.total_price_vat, 2)} {order.currency.code}"
     total_value_p = Paragraph(total_value_text)
@@ -205,7 +223,7 @@ def _build_order_lines(order: Order) -> list[FixedColumnWidthTable]:
     )
 
     # note
-    note_1_text = "Please follow the payment instructions from Mollie."
+    note_1_text = _("PDF_NOTE")
     note_1_p = Paragraph(note_1_text, horizontal_alignment=Alignment.RIGHT)
     cells.append(TableCell(note_1_p, col_span=h_count))
 

@@ -1,7 +1,6 @@
 from web import config
+from web.i18n.base import _
 from web.mail.base import pdf_to_string, render_email, send_email
-
-# Todo: add translations
 
 
 def send_order_received(
@@ -10,14 +9,15 @@ def send_order_received(
     shipping_email: str,
 ) -> None:
     to = [billing_email, shipping_email]
-    subject = f"{config.BUSINESS_NAME} Order #{order_id}"
-    title = f"Order #{order_id}"
+    subject = _(
+        "MAIL_ORDER_SUBJECT", business_name=config.BUSINESS_NAME, order_id=order_id
+    )
+    title = _("MAIL_ORDER_TITLE", order_id=order_id)
     paragraphs = [
-        f"Thank you for your order at {config.BUSINESS_NAME}.",
-        f"Once your payment is fully processed, you will receive the invoice.",
+        _("MAIL_ORDER_RECEIVED_P1", business_name=config.BUSINESS_NAME),
+        _("MAIL_ORDER_RECEIVED_P2"),
     ]
-
-    html = render_email(title=title, paragraphs=paragraphs, show_unsubscribe=False)
+    html = render_email(title, paragraphs)
     send_email(to, subject, html)
 
 
@@ -28,18 +28,15 @@ def send_order_paid(
     pdf_path: str,
 ) -> None:
     to = [billing_email]
-    subject = f"{config.BUSINESS_NAME} Order #{order_id}"
-    title = f"Order #{order_id}"
-    paragraphs = [
-        f"We have succesfully processed your payment.",
-        f"Please see the attachment for your order details.",
-    ]
-
+    subject = _(
+        "MAIL_ORDER_SUBJECT", business_name=config.BUSINESS_NAME, order_id=order_id
+    )
+    title = _("MAIL_ORDER_TITLE", order_id=order_id)
+    paragraphs = [_("MAIL_ORDER_PAID_P1"), _("MAIL_ORDER_PAID_P2")]
     pdf_str = pdf_to_string(pdf_path)
-    pdf_name = f"Invoice #{invoice_id}.pdf"
+    pdf_name = _("MAIL_ORDER_PAID_FILENAME", invoice_id=invoice_id)
     pdf_type = "application/docs"
-
-    html = render_email(title=title, paragraphs=paragraphs, show_unsubscribe=False)
+    html = render_email(title, paragraphs)
     send_email(to, subject, html, pdf_str, pdf_name, pdf_type)
 
 
@@ -51,15 +48,16 @@ def send_order_shipped(
     shipping_address: str,
 ) -> None:
     to = [billing_email, shipping_email]
-    subject = f"{config.BUSINESS_NAME} Order #{order_id}"
-    title = f"Order #{order_id}"
+    subject = _(
+        "MAIL_ORDER_SUBJECT", business_name=config.BUSINESS_NAME, order_id=order_id
+    )
+    title = _("MAIL_ORDER_TITLE", order_id=order_id)
     paragraphs = [
-        f"We have handed your order to our carrier.",
-        f"You can follow your shipment with this URL: {shipment_url}.",
-        f"Your order will be delivered to {shipping_address}.",
+        _("MAIL_ORDER_SHIPPED_P1"),
+        _("MAIL_ORDER_SHIPPED_P2", shipment_url=shipment_url),
+        _("MAIL_ORDER_SHIPPED_P3", shipping_address=shipping_address),
     ]
-
-    html = render_email(title=title, paragraphs=paragraphs, show_unsubscribe=False)
+    html = render_email(title, paragraphs)
     send_email(to, subject, html)
 
 
@@ -70,16 +68,13 @@ def send_order_refund(
     pdf_path: str,
 ) -> None:
     to = [billing_email]
-    subject = f"{config.BUSINESS_NAME} Order #{order_id}"
-    title = f"Order #{order_id}"
-    paragraphs = [
-        f"We have created a refund for your order.",
-        f"Please see the attachment for your refund details.",
-    ]
-
+    subject = _(
+        "MAIL_ORDER_SUBJECT", business_name=config.BUSINESS_NAME, order_id=order_id
+    )
+    title = _("MAIL_ORDER_TITLE", order_id=order_id)
+    paragraphs = [_("MAIL_ORDER_REFUNDED_P1"), _("MAIL_ORDER_REFUNDED_P2")]
     pdf_str = pdf_to_string(pdf_path)
-    pdf_name = f"Refund #{refund_id}.pdf"
+    pdf_name = _("MAIL_ORDER_REFUNDED_FILENAME", refund_id=refund_id)
     pdf_type = "application/docs"
-
-    html = render_email(title=title, paragraphs=paragraphs, show_unsubscribe=False)
+    html = render_email(title, paragraphs)
     send_email(to, subject, html, pdf_str, pdf_name, pdf_type)

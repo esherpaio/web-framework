@@ -9,18 +9,14 @@ from web.database.model import Order, UserRoleLevel
 from web.helper.api import ApiText, json_get, response
 from web.helper.mollie_api import Mollie
 from web.helper.security import authorize
+from web.i18n.base import _
 
 
 class _Text(StrEnum):
-    # Todo: add translations
-    VAT_NO_CONNECTION = "We are currently unable to verify your VAT number. Please try again in one hour."  # noqa: E501
-    VAT_INVALID = "Your VAT number seems to be invalid. If you believe this is a mistake, please contact us."  # noqa: E501
-    VAT_REQUIRED = "Your VAT number is required."
-    PHONE_REQUIRED = "Your phone number is required."
-    PAYMENT_INCOMPLETE = "The customer has not completed the payment yet."
-    REFUND_NOT_ALLOWED = "Mollie does not allow refunds for this payment."
-    REFUND_TOO_HIGH = "The requested refund price is too high."
-    INVOICE_NOT_FOUND = "We cannot proceed because there is no invoice created yet."
+    PAYMENT_INCOMPLETE = _("API_ORDER_REFUND_PAYMENT_INCOMPLETE")
+    REFUND_NOT_ALLOWED = _("API_ORDER_REFUND_NOT_ALLOWED")
+    REFUND_TOO_HIGH = _("API_ORDER_REFUND_TOO_HIGH")
+    INVOICE_NOT_FOUND = _("API_ORDER_REFUND_INVOICE_NOT_FOUND")
 
 
 @authorize(UserRoleLevel.ADMIN)

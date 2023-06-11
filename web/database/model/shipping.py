@@ -44,5 +44,9 @@ class Shipping(Base):
     # Properties - general
 
     @hybrid_property
+    def full_name(self) -> str:
+        return f"{self.first_name} {self.last_name}"
+
+    @hybrid_property
     def full_address(self) -> str:
         return f"{self.address}, {self.zip_code} {self.city}, {self.country.name}"

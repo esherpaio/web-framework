@@ -15,11 +15,14 @@ from web import config
 from web.database.model import Invoice, Order, Refund
 from web.document._base import FONT_BOLD, FONT_SIZE_TITLE, Paragraph, TableCell
 from web.document._utils import cells_to_tables, num_to_str, save_pdf
+from web.i18n.base import _
 
-# Todo: add translations
 
-
-def gen_refund(order: Order, invoice: Invoice, refund: Refund) -> tuple[str, str]:
+def gen_refund(
+    order: Order,
+    invoice: Invoice,
+    refund: Refund,
+) -> tuple[str, str]:
     pdf = Document()
     page = Page()
     pdf.add_page(page)
@@ -27,7 +30,7 @@ def gen_refund(order: Order, invoice: Invoice, refund: Refund) -> tuple[str, str
     layout = SingleColumnLayout(page, margin, margin)
 
     layout.add(Image(config.EMAIL_LOGO_URL, width=Decimal(300), height=Decimal(35)))
-    layout.add(Paragraph("Refund", font=FONT_BOLD, font_size=FONT_SIZE_TITLE))
+    layout.add(Paragraph(_("PDF_REFUND"), font=FONT_BOLD, font_size=FONT_SIZE_TITLE))
     layout.add(_build_refund_info(order, invoice, refund))
 
     tables = _build_refund_lines(order, refund)
@@ -38,21 +41,21 @@ def gen_refund(order: Order, invoice: Invoice, refund: Refund) -> tuple[str, str
             layout = SingleColumnLayout(page, margin, margin)
         layout.add(table)
 
-    pdf_name_ext = f"Refund number {refund.number}.pdf"
+    pdf_name_ext = _("PDF_REFUND_FILENAME", refund_number=refund.number)
     pdf_path = save_pdf(pdf, pdf_name_ext)
     return pdf_name_ext, pdf_path
 
 
 def _build_refund_info(
-    order: Order, invoice: Invoice, refund: Refund
+    order: Order,
+    invoice: Invoice,
+    refund: Refund,
 ) -> FixedColumnWidthTable:
     # Left 1 column.
     left_items = []
     if order.billing.company:
         left_items.append(Paragraph(order.billing.company))
-    left_items.append(
-        Paragraph(f"{order.billing.first_name} {order.billing.last_name}")
-    )
+    left_items.append(Paragraph(order.billing.full_name))
     left_items.append(Paragraph(order.billing.address))
     left_items.append(Paragraph(f"{order.billing.zip_code} {order.billing.city}"))
     left_items.append(Paragraph(order.billing.country.name))
@@ -64,31 +67,41 @@ def _build_refund_info(
         Paragraph(config.BUSINESS_STREET),
         Paragraph(f"{config.BUSINESS_ZIP_CODE} {config.BUSINESS_CITY}"),
         Paragraph(config.BUSINESS_COUNTRY),
-        Paragraph(f"CC: {config.BUSINESS_CC}"),
-        Paragraph(f"VAT: {config.BUSINESS_VAT}"),
+        Paragraph(_("PDF_CC_NUMBER", CC=config.BUSINESS_CC)),
+        Paragraph(_("PDF_VAT_NUMBER", CC=config.BUSINESS_VAT)),
     ]
 
     # Right 2 columns.
     right_groups = [
         [
-            Paragraph("Order ID", font=FONT_BOLD, horizontal_alignment=Alignment.RIGHT),
-            Paragraph(f"{order.id}"),
-        ],
-        [
             Paragraph(
-                "Invoice number", font=FONT_BOLD, horizontal_alignment=Alignment.RIGHT
+                _("PDF_ORDER_ID"),
+                font=FONT_BOLD,
+                horizontal_alignment=Alignment.RIGHT,
             ),
-            Paragraph(f"{invoice.number}"),
+            Paragraph(str(order.id)),
         ],
         [
             Paragraph(
-                "Refund number", font=FONT_BOLD, horizontal_alignment=Alignment.RIGHT
+                _("PDF_INVOICE_NUMBER"),
+                font=FONT_BOLD,
+                horizontal_alignment=Alignment.RIGHT,
             ),
-            Paragraph(f"{refund.number}"),
+            Paragraph(invoice.number),
         ],
         [
             Paragraph(
-                "Order date", font=FONT_BOLD, horizontal_alignment=Alignment.RIGHT
+                _("PDF_REFUND_NUMBER"),
+                font=FONT_BOLD,
+                horizontal_alignment=Alignment.RIGHT,
+            ),
+            Paragraph(refund.number),
+        ],
+        [
+            Paragraph(
+                _("PDF_ORDER_DATE"),
+                font=FONT_BOLD,
+                horizontal_alignment=Alignment.RIGHT,
             ),
             Paragraph(order.created_at.strftime("%Y-%m-%d")),
         ],
@@ -125,9 +138,12 @@ def _build_refund_info(
     return table
 
 
-def _build_refund_lines(order: Order, refund: Refund) -> list[FixedColumnWidthTable]:
+def _build_refund_lines(
+    order: Order,
+    refund: Refund,
+) -> list[FixedColumnWidthTable]:
     cells = []
-    h_texts = ["Description", "Quantity", "Price"]
+    h_texts = [_("PDF_DESCRIPTION"), _("PDF_QUANTITY"), _("PDF_PRICE")]
     h_widths = [Decimal(64), Decimal(10), Decimal(16)]
     h_count = len(h_texts)
 
@@ -139,15 +155,12 @@ def _build_refund_lines(order: Order, refund: Refund) -> list[FixedColumnWidthTa
 
     # line
     background_color = HexColor("f0f0f0")
-
-    name_text = "Refund"
+    name_text = _("PDF_REFUND")
     name_p = Paragraph(name_text)
     cells.append(TableCell(name_p, background_color))
-
     quantity_text = "1"
     quantity_p = Paragraph(quantity_text)
     cells.append(TableCell(quantity_p, background_color))
-
     price_text = f"{num_to_str(refund.total_price, 2)} {order.currency.code}"
     price_p = Paragraph(price_text)
     cells.append(TableCell(price_p, background_color))
@@ -160,7 +173,9 @@ def _build_refund_lines(order: Order, refund: Refund) -> list[FixedColumnWidthTa
 
     # subtotal
     subtotal_head_p = Paragraph(
-        "Subtotal", font=FONT_BOLD, horizontal_alignment=Alignment.RIGHT
+        _("PDF_SUBTOTAL"),
+        font=FONT_BOLD,
+        horizontal_alignment=Alignment.RIGHT,
     )
     subtotal_value_text = (
         f"{num_to_str(refund.subtotal_price, 2)} {order.currency.code}"
@@ -171,7 +186,7 @@ def _build_refund_lines(order: Order, refund: Refund) -> list[FixedColumnWidthTa
 
     # VAT
     vat_head_p = Paragraph(
-        f"VAT {refund.vat_percentage}%",
+        _("PDF_VAT_PERCENTAGE", vat_percentage=order.vat_percentage),
         font=FONT_BOLD,
         horizontal_alignment=Alignment.RIGHT,
     )
@@ -182,7 +197,9 @@ def _build_refund_lines(order: Order, refund: Refund) -> list[FixedColumnWidthTa
 
     # total
     total_head_p = Paragraph(
-        "Total", font=FONT_BOLD, horizontal_alignment=Alignment.RIGHT
+        _("PDF_TOTAL"),
+        font=FONT_BOLD,
+        horizontal_alignment=Alignment.RIGHT,
     )
     total_value_text = f"{num_to_str(refund.total_price_vat, 2)} {order.currency.code}"
     total_value_p = Paragraph(total_value_text)

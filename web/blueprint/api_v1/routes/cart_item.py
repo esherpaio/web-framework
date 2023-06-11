@@ -10,11 +10,11 @@ from web.database.model import Cart, CartItem
 from web.helper.api import ApiText, json_get, response
 from web.helper.cart import get_shipment_methods, update_cart_count
 from web.helper.security import get_access
+from web.i18n.base import _
 
 
 class _Text(StrEnum):
-    # Todo: add translations
-    ADDED = "The product has been added to your cart."
+    ADDED = _("API_CART_ITEM_ADDED")
 
 
 @api_v1_bp.post("/carts/<int:cart_id>/items")
