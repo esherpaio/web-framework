@@ -16,12 +16,12 @@ from web.helper.api import json_get, response
 from web.helper.cart import transfer_cart, update_cart_count
 from web.helper.security import get_access
 from web.helper.user import KnownUser
+from web.i18n.base import _
 
 
 class _Text(StrEnum):
-    # Todo: add translations
-    CHECK_DETAILS = "Please check your login details."
-    CHECK_ACTIVATION = "Please activate your account."
+    CHECK_DETAILS = _("API_SESSION_CHECK_DETAILS")
+    CHECK_ACTIVATION = _("API_SESSION_CHECK_ACTIVATION")
 
 
 @api_v1_bp.post("/sessions")

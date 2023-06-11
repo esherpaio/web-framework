@@ -11,7 +11,6 @@ from web.helper.logger import logger
 def render_email(
     title: str,
     paragraphs: list[str],
-    show_unsubscribe: bool = True,
     **kwargs,
 ) -> str:
     curr_dir = os.path.dirname(os.path.realpath(__file__))
@@ -26,7 +25,6 @@ def render_email(
             "config": config,
             "title": title,
             "paragraphs": paragraphs,
-            "show_unsubscribe": show_unsubscribe,
         }
     )
 

@@ -4,11 +4,15 @@ This repository is a custom web framework for clients of Enlarge.
 
 ## Changelog
 
+### 2023-06-11
+
+Improvements:
+- All translations
+
 ### 2023-06-10
 
 Improvements:
 - Mail automatically recognizes language
-- Mail contact translations
 
 ### 2023-06-09
 

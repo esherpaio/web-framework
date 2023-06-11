@@ -8,11 +8,11 @@ from web.database.model import Category, UserRoleLevel
 from web.helper.api import ApiText, json_get, response
 from web.helper.security import authorize
 from web.helper.validation import gen_slug
+from web.i18n.base import _
 
 
 class _Text(StrEnum):
-    # Todo: add translations
-    REBOOT_REQUIRED = "The changes will be reflected after the server has rebooted."
+    REBOOT_REQUIRED = _("API_CATEGORY_REBOOT_REQUIRED")
 
 
 @authorize(UserRoleLevel.ADMIN)

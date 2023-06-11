@@ -12,22 +12,21 @@ from web.database.client import conn
 from web.database.model import User, UserVerification
 from web.helper.api import ApiText, json_get, response
 from web.helper.security import get_access
+from web.i18n.base import _
 from web.mail.routes.user import send_new_password, send_verification_url
 
 
 class _Text(StrEnum):
-    # Todo: add translations
-    PASSWORD_LENGTH = "Please enter at least 8 password characters."
-    PASSWORD_NO_MATCH = "The passwords do not match."
-    EMAIL_INVALID = "Please enter a valid email address."
-    EMAIL_IN_USE = "This email address is already in use."
-    EMAIL_NO_MATCH = "The email addresses do not match."
-    REGISTER_SUCCESS = "Your account has been registered. Activate it with the URL in your email."  # noqa: E501
-    ACTIVATION_SUCCESS = "Your account has been activated."
-    VERIFY_FAILED = "We are unable to verify your account."
-    PASSWORD_REQUEST_SEND = "Please follow the URL sent to your email."
-    PASSWORD_RESET_SUCCESS = "Your password has been recovered."
-    UPDATE_SUCCESS = "Your account has been updated."
+    PASSWORD_LENGTH = _("API_USER_PASSWORD_LENGTH")
+    PASSWORD_NO_MATCH = _("API_USER_PASSWORD_NO_MATCH")
+    EMAIL_INVALID = _("API_USER_EMAIL_INVALID")
+    EMAIL_IN_USE = _("API_USER_EMAIL_IN_USE")
+    REGISTER_SUCCESS = _("API_USER_REGISTER_SUCCESS")
+    ACTIVATION_SUCCESS = _("API_USER_ACTIVATION_SUCCESS")
+    VERIFY_FAILED = _("API_USER_VERIFY_FAILED")
+    PASSWORD_REQUEST_SEND = _("API_USER_PASSWORD_REQUEST_SEND")
+    PASSWORD_RESET_SUCCESS = _("API_USER_PASSWORD_RESET_SUCCESS")
+    UPDATE_SUCCESS = _("API_USER_UPDATE_SUCCESS")
 
 
 @api_v1_bp.post("/users")

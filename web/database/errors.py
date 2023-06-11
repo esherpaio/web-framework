@@ -1,4 +1,4 @@
-# Todo: add translations
+from web.i18n.base import _
 
 
 class DbError(Exception):
@@ -16,13 +16,13 @@ class DbLengthError(DbError):
 class DbEmailError(DbError):
     """Raised when an email address cannot be validated."""
 
-    MESSAGE = "Please check your email address."
+    MESSAGE = _("DATABASE_EMAIL_ERROR")
 
 
 class DbPhoneError(DbError):
     """Raised when a phone number cannot be validated."""
 
-    MESSAGE = "Please check your phone number."
+    MESSAGE = _("DATABASE_PHONE_ERROR")
 
 
 class DbSlugError(DbError):

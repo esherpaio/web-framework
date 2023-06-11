@@ -4,18 +4,19 @@ from typing import Callable
 
 from flask import Response, request
 
+from web.i18n.base import _
+
 
 class ApiText(StrEnum):
-    # Todo: add translations
-    HTTP_200 = "We have processed your request."
-    HTTP_202 = "We are processing your request."
-    HTTP_400 = "We could not process your request."
-    HTTP_401 = "Unauthorized request."
-    HTTP_403 = "Access is forbidden."
-    HTTP_404 = "The resource(s) could not be found."
-    HTTP_409 = "The resource(s) already exists."
-    HTTP_410 = "The resource(s) is no longer available."
-    HTTP_500 = "Something went wrong on our end."
+    HTTP_200 = _("API_HTTP_200")
+    HTTP_202 = _("API_HTTP_202")
+    HTTP_400 = _("API_HTTP_400")
+    HTTP_401 = _("API_HTTP_401")
+    HTTP_403 = _("API_HTTP_403")
+    HTTP_404 = _("API_HTTP_404")
+    HTTP_409 = _("API_HTTP_409")
+    HTTP_410 = _("API_HTTP_410")
+    HTTP_500 = _("API_HTTP_500")
 
 
 def response(

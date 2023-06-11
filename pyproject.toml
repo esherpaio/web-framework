@@ -8,7 +8,6 @@ profile = "black"
 skip_gitignore = true
 
 [tool.djlint]
-close_void_tags=true
 custom_blocks="pack"
 format_attribute_template_tags=true
 line_break_after_multiline_tag=true
