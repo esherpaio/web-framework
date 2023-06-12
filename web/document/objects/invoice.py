@@ -65,8 +65,8 @@ def _build_order_info(
         Paragraph(config.BUSINESS_STREET),
         Paragraph(f"{config.BUSINESS_ZIP_CODE} {config.BUSINESS_CITY}"),
         Paragraph(config.BUSINESS_COUNTRY),
-        Paragraph(_("PDF_CC_NUMBER", CC=config.BUSINESS_CC)),
-        Paragraph(_("PDF_VAT_NUMBER", CC=config.BUSINESS_VAT)),
+        Paragraph(_("PDF_CC_NUMBER", cc=config.BUSINESS_CC)),
+        Paragraph(_("PDF_VAT_NUMBER", vat=config.BUSINESS_VAT)),
     ]
 
     # Right 2 columns.
