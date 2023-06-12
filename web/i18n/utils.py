@@ -39,8 +39,6 @@ def sync_translations(language_in: str, language_out: str) -> None:
     # Add new keys
     out_keys = out_data.keys()
     for in_key, in_value in in_data.items():
-        if in_key.startswith("API_HTTP_"):
-            continue
         if in_key not in out_keys:
             data[in_key] = in_value
 
