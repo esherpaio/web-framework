@@ -4,10 +4,13 @@ This repository is a custom web framework for clients of Enlarge.
 
 ## Changelog
 
-### 2023-06-11
+### 2023-06-12
+
+Added:
+- Utility to synchronize translations
 
 Improvements:
-- All translations
+- Created all translations in EN and NL
 
 ### 2023-06-10
 

@@ -78,5 +78,5 @@
     "PDF_SUBTOTAL": "Subtotal",
     "PDF_TOTAL": "Total",
     "PDF_VAT_NUMBER": "VAT: %(VAT)s",
-    "PDF_VAT_PERCENTAGE": "VAT %(vat_percentage)s%",
+    "PDF_VAT_PERCENTAGE": "VAT %(vat_percentage)s%"
 }
