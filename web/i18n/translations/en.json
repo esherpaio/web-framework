@@ -59,7 +59,7 @@
     "MAIL_WELCOME_P3": "You can sign in after your account has been activated.",
     "MAIL_WELCOME_SUBJECT": "%(business_name)s Welcome",
     "MAIL_WELCOME_TITLE": "Welcome",
-    "PDF_CC_NUMBER": "CC: %(CC)s",
+    "PDF_CC_NUMBER": "CC: %(cc)s",
     "PDF_DESCRIPTION": "Description",
     "PDF_DISCOUNT": "Discount",
     "PDF_INVOICE_FILENAME": "Invoice number %(invoice_number)s.pdf",
@@ -77,6 +77,6 @@
     "PDF_SHIPMENT": "Shipment",
     "PDF_SUBTOTAL": "Subtotal",
     "PDF_TOTAL": "Total",
-    "PDF_VAT_NUMBER": "VAT: %(VAT)s",
+    "PDF_VAT_NUMBER": "VAT: %(vat)s",
     "PDF_VAT_PERCENTAGE": "VAT %(vat_percentage)s%"
 }
