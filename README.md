@@ -6,6 +6,9 @@ This repository is a custom web framework for clients of Enlarge.
 
 ### 2023-06-14
 
+Improvements:
+- Change the way emails are send over the API
+
 Deprecated:
 - Remove pycodestyle
 

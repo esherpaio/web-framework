@@ -3,12 +3,13 @@ from web.i18n.base import _
 from web.mail.base import render_email, send_email
 
 
-def send_contact(
+def send_contact_business(
     email: str,
     name: str,
     message: str,
     company: str | None = None,
     phone: str | None = None,
+    **kwargs,
 ) -> None:
     subject = _("MAIL_CONTACT_SUBJECT", business_name=config.BUSINESS_NAME)
     title = _("MAIL_CONTACT_TITLE")
@@ -20,9 +21,10 @@ def send_contact(
     send_email([config.EMAIL_TO], subject, html)
 
 
-def send_contact_confirmation(
+def send_contact_customer(
     to: str,
     message: str,
+    **kwargs,
 ) -> None:
     subject = _("MAIL_CONTACT_SUBJECT", business_name=config.BUSINESS_NAME)
     title = _("MAIL_CONTACT_TITLE")

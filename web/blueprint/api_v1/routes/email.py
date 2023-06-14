@@ -1,19 +1,25 @@
+from enum import StrEnum
+
 from flask import Response
 
 from web.blueprint.api_v1 import api_v1_bp
 from web.helper.api import json_get, response
-from web.mail.routes.contact import send_contact, send_contact_confirmation
+from web.i18n.base import _
+from web.mail.routes.contact import send_contact_business, send_contact_customer
 
 
-@api_v1_bp.post("/emails/contact")
+class _Text(StrEnum):
+    INVALID_TEMPLATE_ID = _("API_MAIL_INVALID_TEMPLATE_ID")
+
+
+@api_v1_bp.post("/emails")
 def post_emails_contact() -> Response:
-    company, _ = json_get("company", str)
-    email, _ = json_get("email", str, nullable=False)
-    message, _ = json_get("message", str, nullable=False)
-    name, _ = json_get("name", str, nullable=False)
-    phone, _ = json_get("phone", str)
+    template_id = json_get("template_id", str)
+    data = json_get("data", dict)
 
-    send_contact(email=email, name=name, message=message, company=company, phone=phone)
-    send_contact_confirmation(email, message)
-
+    if template_id == "contact":
+        send_contact_business(**data)
+        send_contact_customer(**data)
+    else:
+        return response(403, _Text.INVALID_TEMPLATE_ID)
     return response()
