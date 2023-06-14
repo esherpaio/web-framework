@@ -24,7 +24,7 @@ class SitemapUrl:
 
     @property
     def loc(self) -> str:
-        return url_for(self._endpoint, **self._kwargs, _external=True)
+        return url_for(self._endpoint, **self._kwargs, _scheme="https", _external=True)
 
     @property
     def lastmod(self) -> str | None:
