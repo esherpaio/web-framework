@@ -4,7 +4,7 @@ import os
 
 def sync_translations(language_in: str, language_out: str) -> None:
     """Synchronizes languages.
-    
+
     Keys starting with `API_HTTP_` will not be translated.
     """
 
