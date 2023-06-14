@@ -4,6 +4,11 @@ This repository is a custom web framework for clients of Enlarge.
 
 ## Changelog
 
+### 2023-06-14
+
+Deprecated:
+- Remove pycodestyle
+
 ### 2023-06-12
 
 Added:

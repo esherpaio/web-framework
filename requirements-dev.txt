@@ -2,5 +2,4 @@ black~=23.3.0
 djlint~=1.29.0
 git+https://REDACTED@github.com/enlarge-online/python-pdf.git@v1.0.1
 isort~=5.12.0
-pycodestyle~=2.10.0
 setuptools~=67.7.2
