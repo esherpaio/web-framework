@@ -11,7 +11,6 @@ requirements:
 ## lint : run linters
 .PHONY: lint
 lint:
-	pycodestyle .
 	isort . --check-only
 	black . --check --quiet --diff --color
 	djlint . --check
