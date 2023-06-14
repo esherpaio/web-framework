@@ -10,6 +10,7 @@
     "API_HTTP_409": "The resource(s) already exists.",
     "API_HTTP_410": "The resource(s) is no longer available.",
     "API_HTTP_500": "Something went wrong on our end.",
+    "API_MAIL_INVALID_TEMPLATE_ID": "The template ID is invalid.",
     "API_ORDER_PHONE_REQUIRED": "Your phone number is required.",
     "API_ORDER_REFUND_INVOICE_NOT_FOUND": "We cannot proceed because there is no invoice created.",
     "API_ORDER_REFUND_NOT_ALLOWED": "Mollie does not allow refunds for this payment.",
@@ -78,5 +79,5 @@
     "PDF_SUBTOTAL": "Subtotal",
     "PDF_TOTAL": "Total",
     "PDF_VAT_NUMBER": "VAT: %(vat)s",
-    "PDF_VAT_PERCENTAGE": "VAT %(vat_percentage)s%"
+    "PDF_VAT_PERCENTAGE": "VAT %(vat_percentage)s%",
 }
