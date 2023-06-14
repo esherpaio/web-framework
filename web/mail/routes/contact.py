@@ -22,7 +22,7 @@ def send_contact_business(
 
 
 def send_contact_customer(
-    to: str,
+    email: str,
     message: str,
     **kwargs,
 ) -> None:
@@ -33,4 +33,4 @@ def send_contact_customer(
         _("MAIL_CONTACT_MESSAGE", message=message),
     ]
     html = render_email(title, paragraphs)
-    send_email([to], subject, html)
+    send_email([email], subject, html)

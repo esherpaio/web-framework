@@ -14,8 +14,8 @@ class _Text(StrEnum):
 
 @api_v1_bp.post("/emails")
 def post_emails_contact() -> Response:
-    template_id = json_get("template_id", str)
-    data = json_get("data", dict)
+    template_id, _ = json_get("template_id", str)
+    data, _ = json_get("data", dict)
 
     if template_id == "contact":
         send_contact_business(**data)
