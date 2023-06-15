@@ -69,3 +69,7 @@ class Translator:
 
 translator = Translator()
 _ = translator.translate
+
+
+if __name__ == "__main__":
+    print(_("PDF_VAT_PERCENTAGE", vat_percentage="21"))
