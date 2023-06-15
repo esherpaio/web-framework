@@ -5,7 +5,7 @@ from web.database.model import Order, Refund
 from web.document.objects.refund import gen_refund
 from web.helper.fso import remove_file
 from web.helper.mollie_api import Mollie, mollie_amount
-from web.mail.routes.order import send_order_refund
+from web.mail.routes.order import send_order_refunded
 
 
 def create_refund(
@@ -33,7 +33,7 @@ def create_refund(
 
     # Send email
     _, pdf_path = gen_refund(order, order.invoice, refund)
-    send_order_refund(
+    send_order_refunded(
         order_id=order.id,
         billing_email=order.billing.email,
         refund_id=refund.id,

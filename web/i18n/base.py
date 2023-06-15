@@ -72,4 +72,4 @@ _ = translator.translate
 
 
 if __name__ == "__main__":
-    print(_("PDF_VAT_PERCENTAGE", vat_percentage="21"))
+    print(_("MAIL_ORDER_PAID_FILENAME", invoice_id="21"))
