@@ -67,8 +67,8 @@ def _build_refund_info(
         Paragraph(config.BUSINESS_STREET),
         Paragraph(f"{config.BUSINESS_ZIP_CODE} {config.BUSINESS_CITY}"),
         Paragraph(config.BUSINESS_COUNTRY),
-        Paragraph(_("PDF_CC_NUMBER", CC=config.BUSINESS_CC)),
-        Paragraph(_("PDF_VAT_NUMBER", CC=config.BUSINESS_VAT)),
+        Paragraph(_("PDF_CC_NUMBER", cc=config.BUSINESS_CC)),
+        Paragraph(_("PDF_VAT_NUMBER", vat=config.BUSINESS_VAT)),
     ]
 
     # Right 2 columns.
@@ -186,7 +186,7 @@ def _build_refund_lines(
 
     # VAT
     vat_head_p = Paragraph(
-        _("PDF_VAT_PERCENTAGE", vat_percentage=order.vat_percentage),
+        _("PDF_VAT_PERCENTAGE", vat_percentage=str(order.vat_percentage)),
         font=FONT_BOLD,
         horizontal_alignment=Alignment.RIGHT,
     )

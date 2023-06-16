@@ -38,7 +38,7 @@
     "MAIL_CONTACT_MESSAGE": "Message: %(message)s",
     "MAIL_CONTACT_SUBJECT": "%(business_name)s Contact",
     "MAIL_CONTACT_TITLE": "Contact Form",
-    "MAIL_ORDER_PAID_FILENAME": "Invoice #%(order_id)s.pdf",
+    "MAIL_ORDER_PAID_FILENAME": "Invoice #%(invoice_id)s.pdf",
     "MAIL_ORDER_PAID_P1": "We have succesfully processed your payment.",
     "MAIL_ORDER_PAID_P2": "Please see the attachment for your order details.",
     "MAIL_ORDER_RECEIVED_P1": "Thank you for your order at %(business_name)s.",
@@ -79,5 +79,5 @@
     "PDF_SUBTOTAL": "Subtotal",
     "PDF_TOTAL": "Total",
     "PDF_VAT_NUMBER": "VAT: %(vat)s",
-    "PDF_VAT_PERCENTAGE": "VAT %(vat_percentage)s%"
+    "PDF_VAT_PERCENTAGE": "VAT %(vat_percentage)s%%"
 }

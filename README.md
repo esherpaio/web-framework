@@ -8,14 +8,18 @@ This repository is a custom web framework for clients of Enlarge.
 
 Additions:
 - Email over SMTP
+### 2023-06-15
+
+Improvements:
+- Issues with % symbol in translations fixed
 
 ### 2023-06-14
 
+Removals:
+- Remove pycodestyle
+
 Improvements:
 - Change the way emails are send over the API
-
-Deprecated:
-- Remove pycodestyle
 
 ### 2023-06-12
 
@@ -25,6 +29,9 @@ Additions:
 Improvements:
 - Created all translations in EN and NL
 
+Additions:
+- Utility to synchronize translations
+
 ### 2023-06-10
 
 Improvements:
@@ -32,12 +39,7 @@ Improvements:
 
 ### 2023-06-09
 
-Additions:
-- A changelog
-- Translations module
-- Example config
-
-Deprecated:
+Removals:
 - CACHE_MIMETYPE is removed due to big variations between projects
 
 Improvements:
@@ -48,6 +50,9 @@ Improvements:
 - Emails
     - Possibility to hide the unsubscribe element in an email
     - The render_email() function kwargs have been changed
-
-Bugs:
 - APP_DEBUG was not correctly loaded as a boolean
+
+Additions:
+- A changelog
+- Translations module
+- Example config

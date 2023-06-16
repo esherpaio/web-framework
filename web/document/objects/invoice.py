@@ -196,7 +196,7 @@ def _build_order_lines(
 
     # VAT
     vat_head_p = Paragraph(
-        _("PDF_VAT_PERCENTAGE", vat_percentage=order.vat_percentage),
+        _("PDF_VAT_PERCENTAGE", vat_percentage=str(order.vat_percentage)),
         font=FONT_BOLD,
         horizontal_alignment=Alignment.RIGHT,
     )
