@@ -49,8 +49,9 @@ def send_email(
     blob_type: str = None,
 ) -> None:
     # Check environment variables
-    if not config.BUSINESS_EMAIL:
-        raise EnvironmentError("Variable `BUSINESS_EMAIL` is not set")
+    from_ = config.EMAIL_OVERRIDE or config.BUSINESS_EMAIL
+    if not from_:
+        raise EnvironmentError("No email address is configured")
     # Create list of unique to-addresses
     to = list(set(to))
     # Try to send over SMTP
@@ -60,16 +61,17 @@ def send_email(
         and config.SMTP_USERNAME
         and config.SMTP_PASSWORD
     ):
-        _send_over_smtp(to, subject, html)
+        _send_over_smtp(from_, to, subject, html)
     # Try to send over SendGrid
     elif config.SENDGRID_KEY:
-        _send_over_sengrid(to, subject, html, blob_str, blob_name, blob_type)
+        _send_over_sengrid(from_, to, subject, html, blob_str, blob_name, blob_type)
     # No email sending method is configured
     else:
         raise EnvironmentError("No email sending method is configured")
 
 
 def _send_over_smtp(
+    from_: str,
     to: list[str],
     subject: str,
     html: str,
@@ -77,15 +79,14 @@ def _send_over_smtp(
     # Build the message
     msg = MIMEText(html, _subtype="html")
     msg["Subject"] = subject
-    msg["From"] = config.BUSINESS_EMAIL
-
+    msg["From"] = from_
     # Send the message
     try:
         conn = SMTP(host=config.SMTP_HOST, port=config.SMTP_PORT)
         conn.set_debuglevel(False)
         conn.login(config.SMTP_USERNAME, config.SMTP_PASSWORD)
         try:
-            conn.sendmail(config.BUSINESS_EMAIL, to, msg.as_string())
+            conn.sendmail(from_, to, msg.as_string())
         finally:
             conn.quit()
     except Exception as error:
@@ -93,6 +94,7 @@ def _send_over_smtp(
 
 
 def _send_over_sengrid(
+    from_: str,
     to: list[str],
     subject: str,
     html: str,
@@ -100,14 +102,13 @@ def _send_over_sengrid(
     blob_name: str = None,
     blob_type: str = None,
 ) -> None:
-    # Create an email
+    # Build the email
     mail = Mail(
-        from_email=config.BUSINESS_EMAIL,
+        from_email=from_,
         to_emails=to,
         subject=subject,
         html_content=html,
     )
-
     # Add attachment
     if blob_str and blob_name and blob_type:
         attachment = Attachment(
@@ -117,7 +118,6 @@ def _send_over_sengrid(
             disposition="attachment",
         )
         mail.add_attachment(attachment)
-
     # Send the email
     try:
         sendgrid = SendGridAPIClient(config.SENDGRID_KEY)
