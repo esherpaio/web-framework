@@ -29,7 +29,7 @@ def gen_refund(
     margin = Decimal(30)
     layout = SingleColumnLayout(page, margin, margin)
 
-    layout.add(Image(config.EMAIL_LOGO_URL, width=Decimal(300), height=Decimal(35)))
+    layout.add(Image(config.WEBSITE_LOGO_URL, width=Decimal(300), height=Decimal(35)))
     layout.add(Paragraph(_("PDF_REFUND"), font=FONT_BOLD, font_size=FONT_SIZE_TITLE))
     layout.add(_build_refund_info(order, invoice, refund))
 

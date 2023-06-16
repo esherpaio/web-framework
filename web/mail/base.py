@@ -1,11 +1,14 @@
 import base64
 import os
+from email.mime.text import MIMEText
+from smtplib import SMTP_SSL as SMTP
 
 import jinja2
 from sendgrid import Attachment, Mail, SendGridAPIClient
 
 from web import config
 from web.helper.logger import logger
+from web.i18n.base import _
 
 
 def render_email(
@@ -46,18 +49,60 @@ def send_email(
     blob_type: str = None,
 ) -> None:
     # Check environment variables
-    if config.EMAIL_FROM is None:
-        raise EnvironmentError("Variable `EMAIL_FROM` is not set")
-    if config.SENDGRID_KEY is None:
-        raise EnvironmentError("Variable `SENDGRID_KEY` is not set")
-
+    if not config.BUSINESS_EMAIL:
+        raise EnvironmentError("Variable `BUSINESS_EMAIL` is not set")
     # Create list of unique to-addresses
-    # Sendgrid does not allow duplicates
     to = list(set(to))
+    # Try to send over SMTP
+    if (
+        config.SMTP_HOST
+        and config.SMTP_PORT
+        and config.SMTP_USERNAME
+        and config.SMTP_PASSWORD
+    ):
+        _send_over_smtp(to, subject, html)
+    # Try to send over SendGrid
+    elif config.SENDGRID_KEY:
+        _send_over_sengrid(to, subject, html, blob_str, blob_name, blob_type)
+    # No email sending method is configured
+    else:
+        raise EnvironmentError("No email sending method is configured")
 
+
+def _send_over_smtp(
+    to: list[str],
+    subject: str,
+    html: str,
+) -> None:
+    # Build the message
+    msg = MIMEText(html, _subtype="html")
+    msg["Subject"] = subject
+    msg["From"] = config.BUSINESS_EMAIL
+
+    # Send the message
+    try:
+        conn = SMTP(host=config.SMTP_HOST, port=config.SMTP_PORT)
+        conn.set_debuglevel(False)
+        conn.login(config.SMTP_USERNAME, config.SMTP_PASSWORD)
+        try:
+            conn.sendmail(config.BUSINESS_EMAIL, to, msg.as_string())
+        finally:
+            conn.quit()
+    except Exception as error:
+        logger.critical(error)
+
+
+def _send_over_sengrid(
+    to: list[str],
+    subject: str,
+    html: str,
+    blob_str: str = None,
+    blob_name: str = None,
+    blob_type: str = None,
+) -> None:
     # Create an email
     mail = Mail(
-        from_email=config.EMAIL_FROM,
+        from_email=config.BUSINESS_EMAIL,
         to_emails=to,
         subject=subject,
         html_content=html,
@@ -79,9 +124,3 @@ def send_email(
         sendgrid.send(mail)
     except Exception as error:
         logger.critical(error)
-
-
-def pdf_to_string(path: str) -> str:
-    with open(path, "rb") as file:
-        data = file.read()
-    return base64.b64encode(data).decode()
