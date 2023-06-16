@@ -22,7 +22,11 @@ def env_var(
         raise KeyError(f"Environment variable {key} is not set")
     # Parse value
     if as_int:
-        return int(value)
+        try:
+            return int(value)
+        except ValueError:
+            if not optional:
+                raise ValueError(f"Environment variable {key} is not an integer")
     if as_boolean:
         return value in ["true", "1"]
     # Set value

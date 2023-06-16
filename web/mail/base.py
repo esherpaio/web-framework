@@ -124,3 +124,27 @@ def _send_over_sengrid(
         sendgrid.send(mail)
     except Exception as error:
         logger.critical(error)
+
+
+if __name__ == "__main__":
+    # Build the message
+    msg = MIMEText("Test", _subtype="html")
+    msg["Subject"] = "Test"
+    msg["From"] = "info@mertenskeukenambacht.nl"
+    # Send the message
+    try:
+        conn = SMTP("mwp10.cloud86-host.nl", port=465)
+        conn.set_debuglevel(False)
+        conn.login("info@mertenskeukenambacht.nl", "Kayvera001!")
+        try:
+            conn.sendmail(
+                "info@mertenskeukenambacht.nl",
+                ["contact@enlarge-online.nl"],
+                msg.as_string(),
+            )
+        except Exception as error:
+            logger.critical(error, exc_info=True)
+        finally:
+            conn.quit()
+    except Exception as error:
+        logger.critical(error, exc_info=True)
