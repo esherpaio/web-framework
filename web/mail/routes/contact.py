@@ -18,7 +18,7 @@ def send_contact_business(
         _("MAIL_CONTACT_MESSAGE", message=message),
     ]
     html = render_email(title, paragraphs)
-    send_email([config.EMAIL_TO], subject, html)
+    send_email([config.BUSINESS_EMAIL], subject, html)
 
 
 def send_contact_customer(
@@ -34,3 +34,13 @@ def send_contact_customer(
     ]
     html = render_email(title, paragraphs)
     send_email([email], subject, html)
+
+
+if __name__ == "__main__":
+    send_contact_business(
+        email="contact@enlarge-online.nl",
+        name="John Doe",
+        message="Hello world",
+        company="Enlarge Online",
+        phone="+31612345678",
+    )

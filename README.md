@@ -4,6 +4,11 @@ This repository is a custom web framework for clients of Enlarge.
 
 ## Changelog
 
+### 2023-06-16
+
+Additions:
+- Email over SMTP
+
 ### 2023-06-14
 
 Improvements:
@@ -14,7 +19,7 @@ Deprecated:
 
 ### 2023-06-12
 
-Added:
+Additions:
 - Utility to synchronize translations
 
 Improvements:

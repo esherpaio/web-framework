@@ -11,8 +11,6 @@
   "BUSINESS_VAT_REVERSE_CHARGE": false,
   "BUSINESS_ZIP_CODE": "1234AB",
   "CDN_AUTO_NAMING": true,
-  "EMAIL_LOGO_URL": "https://www.google.nl/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png",
-  "EMAIL_UNSUBSCRIBE_URL": "https://www.google.nl/",
   "ENDPOINT_ERROR": null,
   "ENDPOINT_HOME": null,
   "ENDPOINT_LOGIN": null,
@@ -35,5 +33,6 @@
   "WEBSITE_HEX_COLOR": "#4285F4",
   "WEBSITE_LANGUAGE_CODE": "en",
   "WEBSITE_LOCALE": "nl-nl",
+  "WEBSITE_LOGO_URL": "https://www.google.nl/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png",
   "WEBSITE_NAME": "Enlarge"
 }
