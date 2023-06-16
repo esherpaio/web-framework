@@ -6,6 +6,9 @@ This repository is a custom web framework for clients of Enlarge.
 
 ### 2023-06-16
 
+Improvements:
+- Loading integers from environment variables bug fix
+
 Additions:
 - Email over SMTP
 - EMAIL_OVERRIDE as config variable
@@ -24,9 +27,6 @@ Improvements:
 - Change the way emails are send over the API
 
 ### 2023-06-12
-
-Additions:
-- Utility to synchronize translations
 
 Improvements:
 - Created all translations in EN and NL
