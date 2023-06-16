@@ -24,7 +24,7 @@ def env_var(
     if as_int:
         try:
             return int(value)
-        except ValueError:
+        except (ValueError, TypeError):
             if not optional:
                 raise ValueError(f"Environment variable {key} is not an integer")
     if as_boolean:
