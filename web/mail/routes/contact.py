@@ -11,7 +11,7 @@ def send_contact_business(
     phone: str | None = None,
     **kwargs,
 ) -> None:
-    to_ = config.EMAIL_OVERRIDE or config.BUSINESS_EMAIL
+    to = [config.EMAIL_OVERRIDE or config.BUSINESS_EMAIL]
     subject = _("MAIL_CONTACT_SUBJECT", business_name=config.BUSINESS_NAME)
     title = _("MAIL_CONTACT_TITLE")
     paragraphs = [
@@ -19,7 +19,7 @@ def send_contact_business(
         _("MAIL_CONTACT_MESSAGE", message=message),
     ]
     html = render_email(title, paragraphs)
-    send_email(to_, subject, html)
+    send_email(to, subject, html)
 
 
 def send_contact_customer(
@@ -27,7 +27,7 @@ def send_contact_customer(
     message: str,
     **kwargs,
 ) -> None:
-    to_ = [email]
+    to = [email]
     subject = _("MAIL_CONTACT_SUBJECT", business_name=config.BUSINESS_NAME)
     title = _("MAIL_CONTACT_TITLE")
     paragraphs = [
@@ -35,7 +35,7 @@ def send_contact_customer(
         _("MAIL_CONTACT_MESSAGE", message=message),
     ]
     html = render_email(title, paragraphs)
-    send_email(to_, subject, html)
+    send_email(to, subject, html)
 
 
 if __name__ == "__main__":
