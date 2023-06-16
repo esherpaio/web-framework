@@ -8,6 +8,8 @@ This repository is a custom web framework for clients of Enlarge.
 
 Additions:
 - Email over SMTP
+- EMAIL_OVERRIDE as config variable
+
 ### 2023-06-15
 
 Improvements:

@@ -96,6 +96,7 @@ SOCIAL_PINTEREST: str | None = config_var("SOCIAL_PINTEREST", optional=True)
 SOCIAL_TWITTER: str | None = config_var("SOCIAL_TWITTER", optional=True)
 SOCIAL_YOUTUBE: str | None = config_var("SOCIAL_YOUTUBE", optional=True)
 
+EMAIL_OVERRIDE: str = env_var("EMAIL_OVERRIDE", optional=True)
 SENDGRID_KEY: str = env_var("SENDGRID_KEY", optional=True)
 SMTP_HOST: str = env_var("SMTP_HOST", optional=True)
 SMTP_PASSWORD: str = env_var("SMTP_PASSWORD", optional=True)
