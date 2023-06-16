@@ -74,7 +74,7 @@ def post_users() -> Response:
         _external=True,
     )
     send_verification_url(
-        to=email,
+        email=email,
         verification_url=verification_url,
     )
 
@@ -142,7 +142,7 @@ def patch_users_id(user_id: int) -> Response:
                 verification_key=verification.key,
                 _external=True,
             )
-            send_new_password(to=user.email, reset_url=reset_url)
+            send_new_password(email=user.email, reset_url=reset_url)
             return response(200, _Text.PASSWORD_REQUEST_SEND)
 
         # Authorize request with verification_key
