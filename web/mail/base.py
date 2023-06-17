@@ -77,12 +77,12 @@ def _send_over_smtp(
     html: str,
 ) -> None:
     # Build the message
-    msg = MIMEText(html, _subtype="html")
+    msg = MIMEText(html, "html")
     msg["Subject"] = subject
     msg["From"] = from_
     # Send the message
     try:
-        conn = SMTP(host=config.SMTP_HOST, port=config.SMTP_PORT)
+        conn = SMTP(config.SMTP_HOST, port=config.SMTP_PORT)
         conn.set_debuglevel(False)
         conn.login(config.SMTP_USERNAME, config.SMTP_PASSWORD)
         try:
@@ -124,27 +124,3 @@ def _send_over_sengrid(
         sendgrid.send(mail)
     except Exception as error:
         logger.critical(error)
-
-
-if __name__ == "__main__":
-    # Build the message
-    msg = MIMEText("Test", _subtype="html")
-    msg["Subject"] = "Test"
-    msg["From"] = "info@mertenskeukenambacht.nl"
-    # Send the message
-    try:
-        conn = SMTP("REDACTED", port=465)
-        conn.set_debuglevel(False)
-        conn.login("info@mertenskeukenambacht.nl", "REDACTED")
-        try:
-            conn.sendmail(
-                "info@mertenskeukenambacht.nl",
-                ["contact@enlarge-online.nl"],
-                msg.as_string(),
-            )
-        except Exception as error:
-            logger.critical(error, exc_info=True)
-        finally:
-            conn.quit()
-    except Exception as error:
-        logger.critical(error, exc_info=True)

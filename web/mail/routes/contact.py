@@ -36,13 +36,3 @@ def send_contact_customer(
     ]
     html = render_email(title, paragraphs)
     send_email(to, subject, html)
-
-
-if __name__ == "__main__":
-    send_contact_business(
-        email="contact@enlarge-online.nl",
-        name="John Doe",
-        message="Hello world",
-        company="Enlarge Online",
-        phone="+31612345678",
-    )
