@@ -21,11 +21,11 @@ def post_emails_contact() -> Response:
 
     if template_id == "contact":
         send_contact_business(**data)
-        send_contact_customer(**data)
+        send_contact_customer(email=data["email"], message=data["message"])
         return response(200, _Text.CONTACT_SUCCESS)
     elif template_id == "custom_1":
         send_custom_1(**data)
-        send_contact_customer(**data)
+        send_contact_customer(email=data["email"], message=data["message"])
         return response(200, _Text.CONTACT_SUCCESS)
     else:
         return response(403, _Text.INVALID_TEMPLATE_ID)

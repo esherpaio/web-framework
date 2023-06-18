@@ -4,6 +4,14 @@ This repository is a custom web framework for clients of Enlarge.
 
 ## Changelog
 
+### 2023-06-18
+
+Improvements:
+- Email API small bug fixes
+
+Additions:
+- Email template for Mertens Keukenambacht
+
 ### 2023-06-16
 
 Improvements:
