@@ -6,6 +6,7 @@ from web.blueprint.api_v1 import api_v1_bp
 from web.helper.api import json_get, response
 from web.i18n.base import _
 from web.mail.routes.contact import send_contact_business, send_contact_customer
+from web.mail.routes.custom import send_custom_1
 
 
 class _Text(StrEnum):
@@ -20,6 +21,10 @@ def post_emails_contact() -> Response:
 
     if template_id == "contact":
         send_contact_business(**data)
+        send_contact_customer(**data)
+        return response(200, _Text.CONTACT_SUCCESS)
+    elif template_id == "custom_1":
+        send_custom_1(**data)
         send_contact_customer(**data)
         return response(200, _Text.CONTACT_SUCCESS)
     else:
