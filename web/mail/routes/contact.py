@@ -9,7 +9,6 @@ def send_contact_business(
     message: str,
     company: str | None = None,
     phone: str | None = None,
-    **kwargs,
 ) -> None:
     to = [config.EMAIL_OVERRIDE or config.BUSINESS_EMAIL]
     subject = _("MAIL_CONTACT_SUBJECT", business_name=config.BUSINESS_NAME)
@@ -25,7 +24,6 @@ def send_contact_business(
 def send_contact_customer(
     email: str,
     message: str,
-    **kwargs,
 ) -> None:
     to = [email]
     subject = _("MAIL_CONTACT_SUBJECT", business_name=config.BUSINESS_NAME)
