@@ -39,7 +39,7 @@
     "MAIL_CONTACT_MESSAGE": "Message: %(message)s",
     "MAIL_CONTACT_SUBJECT": "%(business_name)s Contact",
     "MAIL_CONTACT_TITLE": "Contact Form",
-    "MAIL_CUSTOM_1_P1": "Name: %(name)s<br>Email: %(email)s<br>Phone: %(phone)sFound by: %(found_by)s",
+    "MAIL_CUSTOM_1_P1": "Name: %(name)s<br>Email: %(email)s<br>Phone: %(phone)s<br>Found by: %(found_by)s",
     "MAIL_ORDER_PAID_FILENAME": "Invoice #%(invoice_id)s.pdf",
     "MAIL_ORDER_PAID_P1": "We have succesfully processed your payment.",
     "MAIL_ORDER_PAID_P2": "Please see the attachment for your order details.",

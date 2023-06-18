@@ -39,7 +39,7 @@
     "MAIL_CONTACT_MESSAGE": "Bericht: %(message)s",
     "MAIL_CONTACT_SUBJECT": "%(business_name)s Contact",
     "MAIL_CONTACT_TITLE": "Contactformulier",
-    "MAIL_CUSTOM_1_P1": "Naam: %(name)s<br>Email: %(email)s<br>Telefoon: %(phone)sGevonden door: %(found_by)s",
+    "MAIL_CUSTOM_1_P1": "Naam: %(name)s<br>Email: %(email)s<br>Telefoon: %(phone)s<br>Gevonden door: %(found_by)s",
     "MAIL_ORDER_PAID_FILENAME": "Factuur #%(invoice_id)s.pdf",
     "MAIL_ORDER_PAID_P1": "We hebben uw betaling succesvol verwerkt.",
     "MAIL_ORDER_PAID_P2": "Zie de bijlage voor uw bestelgegevens.",
