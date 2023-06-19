@@ -11,6 +11,7 @@ Improvements:
 
 Additions:
 - The email method must be explicitly mentioned in env var EMAIL_METHOD
+- Unit tests
 
 ### 2023-06-18
 
