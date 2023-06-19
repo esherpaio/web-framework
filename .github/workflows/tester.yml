@@ -3,7 +3,7 @@ name: Tester
 on: [ push, pull_request ]
 
 env:
-  CONFIG_PATH: ${{ secrets.CONFIG_PATH }}
+  CONFIG_PATH: ${{ vars.CONFIG_PATH }}
 
 jobs:
   lint:
