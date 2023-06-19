@@ -3,7 +3,27 @@ name: Tester
 on: [ push, pull_request ]
 
 env:
+  APP_DEBUG: ${{ vars.APP_DEBUG }}
+  APP_SECRET: ${{ vars.APP_SECRET }}
+  CDN_HOSTNAME: ${{ vars.CDN_HOSTNAME }}
+  CDN_PASSWORD: ${{ secrets.CDN_PASSWORD }}
+  CDN_URL: ${{ vars.CDN_URL }}
+  CDN_USERNAME: ${{ vars.CDN_USERNAME }}
+  CDN_ZONE: ${{ vars.CDN_ZONE }}
   CONFIG_PATH: ${{ vars.CONFIG_PATH }}
+  DATABASE_URL: ${{ vars.DATABASE_URL }}
+  EMAIL_METHOD: ${{ vars.EMAIL_METHOD }}
+  EMAIL_OVERRIDE: ${{ vars.EMAIL_OVERRIDE }}
+  GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+  GOOGLE_PLACE_ID: ${{ vars.GOOGLE_PLACE_ID }}
+  LOCALHOST: ${{ vars.LOCALHOST }}
+  MOLLIE_KEY: ${{ secrets.MOLLIE_KEY }}
+  SEED_EXTERNAL: ${{ vars.SEED_EXTERNAL }}
+  SENDGRID_KEY: ${{ secrets.SENDGRID_KEY }}
+  SMTP_HOST: ${{ vars.SMTP_HOST }}
+  SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
+  SMTP_PORT: ${{ vars.SMTP_PORT }}
+  SMTP_USERNAME: ${{ vars.SMTP_USERNAME }}
 
 jobs:
   lint:
