@@ -1,4 +1,4 @@
-name: Linter
+name: Tester
 
 on: [ push, pull_request ]
 
