@@ -90,10 +90,13 @@ def send_over_smtp(
     message["From"] = from_
     body = MIMEText(html, "html")
     message.attach(body)
-    blob_str = pdf_to_string(blob_path)
-    attachment = MIMEApplication(blob_str)
-    attachment.add_header("Content-Disposition", "attachment", filename=blob_name)
-    message.attach(attachment)
+
+    # Add attachment
+    if blob_path and blob_name:
+        blob_str = pdf_to_string(blob_path)
+        attachment = MIMEApplication(blob_str)
+        attachment.add_header("Content-Disposition", "attachment", filename=blob_name)
+        message.attach(attachment)
 
     # Send the message
     try:
