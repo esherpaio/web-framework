@@ -13,10 +13,12 @@ jobs:
       - uses: actions/setup-python@v3
         with:
           python-version: ${{ matrix.python-version }}
-      - run: |
+      - name: Install dependencies
+        run: |
           pip install --upgrade pip
           pip install -r requirements-dev.txt
-      - run: |
+      - name: Check with linters
+        run: |
           black . --check --quiet --diff --color
           isort . --check-only
           djlint . --check
