@@ -15,3 +15,9 @@ max_attribute_length=10
 max_line_length=100
 profile="jinja"
 use_gitignore=true
+
+[tool.pytest.ini_options]
+cache_dir="tests/.cache"
+faulthandler_timeout=2
+python_files="test_*.py"
+addopts="--maxfail=1"
