@@ -1,4 +1,4 @@
-name: Linter
+name: Tester
 
 on: [ push, pull_request ]
 
@@ -15,8 +15,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - run: |
           pip install --upgrade pip
+          pip install -r requirements.txt
           pip install -r requirements-dev.txt
       - run: |
-          black . --check --quiet --diff --color
-          isort . --check-only
-          djlint . --check
+          pytest .
