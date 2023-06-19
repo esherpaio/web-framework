@@ -1,5 +1,7 @@
 import base64
 import os
+from email.mime.application import MIMEApplication
+from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from smtplib import SMTP_SSL as SMTP
 
@@ -9,6 +11,7 @@ from sendgrid import Attachment, Mail, SendGridAPIClient
 from web import config
 from web.helper.logger import logger
 from web.i18n.base import _
+from web.mail.utils import pdf_to_string
 
 
 def render_email(
@@ -44,9 +47,8 @@ def send_email(
     to: list[str],
     subject: str,
     html: str,
-    blob_str: str = None,
+    blob_path: str = None,
     blob_name: str = None,
-    blob_type: str = None,
 ) -> None:
     # Check environment variables
     from_ = config.EMAIL_OVERRIDE or config.BUSINESS_EMAIL
@@ -65,47 +67,54 @@ def send_email(
             and config.SMTP_PASSWORD
         ):
             raise EnvironmentError("SMTP is not configured")
-        _send_over_smtp(from_, to, subject, html)
+        send_over_smtp(from_, to, subject, html, blob_path, blob_name)
     elif config.EMAIL_METHOD == "sendgrid":
         if not config.SENDGRID_KEY:
             raise EnvironmentError("SendGrid is not configured")
-        _send_over_sengrid(from_, to, subject, html, blob_str, blob_name, blob_type)
+        send_over_sengrid(from_, to, subject, html, blob_path, blob_name)
     else:
         raise EnvironmentError("No email method is configured")
 
 
-def _send_over_smtp(
+def send_over_smtp(
     from_: str,
     to: list[str],
     subject: str,
     html: str,
+    blob_path: str = None,
+    blob_name: str = None,
 ) -> None:
     # Build the message
-    msg = MIMEText(html, "html")
-    msg["Subject"] = subject
-    msg["From"] = from_
+    message = MIMEMultipart()
+    message["Subject"] = subject
+    message["From"] = from_
+    body = MIMEText(html, "html")
+    message.attach(body)
+    blob_str = pdf_to_string(blob_path)
+    attachment = MIMEApplication(blob_str)
+    attachment.add_header("Content-Disposition", "attachment", filename=blob_name)
+    message.attach(attachment)
 
     # Send the message
     try:
-        conn = SMTP(config.SMTP_HOST, port=config.SMTP_PORT)
+        conn = SMTP(config.SMTP_HOST, port=config.SMTP_PORT, timeout=10)
         conn.set_debuglevel(False)
         conn.login(config.SMTP_USERNAME, config.SMTP_PASSWORD)
         try:
-            conn.sendmail(from_, to, msg.as_string())
+            conn.sendmail(from_, to, message.as_string())
         finally:
             conn.quit()
     except Exception as error:
         logger.critical(error)
 
 
-def _send_over_sengrid(
+def send_over_sengrid(
     from_: str,
     to: list[str],
     subject: str,
     html: str,
-    blob_str: str = None,
+    blob_path: str = None,
     blob_name: str = None,
-    blob_type: str = None,
 ) -> None:
     # Build the email
     mail = Mail(
@@ -116,11 +125,11 @@ def _send_over_sengrid(
     )
 
     # Add attachment
-    if blob_str and blob_name and blob_type:
+    if blob_path and blob_name:
+        blob_str = pdf_to_string(blob_path, encode=True)
         attachment = Attachment(
             file_content=blob_str,
             file_name=blob_name,
-            file_type=blob_type,
             disposition="attachment",
         )
         mail.add_attachment(attachment)

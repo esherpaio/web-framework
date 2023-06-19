@@ -34,11 +34,9 @@ def send_order_paid(
     )
     title = _("MAIL_ORDER_TITLE", order_id=order_id)
     paragraphs = [_("MAIL_ORDER_PAID_P1"), _("MAIL_ORDER_PAID_P2")]
-    pdf_str = pdf_to_string(pdf_path)
     pdf_name = _("MAIL_ORDER_PAID_FILENAME", invoice_id=str(invoice_id))
-    pdf_type = "application/docs"
     html = render_email(title, paragraphs)
-    send_email(to, subject, html, pdf_str, pdf_name, pdf_type)
+    send_email(to, subject, html, pdf_path, pdf_name)
 
 
 def send_order_shipped(
@@ -74,8 +72,6 @@ def send_order_refunded(
     )
     title = _("MAIL_ORDER_TITLE", order_id=order_id)
     paragraphs = [_("MAIL_ORDER_REFUNDED_P1"), _("MAIL_ORDER_REFUNDED_P2")]
-    pdf_str = pdf_to_string(pdf_path)
     pdf_name = _("MAIL_ORDER_REFUNDED_FILENAME", refund_id=refund_id)
-    pdf_type = "application/docs"
     html = render_email(title, paragraphs)
-    send_email(to, subject, html, pdf_str, pdf_name, pdf_type)
+    send_email(to, subject, html, pdf_path, pdf_name)

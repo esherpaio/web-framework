@@ -8,6 +8,8 @@ This repository is a custom web framework for clients of Enlarge.
 
 Improvements:
 - Remove optional from config variables
+- Support for sending attachments over SMTP
+- Simplified mailing functions
 
 Additions:
 - The email method must be explicitly mentioned in env var EMAIL_METHOD

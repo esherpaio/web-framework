@@ -29,7 +29,6 @@ def config_var(key: str) -> any:
     """Get a config variable."""
     # Get config path
     path = env_var("CONFIG_PATH")
-    print("config_path", path)
     if not os.path.isfile(path):
         raise FileNotFoundError(f"Config file {path} does not exist")
     # Get value from config file
