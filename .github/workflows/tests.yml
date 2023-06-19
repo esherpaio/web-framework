@@ -5,9 +5,6 @@ on: [ push, pull_request ]
 jobs:
   lint:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./app
     strategy:
       matrix:
         python-version: ["3.11"]
