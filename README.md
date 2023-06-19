@@ -4,6 +4,14 @@ This repository is a custom web framework for clients of Enlarge.
 
 ## Changelog
 
+### 2023-06-19
+
+Improvements:
+- Remove optional from config variables
+
+Additions:
+- The email method must be explicitly mentioned in env var EMAIL_METHOD
+
 ### 2023-06-18
 
 Improvements:
