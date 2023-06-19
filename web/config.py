@@ -8,25 +8,16 @@ load_dotenv()
 
 
 @lru_cache
-def env_var(
-    key: str,
-    as_int: bool = False,
-    as_boolean: bool = False,
-    optional: bool = False,
-) -> str:
+def env_var(key: str, as_int: bool = False, as_boolean: bool = False) -> str:
     """Get an environment variable."""
     # Get value from environment
     value = os.getenv(key)
-    # Check if key is set
-    if (value is None or value == "") and not optional:
-        raise KeyError(f"Environment variable {key} is not set")
     # Parse value
     if as_int:
         try:
             return int(value)
         except (ValueError, TypeError):
-            if not optional:
-                raise ValueError(f"Environment variable {key} is not an integer")
+            pass
     if as_boolean:
         return value in ["true", "1"]
     # Set value
@@ -34,10 +25,7 @@ def env_var(
 
 
 @lru_cache
-def config_var(
-    key: str,
-    optional: bool = False,
-) -> any:
+def config_var(key: str) -> any:
     """Get a config variable."""
     # Get config path
     path = env_var("CONFIG_PATH")
@@ -47,9 +35,6 @@ def config_var(
     with open(path, "r") as file:
         data = json.loads(file.read())
     value = data.get(key)
-    # Check if key is set
-    if value is None and not optional:
-        raise KeyError(f"Config variable {key} is not set")
     # Set value
     return value
 
@@ -78,34 +63,35 @@ CDN_USERNAME: str = env_var("CDN_USERNAME")
 CDN_VIDEO_EXTS: list[str] = ["mp4"]
 CDN_ZONE: str = env_var("CDN_ZONE")
 
-ENDPOINT_ERROR: str | None = config_var("ENDPOINT_ERROR", optional=True)
-ENDPOINT_HOME: str | None = config_var("ENDPOINT_HOME", optional=True)
-ENDPOINT_LOGIN: str | None = config_var("ENDPOINT_LOGIN", optional=True)
-ENDPOINT_USER: str | None = config_var("ENDPOINT_USER", optional=True)
+ENDPOINT_ERROR: str | None = config_var("ENDPOINT_ERROR")
+ENDPOINT_HOME: str | None = config_var("ENDPOINT_HOME")
+ENDPOINT_LOGIN: str | None = config_var("ENDPOINT_LOGIN")
+ENDPOINT_USER: str | None = config_var("ENDPOINT_USER")
 
 DATABASE_URL: str = env_var("DATABASE_URL")
-GOOGLE_API_KEY: str = env_var("GOOGLE_API_KEY", optional=True)
-GOOGLE_PLACE_ID: str = env_var("GOOGLE_PLACE_ID", optional=True)
-LOCALHOST: str = env_var("LOCALHOST", optional=True)
-MOLLIE_KEY: str = env_var("MOLLIE_KEY", optional=True)
+GOOGLE_API_KEY: str = env_var("GOOGLE_API_KEY")
+GOOGLE_PLACE_ID: str = env_var("GOOGLE_PLACE_ID")
+LOCALHOST: str = env_var("LOCALHOST")
+MOLLIE_KEY: str = env_var("MOLLIE_KEY")
 SEED_EXTERNAL: bool = env_var("SEED_EXTERNAL", as_boolean=True)
 
 ROBOT_DEFAULT_TAGS: str = config_var("ROBOT_DEFAULT_TAGS")
 ROBOT_DISALLOW_URLS: list[str] = config_var("ROBOT_DISALLOW_URLS")
 
-SOCIAL_DISCORD: str | None = config_var("SOCIAL_DISCORD", optional=True)
-SOCIAL_FACEBOOK: str | None = config_var("SOCIAL_FACEBOOK", optional=True)
-SOCIAL_INSTAGRAM: str | None = config_var("SOCIAL_INSTAGRAM", optional=True)
-SOCIAL_PINTEREST: str | None = config_var("SOCIAL_PINTEREST", optional=True)
-SOCIAL_TWITTER: str | None = config_var("SOCIAL_TWITTER", optional=True)
-SOCIAL_YOUTUBE: str | None = config_var("SOCIAL_YOUTUBE", optional=True)
+SOCIAL_DISCORD: str | None = config_var("SOCIAL_DISCORD")
+SOCIAL_FACEBOOK: str | None = config_var("SOCIAL_FACEBOOK")
+SOCIAL_INSTAGRAM: str | None = config_var("SOCIAL_INSTAGRAM")
+SOCIAL_PINTEREST: str | None = config_var("SOCIAL_PINTEREST")
+SOCIAL_TWITTER: str | None = config_var("SOCIAL_TWITTER")
+SOCIAL_YOUTUBE: str | None = config_var("SOCIAL_YOUTUBE")
 
-EMAIL_OVERRIDE: str = env_var("EMAIL_OVERRIDE", optional=True)
-SENDGRID_KEY: str = env_var("SENDGRID_KEY", optional=True)
-SMTP_HOST: str = env_var("SMTP_HOST", optional=True)
-SMTP_PASSWORD: str = env_var("SMTP_PASSWORD", optional=True)
-SMTP_PORT: int = env_var("SMTP_PORT", as_int=True, optional=True)
-SMTP_USERNAME: str = env_var("SMTP_USERNAME", optional=True)
+EMAIL_METHOD: str = env_var("EMAIL_METHOD")
+EMAIL_OVERRIDE: str = env_var("EMAIL_OVERRIDE")
+SENDGRID_KEY: str = env_var("SENDGRID_KEY")
+SMTP_HOST: str = env_var("SMTP_HOST")
+SMTP_PASSWORD: str = env_var("SMTP_PASSWORD")
+SMTP_PORT: int = env_var("SMTP_PORT", as_int=True)
+SMTP_USERNAME: str = env_var("SMTP_USERNAME")
 
 WEBSITE_COUNTRY_CODE: str = config_var("WEBSITE_COUNTRY_CODE")
 WEBSITE_FAVICON_URL: str = config_var("WEBSITE_FAVICON_URL")
