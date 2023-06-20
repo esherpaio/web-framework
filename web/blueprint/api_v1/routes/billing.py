@@ -11,16 +11,16 @@ from web.helper.security import get_access
 
 @api_v1_bp.post("/billings")
 def post_billings() -> Response:
-    address, _ = json_get("address", str, allow_empty=False)
-    city, _ = json_get("city", str, allow_empty=False)
-    company, _ = json_get("company", str, allow_empty=False)
+    address, _ = json_get("address", str, allow_empty_str=False)
+    city, _ = json_get("city", str, allow_empty_str=False)
+    company, _ = json_get("company", str, allow_empty_str=False)
     country_id, _ = json_get("country_id", int)
-    email, _ = json_get("email", str, allow_empty=False)
-    first_name, _ = json_get("first_name", str, allow_empty=False)
-    last_name, _ = json_get("last_name", str, allow_empty=False)
-    phone, _ = json_get("phone", str, allow_empty=False)
-    vat, _ = json_get("vat", str, allow_empty=False)
-    zip_code, _ = json_get("zip_code", str, allow_empty=False)
+    email, _ = json_get("email", str, allow_empty_str=False)
+    first_name, _ = json_get("first_name", str, allow_empty_str=False)
+    last_name, _ = json_get("last_name", str, allow_empty_str=False)
+    phone, _ = json_get("phone", str, allow_empty_str=False)
+    vat, _ = json_get("vat", str, allow_empty_str=False)
+    zip_code, _ = json_get("zip_code", str, allow_empty_str=False)
 
     with conn.begin() as s:
         # Insert billing
@@ -45,16 +45,16 @@ def post_billings() -> Response:
 
 @api_v1_bp.patch("/billings/<int:billing_id>")
 def patch_billings(billing_id: int) -> Response:
-    address, has_address = json_get("address", str, allow_empty=False)
-    city, has_city = json_get("city", str, allow_empty=False)
-    company, has_company = json_get("company", str, allow_empty=False)
+    address, has_address = json_get("address", str, allow_empty_str=False)
+    city, has_city = json_get("city", str, allow_empty_str=False)
+    company, has_company = json_get("company", str, allow_empty_str=False)
     country_id, has_country_id = json_get("country_id", int)
-    email, has_email = json_get("email", str, allow_empty=False)
-    first_name, has_first_name = json_get("first_name", str, allow_empty=False)
-    last_name, has_last_name = json_get("last_name", str, allow_empty=False)
-    phone, has_phone = json_get("phone", str, allow_empty=False)
-    vat, has_vat = json_get("vat", str, allow_empty=False)
-    zip_code, has_zip_code = json_get("zip_code", str, allow_empty=False)
+    email, has_email = json_get("email", str, allow_empty_str=False)
+    first_name, has_first_name = json_get("first_name", str, allow_empty_str=False)
+    last_name, has_last_name = json_get("last_name", str, allow_empty_str=False)
+    phone, has_phone = json_get("phone", str, allow_empty_str=False)
+    vat, has_vat = json_get("vat", str, allow_empty_str=False)
+    zip_code, has_zip_code = json_get("zip_code", str, allow_empty_str=False)
 
     with conn.begin() as s:
         # Authorize request

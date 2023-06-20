@@ -51,13 +51,13 @@ def json_get(
     type_: any,
     nullable: bool = True,
     default: any = None,
-    allow_empty: bool = False,
+    allow_empty_str: bool = True,
 ) -> tuple[any, bool] | None:
     # Get value and determine whether the key is contained
     value = request.json.get(key, default)
     has_key = key in request.json
     # Parse empty strings
-    if isinstance(value, str) and not value and allow_empty:
+    if value == "" and not allow_empty_str:
         value = None
     # Type checks
     if nullable and value is None:
