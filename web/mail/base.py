@@ -11,7 +11,7 @@ from sendgrid import Attachment, Mail, SendGridAPIClient
 from web import config
 from web.helper.logger import logger
 from web.i18n.base import _
-from web.mail.utils import pdf_to_string
+from web.mail.utils import file_to_str
 
 
 def render_email(
@@ -93,7 +93,7 @@ def send_over_smtp(
 
     # Add attachment
     if blob_path and blob_name:
-        blob_str = pdf_to_string(blob_path)
+        blob_str = file_to_str(blob_path)
         attachment = MIMEApplication(blob_str)
         attachment.add_header("Content-Disposition", "attachment", filename=blob_name)
         message.attach(attachment)
@@ -129,7 +129,7 @@ def send_over_sengrid(
 
     # Add attachment
     if blob_path and blob_name:
-        blob_str = pdf_to_string(blob_path, encode=True)
+        blob_str = file_to_str(blob_path, encode=True)
         attachment = Attachment(
             file_content=blob_str,
             file_name=blob_name,

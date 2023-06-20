@@ -4,10 +4,9 @@ from web.blueprint.api_v1 import api_v1_bp
 from web.blueprint.api_v1.utils.product import clean_html
 from web.database.client import conn
 from web.database.model import Product, ProductTypeId, Sku, UserRoleLevel
-from web.helper.api import ApiText, json_get, response
-from web.helper.security import authorize
+from web.helper.api import ApiText, authorize, json_get, response
 from web.helper.validation import gen_slug
-from web.seeder.decs import sync_after
+from web.seeder.decorators import sync_after
 from web.seeder.model.sku import SkuSyncer
 
 

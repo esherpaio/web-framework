@@ -10,6 +10,8 @@ Improvements:
 - More meta tags
 - Automatic generation of meta tags
 - Add img_url to Page database scheme
+- Add translations to Makefile
+- FSOs renaming
 
 ### 2023-06-19
 

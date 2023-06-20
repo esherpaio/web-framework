@@ -1,7 +1,7 @@
 from web import config
 from web.i18n.base import _
 from web.mail.base import render_email, send_email
-from web.mail.utils import pdf_to_string
+from web.mail.utils import file_to_str
 
 
 def send_order_received(

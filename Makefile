@@ -23,3 +23,10 @@ format:
 	isort .
 	black .
 	djlint . --reformat
+
+## TRANSLATIONS
+## ----------
+## translations : fix translations
+.PHONY: translations
+translations:
+	python3 -c 'from web.i18n.utils import sort_translations; sort_translations();'
