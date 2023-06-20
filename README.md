@@ -4,6 +4,13 @@ This repository is a custom web framework for clients of Enlarge.
 
 ## Changelog
 
+### 2023-06-20
+
+Improvements:
+- More meta tags
+- Automatic generation of meta tags
+- Add img_url to Page database scheme
+
 ### 2023-06-19
 
 Improvements:

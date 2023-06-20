@@ -9,7 +9,7 @@ from web import config
 from web.database.client import conn
 from web.database.model import Country, Currency, Language, User
 from web.helper.cache import cache
-from web.helper.locale import cur_locale, match_locale
+from web.helper.localization import cur_locale, match_locale
 
 
 class Header(StrEnum):
