@@ -53,7 +53,9 @@ def post_skus() -> Response:
                 slug = gen_slug("-".join(slug_parts))
 
                 # Insert sku
-                sku = Sku(product_id=product_id, slug=slug, is_visible=True)
+                sku = Sku(
+                    product_id=product_id, slug=slug, is_visible=True, unit_price=0
+                )
                 s.add(sku)
                 s.flush()
 
