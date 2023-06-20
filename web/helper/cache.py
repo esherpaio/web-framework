@@ -7,6 +7,8 @@ from web.helper.objects import Singleton
 
 
 class Cache(dict, metaclass=Singleton):
+    """A simple cache mechanism for objects and routes."""
+
     def route(self, f: Callable) -> Callable[..., Response]:
         def wrap(*args, **kwargs) -> Response:
             if request.full_path in self:

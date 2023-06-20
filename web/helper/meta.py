@@ -8,7 +8,7 @@ from web import config
 from web.database.model import Page
 
 
-class MetaLine(StrEnum):
+class MetaTag(StrEnum):
     LINK_APPLE_TOUCH_ICON = "<link rel='apple-touch-icon' href='%s'/>"
     LINK_CANONICAL = "<link rel='canonical' href='%s'/>"
     LINK_ICON = "<link rel='icon' href='%s'/>"
@@ -16,9 +16,7 @@ class MetaLine(StrEnum):
     META_DESCRIPTION = "<meta name='description' content='%s'/>"
     META_ROBOTS = "<meta name='robots' content='%s'/>"
     META_THEME_COLOR = "<meta name='theme-color' content='%s'/>"
-    META_VIEWPORT = (
-        "<meta name='viewport' content='width=device-width, initial-scale=1'/>"
-    )
+    META_VIEWPORT = "<meta name='viewport' content='width=device-width, initial-scale=1'/>"  # noqa: E501
     OG_DESCRIPTION = "<meta property='og:description' content='%s'/>"
     OG_LOCALE = "<meta property='og:locale' content='%s'/>"
     OG_PUBLISHER = "<meta property='article:publisher' content='%s'/>"
@@ -34,6 +32,8 @@ class MetaLine(StrEnum):
 
 
 class Meta:
+    """A class to generate meta tags."""
+
     def __init__(
         self,
         title: str | None = None,
@@ -111,46 +111,46 @@ class Meta:
     @property
     def tags(self) -> list[str]:
         # Meta
-        yield Markup(MetaLine.META_CHARSET)
-        yield Markup(MetaLine.META_VIEWPORT)
+        yield Markup(MetaTag.META_CHARSET)
+        yield Markup(MetaTag.META_VIEWPORT)
         if self.robots:
-            yield Markup(MetaLine.META_ROBOTS % self.robots)
+            yield Markup(MetaTag.META_ROBOTS % self.robots)
         if self.description:
-            yield Markup(MetaLine.META_DESCRIPTION % self.description)
+            yield Markup(MetaTag.META_DESCRIPTION % self.description)
         if self.hex_color:
-            yield Markup(MetaLine.META_THEME_COLOR % self.hex_color)
+            yield Markup(MetaTag.META_THEME_COLOR % self.hex_color)
         # Title
         if self.title:
-            yield Markup(MetaLine.TITLE % self.title)
-        # Links
+            yield Markup(MetaTag.TITLE % self.title)
+        # Link
         if self.canonical_url:
-            yield Markup(MetaLine.LINK_CANONICAL % self.canonical_url)
+            yield Markup(MetaTag.LINK_CANONICAL % self.canonical_url)
         if self.favicon_url:
-            yield Markup(MetaLine.LINK_ICON % self.favicon_url)
-            yield Markup(MetaLine.LINK_APPLE_TOUCH_ICON % self.favicon_url)
+            yield Markup(MetaTag.LINK_ICON % self.favicon_url)
+            yield Markup(MetaTag.LINK_APPLE_TOUCH_ICON % self.favicon_url)
         # Opengraph
         if self.canonical_url:
-            yield Markup(MetaLine.OG_URL % self.canonical_url)
+            yield Markup(MetaTag.OG_URL % self.canonical_url)
         if self.locale:
-            yield Markup(MetaLine.OG_LOCALE % self.locale)
+            yield Markup(MetaTag.OG_LOCALE % self.locale)
         if self.title:
-            yield Markup(MetaLine.OG_TITLE % self.title)
+            yield Markup(MetaTag.OG_TITLE % self.title)
         if self.description:
-            yield Markup(MetaLine.OG_DESCRIPTION % self.description)
+            yield Markup(MetaTag.OG_DESCRIPTION % self.description)
         if self.img_url:
-            yield Markup(MetaLine.OG_IMAGE % self.img_url)
+            yield Markup(MetaTag.OG_IMAGE % self.img_url)
         if self.website_name:
-            yield Markup(MetaLine.OG_SITE_NAME % self.website_name)
+            yield Markup(MetaTag.OG_SITE_NAME % self.website_name)
         if self.facebook_url:
-            yield Markup(MetaLine.OG_PUBLISHER % self.facebook_url)
+            yield Markup(MetaTag.OG_PUBLISHER % self.facebook_url)
         # Twitter
-        yield Markup(MetaLine.TWITTER_CARD)
+        yield Markup(MetaTag.TWITTER_CARD)
         if self.twitter_at:
-            yield Markup(MetaLine.TWITTER_SITE % self.twitter_at)
-            yield Markup(MetaLine.TWITTER_CREATOR % self.twitter_at)
+            yield Markup(MetaTag.TWITTER_SITE % self.twitter_at)
+            yield Markup(MetaTag.TWITTER_CREATOR % self.twitter_at)
 
 
-def gen_meta(page: Page = None) -> Meta:
+def gen_meta(page: Page | None = None) -> Meta:
     if isinstance(page, Page):
         return Meta(page.name, page.desc, page.robots, page.img_url)
     else:

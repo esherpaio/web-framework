@@ -5,14 +5,14 @@ from flask import current_app, request
 from web import config
 
 
-def set_locale(values: dict, locale: str = config.WEBSITE_LOCALE) -> None:
-    """Sets the locale on the values."""
+def set_locale(data: dict, locale: str = config.WEBSITE_LOCALE) -> None:
+    """Set the locale."""
 
-    values["_locale"] = locale
+    data["_locale"] = locale
 
 
 def cur_locale() -> str | None:
-    """Gets the locale."""
+    """Get the locale."""
 
     if request.endpoint:
         if "_locale" in request.view_args:
@@ -20,7 +20,7 @@ def cur_locale() -> str | None:
 
 
 def expects_locale(endpoint: str | None) -> bool:
-    """Determines whether a locale is expected."""
+    """Determine whether a locale is expected."""
 
     if endpoint:
         if current_app.url_map.is_endpoint_expecting(endpoint, "_locale"):
@@ -29,7 +29,7 @@ def expects_locale(endpoint: str | None) -> bool:
 
 
 def requires_locale(endpoint: str | None, values: dict) -> bool:
-    """Determines whether a locale is expected and not present."""
+    """Determine whether a locale is expected and not present."""
 
     return expects_locale(endpoint) and "_locale" not in values
 
@@ -39,7 +39,7 @@ def match_locale(locale: str) -> tuple[str | None, str | None]:
 
     match = re.fullmatch(r"^([a-z]{2})-([a-z]{2})$", locale)
     if match:
-        return match.groups()  # noqa
+        return match.groups()
     else:
         return None, None
 
@@ -50,7 +50,7 @@ def gen_locale(
 ) -> str:
     """Generate a locale using a language code and country code.
 
-    Both codes are in compliance with ISO standards.
+    Both codes are compliant with ISO standards.
     - Language ISO 639-1: https://simple.wikipedia.org/wiki/ISO_639-1.
     - Country ISO 3166: https://en.wikipedia.org/wiki/List_of_ISO_3166_country_codes.
     """

@@ -7,6 +7,8 @@ from web.database.model import Access
 
 
 def get_access(s: Session) -> Access:
+    """Get an access object for the current user."""
+
     user_id = current_user.get_id()
     user_key = current_user.key
     if not user_key:

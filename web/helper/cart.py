@@ -26,10 +26,7 @@ from web.helper.security import get_access
 def transfer_cart(
     f: Callable,
 ) -> Callable[..., Response]:
-    """Transfer a cart from one session to another.
-
-    To be used as a decorator on a login-endpoint.
-    """
+    """Transfer a cart from one session to another."""
 
     def wrap(*args, **kwargs) -> Response:
         with conn.begin() as s:
@@ -37,13 +34,11 @@ def transfer_cart(
             prev_access = get_access(s)
             resp = f(*args, **kwargs)
             curr_access = get_access(s)
-
             # Transfer cart
             prev_cart = s.query(Cart).filter_by(access_id=prev_access.id).first()
             if prev_cart:
                 s.query(Cart).filter_by(access_id=curr_access.id).delete()
                 prev_cart.access_id = curr_access.id
-
                 # Update cart count
                 update_cart_count(s, prev_cart)
 
@@ -175,7 +170,7 @@ def update_cart_count(
     s: Session,
     cart: Cart | None = None,
 ) -> int:
-    """Update the cart count in the session."""
+    """Update the cart count in a session."""
 
     if cart:
         cart_count = len(cart.items)
