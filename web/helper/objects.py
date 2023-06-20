@@ -3,6 +3,8 @@ from typing import Callable
 
 
 def none_aware_attrgetter(attr: str) -> Callable[[list], tuple[bool, any]]:
+    """Attribute getter that accepts None values."""
+
     def wrap(item: list) -> tuple[bool, any]:
         value = getter(item)
         return value is None, value
@@ -12,6 +14,8 @@ def none_aware_attrgetter(attr: str) -> Callable[[list], tuple[bool, any]]:
 
 
 class Singleton(type):
+    """Singleton metaclass."""
+
     _instances = {}
 
     def __call__(cls, *args, **kwargs) -> dict:

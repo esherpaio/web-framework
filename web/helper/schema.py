@@ -9,6 +9,8 @@ from web.database.model import Page
 
 
 class Schema:
+    """A class to generate schema.org JSON-LD."""
+
     def __init__(self) -> None:
         self._data = None
 

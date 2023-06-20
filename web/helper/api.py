@@ -11,6 +11,8 @@ from web.i18n.base import _
 
 
 class ApiText(StrEnum):
+    """API response messages."""
+
     HTTP_200 = _("API_HTTP_200")
     HTTP_202 = _("API_HTTP_202")
     HTTP_400 = _("API_HTTP_400")
@@ -28,6 +30,8 @@ def response(
     data: list | dict | None = None,
     links: dict | None = None,
 ) -> Response:
+    """Create a default API response."""
+
     if data is None:
         data = {}
     if links is None:
@@ -54,20 +58,18 @@ def json_get(
     default: any = None,
     allow_empty_str: bool = True,
 ) -> tuple[any, bool] | None:
-    # Get value and determine whether the key is contained
+    """Get a value from the request body."""
+
     value = request.json.get(key, default)
     has_key = key in request.json
-    # Parse empty strings
     if value == "" and not allow_empty_str:
         value = None
-    # Type checks
     if nullable and value is None:
         pass
     elif not isinstance(value, type_):
         raise TypeError
     elif not nullable and value is None:
         raise TypeError
-    # Return
     return value, has_key
 
 
@@ -86,6 +88,8 @@ def create_links(mapping: dict[str, Callable], links: dict = None) -> dict:
 def authorize(
     level: UserRoleLevel,
 ) -> Callable[[Callable[..., Response]], Callable[..., Response]]:
+    """Authorize a user based on their role level."""
+
     def decorate(f: Callable) -> Callable[..., Response]:
         def wrap(*args, **kwargs) -> Response:
             if current_user.is_authenticated and current_user.role.level >= level:
