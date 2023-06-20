@@ -3,7 +3,7 @@ from typing import Callable
 
 from flask import Response, request
 
-from web.helper.operator import Singleton
+from web.helper.objects import Singleton
 
 
 class Cache(dict, metaclass=Singleton):

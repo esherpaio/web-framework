@@ -15,7 +15,7 @@
   "ENDPOINT_HOME": null,
   "ENDPOINT_LOGIN": null,
   "ENDPOINT_USER": null,
-  "ROBOT_DEFAULT_TAGS": "index,follow",
+  "ROBOT_DEFAULT_TAGS": "index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1",
   "ROBOT_DISALLOW_URLS": [
     "/admin/*",
     "/api/*",
@@ -26,7 +26,7 @@
   "SOCIAL_FACEBOOK": null,
   "SOCIAL_INSTAGRAM": null,
   "SOCIAL_PINTEREST": null,
-  "SOCIAL_TWITTER": null,
+  "SOCIAL_TWITTER": "https://twitter.com/waynesworkshops",
   "SOCIAL_YOUTUBE": null,
   "WEBSITE_COUNTRY_CODE": "NL",
   "WEBSITE_FAVICON_URL": "https://www.google.nl/favicon.ico",
