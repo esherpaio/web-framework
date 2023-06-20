@@ -10,5 +10,5 @@ class Page(Base):
     endpoint = Column(String(64), unique=True, nullable=False)
     in_sitemap = Column(Boolean, nullable=False)
     name = Column(String(64), nullable=False)
-    robots = Column(String(64), nullable=False)
+    robots = Column(String(256), nullable=False)
     img_url = Column(String(256))
