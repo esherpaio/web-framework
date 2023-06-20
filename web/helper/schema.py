@@ -24,8 +24,10 @@ class Schema:
         self._data = data
 
     @property
-    def markup(self) -> Markup:
-        return Markup(json.dumps(self.data))
+    def tag(self) -> Markup:
+        return Markup(
+            f"<script type='application/ld+json'>{ json.dumps(self.data) }</script>"
+        )
 
 
 class SchemaWebPage(Schema):
