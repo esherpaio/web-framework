@@ -3,7 +3,9 @@ from enum import StrEnum
 from typing import Callable
 
 from flask import Response, request
+from flask_login import current_user
 
+from web.database.model import UserRoleLevel
 from web.i18n.base import _
 
 
@@ -50,10 +52,9 @@ def json_get(
     nullable: bool = True,
     default: any = None,
 ) -> tuple[any, bool] | None:
-    # Get value and determine if key is contained
+    # Get value and determine whether the key is contained
     value = request.json.get(key, default)
     has_key = key in request.json
-
     # Type checks
     if nullable and value is None:
         pass
@@ -61,11 +62,15 @@ def json_get(
         raise TypeError
     elif not nullable and value is None:
         raise TypeError
-
+    # Return
     return value, has_key
 
 
 def json_empty_str_to_none(f: Callable) -> Callable[..., Response]:
+    # Todo: remove this decorator,
+    #  empty strings should be converted to None by the frontend,
+    #  or it can be integrated in the json_get function
+
     def wrap(*args, **kwargs) -> Response:
         if request.is_json:
             for k, v in request.json.items():
@@ -78,12 +83,28 @@ def json_empty_str_to_none(f: Callable) -> Callable[..., Response]:
 
 
 def create_links(mapping: dict[str, Callable], links: dict = None) -> dict:
+    """Inject links into the response body."""
+
     if links is None:
         links = {}
-
     for _name, func in mapping.items():
         if f".{_name}" in request.endpoint:
             func_links = {**func(**request.view_args)}
             links.update(func_links)
-
     return links
+
+
+def authorize(
+    level: UserRoleLevel,
+) -> Callable[[Callable[..., Response]], Callable[..., Response]]:
+    def decorate(f: Callable) -> Callable[..., Response]:
+        def wrap(*args, **kwargs) -> Response:
+            if current_user.is_authenticated and current_user.role.level >= level:
+                return f(*args, **kwargs)
+            else:
+                return response(403, ApiText.HTTP_403)
+
+        wrap.__name__ = f.__name__
+        return wrap
+
+    return decorate

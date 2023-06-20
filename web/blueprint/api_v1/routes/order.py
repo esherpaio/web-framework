@@ -8,10 +8,10 @@ from web.blueprint.api_v1.resource.order import get_resource
 from web.blueprint.api_v1.utils.order_refund import create_refund
 from web.database.client import conn
 from web.database.model import Cart, Order, OrderLine, OrderStatusId, UserRoleLevel
-from web.helper.api import ApiText, json_get, response
+from web.helper.api import ApiText, authorize, json_get, response
 from web.helper.cart import get_shipment_methods
 from web.helper.mollie_api import Mollie
-from web.helper.security import authorize, get_access
+from web.helper.security import get_access
 from web.i18n.base import _
 from web.mail.routes.order import send_order_received
 

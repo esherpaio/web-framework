@@ -4,8 +4,7 @@ from sqlalchemy import and_, or_
 from web.blueprint.api_v1 import api_v1_bp
 from web.database.client import conn
 from web.database.model import ShipmentZone, UserRoleLevel
-from web.helper.api import ApiText, json_get, response
-from web.helper.security import authorize
+from web.helper.api import ApiText, authorize, json_get, response
 
 
 @authorize(UserRoleLevel.ADMIN)
