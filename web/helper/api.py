@@ -51,10 +51,14 @@ def json_get(
     type_: any,
     nullable: bool = True,
     default: any = None,
+    allow_empty: bool = False,
 ) -> tuple[any, bool] | None:
     # Get value and determine whether the key is contained
     value = request.json.get(key, default)
     has_key = key in request.json
+    # Parse empty strings
+    if isinstance(value, str) and not value and allow_empty:
+        value = None
     # Type checks
     if nullable and value is None:
         pass
@@ -64,22 +68,6 @@ def json_get(
         raise TypeError
     # Return
     return value, has_key
-
-
-def json_empty_str_to_none(f: Callable) -> Callable[..., Response]:
-    # Todo: remove this decorator,
-    #  empty strings should be converted to None by the frontend,
-    #  or it can be integrated in the json_get function
-
-    def wrap(*args, **kwargs) -> Response:
-        if request.is_json:
-            for k, v in request.json.items():
-                if isinstance(v, str) and not v:
-                    request.json[k] = None
-        return f(*args, **kwargs)
-
-    wrap.__name__ = f.__name__
-    return wrap
 
 
 def create_links(mapping: dict[str, Callable], links: dict = None) -> dict:

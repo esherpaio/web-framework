@@ -4,24 +4,23 @@ from web.blueprint.api_v1 import api_v1_bp
 from web.blueprint.api_v1.resource.billing import get_resource
 from web.database.client import conn
 from web.database.model import Billing, Cart, Order, User
-from web.helper.api import ApiText, json_empty_str_to_none, json_get, response
+from web.helper.api import ApiText, json_get, response
 from web.helper.cart import get_vat
 from web.helper.security import get_access
 
 
 @api_v1_bp.post("/billings")
-@json_empty_str_to_none
 def post_billings() -> Response:
-    address, _ = json_get("address", str)
-    city, _ = json_get("city", str)
-    company, _ = json_get("company", str)
+    address, _ = json_get("address", str, allow_empty=False)
+    city, _ = json_get("city", str, allow_empty=False)
+    company, _ = json_get("company", str, allow_empty=False)
     country_id, _ = json_get("country_id", int)
-    email, _ = json_get("email", str)
-    first_name, _ = json_get("first_name", str)
-    last_name, _ = json_get("last_name", str)
-    phone, _ = json_get("phone", str)
-    vat, _ = json_get("vat", str)
-    zip_code, _ = json_get("zip_code", str)
+    email, _ = json_get("email", str, allow_empty=False)
+    first_name, _ = json_get("first_name", str, allow_empty=False)
+    last_name, _ = json_get("last_name", str, allow_empty=False)
+    phone, _ = json_get("phone", str, allow_empty=False)
+    vat, _ = json_get("vat", str, allow_empty=False)
+    zip_code, _ = json_get("zip_code", str, allow_empty=False)
 
     with conn.begin() as s:
         # Insert billing
@@ -45,18 +44,17 @@ def post_billings() -> Response:
 
 
 @api_v1_bp.patch("/billings/<int:billing_id>")
-@json_empty_str_to_none
 def patch_billings(billing_id: int) -> Response:
-    address, has_address = json_get("address", str)
-    city, has_city = json_get("city", str)
-    company, has_company = json_get("company", str)
+    address, has_address = json_get("address", str, allow_empty=False)
+    city, has_city = json_get("city", str, allow_empty=False)
+    company, has_company = json_get("company", str, allow_empty=False)
     country_id, has_country_id = json_get("country_id", int)
-    email, has_email = json_get("email", str)
-    first_name, has_first_name = json_get("first_name", str)
-    last_name, has_last_name = json_get("last_name", str)
-    phone, has_phone = json_get("phone", str)
-    vat, has_vat = json_get("vat", str)
-    zip_code, has_zip_code = json_get("zip_code", str)
+    email, has_email = json_get("email", str, allow_empty=False)
+    first_name, has_first_name = json_get("first_name", str, allow_empty=False)
+    last_name, has_last_name = json_get("last_name", str, allow_empty=False)
+    phone, has_phone = json_get("phone", str, allow_empty=False)
+    vat, has_vat = json_get("vat", str, allow_empty=False)
+    zip_code, has_zip_code = json_get("zip_code", str, allow_empty=False)
 
     with conn.begin() as s:
         # Authorize request
