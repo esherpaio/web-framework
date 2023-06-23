@@ -192,9 +192,10 @@ def patch_users_id(user_id: int) -> Response:
             # Update
             if has_shipping_id:
                 user.shipping_id = shipping_id
+                s.flush()
             if has_billing_id:
                 user.billing_id = billing_id
-            s.flush()
+                s.flush()
             # Return resource
             resource = [get_resource(user.id)]
             return response(message=_Text.UPDATE_SUCCESS, data=resource)
