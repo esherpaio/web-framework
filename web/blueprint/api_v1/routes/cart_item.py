@@ -8,7 +8,6 @@ from web.blueprint.api_v1.utils.cart_item import update_cart_shipment_methods
 from web.database.client import conn
 from web.database.model import Cart, CartItem
 from web.helper.api import ApiText, json_get, response
-from web.helper.cart import update_cart_count
 from web.helper.security import get_access
 from web.i18n.base import _
 
@@ -21,8 +20,6 @@ class _Text(StrEnum):
 def post_carts_id_items(cart_id: int) -> Response:
     quantity, _ = json_get("quantity", int, default=1)
     sku_id, _ = json_get("sku_id", int, nullable=False)
-
-    data = {}
 
     with conn.begin() as s:
         # Authorize request
@@ -42,14 +39,9 @@ def post_carts_id_items(cart_id: int) -> Response:
             cart_item = CartItem(cart_id=cart.id, sku_id=sku_id, quantity=quantity)
             s.add(cart_item)
         s.flush()
-        s.expire_all()
 
         # Update shipment method
         update_cart_shipment_methods(s, cart)
-        # Update cart count
-        cart_count = update_cart_count(s, cart)
-        # Create resource
-        data["cart_count"] = cart_count
 
     resource = get_resource(cart_item.id)
     return response(message=_Text.ADDED, data=resource)
@@ -80,8 +72,6 @@ def patch_cart_id_items_id(cart_id: int, cart_item_id: int) -> Response:
 
         # Update shipment methods
         update_cart_shipment_methods(s, cart)
-        # Update cart count
-        update_cart_count(s, cart)
 
     resource = get_resource(cart_item_id)
     return response(data=resource)
@@ -104,7 +94,5 @@ def delete_cart_id_items_id(cart_id: int, cart_item_id: int) -> Response:
 
         # Update shipment methods
         update_cart_shipment_methods(s, cart)
-        # Update cart count
-        update_cart_count(s, cart)
 
     return response(204, ApiText.HTTP_204)

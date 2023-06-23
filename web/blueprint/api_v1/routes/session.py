@@ -11,10 +11,9 @@ from werkzeug.security import check_password_hash
 from web import config
 from web.blueprint.api_v1 import api_v1_bp
 from web.database.client import conn
-from web.database.model import Cart, User
+from web.database.model import User
 from web.helper.api import ApiText, json_get, response
-from web.helper.cart import transfer_cart, update_cart_count
-from web.helper.security import get_access
+from web.helper.cart import transfer_cart
 from web.helper.user import KnownUser
 from web.i18n.base import _
 
@@ -63,14 +62,6 @@ def post_session() -> Response:
 
 @api_v1_bp.delete("/sessions")
 def delete_session() -> Response:
-    # Logout user
     flask_login.logout_user()
-
-    # Update cart_count
-    with conn.begin() as s:
-        access = get_access(s)
-        cart = s.query(Cart).filter_by(access_id=access.id).first()
-        update_cart_count(s, cart)
-
     links = {"redirect": url_for(config.ENDPOINT_HOME, _locale=current_user.locale)}
     return response(204, message=ApiText.HTTP_204, links=links)

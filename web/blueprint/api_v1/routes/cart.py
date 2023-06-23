@@ -6,7 +6,7 @@ from web.blueprint.api_v1.resource.cart import get_resource
 from web.database.client import conn
 from web.database.model import Cart, Coupon, ShipmentMethod
 from web.helper.api import ApiText, json_get, response
-from web.helper.cart import get_vat, update_cart_count
+from web.helper.cart import get_vat
 from web.helper.security import get_access
 
 
@@ -99,9 +99,6 @@ def patch_carts_id(cart_id: int) -> Response:
             coupon_id = coupon.id if coupon else None
             cart.coupon_id = coupon_id
             s.flush()
-
-        # Update cart count
-        update_cart_count(s, cart)
 
     resource = get_resource(cart_id)
     return response(data=resource)
