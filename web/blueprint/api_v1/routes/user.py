@@ -153,6 +153,7 @@ def patch_users_id(user_id: int) -> Response:
             # Update is_active
             if has_is_active:
                 user.is_active = is_active
+                s.delete(verification)
                 s.flush()
                 message = (
                     _Text.ACTIVATION_SUCCESS
@@ -170,6 +171,7 @@ def patch_users_id(user_id: int) -> Response:
                     password, method="pbkdf2:sha256:1000000"
                 )
                 user.password_hash = password_hash
+                s.delete(verification)
                 s.flush()
                 return response(200, _Text.PASSWORD_RESET_SUCCESS)
             # Update email
@@ -177,6 +179,7 @@ def patch_users_id(user_id: int) -> Response:
                 if not re.match(r"[^@]+@[^@]+\.[^@]+", email):
                     return response(400, _Text.EMAIL_INVALID)
                 user.email = email
+                s.delete(verification)
                 s.flush()
                 return response(200, _Text.EMAIL_UPDATE_SUCCESS)
 
@@ -186,14 +189,13 @@ def patch_users_id(user_id: int) -> Response:
             access = get_access(s)
             if access.user_id != user_id:
                 return response(401, _Text.VERIFICATION_FAILED)
-            # Update shipping_id
+            # Update
             if has_shipping_id:
                 user.shipping_id = shipping_id
-            # Update billing_id
             if has_billing_id:
                 user.billing_id = billing_id
-            # Return resource
             s.flush()
+            # Return resource
             resource = [get_resource(user.id)]
             return response(message=_Text.UPDATE_SUCCESS, data=resource)
 
