@@ -39,8 +39,6 @@ def transfer_cart(
             if prev_cart:
                 s.query(Cart).filter_by(access_id=curr_access.id).delete()
                 prev_cart.access_id = curr_access.id
-                # Update cart count
-                update_cart_count(s, prev_cart)
 
         return resp
 
@@ -164,17 +162,3 @@ def get_vat(
         vat_reverse = True
 
     return vat_rate, vat_reverse
-
-
-def update_cart_count(
-    s: Session,
-    cart: Cart | None = None,
-) -> int:
-    """Update the cart count in a session."""
-
-    if cart:
-        cart_count = len(cart.items)
-    else:
-        cart_count = 0
-    current_user.cart_count = cart_count
-    return cart_count
