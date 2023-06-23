@@ -25,7 +25,7 @@ class User(Base):
     billing = relationship("Billing")
     role = relationship("UserRole")
     shipping = relationship("Shipping")
-    verifications = relationship("UserVerification", back_populates="user")
+    verifications = relationship("Verification", back_populates="user")
 
     # Validation
 
