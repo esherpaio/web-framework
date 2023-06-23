@@ -1,3 +1,4 @@
+alembic==1.11.1
 black~=23.3.0
 djlint~=1.31.0
 git+https://REDACTED@github.com/enlarge-online/python-pdf.git@v1.0.3
