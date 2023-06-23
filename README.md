@@ -7,11 +7,16 @@ This repository is a custom web framework for clients of Enlarge.
 ### 2023-06-23
 
 Improvements:
-- User API
-    - Return a list in GET /users, before it was a single dict
+- API
+    - Return 204 HTTP code for DELETE requests
     - Added more attributes to be POSTed or PATCHed
     - More custom error messages
+- API /users*
+    - Return a list in GET /users, before it was a single dict
     - Slightly enhanced security by using a better flow on PATCH /users/id
+- API /carts*
+    - Return a list in GET /carts, before it was a single dict
+    - Remove changing stuff in the session: it should not be related to the API
 
 ### 2023-06-20
 
