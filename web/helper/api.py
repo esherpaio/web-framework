@@ -103,16 +103,23 @@ def args_get(
     return value, has_key
 
 
-def create_links(mapping: dict[str, Callable], links: dict = None) -> dict:
-    """Inject links into the response body."""
+def modify_response(
+    mapping: dict[str, Callable]
+) -> Callable[[Callable[..., Response]], Callable[..., Response]]:
+    """Modify the response body."""
 
-    if links is None:
-        links = {}
-    for _name, func in mapping.items():
-        if f".{_name}" in request.endpoint:
-            func_links = {**func(**request.view_args)}
-            links.update(func_links)
-    return links
+    def decorate(f: Callable) -> Callable[..., Response]:
+        def wrap(resp: Response) -> Response:
+            if resp.is_json:
+                for name, func in mapping.items():
+                    if f".{name}" in request.endpoint:
+                        return func(resp, **request.view_args)
+            return resp
+
+        wrap.__name__ = f.__name__
+        return wrap
+
+    return decorate
 
 
 def authorize(

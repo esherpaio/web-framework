@@ -2,8 +2,7 @@ import re
 import uuid
 from enum import StrEnum
 
-from flask import Response, request, url_for
-from sqlalchemy import func
+from flask import Response, url_for
 from werkzeug.security import generate_password_hash
 
 from web import config
