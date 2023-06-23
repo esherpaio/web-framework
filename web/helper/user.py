@@ -68,22 +68,6 @@ class UserAttrs:
                 return language
 
     @property
-    def cart_count(self) -> int:
-        return session.get(Session.CART_COUNT, 0)
-
-    @cart_count.setter
-    def cart_count(self, value: int) -> None:
-        session[Session.CART_COUNT] = value
-
-    @property
-    def redirect(self) -> str | None:
-        return session.get(Session.REDIRECT)
-
-    @redirect.setter
-    def redirect(self, value: str | None) -> None:
-        session[Session.REDIRECT] = value
-
-    @property
     def key(self) -> str | None:
         return session.get(Session.KEY)
 
