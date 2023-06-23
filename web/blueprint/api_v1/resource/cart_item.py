@@ -13,5 +13,8 @@ def get_resource(cart_item_id: int) -> dict:
 
 def _build(s: Session, cart_item: CartItem) -> dict:
     return {
-        "cart_count": current_user.cart_count,
+        "cart_id": cart_item.cart_id,
+        "id": cart_item.id,
+        "quantity": cart_item.quantity,
+        "sku_id": cart_item.sku_id,
     }
