@@ -44,7 +44,7 @@ def get_carts() -> Response:
         if not cart:
             return response(403, ApiText.HTTP_403)
 
-    resource = get_resource(cart.id)
+    resource = [get_resource(cart.id)]
     return response(data=resource)
 
 
@@ -68,13 +68,11 @@ def patch_carts_id(cart_id: int) -> Response:
         if has_shipping_id:
             cart.shipping_id = shipping_id
             s.flush()
-
         # Update billing_id
         if has_billing_id:
             cart.billing_id = billing_id
             s.flush()
-
-        # Sync country_id
+        # Sync currency_id, vat_rate and vat_reverse
         if cart.billing:
             country_code = cart.billing.country.code
             is_business = cart.billing.company is not None
@@ -83,8 +81,7 @@ def patch_carts_id(cart_id: int) -> Response:
             cart.vat_rate = vat_rate
             cart.vat_reverse = vat_reverse
             s.flush()
-
-        # Update shipment details
+        # Update shipment_method_id and shipment_price
         if cart.shipping_id and has_shipment_method_id:
             shipment_method = (
                 s.query(ShipmentMethod)
@@ -94,7 +91,6 @@ def patch_carts_id(cart_id: int) -> Response:
             cart.shipment_method_id = shipment_method.id
             cart.shipment_price = shipment_method.unit_price * cart.currency.rate
             s.flush()
-
         # Update coupon_id
         if has_coupon_code:
             coupon = (
