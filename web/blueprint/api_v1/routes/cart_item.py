@@ -1,14 +1,14 @@
 from enum import StrEnum
 
 from flask import Response
-from sqlalchemy.orm import Session
 
 from web.blueprint.api_v1 import api_v1_bp
 from web.blueprint.api_v1.resource.cart_item import get_resource
+from web.blueprint.api_v1.utils.cart_item import update_cart_shipment_methods
 from web.database.client import conn
 from web.database.model import Cart, CartItem
 from web.helper.api import ApiText, json_get, response
-from web.helper.cart import get_shipment_methods, update_cart_count
+from web.helper.cart import update_cart_count
 from web.helper.security import get_access
 from web.i18n.base import _
 
@@ -19,7 +19,8 @@ class _Text(StrEnum):
 
 @api_v1_bp.post("/carts/<int:cart_id>/items")
 def post_carts_id_items(cart_id: int) -> Response:
-    sku_id, has_sku_id = json_get("sku_id", int)
+    quantity, _ = json_get("quantity", int, default=0)
+    sku_id, has_sku_id = json_get("sku_id", int, nullable=False)
 
     data = {}
 
@@ -36,16 +37,16 @@ def post_carts_id_items(cart_id: int) -> Response:
         if has_sku_id:
             for cart_item in cart.items:
                 if cart_item.sku_id == sku_id:
-                    cart_item.quantity += 1
+                    cart_item.quantity += quantity
                     break
             else:
-                cart_item = CartItem(cart_id=cart.id, sku_id=sku_id, quantity=1)
+                cart_item = CartItem(cart_id=cart.id, sku_id=sku_id, quantity=quantity)
                 s.add(cart_item)
             s.flush()
             s.expire_all()
 
         # Update shipment method
-        _update_cart_shipment_methods(s, cart)
+        update_cart_shipment_methods(s, cart)
         # Update cart count
         cart_count = update_cart_count(s, cart)
         # Create resource
@@ -79,11 +80,12 @@ def patch_cart_id_items_id(cart_id: int, cart_item_id: int) -> Response:
             s.flush()
 
         # Update shipment methods
-        _update_cart_shipment_methods(s, cart)
+        update_cart_shipment_methods(s, cart)
         # Update cart count
         update_cart_count(s, cart)
 
-    return response()
+    resource = get_resource(cart_id)
+    return response(data=resource)
 
 
 @api_v1_bp.delete("/carts/<int:cart_id>/items/<int:cart_item_id>")
@@ -102,20 +104,9 @@ def delete_cart_id_items_id(cart_id: int, cart_item_id: int) -> Response:
         s.flush()
 
         # Update shipment methods
-        _update_cart_shipment_methods(s, cart)
+        update_cart_shipment_methods(s, cart)
         # Update cart count
         update_cart_count(s, cart)
 
-    return response()
-
-
-def _update_cart_shipment_methods(s: Session, cart: Cart) -> None:
-    shipment_methods = get_shipment_methods(s, cart)
-    if shipment_methods:
-        shipment_method = min(shipment_methods)
-        cart.shipment_method_id = shipment_method.id
-        cart.shipment_price = shipment_method.unit_price * cart.currency.rate
-    else:
-        cart.shipment_method_id = None
-        cart.shipment_price = 0
-    s.flush()
+    resource = get_resource(cart_id)
+    return response(data=resource)

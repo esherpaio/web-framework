@@ -32,6 +32,14 @@ class Cart(Base):
     shipment_method = relationship("ShipmentMethod")
     shipping = relationship("Shipping")
 
+    # Properties - general
+
+    @hybrid_property
+    def items_count(self) -> int:
+        if self.items:
+            return len(self.items)
+        return 0
+
     # Properties - pricing
 
     @hybrid_property
