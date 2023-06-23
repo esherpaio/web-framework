@@ -1,7 +1,6 @@
 from flask import Response
 
 from web.api_v1 import api_v1_bp
-from web.api_v1.utils.article import clean_html
 from web.database.client import conn
 from web.database.model import Article, UserRoleLevel
 from web.helper.api import ApiText, authorize, json_get, response
@@ -54,7 +53,7 @@ def patch_articles_id(article_id: int) -> Response:
         if has_summary:
             article.summary = summary
         if has_html:
-            article.html = clean_html(html)
+            article.html = html
         if has_is_visible:
             article.is_visible = is_visible
 

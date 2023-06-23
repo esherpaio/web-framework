@@ -10,6 +10,7 @@ Improvements:
 - API
     - Added more attributes to be POSTed or PATCHed
     - More custom error messages
+    - Modify response function
 - API /users*
     - Return a list in GET /users, before it was a single dict
     - Slightly enhanced security by using a better flow on PATCH /users/id
