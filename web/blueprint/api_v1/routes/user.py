@@ -8,69 +8,76 @@ from werkzeug.security import generate_password_hash
 
 from web import config
 from web.blueprint.api_v1 import api_v1_bp
+from web.blueprint.api_v1.resource.user import get_resource
 from web.database.client import conn
-from web.database.model import User, UserVerification
-from web.helper.api import ApiText, json_get, response
+from web.database.model import User, Verification
+from web.helper.api import ApiText, args_get, json_get, response
 from web.helper.security import get_access
 from web.i18n.base import _
 from web.mail.routes.user import send_new_password, send_verification_url
 
 
 class _Text(StrEnum):
+    ACTIVATION_SUCCESS = _("API_USER_ACTIVATION_SUCCESS")
+    DEACTIVATION_SUCCESS = _("API_USER_DEACTIVATION_SUCCESS")
+    EMAIL_IN_USE = _("API_USER_EMAIL_IN_USE")
+    EMAIL_INVALID = _("API_USER_EMAIL_INVALID")
+    EMAIL_NOT_FOUND = _("API_USER_EMAIL_NOT_FOUND")
+    EMAIL_UPDATE_SUCCESS = _("API_USER_EMAIL_UPDATE_SUCCESS")
     PASSWORD_LENGTH = _("API_USER_PASSWORD_LENGTH")
     PASSWORD_NO_MATCH = _("API_USER_PASSWORD_NO_MATCH")
-    EMAIL_INVALID = _("API_USER_EMAIL_INVALID")
-    EMAIL_IN_USE = _("API_USER_EMAIL_IN_USE")
-    REGISTER_SUCCESS = _("API_USER_REGISTER_SUCCESS")
-    ACTIVATION_SUCCESS = _("API_USER_ACTIVATION_SUCCESS")
-    VERIFY_FAILED = _("API_USER_VERIFY_FAILED")
     PASSWORD_REQUEST_SEND = _("API_USER_PASSWORD_REQUEST_SEND")
     PASSWORD_RESET_SUCCESS = _("API_USER_PASSWORD_RESET_SUCCESS")
+    REGISTER_SUCCESS = _("API_USER_REGISTER_SUCCESS")
     UPDATE_SUCCESS = _("API_USER_UPDATE_SUCCESS")
+    VERIFICATION_FAILED = _("API_USER_VERIFICATION_FAILED")
+    VERIFICATION_KEY_NOT_FOUND = _("API_USER_VERIFICATION_KEY_NOT_FOUND")
 
 
 @api_v1_bp.post("/users")
 def post_users() -> Response:
-    email, _ = json_get("email", str, nullable=False)
-    password, _ = json_get("password", str, nullable=False)
+    billing_id, _ = json_get("billing_id", int)
+    email, _ = json_get("email", str, nullable=False, lower_str=True)
     password_eval, _ = json_get("password_eval", str, nullable=False)
+    password, _ = json_get("password", str, nullable=False)
+    shipping_id, _ = json_get("shipping_id", int)
 
+    # Validate email
+    if not re.match(r"[^@]+@[^@]+\.[^@]+", email):
+        return response(400, _Text.EMAIL_INVALID)
     # Validate password
     if len(password) < 8:
         return response(400, _Text.PASSWORD_LENGTH)
     if password != password_eval:
         return response(400, _Text.PASSWORD_NO_MATCH)
 
-    # Validate email
-    if not re.match(r"[^@]+@[^@]+\.[^@]+", email):
-        return response(400, _Text.EMAIL_INVALID)
-
     # Generate password_hash and verification_key
     password_hash = generate_password_hash(password, method="pbkdf2:sha256:1000000")
     verification_key = str(uuid.uuid4())
 
     with conn.begin() as s:
-        # Get user
-        # Raise if it exists
-        user = s.query(User).filter(func.lower(User.email) == func.lower(email)).first()
+        # Check if email exists
+        user = s.query(User).filter(User.email == email).first()
         if user:
             return response(409, _Text.EMAIL_IN_USE)
-
         # Insert user
-        user = User(email=email, password_hash=password_hash)
+        user = User(
+            email=email,
+            password_hash=password_hash,
+            billing_id=billing_id,
+            shipping_id=shipping_id,
+        )
         s.add(user)
         s.flush()
-
         # Insert verification
-        user_verification = UserVerification(user_id=user.id, key=verification_key)
-        s.add(user_verification)
+        verification = Verification(user_id=user.id, key=verification_key)
+        s.add(verification)
         s.flush()
 
-    # Create verification_url
     # Send email
     verification_url = url_for(
         config.ENDPOINT_LOGIN,
-        verification_key=user_verification.key,
+        verification_key=verification.key,
         _external=True,
     )
     send_verification_url(
@@ -78,40 +85,31 @@ def post_users() -> Response:
         verification_url=verification_url,
     )
 
-    return response(message=_Text.REGISTER_SUCCESS)
+    resource = get_resource(user.id)
+    return response(message=_Text.REGISTER_SUCCESS, data=resource)
 
 
 @api_v1_bp.get("/users")
 def get_users() -> Response:
-    email = request.args.get("email", type=str)
-    has_email = "email" in request.args
-    verification_key = request.args.get("verification_key", type=str)
-    has_verification_key = "verification_key" in request.args
+    email, has_email = args_get("email", str, lower_str=True)
+    verification_key, has_verification_key = args_get("verification_key", str)
 
     with conn.begin() as s:
         # Get user_id by verification_key
-        # Raise if verification doesn't exist
         if has_verification_key:
-            verification = (
-                s.query(UserVerification).filter_by(key=verification_key).first()
-            )
+            verification = s.query(Verification).filter_by(key=verification_key).first()
             if verification is None:
-                return response(404, ApiText.HTTP_404)
-            data = {"id": verification.user_id}
-            return response(data=data)
+                return response(404, _Text.VERIFICATION_KEY_NOT_FOUND)
+            resource = [get_resource(verification.user_id)]
+            return response(data=resource)
 
         # Get user_id by email
-        # Raise if user doesn't exist
         if has_email:
-            user = (
-                s.query(User)
-                .filter(func.lower(User.email) == func.lower(email))
-                .first()
-            )
+            user = s.query(User).filter(User.email == email).first()
             if user is None:
-                return response(404, ApiText.HTTP_404)
-            data = {"id": user.id}
-            return response(data=data)
+                return response(404, _Text.EMAIL_NOT_FOUND)
+            resource = [get_resource(user.id)]
+            return response(data=resource)
 
     return response(400, message=ApiText.HTTP_400)
 
@@ -119,9 +117,10 @@ def get_users() -> Response:
 @api_v1_bp.patch("/users/<int:user_id>")
 def patch_users_id(user_id: int) -> Response:
     billing_id, has_billing_id = json_get("billing_id", int)
+    email, has_email = json_get("email", str, lower_str=True)
     is_active, has_is_active = json_get("is_active", bool)
-    password, has_password = json_get("password", str)
     password_eval, has_password_eval = json_get("password_eval", str)
+    password, has_password = json_get("password", str)
     shipping_id, has_shipping_id = json_get("shipping_id", int)
     verification_key, has_verification_key = json_get("verification_key", str)
 
@@ -129,64 +128,73 @@ def patch_users_id(user_id: int) -> Response:
         # Get user
         user = s.query(User).filter_by(id=user_id).first()
 
-        # Flow for request password
-        # Generate and insert verification_key
-        # Send email
+        # Flow for password reset request
         if has_password and not has_password_eval and not has_verification_key:
+            # Generate and insert verification_key
             verification_key = str(uuid.uuid4())
-            verification = UserVerification(user_id=user.id, key=verification_key)
+            verification = Verification(user_id=user.id, key=verification_key)
             s.add(verification)
             s.flush()
+            # Send email
             reset_url = url_for(
-                "auth.password_reset",
-                verification_key=verification.key,
-                _external=True,
+                "auth.password_reset", verification_key=verification.key, _external=True
             )
             send_new_password(email=user.email, reset_url=reset_url)
             return response(200, _Text.PASSWORD_REQUEST_SEND)
 
-        # Authorize request with verification_key
-        # Raise if verification doesn't exist
-        # Raise if user_id doesn't match
+        # Flow for verification_key
         if has_verification_key:
-            verification = (
-                s.query(UserVerification).filter_by(key=verification_key).first()
-            )
+            # Authorize request with verification_key
+            verification = s.query(Verification).filter_by(key=verification_key).first()
             if verification is None:
-                return response(401, _Text.VERIFY_FAILED)
+                return response(401, _Text.VERIFICATION_FAILED)
             if verification.user_id != user_id:
-                return response(401, _Text.VERIFY_FAILED)
+                return response(401, _Text.VERIFICATION_FAILED)
+            # Update is_active
+            if has_is_active:
+                user.is_active = is_active
+                s.flush()
+                message = (
+                    _Text.ACTIVATION_SUCCESS
+                    if is_active
+                    else _Text.DEACTIVATION_SUCCESS
+                )
+                return response(200, message=message)
+            # Update password
+            if has_password and has_password_eval:
+                if len(password) < 8:
+                    return response(400, _Text.PASSWORD_LENGTH)
+                if password != password_eval:
+                    return response(400, _Text.PASSWORD_NO_MATCH)
+                password_hash = generate_password_hash(
+                    password, method="pbkdf2:sha256:1000000"
+                )
+                user.password_hash = password_hash
+                s.flush()
+                return response(200, _Text.PASSWORD_RESET_SUCCESS)
+            # Update email
+            if has_email:
+                if not re.match(r"[^@]+@[^@]+\.[^@]+", email):
+                    return response(400, _Text.EMAIL_INVALID)
+                user.email = email
+                s.flush()
+                return response(200, _Text.EMAIL_UPDATE_SUCCESS)
 
-        # Authorize request with access
-        # Raise if user_id doesn't match
+        # Flow for logged in user
         else:
+            # Authorize request with access
             access = get_access(s)
             if access.user_id != user_id:
-                return response(401, _Text.VERIFY_FAILED)
+                return response(401, _Text.VERIFICATION_FAILED)
+            # Update shipping_id
+            if has_shipping_id:
+                user.shipping_id = shipping_id
+            # Update billing_id
+            if has_billing_id:
+                user.billing_id = billing_id
+            # Return resource
+            s.flush()
+            resource = [get_resource(user.id)]
+            return response(message=_Text.UPDATE_SUCCESS, data=resource)
 
-        # Update is_active
-        if has_is_active and has_verification_key:
-            user.is_active = is_active
-            return response(200, _Text.ACTIVATION_SUCCESS)
-
-        # Update password
-        if has_password and has_password_eval and has_verification_key:
-            if len(password) < 8:
-                return response(400, _Text.PASSWORD_LENGTH)
-            if password != password_eval:
-                return response(400, _Text.PASSWORD_NO_MATCH)
-            password_hash = generate_password_hash(
-                password, method="pbkdf2:sha256:1000000"
-            )
-            user.password_hash = password_hash
-            return response(200, _Text.PASSWORD_RESET_SUCCESS)
-
-        # Update shipping_id
-        if has_shipping_id:
-            user.shipping_id = shipping_id
-
-        # Update billing_id
-        if has_billing_id:
-            user.billing_id = billing_id
-
-    return response(message=_Text.UPDATE_SUCCESS)
+    return response(400, message=ApiText.HTTP_400)

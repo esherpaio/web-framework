@@ -4,6 +4,15 @@ This repository is a custom web framework for clients of Enlarge.
 
 ## Changelog
 
+### 2023-06-23
+
+Improvements:
+- User API
+    - Return a list in GET /users, before it was a single dict
+    - Added more attributes to be POSTed or PATCHed
+    - More custom error messages
+    - Slightly enhanced security by using a better flow on PATCH /users/id
+
 ### 2023-06-20
 
 Improvements:

@@ -31,7 +31,7 @@
     "API_USER_PASSWORD_RESET_SUCCESS": "Uw wachtwoord is hersteld.",
     "API_USER_REGISTER_SUCCESS": "Uw account is geregistreerd. Activeer het met de URL in uw e-mail.",
     "API_USER_UPDATE_SUCCESS": "Uw account is bijgewerkt.",
-    "API_USER_VERIFY_FAILED": "We kunnen uw account niet verifiëren.",
+    "API_USER_VERIFICATION_FAILED": "We kunnen uw account niet verifiëren.",
     "DATABASE_EMAIL_ERROR": "Controleer uw emailadres.",
     "DATABASE_PHONE_ERROR": "Controleer uw telefoonnummer.",
     "MAIL_CONTACT_CONFIRMATION": "We hebben uw bericht ontvangen en nemen zo snel mogelijk contact met u op.",

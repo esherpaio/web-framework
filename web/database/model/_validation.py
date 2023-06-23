@@ -31,7 +31,7 @@ def check_email(*names: str) -> Callable[[Callable[..., any]], Callable[..., any
         @validates(*names)
         def wrap(self: Type[Base], key: str, value: any) -> any:
             if isinstance(value, str):
-                value = value.strip()
+                value = value.lower().strip()
                 if not is_email(value):
                     raise DbEmailError
             return value

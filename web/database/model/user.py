@@ -17,9 +17,7 @@ class User(Base):
 
     billing_id = Column(FKSetNull("billing.id"))
     role_id = Column(
-        FKRestrict("user_role.id"),
-        nullable=False,
-        default=UserRoleId.USER,
+        FKRestrict("user_role.id"), nullable=False, default=UserRoleId.USER
     )
     shipping_id = Column(FKSetNull("shipping.id"))
 
