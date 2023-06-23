@@ -64,4 +64,4 @@ def post_session() -> Response:
 def delete_session() -> Response:
     flask_login.logout_user()
     links = {"redirect": url_for(config.ENDPOINT_HOME, _locale=current_user.locale)}
-    return response(204, message=ApiText.HTTP_204, links=links)
+    return response(links=links)

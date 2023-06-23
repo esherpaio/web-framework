@@ -59,4 +59,4 @@ def delete_shipment_classes_id(shipment_class_id: int) -> Response:
         # Update is_deleted
         shipment_class.is_deleted = True
 
-    return response(204, ApiText.HTTP_204)
+    return response()

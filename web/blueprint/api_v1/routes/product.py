@@ -96,4 +96,4 @@ def delete_products_id(product_id: int) -> Response:
         for sku in skus:
             sku.is_deleted = True
 
-    return response(204, ApiText.HTTP_204)
+    return response()

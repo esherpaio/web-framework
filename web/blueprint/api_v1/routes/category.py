@@ -76,4 +76,4 @@ def delete_categories_id(category_id: int) -> Response:
         # Delete category
         category.is_deleted = True
 
-    return response(204, message=_Text.REBOOT_REQUIRED)
+    return response(message=_Text.REBOOT_REQUIRED)

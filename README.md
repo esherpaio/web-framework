@@ -8,7 +8,6 @@ This repository is a custom web framework for clients of Enlarge.
 
 Improvements:
 - API
-    - Return 204 HTTP code for DELETE requests
     - Added more attributes to be POSTed or PATCHed
     - More custom error messages
 - API /users*
