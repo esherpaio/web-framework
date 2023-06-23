@@ -57,19 +57,48 @@ def json_get(
     nullable: bool = True,
     default: any = None,
     allow_empty_str: bool = True,
+    lower_str: bool = False,
 ) -> tuple[any, bool] | None:
     """Get a value from the request body."""
 
     value = request.json.get(key, default)
     has_key = key in request.json
+
     if value == "" and not allow_empty_str:
         value = None
+    if lower_str and isinstance(value, str):
+        value = value.lower()
+
     if nullable and value is None:
         pass
     elif not isinstance(value, type_):
         raise TypeError
     elif not nullable and value is None:
         raise TypeError
+
+    return value, has_key
+
+
+def args_get(
+    key: str,
+    type_: any,
+    nullable: bool = True,
+    default: any = None,
+    lower_str: bool = False,
+) -> tuple[any, bool] | None:
+    """Get a value from the request args."""
+
+    value = request.args.get(key, default, type)
+    has_key = key in request.args
+
+    if lower_str and isinstance(value, str):
+        value = value.lower()
+
+    if nullable and value is None:
+        pass
+    elif not nullable and value is None:
+        raise TypeError
+
     return value, has_key
 
 

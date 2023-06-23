@@ -37,4 +37,4 @@ from .sku import Sku
 from .sku_detail import SkuDetail
 from .user import User
 from .user_role import UserRole, UserRoleId, UserRoleLevel
-from .user_verification import UserVerification
+from .verification import Verification
