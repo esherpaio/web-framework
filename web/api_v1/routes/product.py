@@ -1,7 +1,7 @@
 from flask import Response
 
-from web.blueprint.api_v1 import api_v1_bp
-from web.blueprint.api_v1.utils.product import clean_html
+from web.api_v1 import api_v1_bp
+from web.api_v1.utils.product import clean_html
 from web.database.client import conn
 from web.database.model import Product, ProductTypeId, Sku, UserRoleLevel
 from web.helper.api import ApiText, authorize, json_get, response

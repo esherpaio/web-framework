@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 from flask import Response, url_for
 
 from web import config
-from web.blueprint.api_v1 import api_v1_bp
+from web.api_v1 import api_v1_bp
 from web.database.client import conn
 from web.database.model import Order
 from web.helper.api import ApiText, response

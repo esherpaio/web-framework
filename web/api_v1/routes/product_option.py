@@ -1,7 +1,7 @@
 from flask import Response
 from sqlalchemy.orm import contains_eager
 
-from web.blueprint.api_v1 import api_v1_bp
+from web.api_v1 import api_v1_bp
 from web.database.client import conn
 from web.database.model import ProductOption, Sku, SkuDetail, UserRoleLevel
 from web.helper.api import ApiText, authorize, json_get, response
