@@ -88,7 +88,7 @@ def args_get(
 ) -> tuple[any, bool] | None:
     """Get a value from the request args."""
 
-    value = request.args.get(key, default, type)
+    value = request.args.get(key, default, type_)
     has_key = key in request.args
 
     if lower_str and isinstance(value, str):
