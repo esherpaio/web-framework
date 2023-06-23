@@ -7,8 +7,8 @@ from sqlalchemy import func
 from werkzeug.security import generate_password_hash
 
 from web import config
-from web.blueprint.api_v1 import api_v1_bp
-from web.blueprint.api_v1.resource.user import get_resource
+from web.api_v1 import api_v1_bp
+from web.api_v1.resource.user import get_resource
 from web.database.client import conn
 from web.database.model import User, Verification
 from web.helper.api import ApiText, args_get, json_get, response

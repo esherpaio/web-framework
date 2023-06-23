@@ -3,9 +3,9 @@ from enum import StrEnum
 from flask import Response
 from pyvat import check_vat_number
 
-from web.blueprint.api_v1 import api_v1_bp
-from web.blueprint.api_v1.resource.order import get_resource
-from web.blueprint.api_v1.utils.order_refund import create_refund
+from web.api_v1 import api_v1_bp
+from web.api_v1.resource.order import get_resource
+from web.api_v1.utils.order_refund import create_refund
 from web.database.client import conn
 from web.database.model import Cart, Order, OrderLine, OrderStatusId, UserRoleLevel
 from web.helper.api import ApiText, authorize, json_get, response
