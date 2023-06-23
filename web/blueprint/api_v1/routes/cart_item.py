@@ -19,8 +19,8 @@ class _Text(StrEnum):
 
 @api_v1_bp.post("/carts/<int:cart_id>/items")
 def post_carts_id_items(cart_id: int) -> Response:
-    quantity, _ = json_get("quantity", int, default=0)
-    sku_id, has_sku_id = json_get("sku_id", int, nullable=False)
+    quantity, _ = json_get("quantity", int, default=1)
+    sku_id, _ = json_get("sku_id", int, nullable=False)
 
     data = {}
 
@@ -34,16 +34,15 @@ def post_carts_id_items(cart_id: int) -> Response:
             return response(403, ApiText.HTTP_403)
 
         # Update or insert cart item
-        if has_sku_id:
-            for cart_item in cart.items:
-                if cart_item.sku_id == sku_id:
-                    cart_item.quantity += quantity
-                    break
-            else:
-                cart_item = CartItem(cart_id=cart.id, sku_id=sku_id, quantity=quantity)
-                s.add(cart_item)
-            s.flush()
-            s.expire_all()
+        for cart_item in cart.items:
+            if cart_item.sku_id == sku_id:
+                cart_item.quantity += quantity
+                break
+        else:
+            cart_item = CartItem(cart_id=cart.id, sku_id=sku_id, quantity=quantity)
+            s.add(cart_item)
+        s.flush()
+        s.expire_all()
 
         # Update shipment method
         update_cart_shipment_methods(s, cart)
@@ -52,7 +51,7 @@ def post_carts_id_items(cart_id: int) -> Response:
         # Create resource
         data["cart_count"] = cart_count
 
-    resource = get_resource(cart_id)
+    resource = get_resource(cart_item.id)
     return response(message=_Text.ADDED, data=resource)
 
 
@@ -84,7 +83,7 @@ def patch_cart_id_items_id(cart_id: int, cart_item_id: int) -> Response:
         # Update cart count
         update_cart_count(s, cart)
 
-    resource = get_resource(cart_id)
+    resource = get_resource(cart_item_id)
     return response(data=resource)
 
 
@@ -108,5 +107,4 @@ def delete_cart_id_items_id(cart_id: int, cart_item_id: int) -> Response:
         # Update cart count
         update_cart_count(s, cart)
 
-    resource = get_resource(cart_id)
-    return response(data=resource)
+    return response(204, ApiText.HTTP_204)

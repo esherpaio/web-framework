@@ -15,6 +15,7 @@ class ApiText(StrEnum):
 
     HTTP_200 = _("API_HTTP_200")
     HTTP_202 = _("API_HTTP_202")
+    HTTP_204 = _("API_HTTP_204")
     HTTP_400 = _("API_HTTP_400")
     HTTP_401 = _("API_HTTP_401")
     HTTP_403 = _("API_HTTP_403")

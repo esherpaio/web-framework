@@ -3,6 +3,7 @@
     "API_CATEGORY_REBOOT_REQUIRED": "The changes will be reflected after the server has rebooted.",
     "API_HTTP_200": "We have processed your request.",
     "API_HTTP_202": "We are processing your request.",
+    "API_HTTP_204": "We have processed your request.",
     "API_HTTP_400": "We could not process your request.",
     "API_HTTP_401": "Unauthorized request.",
     "API_HTTP_403": "Access is forbidden.",

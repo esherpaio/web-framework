@@ -12,7 +12,7 @@ from web import config
 from web.blueprint.api_v1 import api_v1_bp
 from web.database.client import conn
 from web.database.model import Cart, User
-from web.helper.api import json_get, response
+from web.helper.api import ApiText, json_get, response
 from web.helper.cart import transfer_cart, update_cart_count
 from web.helper.security import get_access
 from web.helper.user import KnownUser
@@ -73,4 +73,4 @@ def delete_session() -> Response:
         update_cart_count(s, cart)
 
     links = {"redirect": url_for(config.ENDPOINT_HOME, _locale=current_user.locale)}
-    return response(links=links)
+    return response(204, message=ApiText.HTTP_204, links=links)

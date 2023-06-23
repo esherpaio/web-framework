@@ -146,4 +146,4 @@ def delete_orders_id(order_id: int) -> Response:
             create_refund(s, mollie_payment, order, price, price_vat)
             order.status_id = OrderStatusId.COMPLETED
 
-    return response()
+    return response(204, ApiText.HTTP_204)
