@@ -13,13 +13,17 @@ def get_resource(cart_id: int) -> dict:
 
 def _build(s: Session, cart: Cart) -> dict:
     return {
-        "id": cart.id,
-        "shipping_id": cart.shipping_id,
         "billing_id": cart.billing_id,
-        "cart_count": current_user.cart_count,
-        "subtotal_price_vat": cart.subtotal_price_vat,
-        "shipment_price_vat": cart.shipment_price_vat,
-        "discount_price_vat": cart.discount_price_vat,
-        "total_price_vat": cart.total_price_vat,
+        "cart_count": cart.items_count,
+        "coupon_id": cart.coupon_id,
         "currency_code": cart.currency.code,
+        "discount_price_vat": cart.discount_price_vat,
+        "id": cart.id,
+        "shipment_method_id": cart.shipment_method_id,
+        "shipment_price_vat": cart.shipment_price_vat,
+        "shipping_id": cart.shipping_id,
+        "subtotal_price_vat": cart.subtotal_price_vat,
+        "total_price_vat": cart.total_price_vat,
+        "vat_rate": cart.vat_rate,
+        "vat_reverse": cart.vat_reverse,
     }
