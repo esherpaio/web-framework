@@ -133,4 +133,4 @@ def delete_articles_id_media_id(article_id: int, media_id: int) -> Response:
         s.delete(file)
         s.delete(article_media)
 
-    return response()
+    return response(204, ApiText.HTTP_204)

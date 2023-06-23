@@ -40,4 +40,4 @@ def delete_coupons_id(coupon_id: int) -> Response:
         # Update is_deleted
         coupon.is_deleted = True
 
-    return response()
+    return response(204, ApiText.HTTP_204)

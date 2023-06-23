@@ -91,4 +91,4 @@ def delete_shipment_zones_id(shipment_zone_id: int) -> Response:
         # Update is_deleted
         shipment_zone.is_deleted = True
 
-    return response()
+    return response(204, ApiText.HTTP_204)

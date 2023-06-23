@@ -74,4 +74,4 @@ def delete_articles_id(article_id: int) -> Response:
         # Update is_deleted
         article.is_deleted = True
 
-    return response()
+    return response(204, ApiText.HTTP_204)
