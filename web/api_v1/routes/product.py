@@ -1,7 +1,6 @@
 from flask import Response
 
 from web.api_v1 import api_v1_bp
-from web.api_v1.utils.product import clean_html
 from web.database.client import conn
 from web.database.model import Product, ProductTypeId, Sku, UserRoleLevel
 from web.helper.api import ApiText, authorize, json_get, response
@@ -66,7 +65,7 @@ def patch_products_id(product_id: int) -> Response:
         if has_summary:
             product.summary = summary
         if has_html:
-            product.html = clean_html(html)
+            product.html = html
         if has_unit_price:
             product.unit_price = unit_price
         if has_read_html:

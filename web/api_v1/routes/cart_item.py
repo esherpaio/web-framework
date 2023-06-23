@@ -3,8 +3,8 @@ from enum import StrEnum
 from flask import Response
 
 from web.api_v1 import api_v1_bp
+from web.api_v1.common.cart_item import update_cart_shipment_methods
 from web.api_v1.resource.cart_item import get_resource
-from web.api_v1.utils.cart_item import update_cart_shipment_methods
 from web.database.client import conn
 from web.database.model import Cart, CartItem
 from web.helper.api import ApiText, json_get, response
