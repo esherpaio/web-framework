@@ -1,4 +1,3 @@
-from flask_login import current_user
 from sqlalchemy.orm import Session
 
 from web.database.client import conn

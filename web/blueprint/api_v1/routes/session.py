@@ -3,16 +3,14 @@ from enum import StrEnum
 from random import randint
 
 import flask_login
-from flask import Response, url_for
-from flask_login import current_user
+from flask import Response
 from sqlalchemy import func
 from werkzeug.security import check_password_hash
 
-from web import config
 from web.blueprint.api_v1 import api_v1_bp
 from web.database.client import conn
 from web.database.model import User
-from web.helper.api import ApiText, json_get, response
+from web.helper.api import json_get, response
 from web.helper.cart import transfer_cart
 from web.helper.user import KnownUser
 from web.i18n.base import _
@@ -49,19 +47,10 @@ def post_session() -> Response:
     time.sleep(sleep_s)
     flask_login.login_user(KnownUser(user), remember=True)
 
-    # Create links
-    if current_user.redirect:
-        redirect = current_user.redirect
-    else:
-        redirect = url_for(config.ENDPOINT_USER)
-    current_user.redirect = None
-    links = {"redirect": redirect}
-
-    return response(links=links)
+    return response()
 
 
 @api_v1_bp.delete("/sessions")
 def delete_session() -> Response:
     flask_login.logout_user()
-    links = {"redirect": url_for(config.ENDPOINT_HOME, _locale=current_user.locale)}
-    return response(links=links)
+    return response()
