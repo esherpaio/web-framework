@@ -103,6 +103,24 @@ def args_get(
     return value, has_key
 
 
+def modify_request(
+    mapping: dict[str, Callable]
+) -> Callable[[Callable[..., Response]], Callable[..., Response]]:
+    """Modify the request body."""
+
+    def decorate(f: Callable) -> Callable[..., Response]:
+        def wrap() -> Response:
+            if request.is_json:
+                for name, func in mapping.items():
+                    if f".{name}" in request.endpoint:
+                        func(request.json)
+
+        wrap.__name__ = f.__name__
+        return wrap
+
+    return decorate
+
+
 def modify_response(
     mapping: dict[str, Callable]
 ) -> Callable[[Callable[..., Response]], Callable[..., Response]]:
