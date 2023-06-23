@@ -30,3 +30,17 @@ format:
 .PHONY: translations
 translations:
 	python3 -c 'from web.i18n.utils import sort_translations; sort_translations();'
+
+## MIGRATIONS
+## ----------
+## migrations : create migrations
+.PHONY: migrations
+migrations:
+	alembic revision --autogenerate -m ""
+
+## MIGRATE
+## ----------
+## migrate : run migrations
+.PHONY: migrate
+migrate:
+	alembic upgrade head
