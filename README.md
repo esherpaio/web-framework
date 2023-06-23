@@ -6,6 +6,13 @@ This repository is a custom web framework for clients of Enlarge.
 
 ### 2023-06-23
 
+Additions:
+- Modify response function
+- Modify request function
+
+Removals:
+- Removed bleach
+
 Improvements:
 - API
     - Added more attributes to be POSTed or PATCHed
