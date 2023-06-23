@@ -42,7 +42,7 @@ def get_carts() -> Response:
         access = get_access(s)
         cart = s.query(Cart).filter_by(access_id=access.id).first()
         if not cart:
-            return response(403, ApiText.HTTP_403)
+            return response(404, ApiText.HTTP_404)
 
     resource = [get_resource(cart.id)]
     return response(data=resource)
