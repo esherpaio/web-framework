@@ -95,4 +95,4 @@ def delete_cart_id_items_id(cart_id: int, cart_item_id: int) -> Response:
         # Update shipment methods
         update_cart_shipment_methods(s, cart)
 
-    return response(204, ApiText.HTTP_204)
+    return response()

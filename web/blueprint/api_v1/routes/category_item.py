@@ -69,4 +69,4 @@ def delete_categories_id_items_id(category_id: int, item_id: int) -> Response:
         # Delete category_item
         s.delete(category_item)
 
-    return response(204, ApiText.HTTP_204)
+    return response()
