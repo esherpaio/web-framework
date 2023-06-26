@@ -3,10 +3,11 @@ from flask import Response
 from web.api_v1 import api_v1_bp
 from web.database.client import conn
 from web.database.model import Coupon, UserRoleLevel
-from web.helper.api import ApiText, authorize, json_get, response
+from web.helper.api import ApiText, json_get, response
+from web.helper.user import access_control
 
 
-@authorize(UserRoleLevel.ADMIN)
+@access_control(UserRoleLevel.ADMIN)
 @api_v1_bp.post("/coupons")
 def post_coupons() -> Response:
     amount, _ = json_get("amount", int | float)
@@ -27,7 +28,7 @@ def post_coupons() -> Response:
     return response()
 
 
-@authorize(UserRoleLevel.ADMIN)
+@access_control(UserRoleLevel.ADMIN)
 @api_v1_bp.delete("/coupons/<int:coupon_id>")
 def delete_coupons_id(coupon_id: int) -> Response:
     with conn.begin() as s:

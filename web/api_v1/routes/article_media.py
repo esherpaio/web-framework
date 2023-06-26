@@ -9,10 +9,11 @@ from web.api_v1 import api_v1_bp
 from web.database.client import conn
 from web.database.model import Article, ArticleMedia, File, FileTypeId, UserRoleLevel
 from web.helper import cdn
-from web.helper.api import ApiText, authorize, json_get, response
+from web.helper.api import ApiText, json_get, response
+from web.helper.user import access_control
 
 
-@authorize(UserRoleLevel.ADMIN)
+@access_control(UserRoleLevel.ADMIN)
 @api_v1_bp.post("/articles/<int:article_id>/media")
 def post_articles_id_media(article_id: int) -> Response:
     with conn.begin() as s:
@@ -77,7 +78,7 @@ def post_articles_id_media(article_id: int) -> Response:
     return response()
 
 
-@authorize(UserRoleLevel.ADMIN)
+@access_control(UserRoleLevel.ADMIN)
 @api_v1_bp.patch("/articles/<int:article_id>/media/<int:media_id>")
 def patch_articles_id_media_id(article_id: int, media_id: int) -> Response:
     desc, has_desc = json_get("desc", str)
@@ -109,7 +110,7 @@ def patch_articles_id_media_id(article_id: int, media_id: int) -> Response:
     return response()
 
 
-@authorize(UserRoleLevel.ADMIN)
+@access_control(UserRoleLevel.ADMIN)
 @api_v1_bp.delete("/articles/<int:article_id>/media/<int:media_id>")
 def delete_articles_id_media_id(article_id: int, media_id: int) -> Response:
     with conn.begin() as s:

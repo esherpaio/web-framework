@@ -4,13 +4,14 @@ from sqlalchemy.orm import contains_eager
 from web.api_v1 import api_v1_bp
 from web.database.client import conn
 from web.database.model import ProductValue, Sku, SkuDetail, UserRoleLevel
-from web.helper.api import ApiText, authorize, json_get, response
+from web.helper.api import ApiText, json_get, response
+from web.helper.user import access_control
 from web.helper.validation import gen_slug
 from web.seeder.decorators import sync_after
 from web.seeder.model.sku import SkuSyncer
 
 
-@authorize(UserRoleLevel.ADMIN)
+@access_control(UserRoleLevel.ADMIN)
 @api_v1_bp.post("/products/<int:product_id>/values")
 def post_products_id_values(product_id: int) -> Response:
     name, _ = json_get("name", str, nullable=False)
@@ -43,7 +44,7 @@ def post_products_id_values(product_id: int) -> Response:
     return response()
 
 
-@authorize(UserRoleLevel.ADMIN)
+@access_control(UserRoleLevel.ADMIN)
 @api_v1_bp.patch("/products/<int:product_id>/values/<int:value_id>")
 @sync_after(SkuSyncer)
 def patch_products_id_values_id(product_id: int, value_id: int) -> Response:
@@ -73,7 +74,7 @@ def patch_products_id_values_id(product_id: int, value_id: int) -> Response:
     return response()
 
 
-@authorize(UserRoleLevel.ADMIN)
+@access_control(UserRoleLevel.ADMIN)
 @api_v1_bp.delete("/products/<int:product_id>/values/<int:value_id>")
 def delete_products_id_values_id(product_id: int, value_id: int) -> Response:
     with conn.begin() as s:

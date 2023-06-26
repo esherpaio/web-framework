@@ -1,35 +1,33 @@
+import uuid
 from enum import StrEnum
 from functools import cached_property
+from typing import Callable
 
-from flask import request, session
-from flask_login import AnonymousUserMixin
-from sqlalchemy.orm import joinedload
+from flask import Response, redirect, request, session, url_for
+from flask_login import AnonymousUserMixin, current_user
+from sqlalchemy.orm import Session, joinedload
 
 from web import config
 from web.database.client import conn
-from web.database.model import Country, Currency, Language, User
+from web.database.model import Access, Country, Currency, Language, User
+from web.helper.api import ApiText, UserRoleLevel, response
 from web.helper.cache import cache
 from web.helper.localization import cur_locale, match_locale
 
 
 class Header(StrEnum):
-    COUNTRY = "cf-ipcountry"
+    COUNTRY = "CF-IPCountry"
 
 
 class Session(StrEnum):
-    CART_COUNT = "cart_count"
     KEY = "key"
-    LOCALE = "locale"
-    REDIRECT = "redirect"
 
 
 class UserAttrs:
     @cached_property
     def locale(self) -> str:
         view_locale = cur_locale()
-        session_locale = session.get(Session.LOCALE)
-        locale = view_locale or session_locale or config.WEBSITE_LOCALE
-        session[Session.LOCALE] = locale
+        locale = view_locale or config.WEBSITE_LOCALE
         return locale
 
     @cached_property
@@ -114,3 +112,46 @@ def load_user(user_id: int) -> KnownUser | None:
         )
     if user is not None:
         return KnownUser(user)
+
+
+def access_control(
+    level: UserRoleLevel,
+) -> Callable[[Callable[..., Response]], Callable[..., Response]]:
+    """Authorize a user based on their role level."""
+
+    def decorate(f: Callable) -> Callable[..., Response]:
+        def wrap(*args, **kwargs) -> Response:
+            if current_user.is_authenticated and current_user.role.level >= level:
+                return f(*args, **kwargs)
+            elif "api" in request.blueprint:
+                return response(403, ApiText.HTTP_403)
+            else:
+                return redirect(url_for(config.ENDPOINT_LOGIN))
+
+        wrap.__name__ = f.__name__
+        return wrap
+
+    return decorate
+
+
+def get_access(s: Session) -> Access:
+    """Get an access object for the current user."""
+
+    user_id = current_user.get_id()
+    user_key = current_user.key
+    if not user_key:
+        user_key = str(uuid.uuid4())
+        current_user.key = user_key
+
+    if user_id:
+        kwargs = {"user_id": user_id}
+    else:
+        kwargs = {"session_key": user_key}
+
+    access = s.query(Access).filter_by(**kwargs).first()
+    if not access:
+        access = Access(**kwargs)
+        s.add(access)
+        s.flush()
+
+    return access

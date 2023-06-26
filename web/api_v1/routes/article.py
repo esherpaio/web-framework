@@ -3,11 +3,12 @@ from flask import Response
 from web.api_v1 import api_v1_bp
 from web.database.client import conn
 from web.database.model import Article, UserRoleLevel
-from web.helper.api import ApiText, authorize, json_get, response
+from web.helper.api import ApiText, json_get, response
+from web.helper.user import access_control
 from web.helper.validation import gen_slug
 
 
-@authorize(UserRoleLevel.ADMIN)
+@access_control(UserRoleLevel.ADMIN)
 @api_v1_bp.post("/articles")
 def post_articles() -> Response:
     name, _ = json_get("name", str, nullable=False)
@@ -32,7 +33,7 @@ def post_articles() -> Response:
     return response()
 
 
-@authorize(UserRoleLevel.ADMIN)
+@access_control(UserRoleLevel.ADMIN)
 @api_v1_bp.patch("/articles/<int:article_id>")
 def patch_articles_id(article_id: int) -> Response:
     html, has_html = json_get("html", str)
@@ -60,7 +61,7 @@ def patch_articles_id(article_id: int) -> Response:
     return response()
 
 
-@authorize(UserRoleLevel.ADMIN)
+@access_control(UserRoleLevel.ADMIN)
 @api_v1_bp.delete("/articles/<int:article_id>")
 def delete_articles_id(article_id: int) -> Response:
     with conn.begin() as s:

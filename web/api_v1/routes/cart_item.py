@@ -8,7 +8,7 @@ from web.api_v1.resource.cart_item import get_resource
 from web.database.client import conn
 from web.database.model import Cart, CartItem
 from web.helper.api import ApiText, json_get, response
-from web.helper.security import get_access
+from web.helper.user import get_access
 from web.i18n.base import _
 
 

@@ -4,10 +4,11 @@ from sqlalchemy import and_, or_
 from web.api_v1 import api_v1_bp
 from web.database.client import conn
 from web.database.model import ShipmentZone, UserRoleLevel
-from web.helper.api import ApiText, authorize, json_get, response
+from web.helper.api import ApiText, json_get, response
+from web.helper.user import access_control
 
 
-@authorize(UserRoleLevel.ADMIN)
+@access_control(UserRoleLevel.ADMIN)
 @api_v1_bp.post("/shipment-zones")
 def post_shipment_zones() -> Response:
     country_id, _ = json_get("country_id", int)
@@ -49,7 +50,7 @@ def post_shipment_zones() -> Response:
     return response()
 
 
-@authorize(UserRoleLevel.ADMIN)
+@access_control(UserRoleLevel.ADMIN)
 @api_v1_bp.patch("/shipment-zones/<int:shipment_zone_id>")
 def patch_shipment_zones_id(shipment_zone_id: int) -> Response:
     country_id, has_country_id = json_get("country_id", int)
@@ -78,7 +79,7 @@ def patch_shipment_zones_id(shipment_zone_id: int) -> Response:
     return response()
 
 
-@authorize(UserRoleLevel.ADMIN)
+@access_control(UserRoleLevel.ADMIN)
 @api_v1_bp.delete("/shipment-zones/<int:shipment_zone_id>")
 def delete_shipment_zones_id(shipment_zone_id: int) -> Response:
     with conn.begin() as s:

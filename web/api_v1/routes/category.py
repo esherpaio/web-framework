@@ -5,7 +5,8 @@ from flask import Response
 from web.api_v1 import api_v1_bp
 from web.database.client import conn
 from web.database.model import Category, UserRoleLevel
-from web.helper.api import ApiText, authorize, json_get, response
+from web.helper.api import ApiText, json_get, response
+from web.helper.user import access_control
 from web.helper.validation import gen_slug
 from web.i18n.base import _
 
@@ -14,7 +15,7 @@ class _Text(StrEnum):
     REBOOT_REQUIRED = _("API_CATEGORY_REBOOT_REQUIRED")
 
 
-@authorize(UserRoleLevel.ADMIN)
+@access_control(UserRoleLevel.ADMIN)
 @api_v1_bp.post("/categories")
 def post_categories() -> Response:
     name, _ = json_get("name", str, nullable=False)
@@ -38,7 +39,7 @@ def post_categories() -> Response:
     return response()
 
 
-@authorize(UserRoleLevel.ADMIN)
+@access_control(UserRoleLevel.ADMIN)
 @api_v1_bp.patch("/categories/<int:category_id>")
 def patch_categories_id(category_id: int) -> Response:
     child_id, has_child_id = json_get("child_id", int)
@@ -63,7 +64,7 @@ def patch_categories_id(category_id: int) -> Response:
     return response(message=_Text.REBOOT_REQUIRED)
 
 
-@authorize(UserRoleLevel.ADMIN)
+@access_control(UserRoleLevel.ADMIN)
 @api_v1_bp.delete("/categories/<int:category_id>")
 def delete_categories_id(category_id: int) -> Response:
     with conn.begin() as s:

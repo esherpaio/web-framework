@@ -2,11 +2,8 @@ import json
 from enum import StrEnum
 from typing import Callable
 
-from flask import Response, redirect, request, url_for
-from flask_login import current_user
+from flask import Response, request
 
-from web import config
-from web.database.model import UserRoleLevel
 from web.i18n.base import _
 
 
@@ -133,26 +130,6 @@ def modify_response(
                     if f".{name}" in request.endpoint:
                         return func(resp, **request.view_args)
             return resp
-
-        wrap.__name__ = f.__name__
-        return wrap
-
-    return decorate
-
-
-def authorize(
-    level: UserRoleLevel,
-) -> Callable[[Callable[..., Response]], Callable[..., Response]]:
-    """Authorize a user based on their role level."""
-
-    def decorate(f: Callable) -> Callable[..., Response]:
-        def wrap(*args, **kwargs) -> Response:
-            if current_user.is_authenticated and current_user.role.level >= level:
-                return f(*args, **kwargs)
-            elif "api" in request.blueprint:
-                return response(403, ApiText.HTTP_403)
-            else:
-                return redirect(url_for(config.ENDPOINT_LOGIN))
 
         wrap.__name__ = f.__name__
         return wrap

@@ -6,8 +6,9 @@ from web.api_v1 import api_v1_bp
 from web.api_v1.common.order_refund import create_refund
 from web.database.client import conn
 from web.database.model import Order, UserRoleLevel
-from web.helper.api import ApiText, authorize, json_get, response
+from web.helper.api import ApiText, json_get, response
 from web.helper.mollie_api import Mollie
+from web.helper.user import access_control
 from web.i18n.base import _
 
 
@@ -18,7 +19,7 @@ class _Text(StrEnum):
     INVOICE_NOT_FOUND = _("API_ORDER_REFUND_INVOICE_NOT_FOUND")
 
 
-@authorize(UserRoleLevel.ADMIN)
+@access_control(UserRoleLevel.ADMIN)
 @api_v1_bp.post("/orders/<int:order_id>/refunds")
 def post_orders_id_refund(order_id: int) -> Response:
     price, _ = json_get("total_price", int | float, nullable=False)
