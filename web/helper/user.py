@@ -9,8 +9,8 @@ from sqlalchemy.orm import Session, joinedload
 
 from web import config
 from web.database.client import conn
-from web.database.model import Access, Country, Currency, Language, User
-from web.helper.api import ApiText, UserRoleLevel, response
+from web.database.model import Access, Country, Currency, Language, User, UserRoleLevel
+from web.helper.api import ApiText, response
 from web.helper.cache import cache
 from web.helper.localization import cur_locale, match_locale
 
