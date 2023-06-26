@@ -13,12 +13,14 @@ class UserRole(Base):
 
 
 class UserRoleId(IntEnum):
-    USER = 1
-    ADMIN = 2
-    SUPER = 3
+    GUEST = 1
+    USER = 2
+    ADMIN = 3
+    SUPER = 4
 
 
 class UserRoleLevel(IntEnum):
-    USER = 100
-    ADMIN = 500
-    SUPER = 900
+    GUEST = 100
+    USER = 200
+    ADMIN = 300
+    SUPER = 400

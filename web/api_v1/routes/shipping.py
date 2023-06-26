@@ -5,7 +5,7 @@ from web.api_v1.resource.shipping import get_resource
 from web.database.client import conn
 from web.database.model import Cart, Order, Shipping, User
 from web.helper.api import ApiText, json_get, response
-from web.helper.security import get_access
+from web.helper.user import get_access
 
 
 @api_v1_bp.post("/shippings")

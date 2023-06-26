@@ -4,7 +4,6 @@ from random import randint
 
 import flask_login
 from flask import Response
-from sqlalchemy import func
 from werkzeug.security import check_password_hash
 
 from web.api_v1 import api_v1_bp
@@ -24,27 +23,27 @@ class _Text(StrEnum):
 @api_v1_bp.post("/sessions")
 @transfer_cart
 def post_session() -> Response:
-    email, _ = json_get("email", str, nullable=False)
+    email, _ = json_get("email", str, nullable=False, lower_str=True)
     password, _ = json_get("password", str, nullable=False)
 
     # Get user
     with conn.begin() as s:
-        user = s.query(User).filter(func.lower(User.email) == func.lower(email)).first()
+        user = s.query(User).filter_by(email=email).first()
 
     # Raise if user doesn't exist
-    # Raise if user not active
-    # Raise if wrong password
     if not user or not user.id:
         return response(400, _Text.CHECK_DETAILS)
+    # Raise if user not active
     if not user.is_active:
         return response(400, _Text.CHECK_ACTIVATION)
+    # Raise if wrong password
     if not check_password_hash(user.password_hash, password):
         return response(400, _Text.CHECK_DETAILS)
 
     # Wait random interval
-    # Login user
     sleep_s = randint(0, 2000) / 1000
     time.sleep(sleep_s)
+    # Login user
     flask_login.login_user(KnownUser(user), remember=True)
 
     return response()

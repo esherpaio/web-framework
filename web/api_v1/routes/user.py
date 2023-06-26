@@ -11,7 +11,7 @@ from web.api_v1.resource.user import get_resource
 from web.database.client import conn
 from web.database.model import User, Verification
 from web.helper.api import ApiText, args_get, json_get, response
-from web.helper.security import get_access
+from web.helper.user import get_access
 from web.i18n.base import _
 from web.mail.routes.user import send_new_password, send_verification_url
 

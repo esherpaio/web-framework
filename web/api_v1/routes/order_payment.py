@@ -8,7 +8,7 @@ from web.database.client import conn
 from web.database.model import Order
 from web.helper.api import ApiText, response
 from web.helper.mollie_api import Mollie, mollie_amount, mollie_webhook
-from web.helper.security import get_access
+from web.helper.user import get_access
 
 
 @api_v1_bp.post("/orders/<int:order_id>/payments")

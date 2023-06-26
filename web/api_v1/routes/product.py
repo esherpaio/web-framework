@@ -3,13 +3,14 @@ from flask import Response
 from web.api_v1 import api_v1_bp
 from web.database.client import conn
 from web.database.model import Product, ProductTypeId, Sku, UserRoleLevel
-from web.helper.api import ApiText, authorize, json_get, response
+from web.helper.api import ApiText, json_get, response
+from web.helper.user import access_control
 from web.helper.validation import gen_slug
 from web.seeder.decorators import sync_after
 from web.seeder.model.sku import SkuSyncer
 
 
-@authorize(UserRoleLevel.ADMIN)
+@access_control(UserRoleLevel.ADMIN)
 @api_v1_bp.post("/products")
 @sync_after(SkuSyncer)
 def post_products() -> Response:
@@ -35,7 +36,7 @@ def post_products() -> Response:
     return response()
 
 
-@authorize(UserRoleLevel.ADMIN)
+@access_control(UserRoleLevel.ADMIN)
 @api_v1_bp.patch("/products/<int:product_id>")
 @sync_after(SkuSyncer)
 def patch_products_id(product_id: int) -> Response:
@@ -77,7 +78,7 @@ def patch_products_id(product_id: int) -> Response:
     return response()
 
 
-@authorize(UserRoleLevel.ADMIN)
+@access_control(UserRoleLevel.ADMIN)
 @api_v1_bp.delete("/products/<int:product_id>")
 def delete_products_id(product_id: int) -> Response:
     with conn.begin() as s:

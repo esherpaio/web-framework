@@ -3,11 +3,12 @@ from flask import Response
 from web.api_v1 import api_v1_bp
 from web.database.client import conn
 from web.database.model import Order, OrderStatusId, Shipment, UserRoleLevel
-from web.helper.api import authorize, json_get, response
+from web.helper.api import json_get, response
+from web.helper.user import access_control
 from web.mail.routes.order import send_order_shipped
 
 
-@authorize(UserRoleLevel.ADMIN)
+@access_control(UserRoleLevel.ADMIN)
 @api_v1_bp.post("/orders/<int:order_id>/shipments")
 def post_orders_id_shipments(order_id: int) -> Response:
     url, _ = json_get("url", str, nullable=False)

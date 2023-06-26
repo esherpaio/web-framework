@@ -3,10 +3,11 @@ from flask import Response
 from web.api_v1 import api_v1_bp
 from web.database.client import conn
 from web.database.model import CategoryItem, UserRoleLevel
-from web.helper.api import ApiText, authorize, json_get, response
+from web.helper.api import ApiText, json_get, response
+from web.helper.user import access_control
 
 
-@authorize(UserRoleLevel.ADMIN)
+@access_control(UserRoleLevel.ADMIN)
 @api_v1_bp.post("/categories/<int:category_id>/items")
 def post_categories_id_items(category_id: int) -> Response:
     order, _ = json_get("order", int)
@@ -33,7 +34,7 @@ def post_categories_id_items(category_id: int) -> Response:
     return response()
 
 
-@authorize(UserRoleLevel.ADMIN)
+@access_control(UserRoleLevel.ADMIN)
 @api_v1_bp.patch("/categories/<int:category_id>/items/<int:item_id>")
 def patch_categories_id_items_id(category_id: int, item_id: int) -> Response:
     order, has_order = json_get("order", int)
@@ -54,7 +55,7 @@ def patch_categories_id_items_id(category_id: int, item_id: int) -> Response:
     return response()
 
 
-@authorize(UserRoleLevel.ADMIN)
+@access_control(UserRoleLevel.ADMIN)
 @api_v1_bp.delete("/categories/<int:category_id>/items/<int:item_id>")
 def delete_categories_id_items_id(category_id: int, item_id: int) -> Response:
     with conn.begin() as s:

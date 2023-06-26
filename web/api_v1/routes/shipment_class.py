@@ -3,10 +3,11 @@ from flask import Response
 from web.api_v1 import api_v1_bp
 from web.database.client import conn
 from web.database.model import ShipmentClass, UserRoleLevel
-from web.helper.api import ApiText, authorize, json_get, response
+from web.helper.api import ApiText, json_get, response
+from web.helper.user import access_control
 
 
-@authorize(UserRoleLevel.ADMIN)
+@access_control(UserRoleLevel.ADMIN)
 @api_v1_bp.post("/shipment-classes")
 def post_shipment_classes() -> Response:
     name, _ = json_get("name", str, nullable=False)
@@ -27,7 +28,7 @@ def post_shipment_classes() -> Response:
     return response()
 
 
-@authorize(UserRoleLevel.ADMIN)
+@access_control(UserRoleLevel.ADMIN)
 @api_v1_bp.patch("/shipment-classes/<int:shipment_class_id>")
 def patch_shipment_classes_id(shipment_class_id: int) -> Response:
     order, has_order = json_get("order", int)
@@ -46,7 +47,7 @@ def patch_shipment_classes_id(shipment_class_id: int) -> Response:
     return response()
 
 
-@authorize(UserRoleLevel.ADMIN)
+@access_control(UserRoleLevel.ADMIN)
 @api_v1_bp.delete("/shipment-classes/<int:shipment_class_id>")
 def delete_shipment_classes_id(shipment_class_id: int) -> Response:
     with conn.begin() as s:

@@ -5,13 +5,14 @@ from flask import Response
 from web.api_v1 import api_v1_bp
 from web.database.client import conn
 from web.database.model import Product, ProductValue, Sku, SkuDetail, UserRoleLevel
-from web.helper.api import ApiText, authorize, json_get, response
+from web.helper.api import ApiText, json_get, response
+from web.helper.user import access_control
 from web.helper.validation import gen_slug
 from web.seeder.decorators import sync_after
 from web.seeder.model.sku import SkuSyncer
 
 
-@authorize(UserRoleLevel.ADMIN)
+@access_control(UserRoleLevel.ADMIN)
 @api_v1_bp.post("/skus")
 @sync_after(SkuSyncer)
 def post_skus() -> Response:
@@ -70,7 +71,7 @@ def post_skus() -> Response:
     return response()
 
 
-@authorize(UserRoleLevel.ADMIN)
+@access_control(UserRoleLevel.ADMIN)
 @api_v1_bp.patch("/skus/<int:sku_id>")
 def patch_skus_id(sku_id: int) -> Response:
     is_visible, has_is_visible = json_get("is_visible", bool)
@@ -89,7 +90,7 @@ def patch_skus_id(sku_id: int) -> Response:
     return response()
 
 
-@authorize(UserRoleLevel.ADMIN)
+@access_control(UserRoleLevel.ADMIN)
 @api_v1_bp.delete("/skus/<int:sku_id>")
 def delete_skus_id(sku_id: int) -> Response:
     with conn.begin() as s:

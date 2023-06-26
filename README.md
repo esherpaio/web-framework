@@ -4,6 +4,17 @@ This repository is a custom web framework for clients of Enlarge.
 
 ## Changelog
 
+### 2023-06-26
+
+Additions:
+- Added a guest role (in preparation for Access object removal)
+
+Improvements:
+- Rename authorize() to access_control()
+- The email and password_hash on the User object are now optional (in preparation for Access object removal)
+- Refactored some helper functions
+- We longer store the locale in the session, this should always be derived from the URL, or database objects
+
 ### 2023-06-23
 
 Additions:

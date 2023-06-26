@@ -8,10 +8,10 @@ from web.api_v1.common.order_refund import create_refund
 from web.api_v1.resource.order import get_resource
 from web.database.client import conn
 from web.database.model import Cart, Order, OrderLine, OrderStatusId, UserRoleLevel
-from web.helper.api import ApiText, authorize, json_get, response
+from web.helper.api import ApiText, json_get, response
 from web.helper.cart import get_shipment_methods
 from web.helper.mollie_api import Mollie
-from web.helper.security import get_access
+from web.helper.user import access_control, get_access
 from web.i18n.base import _
 from web.mail.routes.order import send_order_received
 
@@ -120,7 +120,7 @@ def post_orders() -> Response:
     return response(data=resource)
 
 
-@authorize(UserRoleLevel.ADMIN)
+@access_control(UserRoleLevel.ADMIN)
 @api_v1_bp.delete("/orders/<int:order_id>")
 def delete_orders_id(order_id: int) -> Response:
     with conn.begin() as s:
