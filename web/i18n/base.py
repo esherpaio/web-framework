@@ -1,11 +1,8 @@
 import json
 import os
-from functools import lru_cache
-
-from flask import has_request_context
-from flask_login import current_user
 
 from web import config
+from web.helper.localization import current_locale
 from web.helper.logger import logger
 
 
@@ -36,8 +33,8 @@ class Translator:
 
     @property
     def language_code(self) -> str:
-        if current_user:
-            return current_user.language.code
+        if current_locale:
+            return current_locale.language.code
         elif config.WEBSITE_LANGUAGE_CODE:
             return config.WEBSITE_LANGUAGE_CODE
         else:

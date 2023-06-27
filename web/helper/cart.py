@@ -20,6 +20,7 @@ from web.database.model import (
     Shipping,
     User,
 )
+from web.helper.localization import current_locale
 from web.helper.user import get_access
 
 
@@ -107,8 +108,8 @@ def get_shipment_methods(
         country_id = cart.shipping.country_id
         region_id = cart.shipping.country.region_id
     else:
-        country_id = current_user.country.id
-        region_id = current_user.country.region_id
+        country_id = current_locale.country.id
+        region_id = current_locale.country.region_id
 
     # Determine the shipping zone
     shipment_zone = (
