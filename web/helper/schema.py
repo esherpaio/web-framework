@@ -1,11 +1,11 @@
 import json
 
 from flask import request, url_for
-from flask_login import current_user
 from markupsafe import Markup
 
 from web import config
 from web.database.model import Page
+from web.helper.localization import current_locale
 
 
 class Schema:
@@ -53,7 +53,7 @@ class SchemaWebsite(Schema):
         super().__init__()
         home_url = url_for(
             config.ENDPOINT_HOME,
-            _locale=current_user.locale,
+            _locale=current_locale.locale,
             _external=True,
         )
         self.data = {
@@ -70,7 +70,7 @@ class SchemaOrganization(Schema):
         super().__init__()
         home_url = url_for(
             config.ENDPOINT_HOME,
-            _locale=current_user.locale,
+            _locale=current_locale.locale,
             _external=True,
         )
         social_urls = [
@@ -135,7 +135,7 @@ class SchemaProduct(Schema):
             "offers": {
                 "@type": "Offer",
                 "url": request.base_url,
-                "priceCurrency": current_user.currency.code,
+                "priceCurrency": current_locale.currency.code,
                 "price": round(price, 2),
                 "itemCondition": "https://schema.org/NewCondition",
             },
