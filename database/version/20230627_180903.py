@@ -1,7 +1,8 @@
-import sqlalchemy as sa
 from alembic import op
+import sqlalchemy as sa
 
-revision = "d14b06409d69"
+
+revision = "00ad8e394454"
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -484,9 +485,9 @@ def upgrade() -> None:
     )
     op.create_table(
         "user",
-        sa.Column("email", sa.String(length=64), nullable=False),
+        sa.Column("email", sa.String(length=64), nullable=True),
         sa.Column("is_active", sa.Boolean(), nullable=False),
-        sa.Column("password_hash", sa.String(length=256), nullable=False),
+        sa.Column("password_hash", sa.String(length=256), nullable=True),
         sa.Column("billing_id", sa.Integer(), nullable=True),
         sa.Column("role_id", sa.Integer(), nullable=False),
         sa.Column("shipping_id", sa.Integer(), nullable=True),
@@ -537,7 +538,7 @@ def upgrade() -> None:
         sa.UniqueConstraint("sku_id", "value_id"),
     )
     op.create_table(
-        "user_verification",
+        "verification",
         sa.Column("key", sa.String(length=256), nullable=False),
         sa.Column("user_id", sa.Integer(), nullable=False),
         sa.Column("id", sa.Integer(), nullable=False),
@@ -725,7 +726,7 @@ def downgrade() -> None:
     op.drop_table("cart_item")
     op.drop_table("order")
     op.drop_table("cart")
-    op.drop_table("user_verification")
+    op.drop_table("verification")
     op.drop_table("sku_detail")
     op.drop_table("access")
     op.drop_table("user")
