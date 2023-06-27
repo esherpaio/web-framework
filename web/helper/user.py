@@ -1,6 +1,5 @@
 import uuid
 from enum import StrEnum
-from functools import cached_property
 from typing import Callable
 
 from flask import Response, redirect, request, session, url_for
@@ -9,11 +8,8 @@ from sqlalchemy.orm import Session, joinedload
 
 from web import config
 from web.database.client import conn
-from web.database.model import Access, Country, Currency, Language, User, UserRoleLevel
+from web.database.model import Access, User, UserRoleLevel
 from web.helper.api import ApiText, response
-from web.helper.cache import cache
-from web.helper.localization import cur_locale, match_locale
-
 
 
 class Session(StrEnum):
@@ -21,44 +17,6 @@ class Session(StrEnum):
 
 
 class UserAttrs:
-    @cached_property
-    def locale(self) -> str:
-        view_locale = cur_locale()
-        locale = view_locale or config.WEBSITE_LOCALE
-        return locale
-
-    @cached_property
-    def locale_info(self) -> tuple[str, str]:
-        language, country = match_locale(self.locale)
-        if not country:
-            country = config.BUSINESS_COUNTRY_CODE
-        if not language:
-            language = config.WEBSITE_LANGUAGE_CODE
-        country = country.upper()
-        language = language.lower()
-        return country, language
-
-    @cached_property
-    def country(self) -> Country:
-        country_code, _ = self.locale_info
-        for country in cache.countries:
-            if country.code == country_code:
-                return country
-
-    @cached_property
-    def currency(self) -> Currency:
-        currency_id = self.country.currency_id
-        for currency in cache.currencies:
-            if currency.id == currency_id:
-                return currency
-
-    @cached_property
-    def language(self) -> Language:
-        _, language_code = self.locale_info
-        for language in cache.languages:
-            if language.code == language_code:
-                return language
-
     @property
     def key(self) -> str | None:
         return session.get(Session.KEY)

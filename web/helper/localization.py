@@ -1,8 +1,12 @@
 import re
+from functools import cached_property
 
-from flask import current_app, request
+from flask import current_app, g, has_request_context, request
+from werkzeug.local import LocalProxy
 
 from web import config
+from web.database.model import Country, Currency, Language
+from web.helper.cache import cache
 
 
 def set_locale(data: dict, locale: str = config.WEBSITE_LOCALE) -> None:
@@ -14,7 +18,7 @@ def set_locale(data: dict, locale: str = config.WEBSITE_LOCALE) -> None:
 def cur_locale() -> str | None:
     """Get the locale."""
 
-    if request.endpoint:
+    if has_request_context and request.endpoint:
         if "_locale" in request.view_args:
             return request.view_args["_locale"]
 
@@ -56,3 +60,53 @@ def gen_locale(
     """
 
     return f"{language_code}-{country_code}".lower()
+
+
+current_locale = LocalProxy(lambda: _get_locale())
+
+
+class Locale:
+    @cached_property
+    def locale(self) -> str:
+        view_locale = cur_locale()
+        locale = view_locale or config.WEBSITE_LOCALE
+        return locale
+
+    @cached_property
+    def locale_info(self) -> tuple[str, str]:
+        language_code, country_code = match_locale(self.locale)
+        if not language_code:
+            language_code = config.WEBSITE_LANGUAGE_CODE
+        if not country_code:
+            country_code = config.BUSINESS_COUNTRY_CODE
+        language_code = language_code.lower()
+        country_code = country_code.upper()
+        return language_code, country_code
+
+    @cached_property
+    def country(self) -> Country:
+        _, country_code = self.locale_info
+        for country in cache.countries:
+            if country.code == country_code:
+                return country
+
+    @cached_property
+    def currency(self) -> Currency:
+        currency_id = self.country.currency_id
+        for currency in cache.currencies:
+            if currency.id == currency_id:
+                return currency
+
+    @cached_property
+    def language(self) -> Language:
+        language_code, _ = self.locale_info
+        for language in cache.languages:
+            if language.code == language_code:
+                return language
+
+
+def _get_locale() -> Locale:
+    if has_request_context():
+        if "_locale" not in g:
+            g._locale = Locale()
+        return g._locale
