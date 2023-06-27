@@ -5,7 +5,6 @@ from flask import current_app, g, has_request_context, request
 from werkzeug.local import LocalProxy
 
 from web import config
-from web.database.model import Country, Currency, Language
 from web.helper.cache import cache
 
 
@@ -84,21 +83,21 @@ class Locale:
         return language_code, country_code
 
     @cached_property
-    def country(self) -> Country:
+    def country(self) -> "Country":
         _, country_code = self.locale_info
         for country in cache.countries:
             if country.code == country_code:
                 return country
 
     @cached_property
-    def currency(self) -> Currency:
+    def currency(self) -> "Currency":
         currency_id = self.country.currency_id
         for currency in cache.currencies:
             if currency.id == currency_id:
                 return currency
 
     @cached_property
-    def language(self) -> Language:
+    def language(self) -> "Language":
         language_code, _ = self.locale_info
         for language in cache.languages:
             if language.code == language_code:
