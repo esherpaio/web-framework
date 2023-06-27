@@ -15,9 +15,6 @@ from web.helper.cache import cache
 from web.helper.localization import cur_locale, match_locale
 
 
-class Header(StrEnum):
-    COUNTRY = "CF-IPCountry"
-
 
 class Session(StrEnum):
     KEY = "key"
@@ -33,13 +30,10 @@ class UserAttrs:
     @cached_property
     def locale_info(self) -> tuple[str, str]:
         language, country = match_locale(self.locale)
-
         if not country:
-            header_country = request.headers.get(Header.COUNTRY)
-            country = header_country or config.BUSINESS_COUNTRY_CODE
+            country = config.BUSINESS_COUNTRY_CODE
         if not language:
             language = config.WEBSITE_LANGUAGE_CODE
-
         country = country.upper()
         language = language.lower()
         return country, language
