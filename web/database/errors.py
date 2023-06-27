@@ -1,6 +1,3 @@
-from web.i18n.base import _
-
-
 class DbError(Exception):
     """Base class for database errors."""
 
@@ -16,13 +13,9 @@ class DbLengthError(DbError):
 class DbEmailError(DbError):
     """Raised when an email address cannot be validated."""
 
-    MESSAGE = _("DATABASE_EMAIL_ERROR")
-
 
 class DbPhoneError(DbError):
     """Raised when a phone number cannot be validated."""
-
-    MESSAGE = _("DATABASE_PHONE_ERROR")
 
 
 class DbSlugError(DbError):
