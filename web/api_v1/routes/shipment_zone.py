@@ -66,7 +66,7 @@ def patch_shipment_zones_id(shipment_zone_id: int) -> Response:
 
         # Update order
         if has_order:
-            shipment_zone.order_ = order
+            shipment_zone.order = order
 
         # Update country_id
         if has_country_id:

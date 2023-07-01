@@ -50,7 +50,7 @@ def patch_categories_id_items_id(category_id: int, item_id: int) -> Response:
 
         # Update CategoryItem
         if has_order:
-            category_item.order_ = order
+            category_item.order = order
 
     return response()
 

@@ -101,7 +101,7 @@ def patch_articles_id_media_id(article_id: int, media_id: int) -> Response:
 
         # Update order
         if has_order:
-            article_media.order_ = order
+            article_media.order = order
 
         # Update desc
         if has_desc:
