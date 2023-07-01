@@ -2,7 +2,7 @@ from flask import Response
 
 from web.api_v1 import api_v1_bp
 from web.database.client import conn
-from web.database.model import ShipmentClass, UserRoleLevel
+from web.database.model import ShipmentClass, ShipmentMethod, UserRoleLevel
 from web.helper.api import ApiText, json_get, response
 from web.helper.user import access_control
 
@@ -51,13 +51,19 @@ def patch_shipment_classes_id(shipment_class_id: int) -> Response:
 @api_v1_bp.delete("/shipment-classes/<int:shipment_class_id>")
 def delete_shipment_classes_id(shipment_class_id: int) -> Response:
     with conn.begin() as s:
-        # Get shipment_class
-        # Raise if shipment_class doesn't exist
+        # Set shipment class to deleted
         shipment_class = s.query(ShipmentClass).filter_by(id=shipment_class_id).first()
         if not shipment_class:
             return response(404, ApiText.HTTP_404)
-
-        # Update is_deleted
         shipment_class.is_deleted = True
+
+        # Set shipment zones to deleted
+        shipment_zones = (
+            s.query(ShipmentMethod)
+            .filter_by(class_id=shipment_class_id, is_deleted=False)
+            .all()
+        )
+        for shipment_zone in shipment_zones:
+            shipment_zone.is_deleted = True
 
     return response()
