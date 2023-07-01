@@ -62,7 +62,7 @@ def json_get(
     value = request.json.get(key, default)
     has_key = key in request.json
 
-    if value == "" and not allow_empty_str:
+    if not allow_empty_str and value == "":
         value = None
     if lower_str and isinstance(value, str):
         value = value.lower()

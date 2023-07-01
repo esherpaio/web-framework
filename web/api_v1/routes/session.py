@@ -30,19 +30,20 @@ def post_session() -> Response:
     with conn.begin() as s:
         user = s.query(User).filter_by(email=email).first()
 
-    # Raise if user doesn't exist
-    if not user or not user.id:
+    # Check if user exists
+    if not user:
         return response(400, _Text.CHECK_DETAILS)
-    # Raise if user not active
+    # Check if user activation is pending
     if not user.is_active:
         return response(400, _Text.CHECK_ACTIVATION)
-    # Raise if wrong password
+    # Check if password is correct
     if not check_password_hash(user.password_hash, password):
         return response(400, _Text.CHECK_DETAILS)
 
     # Wait random interval
     sleep_s = randint(0, 2000) / 1000
     time.sleep(sleep_s)
+
     # Login user
     flask_login.login_user(FlaskUser(user), remember=True)
 
@@ -51,5 +52,11 @@ def post_session() -> Response:
 
 @api_v1_bp.delete("/sessions")
 def delete_session() -> Response:
+    # Wait random interval
+    sleep_s = randint(0, 2000) / 1000
+    time.sleep(sleep_s)
+
+    # Logout user
     flask_login.logout_user()
+
     return response()

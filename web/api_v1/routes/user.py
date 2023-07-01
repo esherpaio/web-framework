@@ -50,15 +50,16 @@ def post_users() -> Response:
     if password != password_eval:
         return response(400, _Text.PASSWORD_NO_MATCH)
 
-    # Generate password_hash and verification_key
+    # Generate password hash and verification key
     password_hash = generate_password_hash(password, method="pbkdf2:sha256:1000000")
     verification_key = str(uuid.uuid4())
 
     with conn.begin() as s:
-        # Check if email exists
+        # Check if email already exists
         user = s.query(User).filter(User.email == email).first()
         if user:
             return response(409, _Text.EMAIL_IN_USE)
+
         # Insert user
         user = User(
             email=email,
@@ -69,6 +70,7 @@ def post_users() -> Response:
         )
         s.add(user)
         s.flush()
+
         # Insert verification
         verification = Verification(user_id=user.id, key=verification_key)
         s.add(verification)
@@ -95,7 +97,7 @@ def get_users() -> Response:
     verification_key, has_verification_key = args_get("verification_key", str)
 
     with conn.begin() as s:
-        # Get user_id by verification_key
+        # Get user by verification key
         if has_verification_key:
             verification = s.query(Verification).filter_by(key=verification_key).first()
             if verification is None:
@@ -103,7 +105,7 @@ def get_users() -> Response:
             resource = [get_resource(verification.user_id)]
             return response(data=resource)
 
-        # Get user_id by email
+        # Get user by email
         if has_email:
             user = s.query(User).filter(User.email == email).first()
             if user is None:
@@ -127,39 +129,42 @@ def patch_users_id(user_id: int) -> Response:
     with conn.begin() as s:
         # Get user
         user = s.query(User).filter_by(id=user_id).first()
+        if not user:
+            return response(404, ApiText.HTTP_404)
 
         # Flow for password reset request
         if has_password and not has_password_eval and not has_verification_key:
-            # Generate and insert verification_key
+            # Insert verification
             verification_key = str(uuid.uuid4())
             verification = Verification(user_id=user.id, key=verification_key)
             s.add(verification)
             s.flush()
             # Send email
             reset_url = url_for(
-                "auth.password_reset", verification_key=verification.key, _external=True
+                "auth.password_reset",
+                verification_key=verification_key,
+                _external=True,
             )
             send_new_password(email=user.email, reset_url=reset_url)
             return response(200, _Text.PASSWORD_REQUEST_SEND)
 
-        # Flow for verification_key
+        # Flow for reset with verification key
         if has_verification_key:
-            # Authorize request with verification_key
+            # Authorize request with verification key
             verification = s.query(Verification).filter_by(key=verification_key).first()
             if verification is None:
                 return response(401, _Text.VERIFICATION_FAILED)
             if verification.user_id != user_id:
                 return response(401, _Text.VERIFICATION_FAILED)
-            # Update is_active
+            # Update is active
             if has_is_active:
                 user.is_active = is_active
                 s.delete(verification)
                 s.flush()
-                message = (
-                    _Text.ACTIVATION_SUCCESS
-                    if is_active
-                    else _Text.DEACTIVATION_SUCCESS
-                )
+                if is_active:
+                    message = _Text.ACTIVATION_SUCCESS
+                else:
+                    message = _Text.DEACTIVATION_SUCCESS
                 return response(200, message=message)
             # Update password
             if has_password and has_password_eval:
@@ -188,13 +193,11 @@ def patch_users_id(user_id: int) -> Response:
             # Authorize request with access
             if current_user.id != user_id:
                 return response(401, _Text.VERIFICATION_FAILED)
-            # Update
+            # Update user
             if has_shipping_id:
                 user.shipping_id = shipping_id
-                s.flush()
             if has_billing_id:
                 user.billing_id = billing_id
-                s.flush()
             # Return resource
             resource = [get_resource(user.id)]
             return response(message=_Text.UPDATE_SUCCESS, data=resource)

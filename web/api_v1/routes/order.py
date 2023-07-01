@@ -26,41 +26,39 @@ class _Text(StrEnum):
 
 @api_v1_bp.post("/orders")
 def post_orders() -> Response:
-    cart_id, has_cart_id = json_get("cart_id", int)
+    cart_id, _ = json_get("cart_id", int)
 
     with conn.begin() as s:
-        # Authorize request
-        # Get cart
-        # Raise if cart doesn't exist
+        # Check if cart is in use by the user
         cart = s.query(Cart).filter_by(user_id=current_user.id, id=cart_id).first()
         if not cart:
             return response(403, ApiText.HTTP_403)
 
-        # Check shipping_id
+        # Check if shipping id is set
         if cart.shipping_id is None:
             return response(400, ApiText.HTTP_400)
 
-        # Check billing_id
+        # Check if billing id is set
         if cart.billing_id is None:
             return response(400, ApiText.HTTP_400)
 
-        # Check if shipment_method_id is set
+        # Check if shipment method id is set
         shipment_methods = get_shipment_methods(s, cart)
         if shipment_methods and not cart.shipment_method_id:
             return response(400, ApiText.HTTP_400)
 
-        # Check if shipment_method_id is valid
+        # Check if shipment method id is valid
         shipment_method_ids = [x.id for x in shipment_methods]
         if cart.shipment_method_id:
             if cart.shipment_method_id not in shipment_method_ids:
                 return response(400, ApiText.HTTP_400)
 
-        # Check phone for shipping_method
+        # Check if phone is required for shipment method
         if cart.shipment_method:
             if cart.shipment_method.phone_required and not cart.billing.phone:
                 return response(400, _Text.PHONE_REQUIRED)
 
-        # Check VAT required in Europe
+        # Check if VAT is required in Europe
         if (
             cart.billing.company
             and cart.billing.country.region.is_europe
@@ -68,7 +66,7 @@ def post_orders() -> Response:
         ):
             return response(400, _Text.VAT_REQUIRED)
 
-        # Check VAT with pyvat
+        # Check if VAT number is valid
         if cart.billing.vat:
             vat_parsed = "".join(x for x in cart.billing.vat if x.isalnum())
             vat_result = check_vat_number(
@@ -80,14 +78,18 @@ def post_orders() -> Response:
                 return response(400, _Text.VAT_INVALID)
 
         # Insert order
+        coupon_amount = cart.coupon.amount if cart.coupon else None
+        coupon_code = cart.coupon.code if cart.coupon else None
+        coupon_rate = cart.coupon.rate if cart.coupon else None
+        shipment_name = cart.shipment_method.name if cart.shipment_method else None
         order = Order(
-            access_id=access.id,
+            user_id=current_user.id,
             billing_id=cart.billing_id,
-            coupon_amount=cart.coupon.amount if cart.coupon else None,
-            coupon_code=cart.coupon.code if cart.coupon else None,
-            coupon_rate=cart.coupon.rate if cart.coupon else None,
+            coupon_amount=coupon_amount,
+            coupon_code=coupon_code,
+            coupon_rate=coupon_rate,
             currency_id=cart.currency_id,
-            shipment_name=cart.shipment_method.name if cart.shipment_method else None,
+            shipment_name=shipment_name,
             shipment_price=cart.shipment_price,
             shipping_id=cart.shipping_id,
             status_id=OrderStatusId.PENDING,
@@ -107,7 +109,7 @@ def post_orders() -> Response:
                 total_price=cart_item.total_price,
             )
             s.add(order_line)
-            s.flush()
+        s.flush()
 
         # Send email
         send_order_received(
@@ -125,21 +127,17 @@ def post_orders() -> Response:
 def delete_orders_id(order_id: int) -> Response:
     with conn.begin() as s:
         # Get order
-        # Raise if order doesn't exist
         order = s.query(Order).filter_by(id=order_id).first()
         if not order:
             return response(404, ApiText.HTTP_404)
 
-        # Try to cancel the Mollie payment
-        # Update order status
+        # Try to cancel Mollie payment
         mollie_payment = Mollie().payments.get(order.mollie_id)
         if mollie_payment.is_cancelable:
             Mollie().payments.delete(order.mollie_id)
             order.status_id = OrderStatusId.COMPLETED
 
-        # Check if order is refundable
-        # Create refund
-        # Update order
+        # Try to refund Mollie payment
         if order.is_refundable:
             price = order.remaining_refund_amount
             price_vat = price * order.vat_rate

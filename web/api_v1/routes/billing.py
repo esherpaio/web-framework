@@ -37,7 +37,6 @@ def post_billings() -> Response:
             country_id=country_id,
         )
         s.add(billing)
-        s.flush()
 
     resource = get_resource(billing.id)
     return response(data=resource)
@@ -57,8 +56,7 @@ def patch_billings(billing_id: int) -> Response:
     zip_code, has_zip_code = json_get("zip_code", str, allow_empty_str=False)
 
     with conn.begin() as s:
-        # Authorize request
-        # Raise if id not in use by user
+        # Check if billing is in use by the user
         cart = (
             s.query(Cart)
             .filter_by(user_id=current_user.id, billing_id=billing_id)

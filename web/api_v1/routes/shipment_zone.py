@@ -16,8 +16,7 @@ def post_shipment_zones() -> Response:
     region_id, _ = json_get("region_id", int)
 
     with conn.begin() as s:
-        # Get shipment_zone
-        # Raise if shipment_zone exists
+        # Get or restore shipment zone
         shipment_zone = (
             s.query(ShipmentZone)
             .filter(
@@ -37,15 +36,17 @@ def post_shipment_zones() -> Response:
         if shipment_zone:
             if shipment_zone.is_deleted:
                 shipment_zone.is_deleted = False
+                return response()
             else:
                 return response(409, ApiText.HTTP_409)
 
-        else:
-            # Insert shipment_zone
-            shipment_zone = ShipmentZone(
-                order=order, country_id=country_id, region_id=region_id
-            )
-            s.add(shipment_zone)
+        # Insert shipment zone
+        shipment_zone = ShipmentZone(
+            order=order,
+            country_id=country_id,
+            region_id=region_id,
+        )
+        s.add(shipment_zone)
 
     return response()
 
@@ -58,21 +59,16 @@ def patch_shipment_zones_id(shipment_zone_id: int) -> Response:
     region_id, has_region_id = json_get("region_id", int)
 
     with conn.begin() as s:
-        # Get shipment_zone
-        # Raise if shipment_zone doesn't exist
+        # Get shipment zone
         shipment_zone = s.query(ShipmentZone).filter_by(id=shipment_zone_id).first()
         if not shipment_zone:
             return response(404, ApiText.HTTP_404)
 
-        # Update order
+        # Update shipment zone
         if has_order:
             shipment_zone.order = order
-
-        # Update country_id
         if has_country_id:
             shipment_zone.country_id = country_id
-
-        # Update region_id
         if has_region_id:
             shipment_zone.region_id = region_id
 
@@ -83,13 +79,13 @@ def patch_shipment_zones_id(shipment_zone_id: int) -> Response:
 @api_v1_bp.delete("/shipment-zones/<int:shipment_zone_id>")
 def delete_shipment_zones_id(shipment_zone_id: int) -> Response:
     with conn.begin() as s:
-        # Set shipment zone to deleted
+        # Delete shipment zone
         shipment_zone = s.query(ShipmentZone).filter_by(id=shipment_zone_id).first()
         if not shipment_zone:
             return response(404, ApiText.HTTP_404)
         shipment_zone.is_deleted = True
 
-        # Set shipment zones to deleted
+        # Delete shipment zones
         shipment_zones = (
             s.query(ShipmentMethod)
             .filter_by(zone_id=shipment_zone_id, is_deleted=False)

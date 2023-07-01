@@ -15,6 +15,7 @@ Improvements:
 - Fixed a bug where the shipment method was not correctly loaded in POST /carts/<int:cart_id>/items
 - Fixed a bug where shipment zones where not deleted if either the class or zone was deleted
 - Fixed a bug where database objects where referenced with an underscore at the end, making it an invalid reference
+- Fixed a bug where the sequence number for cdn auto naming was not correctly set
 
 ### 2023-06-26
 

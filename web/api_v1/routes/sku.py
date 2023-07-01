@@ -19,19 +19,22 @@ def post_skus() -> Response:
     product_id, _ = json_get("product_id", int, nullable=False)
 
     with conn.begin() as s:
+        # Get product and skus
         product = s.query(Product).filter_by(id=product_id).first()
+        if not product:
+            return response(404, ApiText.HTTP_404)
         skus = s.query(Sku).filter_by(product_id=product_id).all()
 
-        # Generate list of lists with all value ids
+        # Generate all possible combinations between value_ids
         value_id_sets = []
-        for option in [x for x in product.options if not x.is_deleted]:
+        options = [x for x in product.options if not x.is_deleted]
+        for option in options:
             value_ids = [x.id for x in option.values if not x.is_deleted]
             value_id_sets.append(value_ids)
-
-        # Generate all possible combinations between value_ids
         value_id_groups = list(itertools.product(*value_id_sets))
+
         for value_ids in value_id_groups:
-            # Check if sku already exists
+            # Skip if sku already exists
             for sku in skus:
                 if sorted(sku.value_ids) == sorted(value_ids):
                     sku.in_header = True
@@ -39,7 +42,7 @@ def post_skus() -> Response:
                     break
 
             else:
-                # Get product_values
+                # Get product values
                 values = (
                     s.query(ProductValue)
                     .filter(ProductValue.id.in_(value_ids))
@@ -55,7 +58,10 @@ def post_skus() -> Response:
 
                 # Insert sku
                 sku = Sku(
-                    product_id=product_id, slug=slug, is_visible=True, unit_price=0
+                    product_id=product_id,
+                    slug=slug,
+                    is_visible=True,
+                    unit_price=0,
                 )
                 s.add(sku)
                 s.flush()
@@ -63,7 +69,9 @@ def post_skus() -> Response:
                 # Insert sku_details
                 for value in values:
                     sku_detail = SkuDetail(
-                        sku_id=sku.id, option_id=value.option_id, value_id=value.id
+                        sku_id=sku.id,
+                        option_id=value.option_id,
+                        value_id=value.id,
                     )
                     s.add(sku_detail)
                     s.flush()
@@ -78,12 +86,11 @@ def patch_skus_id(sku_id: int) -> Response:
 
     with conn.begin() as s:
         # Get sku
-        # Raise if sku exists
         sku = s.query(Sku).filter_by(id=sku_id).first()
         if not sku:
             return response(404, ApiText.HTTP_404)
 
-        # Update is_visible
+        # Update sku
         if has_is_visible:
             sku.in_header = is_visible
 
@@ -95,7 +102,6 @@ def patch_skus_id(sku_id: int) -> Response:
 def delete_skus_id(sku_id: int) -> Response:
     with conn.begin() as s:
         # Get sku
-        # Raise if sku exists
         sku = s.query(Sku).filter_by(id=sku_id).first()
         if not sku:
             return response(404, ApiText.HTTP_404)

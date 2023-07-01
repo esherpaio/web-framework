@@ -1,5 +1,3 @@
-from enum import StrEnum
-
 from flask import Response
 
 from web.api_v1 import api_v1_bp
@@ -11,10 +9,6 @@ from web.helper.validation import gen_slug
 from web.i18n.base import _
 
 
-class _Text(StrEnum):
-    REBOOT_REQUIRED = _("API_CATEGORY_REBOOT_REQUIRED")
-
-
 @access_control(UserRoleLevel.ADMIN)
 @api_v1_bp.post("/categories")
 def post_categories() -> Response:
@@ -22,19 +16,18 @@ def post_categories() -> Response:
     order, _ = json_get("order", int)
 
     with conn.begin() as s:
-        # Get category
-        # Raise if category exists
+        # Get or restore category
         category = s.query(Category).filter_by(slug=gen_slug(name)).first()
         if category:
             if category.is_deleted:
                 category.is_deleted = False
+                return response()
             else:
                 return response(409, ApiText.HTTP_409)
 
-        else:
-            # Insert category
-            category = Category(name=name, order=order)
-            s.add(category)
+        # Insert category
+        category = Category(name=name, order=order)
+        s.add(category)
 
     return response()
 
@@ -48,7 +41,6 @@ def patch_categories_id(category_id: int) -> Response:
 
     with conn.begin() as s:
         # Get category
-        # Raise if category doesn't exist
         category = s.query(Category).filter_by(id=category_id, is_deleted=False).first()
         if not category:
             return response(404, ApiText.HTTP_404)
@@ -61,20 +53,17 @@ def patch_categories_id(category_id: int) -> Response:
         if has_order:
             category.order = order
 
-    return response(message=_Text.REBOOT_REQUIRED)
+    return response()
 
 
 @access_control(UserRoleLevel.ADMIN)
 @api_v1_bp.delete("/categories/<int:category_id>")
 def delete_categories_id(category_id: int) -> Response:
     with conn.begin() as s:
-        # Get category
-        # Raise if category doesn't exist
+        # Delete category
         category = s.query(Category).filter_by(id=category_id, is_deleted=False).first()
         if not category:
             return response(404, ApiText.HTTP_404)
-
-        # Delete category
         category.is_deleted = True
 
-    return response(message=_Text.REBOOT_REQUIRED)
+    return response()

@@ -14,14 +14,14 @@ def post_shipment_classes() -> Response:
     order, _ = json_get("order", int, nullable=False)
 
     with conn.begin() as s:
-        # Raise if shipment_class exists
+        # Check if shipment class already exists
         shipment_class = (
             s.query(ShipmentClass).filter_by(name=name, is_deleted=False).first()
         )
         if shipment_class:
             return response(409, ApiText.HTTP_409)
 
-        # Insert shipment_class
+        # Insert shipment class
         shipment_class = ShipmentClass(name=name, order=order)
         s.add(shipment_class)
 
@@ -34,8 +34,7 @@ def patch_shipment_classes_id(shipment_class_id: int) -> Response:
     order, has_order = json_get("order", int)
 
     with conn.begin() as s:
-        # Get shipment_zone
-        # Raise if shipment_zone doesn't exist
+        # Get shipment zone
         shipment_zone = s.query(ShipmentClass).filter_by(id=shipment_class_id).first()
         if not shipment_zone:
             return response(404, ApiText.HTTP_404)
@@ -51,13 +50,13 @@ def patch_shipment_classes_id(shipment_class_id: int) -> Response:
 @api_v1_bp.delete("/shipment-classes/<int:shipment_class_id>")
 def delete_shipment_classes_id(shipment_class_id: int) -> Response:
     with conn.begin() as s:
-        # Set shipment class to deleted
+        # Delete shipment class
         shipment_class = s.query(ShipmentClass).filter_by(id=shipment_class_id).first()
         if not shipment_class:
             return response(404, ApiText.HTTP_404)
         shipment_class.is_deleted = True
 
-        # Set shipment zones to deleted
+        # Delete shipment zones
         shipment_zones = (
             s.query(ShipmentMethod)
             .filter_by(class_id=shipment_class_id, is_deleted=False)

@@ -17,7 +17,7 @@ def post_orders_id_shipments(order_id: int) -> Response:
         # Get order
         order = s.query(Order).filter_by(id=order_id).first()
 
-        # Create payment
+        # Insert shipment
         shipment = Shipment(order_id=order_id, url=url)
         s.add(shipment)
         s.flush()
