@@ -1,6 +1,6 @@
 alembic==1.11.1
 black~=23.3.0
-djlint~=1.31.0
+djlint~=1.31.1
 git+https://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@github.com/enlarge-online/python-pdf.git@v1.0.3
 isort~=5.12.0
 pytest~=7.3.2
