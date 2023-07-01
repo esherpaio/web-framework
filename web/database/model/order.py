@@ -26,14 +26,13 @@ class Order(Base):
     vat_rate = Column(vat, nullable=False)
     vat_reverse = Column(Boolean, nullable=False)
 
-    access_id = Column(FKRestrict("access.id"), nullable=False)
     billing_id = Column(FKCascade("billing.id"))
     currency_id = Column(FKRestrict("currency.id"), nullable=False)
     invoice_id = Column(FKRestrict("invoice.id"))
     shipping_id = Column(FKCascade("shipping.id"))
     status_id = Column(FKRestrict("order_status.id"), nullable=False)
+    user_id = Column(FKRestrict("user.id"), nullable=False)
 
-    access = relationship("Access")
     billing = relationship("Billing")
     currency = relationship("Currency")
     invoice = relationship("Invoice")
@@ -42,6 +41,7 @@ class Order(Base):
     shipments = relationship("Shipment", back_populates="order")
     shipping = relationship("Shipping")
     status = relationship("OrderStatus")
+    user = relationship("User")
 
     # Properties - statuses
 

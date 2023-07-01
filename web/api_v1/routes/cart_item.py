@@ -1,6 +1,7 @@
 from enum import StrEnum
 
 from flask import Response
+from flask_login import current_user
 
 from web.api_v1 import api_v1_bp
 from web.api_v1.common.cart_item import update_cart_shipment_methods
@@ -8,7 +9,6 @@ from web.api_v1.resource.cart_item import get_resource
 from web.database.client import conn
 from web.database.model import Cart, CartItem
 from web.helper.api import ApiText, json_get, response
-from web.helper.user import get_access
 from web.i18n.base import _
 
 
@@ -25,8 +25,7 @@ def post_carts_id_items(cart_id: int) -> Response:
         # Authorize request
         # Get cart
         # Raise if cart doesn't exist
-        access = get_access(s)
-        cart = s.query(Cart).filter_by(access_id=access.id, id=cart_id).first()
+        cart = s.query(Cart).filter_by(user_id=current_user.id, id=cart_id).first()
         if not cart:
             return response(403, ApiText.HTTP_403)
 
@@ -55,8 +54,7 @@ def patch_cart_id_items_id(cart_id: int, cart_item_id: int) -> Response:
         # Authorize request
         # Get cart
         # Raise if cart doesn't exist
-        access = get_access(s)
-        cart = s.query(Cart).filter_by(access_id=access.id, id=cart_id).first()
+        cart = s.query(Cart).filter_by(user_id=current_user.id, id=cart_id).first()
         if not cart:
             return response(403, ApiText.HTTP_403)
 
@@ -83,8 +81,7 @@ def delete_cart_id_items_id(cart_id: int, cart_item_id: int) -> Response:
         # Authorize request
         # Get cart
         # Raise if cart doesn't exist
-        access = get_access(s)
-        cart = s.query(Cart).filter_by(access_id=access.id, id=cart_id).first()
+        cart = s.query(Cart).filter_by(user_id=current_user.id, id=cart_id).first()
         if not cart:
             return response(403, ApiText.HTTP_403)
 

@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 
 from flask import Response, url_for
+from flask_login import current_user
 
 from web import config
 from web.api_v1 import api_v1_bp
@@ -8,7 +9,6 @@ from web.database.client import conn
 from web.database.model import Order
 from web.helper.api import ApiText, response
 from web.helper.mollie_api import Mollie, mollie_amount, mollie_webhook
-from web.helper.user import get_access
 
 
 @api_v1_bp.post("/orders/<int:order_id>/payments")
@@ -17,8 +17,7 @@ def post_orders_id_payments(order_id: int) -> Response:
         # Authorize request
         # Get order
         # Raise if order doesn't exist
-        access = get_access(s)
-        order = s.query(Order).filter_by(access_id=access.id, id=order_id).first()
+        order = s.query(Order).filter_by(user_id=current_user.id, id=order_id).first()
         if not order:
             return response(403, ApiText.HTTP_403)
 

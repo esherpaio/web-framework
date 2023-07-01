@@ -13,9 +13,13 @@ class DbLengthError(DbError):
 class DbEmailError(DbError):
     """Raised when an email address cannot be validated."""
 
+    pass
+
 
 class DbPhoneError(DbError):
     """Raised when a phone number cannot be validated."""
+
+    pass
 
 
 class DbSlugError(DbError):

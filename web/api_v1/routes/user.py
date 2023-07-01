@@ -3,15 +3,15 @@ import uuid
 from enum import StrEnum
 
 from flask import Response, url_for
+from flask_login import current_user
 from werkzeug.security import generate_password_hash
 
 from web import config
 from web.api_v1 import api_v1_bp
 from web.api_v1.resource.user import get_resource
 from web.database.client import conn
-from web.database.model import User, Verification
+from web.database.model import User, UserRoleId, Verification
 from web.helper.api import ApiText, args_get, json_get, response
-from web.helper.user import get_access
 from web.i18n.base import _
 from web.mail.routes.user import send_new_password, send_verification_url
 
@@ -65,6 +65,7 @@ def post_users() -> Response:
             password_hash=password_hash,
             billing_id=billing_id,
             shipping_id=shipping_id,
+            role_id=UserRoleId.USER,
         )
         s.add(user)
         s.flush()
@@ -185,8 +186,7 @@ def patch_users_id(user_id: int) -> Response:
         # Flow for logged in user
         else:
             # Authorize request with access
-            access = get_access(s)
-            if access.user_id != user_id:
+            if current_user.id != user_id:
                 return response(401, _Text.VERIFICATION_FAILED)
             # Update
             if has_shipping_id:

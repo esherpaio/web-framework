@@ -1,60 +1,37 @@
-import uuid
-from enum import StrEnum
 from typing import Callable
 
-from flask import Response, redirect, request, session, url_for
-from flask_login import AnonymousUserMixin, current_user
+import flask_login
+from flask import Response, redirect, request, url_for
+from flask_login import current_user
 from sqlalchemy.orm import Session, joinedload
 
 from web import config
 from web.database.client import conn
-from web.database.model import Access, User, UserRoleLevel
+from web.database.model import User, UserRoleId, UserRoleLevel
 from web.helper.api import ApiText, response
 
 
-class Session(StrEnum):
-    KEY = "key"
-
-
-class UserAttrs:
-    @property
-    def key(self) -> str | None:
-        return session.get(Session.KEY)
-
-    @key.setter
-    def key(self, value: str | None) -> None:
-        session[Session.KEY] = value
-
-
-class KnownUser(User, UserAttrs):
+class FlaskUser(User):
     def __init__(self, user: User) -> None:
         super().__init__()
-
         for key, value in vars(user).items():
             if key.startswith("_"):
                 continue
             setattr(self, key, value)
 
-        if not hasattr(self, "is_active"):
-            self.is_active = False
-
     @property
     def is_authenticated(self) -> bool:
-        return True
+        return not self.is_guest
 
     @property
     def is_anonymous(self) -> bool:
-        return False
+        return self.is_guest
 
     def get_id(self) -> int:
         return self.id
 
 
-class GuestUser(AnonymousUserMixin, UserAttrs):
-    pass
-
-
-def load_user(user_id: int) -> KnownUser | None:
+def load_user(user_id: int, *args, **kwargs) -> FlaskUser | None:
     with conn.begin() as s:
         user = (
             s.query(User)
@@ -63,7 +40,15 @@ def load_user(user_id: int) -> KnownUser | None:
             .first()
         )
     if user is not None:
-        return KnownUser(user)
+        return FlaskUser(user)
+
+
+def load_request(*args, **kwargs) -> FlaskUser:
+    with conn.begin() as s:
+        user = User(is_active=True, role_id=UserRoleId.GUEST)
+        s.add(user)
+    flask_login.login_user(FlaskUser(user))
+    return user
 
 
 def access_control(
@@ -84,26 +69,3 @@ def access_control(
         return wrap
 
     return decorate
-
-
-def get_access(s: Session) -> Access:
-    """Get an access object for the current user."""
-
-    user_id = current_user.get_id()
-    user_key = current_user.key
-    if not user_key:
-        user_key = str(uuid.uuid4())
-        current_user.key = user_key
-
-    if user_id:
-        kwargs = {"user_id": user_id}
-    else:
-        kwargs = {"session_key": user_key}
-
-    access = s.query(Access).filter_by(**kwargs).first()
-    if not access:
-        access = Access(**kwargs)
-        s.add(access)
-        s.flush()
-
-    return access
