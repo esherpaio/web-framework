@@ -3,7 +3,7 @@ from sqlalchemy import and_, or_
 
 from web.api_v1 import api_v1_bp
 from web.database.client import conn
-from web.database.model import ShipmentZone, UserRoleLevel
+from web.database.model import ShipmentMethod, ShipmentZone, UserRoleLevel
 from web.helper.api import ApiText, json_get, response
 from web.helper.user import access_control
 
@@ -83,13 +83,19 @@ def patch_shipment_zones_id(shipment_zone_id: int) -> Response:
 @api_v1_bp.delete("/shipment-zones/<int:shipment_zone_id>")
 def delete_shipment_zones_id(shipment_zone_id: int) -> Response:
     with conn.begin() as s:
-        # Get shipment_zone
-        # Raise if shipment_zone doesn't exist
+        # Set shipment zone to deleted
         shipment_zone = s.query(ShipmentZone).filter_by(id=shipment_zone_id).first()
         if not shipment_zone:
             return response(404, ApiText.HTTP_404)
-
-        # Update is_deleted
         shipment_zone.is_deleted = True
+
+        # Set shipment zones to deleted
+        shipment_zones = (
+            s.query(ShipmentMethod)
+            .filter_by(zone_id=shipment_zone_id, is_deleted=False)
+            .all()
+        )
+        for shipment_zone in shipment_zones:
+            shipment_zone.is_deleted = True
 
     return response()

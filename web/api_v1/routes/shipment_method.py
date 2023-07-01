@@ -65,15 +65,12 @@ def patch_shipment_methods_id(shipment_method_id: int) -> Response:
 @api_v1_bp.delete("/shipment-methods/<int:shipment_method_id>")
 def delete_shipment_methods_id(shipment_method_id: int) -> Response:
     with conn.begin() as s:
-        # Get shipment_method
-        # Raise if shipment_method doesn't exist
+        # Set shipment_method to deleted
         shipment_method = (
             s.query(ShipmentMethod).filter_by(id=shipment_method_id).first()
         )
         if shipment_method is None:
             return response(404, ApiText.HTTP_404)
-
-        # Update is_deleted
         shipment_method.is_deleted = True
 
     return response()
