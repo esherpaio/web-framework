@@ -17,7 +17,7 @@ def post_shipment_methods() -> Response:
     zone_id, _ = json_get("zone_id", int, nullable=False)
 
     with conn.begin() as s:
-        # Insert shipment_method
+        # Insert shipment method
         shipment_method = ShipmentMethod(
             name=name,
             class_id=class_id,
@@ -38,23 +38,18 @@ def patch_shipment_methods_id(shipment_method_id: int) -> Response:
     unit_price, has_unit_price = json_get("unit_price", int | float)
 
     with conn.begin() as s:
-        # Get shipment_method
-        # Raise if shipment_method doesn't exist
+        # Get shipment method
         shipment_method = (
             s.query(ShipmentMethod).filter_by(id=shipment_method_id).first()
         )
         if not shipment_method:
             return response(404, ApiText.HTTP_404)
 
-        # Update name
+        # Update shipment method
         if has_name:
             shipment_method.name = name
-
-        # Update unit_price
         if has_unit_price:
             shipment_method.unit_price = unit_price
-
-        # Update phone_required
         if has_phone_required:
             shipment_method.phone_required = phone_required
 
@@ -65,7 +60,7 @@ def patch_shipment_methods_id(shipment_method_id: int) -> Response:
 @api_v1_bp.delete("/shipment-methods/<int:shipment_method_id>")
 def delete_shipment_methods_id(shipment_method_id: int) -> Response:
     with conn.begin() as s:
-        # Set shipment_method to deleted
+        # Delete shipment method
         shipment_method = (
             s.query(ShipmentMethod).filter_by(id=shipment_method_id).first()
         )

@@ -14,21 +14,18 @@ def post_articles() -> Response:
     name, _ = json_get("name", str, nullable=False)
 
     with conn.begin() as s:
-        # Get article
-        # Restore if article is deleted
-        # Raise if article is not deleted
+        # Get or restore article
         article = s.query(Article).filter_by(slug=gen_slug(name)).first()
         if article:
             if article.is_deleted:
                 article.is_deleted = False
+                return response()
             else:
                 return response(409, ApiText.HTTP_409)
 
-        else:
-            # Insert article
-            article = Article(name=name)
-            s.add(article)
-            s.flush()
+        # Insert resource
+        article = Article(name=name)
+        s.add(article)
 
     return response()
 
@@ -43,7 +40,6 @@ def patch_articles_id(article_id: int) -> Response:
 
     with conn.begin() as s:
         # Get article
-        # Raise if article doesn't exist
         article = s.query(Article).filter_by(id=article_id).first()
         if article is None:
             return response(404, ApiText.HTTP_404)
@@ -65,13 +61,10 @@ def patch_articles_id(article_id: int) -> Response:
 @api_v1_bp.delete("/articles/<int:article_id>")
 def delete_articles_id(article_id: int) -> Response:
     with conn.begin() as s:
-        # Get article
-        # Raise if article doesn't exist
+        # Delete article
         article = s.query(Article).filter_by(id=article_id).first()
         if not article:
             return response(404, ApiText.HTTP_404)
-
-        # Update is_deleted
         article.is_deleted = True
 
     return response()

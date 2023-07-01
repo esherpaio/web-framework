@@ -22,9 +22,7 @@ def post_carts_id_items(cart_id: int) -> Response:
     sku_id, _ = json_get("sku_id", int, nullable=False)
 
     with conn.begin() as s:
-        # Authorize request
-        # Get cart
-        # Raise if cart doesn't exist
+        # Check if cart is in use by the user
         cart = s.query(Cart).filter_by(user_id=current_user.id, id=cart_id).first()
         if not cart:
             return response(403, ApiText.HTTP_403)
@@ -51,9 +49,7 @@ def patch_cart_id_items_id(cart_id: int, cart_item_id: int) -> Response:
     quantity, has_quantity = json_get("quantity", int)
 
     with conn.begin() as s:
-        # Authorize request
-        # Get cart
-        # Raise if cart doesn't exist
+        # Check if cart is in use by the user
         cart = s.query(Cart).filter_by(user_id=current_user.id, id=cart_id).first()
         if not cart:
             return response(403, ApiText.HTTP_403)
@@ -66,7 +62,7 @@ def patch_cart_id_items_id(cart_id: int, cart_item_id: int) -> Response:
                 s.query(CartItem).filter_by(id=cart_item_id, cart_id=cart_id).first()
             )
             cart_item.quantity = quantity
-            s.flush()
+        s.flush()
 
         # Update shipment methods
         update_cart_shipment_methods(s, cart)
@@ -78,16 +74,16 @@ def patch_cart_id_items_id(cart_id: int, cart_item_id: int) -> Response:
 @api_v1_bp.delete("/carts/<int:cart_id>/items/<int:cart_item_id>")
 def delete_cart_id_items_id(cart_id: int, cart_item_id: int) -> Response:
     with conn.begin() as s:
-        # Authorize request
-        # Get cart
-        # Raise if cart doesn't exist
+        # Check if cart is in use by the user
         cart = s.query(Cart).filter_by(user_id=current_user.id, id=cart_id).first()
         if not cart:
             return response(403, ApiText.HTTP_403)
 
         # Delete cart item
-        s.query(CartItem).filter_by(id=cart_item_id, cart_id=cart_id).delete()
-        s.flush()
+        cart_item = (
+            s.query(CartItem).filter_by(id=cart_item_id, cart_id=cart_id).first()
+        )
+        s.delete(cart_item)
 
         # Update shipment methods
         update_cart_shipment_methods(s, cart)

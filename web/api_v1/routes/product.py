@@ -17,21 +17,18 @@ def post_products() -> Response:
     name, _ = json_get("name", str, nullable=False)
 
     with conn.begin() as s:
-        # Get product
-        # Restore if product is deleted
-        # Raise if product is not deleted
+        # Get or restore product
         product = s.query(Product).filter_by(slug=gen_slug(name)).first()
         if product:
             if product.is_deleted:
                 product.is_deleted = False
+                return response()
             else:
                 return response(409, ApiText.HTTP_409)
 
-        else:
-            # Insert product
-            product = Product(type_id=ProductTypeId.PHYSICAL, name=name, unit_price=1)
-            s.add(product)
-            s.flush()
+        # Insert product
+        product = Product(type_id=ProductTypeId.PHYSICAL, name=name, unit_price=1)
+        s.add(product)
 
     return response()
 
@@ -51,7 +48,6 @@ def patch_products_id(product_id: int) -> Response:
 
     with conn.begin() as s:
         # Get product
-        # Raise if product doesn't exist
         product = s.query(Product).filter_by(id=product_id).first()
         if product is None:
             return response(404, ApiText.HTTP_404)
@@ -73,7 +69,6 @@ def patch_products_id(product_id: int) -> Response:
             product.read_html = read_html
         if has_file_url:
             product.file_url = file_url
-        s.flush()
 
     return response()
 
@@ -82,17 +77,18 @@ def patch_products_id(product_id: int) -> Response:
 @api_v1_bp.delete("/products/<int:product_id>")
 def delete_products_id(product_id: int) -> Response:
     with conn.begin() as s:
-        # Get product
-        # Raise if product doesn't exist
+        # Delete product
         product = s.query(Product).filter_by(id=product_id).first()
         if not product:
             return response(404, ApiText.HTTP_404)
-
-        # Update is_deleted
         product.is_deleted = True
 
-        # Update SKUs
-        skus = s.query(Sku).filter(Sku.product_id == product_id).all()
+        # Delete skus
+        skus = (
+            s.query(Sku)
+            .filter(Sku.product_id == product_id, Sku.is_deleted == False)
+            .all()
+        )
         for sku in skus:
             sku.is_deleted = True
 

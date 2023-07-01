@@ -1,6 +1,5 @@
 {
     "API_CART_ITEM_ADDED": "Het product is toegevoegd aan uw winkelwagen.",
-    "API_CATEGORY_REBOOT_REQUIRED": "De wijzigingen worden weergegeven nadat de server opnieuw is opgestart.",
     "API_HTTP_200": "We have processed your request.",
     "API_HTTP_202": "We are processing your request.",
     "API_HTTP_400": "We could not process your request.",

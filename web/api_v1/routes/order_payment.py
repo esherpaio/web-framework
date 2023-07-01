@@ -14,23 +14,18 @@ from web.helper.mollie_api import Mollie, mollie_amount, mollie_webhook
 @api_v1_bp.post("/orders/<int:order_id>/payments")
 def post_orders_id_payments(order_id: int) -> Response:
     with conn.begin() as s:
-        # Authorize request
-        # Get order
-        # Raise if order doesn't exist
+        # Check if order is in use by the user
         order = s.query(Order).filter_by(user_id=current_user.id, id=order_id).first()
         if not order:
             return response(403, ApiText.HTTP_403)
 
         # Create Mollie payment
-        amount = mollie_amount(order.total_price * order.vat_rate, order.currency.code)
+        order_price_vat = order.total_price * order.vat_rate
+        amount = mollie_amount(order_price_vat, order.currency.code)
         description = f"Order {order.id}"
-        redirect = url_for(
-            "checkout.confirmation",
-            order_id=order.id,
-            _external=True,
-        )
-        due_date = (datetime.utcnow() + timedelta(days=100)).strftime("%Y-%m-%d")
+        redirect = url_for("checkout.confirmation", order_id=order.id, _external=True)
         is_test = config.MOLLIE_KEY.startswith("test")
+        due_date = (datetime.utcnow() + timedelta(days=100)).strftime("%Y-%m-%d")
         mollie_payment = Mollie().payments.create(
             {
                 "amount": amount,

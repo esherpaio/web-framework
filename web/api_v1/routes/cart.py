@@ -13,20 +13,16 @@ from web.helper.localization import current_locale
 @api_v1_bp.post("/carts")
 def post_carts() -> Response:
     with conn.begin() as s:
-        # Authorize request
-        # Get or insert cart
-        cart = s.query(Cart).filter_by(user_id=current_user.id).first()
-        if not cart:
-            country_code = current_locale.country.code
-            vat_rate, vat_reverse = get_vat(country_code, is_business=False)
-            cart = Cart(
-                user_id=current_user.id,
-                currency_id=current_locale.currency.id,
-                vat_rate=vat_rate,
-                vat_reverse=vat_reverse,
-            )
-            s.add(cart)
-            s.flush()
+        # Insert cart
+        country_code = current_locale.country.code
+        vat_rate, vat_reverse = get_vat(country_code, is_business=False)
+        cart = Cart(
+            user_id=current_user.id,
+            currency_id=current_locale.currency.id,
+            vat_rate=vat_rate,
+            vat_reverse=vat_reverse,
+        )
+        s.add(cart)
 
     resource = get_resource(cart.id)
     return response(data=resource)
@@ -35,9 +31,7 @@ def post_carts() -> Response:
 @api_v1_bp.get("/carts")
 def get_carts() -> Response:
     with conn.begin() as s:
-        # Authorize request
         # Get cart
-        # Raise if cart doesn't exist
         cart = s.query(Cart).filter_by(user_id=current_user.id).first()
         if not cart:
             return response(404, ApiText.HTTP_404)
@@ -54,22 +48,18 @@ def patch_carts_id(cart_id: int) -> Response:
     shipping_id, has_shipping_id = json_get("shipping_id", int)
 
     with conn.begin() as s:
-        # Authorize request
-        # Get cart
-        # Raise if cart doesn't exist
+        # Check if cart is in use by the user
         cart = s.query(Cart).filter_by(user_id=current_user.id, id=cart_id).first()
         if not cart:
             return response(403, ApiText.HTTP_403)
 
-        # Update shipping_id
+        # Update cart
         if has_shipping_id:
             cart.shipping_id = shipping_id
             s.flush()
-        # Update billing_id
         if has_billing_id:
             cart.billing_id = billing_id
             s.flush()
-        # Sync currency_id, vat_rate and vat_reverse
         if cart.billing:
             country_code = cart.billing.country.code
             is_business = cart.billing.company is not None
@@ -78,7 +68,6 @@ def patch_carts_id(cart_id: int) -> Response:
             cart.vat_rate = vat_rate
             cart.vat_reverse = vat_reverse
             s.flush()
-        # Update shipment_method_id and shipment_price
         if cart.shipping_id and has_shipment_method_id:
             shipment_method = (
                 s.query(ShipmentMethod)
@@ -88,7 +77,6 @@ def patch_carts_id(cart_id: int) -> Response:
             cart.shipment_method_id = shipment_method.id
             cart.shipment_price = shipment_method.unit_price * cart.currency.rate
             s.flush()
-        # Update coupon_id
         if has_coupon_code:
             coupon = (
                 s.query(Coupon).filter_by(code=coupon_code, is_deleted=False).first()

@@ -34,7 +34,6 @@ def post_shippings() -> Response:
             country_id=country_id,
         )
         s.add(shipping)
-        s.flush()
 
     resource = get_resource(shipping.id)
     return response(data=resource)
@@ -43,8 +42,7 @@ def post_shippings() -> Response:
 @api_v1_bp.get("/shippings/<int:shipping_id>")
 def get_shippings_id(shipping_id: int) -> Response:
     with conn.begin() as s:
-        # Authorize request
-        # Raise if shipping_id not in use by user
+        # Check if shipping is in use by the user
         cart = (
             s.query(Cart)
             .filter_by(user_id=current_user.id, shipping_id=shipping_id)
@@ -78,8 +76,7 @@ def patch_shippings_id(shipping_id: int) -> Response:
     zip_code, has_zip_code = json_get("zip_code", str, allow_empty_str=False)
 
     with conn.begin() as s:
-        # Authorize request
-        # Raise if shipping_id not in use by user
+        # Check if shipping is in use by the user
         cart = (
             s.query(Cart)
             .filter_by(user_id=current_user.id, shipping_id=shipping_id)
@@ -91,7 +88,7 @@ def patch_shippings_id(shipping_id: int) -> Response:
         if cart is None and user is None:
             return response(403, ApiText.HTTP_403)
 
-        # Check if billing is in use by an order
+        # Check if shipping is in use by an order
         order = s.query(Order).filter_by(shipping_id=shipping_id).first()
         if order:
             return response(403, ApiText.HTTP_403)
@@ -120,7 +117,6 @@ def patch_shippings_id(shipping_id: int) -> Response:
             shipping.zip_code = zip_code
         if has_country_id:
             shipping.country_id = country_id
-        s.flush()
 
     resource = get_resource(shipping_id)
     return response(data=resource)

@@ -26,16 +26,15 @@ def post_orders_id_refund(order_id: int) -> Response:
 
     with conn.begin() as s:
         # Get order
-        # Raise if order doesn't exist
         order = s.query(Order).filter_by(id=order_id).first()
         if not order:
             return response(404, ApiText.HTTP_404)
 
-        # Raise if invoice doesn't exist
+        # Check if an invoice exists
         if not order.invoice:
             return response(400, _Text.INVOICE_NOT_FOUND)
 
-        # Raise if mollie_id doesn't exist
+        # Check if the order has an Mollie ID
         if not order.mollie_id:
             return response(404, _Text.PAYMENT_INCOMPLETE)
 
@@ -44,7 +43,7 @@ def post_orders_id_refund(order_id: int) -> Response:
         if not mollie_payment.can_be_refunded:
             return response(404, _Text.REFUND_NOT_ALLOWED)
 
-        # Check if refund price is OK
+        # Check if the refund amount is not too high
         price_vat = round(price * order.vat_rate, 2)
         if price > order.remaining_refund_amount:
             return response(400, _Text.REFUND_TOO_HIGH)

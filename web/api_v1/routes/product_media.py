@@ -18,12 +18,11 @@ from web.helper.user import access_control
 def post_products_id_media(product_id: int) -> Response:
     with conn.begin() as s:
         # Get product
-        # Raise if product doesn't exist
         product = s.query(Product).filter_by(id=product_id).first()
         if not product:
             return response(404, ApiText.HTTP_404)
 
-        # Generate sequence number for CDN_AUTO_NAMING
+        # Generate sequence number
         sequence = 1
         if config.CDN_AUTO_NAMING:
             last_media = (
@@ -34,9 +33,12 @@ def post_products_id_media(product_id: int) -> Response:
             )
             if last_media:
                 match = re.search(r"(\d+)\D+$", last_media.file.path)
-                sequence = int(match.group(1)) + 1
+                sequence = int(match.group(1))
 
         for request_file in request.files.getlist("file"):
+            # Increment sequence
+            sequence += 1
+
             # Create details
             name, extension = os.path.splitext(request_file.filename)
             if config.CDN_AUTO_NAMING:
@@ -46,7 +48,7 @@ def post_products_id_media(product_id: int) -> Response:
             extension = extension.lstrip(".").lower()
             filename = f"{name}.{extension}"
 
-            # Create path
+            # Create CDN path
             cdn_path_parts = ["product", product.slug, filename]
             if config.APP_DEBUG:
                 cdn_path_parts.insert(0, "_development")
@@ -60,20 +62,16 @@ def post_products_id_media(product_id: int) -> Response:
             else:
                 continue
 
-            # Upload file
-            # Insert file
+            # Upload media
             cdn.upload(request_file, cdn_path)
+
+            # Insert file and product media
             file = File(path=cdn_path, type_id=type_id)
             s.add(file)
             s.flush()
-
-            # Insert product_media
             product_media = ProductMedia(product_id=product_id, file_id=file.id)
             s.add(product_media)
             s.flush()
-
-            # Increment sequence for CDN_AUTO_NAMING
-            sequence += 1
 
     return response()
 
@@ -85,25 +83,19 @@ def patch_products_id_media_id(product_id: int, media_id: int) -> Response:
     order, has_order = json_get("order", int)
 
     with conn.begin() as s:
-        # Get product_media
-        # Raise if product_media doesn't exist
+        # Get product media and file
         product_media = (
             s.query(ProductMedia).filter_by(id=media_id, product_id=product_id).first()
         )
         if not product_media:
             return response(404, ApiText.HTTP_404)
-
-        # Get file
-        # Raise if file doesn't exist
         file = s.query(File).filter_by(id=product_media.file_id).first()
         if not file:
             return response(404, ApiText.HTTP_404)
 
-        # Update order
+        # Update product media and file
         if has_order:
             product_media.order = order
-
-        # Update desc
         if has_desc:
             file.desc = desc
 
@@ -114,23 +106,20 @@ def patch_products_id_media_id(product_id: int, media_id: int) -> Response:
 @api_v1_bp.delete("/products/<int:product_id>/media/<int:media_id>")
 def delete_products_id_media_id(product_id: int, media_id) -> Response:
     with conn.begin() as s:
-        # Get product_media
-        # Raise if product_media doesn't exist
+        # Get product media and file
         product_media = (
             s.query(ProductMedia).filter_by(id=media_id, product_id=product_id).first()
         )
         if not product_media:
             return response(404, ApiText.HTTP_404)
-
-        # Get file
-        # Raise if file doesn't exist
         file = s.query(File).filter_by(id=product_media.file_id).first()
         if not file:
             return response(404, ApiText.HTTP_404)
 
-        # Remove file
-        # Delete file and product_media
+        # Remove file from CDN
         cdn.delete(file.path)
+
+        # Delete product media and file
         s.delete(file)
         s.delete(product_media)
 

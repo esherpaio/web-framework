@@ -15,8 +15,7 @@ def post_categories_id_items(category_id: int) -> Response:
     article_id, _ = json_get("article_id", int)
 
     with conn.begin() as s:
-        # Get category_item
-        # Raise if category_item exists
+        # Check if category item already exists
         category_item = (
             s.query(CategoryItem)
             .filter_by(article_id=article_id, category_id=category_id, sku_id=sku_id)
@@ -25,9 +24,12 @@ def post_categories_id_items(category_id: int) -> Response:
         if category_item:
             return response(409, ApiText.HTTP_409)
 
-        # Insert category_item
+        # Insert category item
         category_item = CategoryItem(
-            article_id=article_id, category_id=category_id, sku_id=sku_id, order=order
+            article_id=article_id,
+            category_id=category_id,
+            sku_id=sku_id,
+            order=order,
         )
         s.add(category_item)
 
@@ -40,15 +42,14 @@ def patch_categories_id_items_id(category_id: int, item_id: int) -> Response:
     order, has_order = json_get("order", int)
 
     with conn.begin() as s:
-        # Get category_item
-        # Raise if category_item doesn't exist
+        # Get category item
         category_item = (
             s.query(CategoryItem).filter_by(id=item_id, category_id=category_id).first()
         )
         if not category_item:
             return response(404, ApiText.HTTP_404)
 
-        # Update CategoryItem
+        # Update category item
         if has_order:
             category_item.order = order
 
@@ -59,15 +60,12 @@ def patch_categories_id_items_id(category_id: int, item_id: int) -> Response:
 @api_v1_bp.delete("/categories/<int:category_id>/items/<int:item_id>")
 def delete_categories_id_items_id(category_id: int, item_id: int) -> Response:
     with conn.begin() as s:
-        # Get category_item
-        # Raise if category_item doesn't exist
+        # Delete category item
         category_item = (
             s.query(CategoryItem).filter_by(id=item_id, category_id=category_id).first()
         )
         if not category_item:
             return response(404, ApiText.HTTP_404)
-
-        # Delete category_item
         s.delete(category_item)
 
     return response()

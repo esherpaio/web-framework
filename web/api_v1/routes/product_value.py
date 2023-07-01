@@ -20,9 +20,7 @@ def post_products_id_values(product_id: int) -> Response:
     unit_price, _ = json_get("unit_price", int | float, nullable=True)
 
     with conn.begin() as s:
-        # Get value
-        # Restore if value is deleted
-        # Raise if value is not deleted
+        # Get or restore product value
         product_value = (
             s.query(ProductValue)
             .filter_by(option_id=option_id, slug=gen_slug(name))
@@ -31,15 +29,18 @@ def post_products_id_values(product_id: int) -> Response:
         if product_value:
             if product_value.is_deleted:
                 product_value.is_deleted = False
+                return response()
             else:
                 return response(409, ApiText.HTTP_409)
 
-        else:
-            # Insert value
-            product_value = ProductValue(
-                option_id=option_id, name=name, unit_price=unit_price, order=order
-            )
-            s.add(product_value)
+        # Insert product value
+        product_value = ProductValue(
+            option_id=option_id,
+            name=name,
+            unit_price=unit_price,
+            order=order,
+        )
+        s.add(product_value)
 
     return response()
 
@@ -53,21 +54,16 @@ def patch_products_id_values_id(product_id: int, value_id: int) -> Response:
     unit_price, has_unit_price = json_get("unit_price", int | float)
 
     with conn.begin() as s:
-        # Get value
-        # Raise if value doesn't exist
+        # Get product value
         product_value = s.query(ProductValue).filter_by(id=value_id).first()
         if not product_value:
             return response(404, ApiText.HTTP_404)
 
-        # Update media_id
+        # Update product value
         if has_media_id:
             product_value.media_id = media_id
-
-        # Update unit_price
         if has_unit_price:
             product_value.unit_price = unit_price
-
-        # Updat order
         if has_order:
             product_value.order = order
 
@@ -78,21 +74,18 @@ def patch_products_id_values_id(product_id: int, value_id: int) -> Response:
 @api_v1_bp.delete("/products/<int:product_id>/values/<int:value_id>")
 def delete_products_id_values_id(product_id: int, value_id: int) -> Response:
     with conn.begin() as s:
-        # Get value
-        # Raise if value doesn't exist
+        # Delete product value
         product_value = s.query(ProductValue).filter_by(id=value_id).first()
         if not product_value:
             return response(404, ApiText.HTTP_404)
-
-        # Update is_deleted
         product_value.is_deleted = True
 
-        # Update skus
+        # Delete skus
         skus = (
             s.query(Sku)
             .join(Sku.details)
             .options(contains_eager(Sku.details))
-            .filter(SkuDetail.value_id == value_id)
+            .filter(SkuDetail.value_id == value_id, Sku.is_deleted == False)
             .all()
         )
         for sku in skus:
