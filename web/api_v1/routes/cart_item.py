@@ -36,7 +36,7 @@ def post_carts_id_items(cart_id: int) -> Response:
                 break
         else:
             cart_item = CartItem(cart_id=cart.id, sku_id=sku_id, quantity=quantity)
-            s.add(cart_item)
+            cart.items.append(cart_item)
         s.flush()
 
         # Update shipment method

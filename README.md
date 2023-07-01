@@ -11,6 +11,8 @@ Removals:
 
 Improvements:
 - Split EMAIL_OVERRIDE into EMAIL_TO and EMAIL_FROM
+- Fixed a bug where the shipment method was not correctly loaded in POST /carts/<int:cart_id>/items
+- Fixed a bug where shipment zones where not deleted if either the class or zone was deleted
 
 ### 2023-06-26
 
