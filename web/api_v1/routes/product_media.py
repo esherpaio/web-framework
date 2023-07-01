@@ -34,7 +34,7 @@ def post_products_id_media(product_id: int) -> Response:
             )
             if last_media:
                 match = re.search(r"(\d+)\D+$", last_media.file.path)
-                sequence = int(match.group(1))
+                sequence = int(match.group(1)) + 1
 
         for request_file in request.files.getlist("file"):
             # Create details
