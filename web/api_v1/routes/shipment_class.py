@@ -42,7 +42,7 @@ def patch_shipment_classes_id(shipment_class_id: int) -> Response:
 
         # Update order
         if has_order:
-            shipment_zone.order_ = order
+            shipment_zone.order = order
 
     return response()
 

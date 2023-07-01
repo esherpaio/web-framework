@@ -58,7 +58,7 @@ def patch_products_id_options_id(product_id: int, option_id: int) -> Response:
 
         # Update order
         if has_order:
-            product_option.order_ = order
+            product_option.order = order
 
     return response()
 

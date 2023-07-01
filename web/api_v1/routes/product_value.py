@@ -69,7 +69,7 @@ def patch_products_id_values_id(product_id: int, value_id: int) -> Response:
 
         # Updat order
         if has_order:
-            product_value.order_ = order
+            product_value.order = order
 
     return response()
 

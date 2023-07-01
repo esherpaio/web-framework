@@ -59,7 +59,7 @@ def patch_categories_id(category_id: int) -> Response:
         if has_in_header:
             category.in_header = in_header
         if has_order:
-            category.order_ = order
+            category.order = order
 
     return response(message=_Text.REBOOT_REQUIRED)
 
