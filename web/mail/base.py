@@ -51,7 +51,7 @@ def send_email(
     blob_name: str = None,
 ) -> None:
     # Check environment variables
-    from_ = config.EMAIL_OVERRIDE or config.BUSINESS_EMAIL
+    from_ = config.EMAIL_FROM
     if not from_:
         raise EnvironmentError("No email address is configured")
 

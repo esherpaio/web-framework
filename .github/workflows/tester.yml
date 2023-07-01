@@ -13,7 +13,8 @@ env:
   CONFIG_PATH: ${{ vars.CONFIG_PATH }}
   DATABASE_URL: ${{ vars.DATABASE_URL }}
   EMAIL_METHOD: ${{ vars.EMAIL_METHOD }}
-  EMAIL_OVERRIDE: ${{ vars.EMAIL_OVERRIDE }}
+  EMAIL_FROM: ${{ vars.EMAIL_FROM }}
+  EMAIL_TO: ${{ vars.EMAIL_TO }}
   GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
   GOOGLE_PLACE_ID: ${{ vars.GOOGLE_PLACE_ID }}
   LOCALHOST: ${{ vars.LOCALHOST }}
