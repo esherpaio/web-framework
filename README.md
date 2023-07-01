@@ -9,6 +9,9 @@ This repository is a custom web framework for clients of Enlarge.
 Removals:
 - Removed the Access object, instead use the request callback from Flask-Login
 
+Improvements:
+- Split EMAIL_OVERRIDE into EMAIL_TO and EMAIL_FROM
+
 ### 2023-06-26
 
 Additions:

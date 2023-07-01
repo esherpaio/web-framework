@@ -10,7 +10,7 @@ def send_contact_business(
     company: str | None = None,
     phone: str | None = None,
 ) -> None:
-    to = [config.EMAIL_OVERRIDE or config.BUSINESS_EMAIL]
+    to = [config.EMAIL_TO]
     subject = _("MAIL_CONTACT_SUBJECT", business_name=config.BUSINESS_NAME)
     title = _("MAIL_CONTACT_TITLE")
     paragraphs = [

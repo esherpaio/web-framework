@@ -12,7 +12,7 @@ def send_custom_1(
     phone: str | None = None,
     found_by: str | None = None,
 ) -> None:
-    to = [config.EMAIL_OVERRIDE or config.BUSINESS_EMAIL]
+    to = [config.EMAIL_TO]
     subject = _("MAIL_CUSTOM_1_SUBJECT", business_name=config.BUSINESS_NAME)
     title = _("MAIL_CUSTOM_1_TITLE")
     paragraphs = [
