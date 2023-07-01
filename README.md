@@ -4,6 +4,11 @@ This repository is a custom web framework for clients of Enlarge.
 
 ## Changelog
 
+### 2023-07-01
+
+Removals:
+- Removed the Access object, instead use the request callback from Flask-Login
+
 ### 2023-06-26
 
 Additions:

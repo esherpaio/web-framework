@@ -21,7 +21,6 @@ from web.database.model import (
     User,
 )
 from web.helper.localization import current_locale
-from web.helper.user import get_access
 
 
 def transfer_cart(
@@ -32,14 +31,14 @@ def transfer_cart(
     def wrap(*args, **kwargs) -> Response:
         with conn.begin() as s:
             # Get before and after access objects
-            prev_access = get_access(s)
+            prev_user_id = current_user.id
             resp = f(*args, **kwargs)
-            curr_access = get_access(s)
+            curr_user_id = current_user.id
             # Transfer cart
-            prev_cart = s.query(Cart).filter_by(access_id=prev_access.id).first()
+            prev_cart = s.query(Cart).filter_by(user_id=prev_user_id).first()
             if prev_cart:
-                s.query(Cart).filter_by(access_id=curr_access.id).delete()
-                prev_cart.access_id = curr_access.id
+                s.query(Cart).filter_by(user_id=curr_user_id).delete()
+                prev_cart.user_id = curr_user_id
 
         return resp
 

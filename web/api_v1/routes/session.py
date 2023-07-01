@@ -11,7 +11,7 @@ from web.database.client import conn
 from web.database.model import User
 from web.helper.api import json_get, response
 from web.helper.cart import transfer_cart
-from web.helper.user import KnownUser
+from web.helper.user import FlaskUser
 from web.i18n.base import _
 
 
@@ -44,7 +44,7 @@ def post_session() -> Response:
     sleep_s = randint(0, 2000) / 1000
     time.sleep(sleep_s)
     # Login user
-    flask_login.login_user(KnownUser(user), remember=True)
+    flask_login.login_user(FlaskUser(user), remember=True)
 
     return response()
 

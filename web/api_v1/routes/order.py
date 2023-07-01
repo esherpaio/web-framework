@@ -1,6 +1,7 @@
 from enum import StrEnum
 
 from flask import Response
+from flask_login import current_user
 from pyvat import check_vat_number
 
 from web.api_v1 import api_v1_bp
@@ -11,7 +12,7 @@ from web.database.model import Cart, Order, OrderLine, OrderStatusId, UserRoleLe
 from web.helper.api import ApiText, json_get, response
 from web.helper.cart import get_shipment_methods
 from web.helper.mollie_api import Mollie
-from web.helper.user import access_control, get_access
+from web.helper.user import access_control
 from web.i18n.base import _
 from web.mail.routes.order import send_order_received
 
@@ -31,8 +32,7 @@ def post_orders() -> Response:
         # Authorize request
         # Get cart
         # Raise if cart doesn't exist
-        access = get_access(s)
-        cart = s.query(Cart).filter_by(access_id=access.id, id=cart_id).first()
+        cart = s.query(Cart).filter_by(user_id=current_user.id, id=cart_id).first()
         if not cart:
             return response(403, ApiText.HTTP_403)
 

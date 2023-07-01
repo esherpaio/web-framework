@@ -19,7 +19,6 @@ class User(Base):
     role_id = Column(FKRestrict("user_role.id"), nullable=False)
     shipping_id = Column(FKSetNull("shipping.id"))
 
-    access = relationship("Access", back_populates="user")
     billing = relationship("Billing")
     role = relationship("UserRole")
     shipping = relationship("Shipping")
@@ -32,6 +31,10 @@ class User(Base):
         pass
 
     # Properties - roles
+
+    @hybrid_property
+    def is_guest(self) -> bool:
+        return self.role_id == UserRoleId.GUEST
 
     @hybrid_property
     def is_user(self) -> bool:

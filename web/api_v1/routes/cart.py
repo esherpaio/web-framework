@@ -1,4 +1,5 @@
 from flask import Response
+from flask_login import current_user
 
 from web.api_v1 import api_v1_bp
 from web.api_v1.resource.cart import get_resource
@@ -7,7 +8,6 @@ from web.database.model import Cart, Coupon, ShipmentMethod
 from web.helper.api import ApiText, json_get, response
 from web.helper.cart import get_vat
 from web.helper.localization import current_locale
-from web.helper.user import get_access
 
 
 @api_v1_bp.post("/carts")
@@ -15,13 +15,12 @@ def post_carts() -> Response:
     with conn.begin() as s:
         # Authorize request
         # Get or insert cart
-        access = get_access(s)
-        cart = s.query(Cart).filter_by(access_id=access.id).first()
+        cart = s.query(Cart).filter_by(user_id=current_user.id).first()
         if not cart:
             country_code = current_locale.country.code
             vat_rate, vat_reverse = get_vat(country_code, is_business=False)
             cart = Cart(
-                access_id=access.id,
+                user_id=current_user.id,
                 currency_id=current_locale.currency.id,
                 vat_rate=vat_rate,
                 vat_reverse=vat_reverse,
@@ -39,8 +38,7 @@ def get_carts() -> Response:
         # Authorize request
         # Get cart
         # Raise if cart doesn't exist
-        access = get_access(s)
-        cart = s.query(Cart).filter_by(access_id=access.id).first()
+        cart = s.query(Cart).filter_by(user_id=current_user.id).first()
         if not cart:
             return response(404, ApiText.HTTP_404)
 
@@ -59,8 +57,7 @@ def patch_carts_id(cart_id: int) -> Response:
         # Authorize request
         # Get cart
         # Raise if cart doesn't exist
-        access = get_access(s)
-        cart = s.query(Cart).filter_by(access_id=access.id, id=cart_id).first()
+        cart = s.query(Cart).filter_by(user_id=current_user.id, id=cart_id).first()
         if not cart:
             return response(403, ApiText.HTTP_403)
 

@@ -17,20 +17,20 @@ class Cart(Base):
     vat_rate = Column(vat, nullable=False, default=1)
     vat_reverse = Column(Boolean, nullable=False, default=False)
 
-    access_id = Column(FKCascade("access.id"), nullable=False, unique=True)
     billing_id = Column(FKRestrict("billing.id"))
     coupon_id = Column(FKRestrict("coupon.id"))
     currency_id = Column(FKRestrict("currency.id"), nullable=False)
     shipment_method_id = Column(FKRestrict("shipment_method.id"))
     shipping_id = Column(FKRestrict("shipping.id"))
+    user_id = Column(FKCascade("user.id"), nullable=False, unique=True)
 
-    access = relationship("Access")
     billing = relationship("Billing")
     coupon = relationship("Coupon")
     currency = relationship("Currency", lazy="joined")
     items = relationship("CartItem", back_populates="cart")
     shipment_method = relationship("ShipmentMethod")
     shipping = relationship("Shipping")
+    user = relationship("User")
 
     # Properties - general
 

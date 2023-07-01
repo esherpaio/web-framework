@@ -1,11 +1,11 @@
 from flask import Response
+from flask_login import current_user
 
 from web.api_v1 import api_v1_bp
 from web.api_v1.resource.shipping import get_resource
 from web.database.client import conn
 from web.database.model import Cart, Order, Shipping, User
 from web.helper.api import ApiText, json_get, response
-from web.helper.user import get_access
 
 
 @api_v1_bp.post("/shippings")
@@ -45,14 +45,13 @@ def get_shippings_id(shipping_id: int) -> Response:
     with conn.begin() as s:
         # Authorize request
         # Raise if shipping_id not in use by user
-        access = get_access(s)
         cart = (
             s.query(Cart)
-            .filter_by(access_id=access.id, shipping_id=shipping_id)
+            .filter_by(user_id=current_user.id, shipping_id=shipping_id)
             .first()
         )
         user = (
-            s.query(User).filter_by(id=access.user_id, shipping_id=shipping_id).first()
+            s.query(User).filter_by(id=current_user.id, shipping_id=shipping_id).first()
         )
         if cart is None and user is None:
             return response(403, ApiText.HTTP_403)
@@ -81,14 +80,13 @@ def patch_shippings_id(shipping_id: int) -> Response:
     with conn.begin() as s:
         # Authorize request
         # Raise if shipping_id not in use by user
-        access = get_access(s)
         cart = (
             s.query(Cart)
-            .filter_by(access_id=access.id, shipping_id=shipping_id)
+            .filter_by(user_id=current_user.id, shipping_id=shipping_id)
             .first()
         )
         user = (
-            s.query(User).filter_by(id=access.user_id, shipping_id=shipping_id).first()
+            s.query(User).filter_by(id=current_user.id, shipping_id=shipping_id).first()
         )
         if cart is None and user is None:
             return response(403, ApiText.HTTP_403)
