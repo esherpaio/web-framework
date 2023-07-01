@@ -8,16 +8,17 @@ profile = "black"
 skip_gitignore = true
 
 [tool.djlint]
+blank_line_before_tag="extends,block"
 custom_blocks="pack"
-format_attribute_template_tags=true
 line_break_after_multiline_tag=true
 max_attribute_length=10
 max_line_length=100
 profile="jinja"
+quiet=true
 use_gitignore=true
 
 [tool.pytest.ini_options]
+addopts="--maxfail=1"
 cache_dir="tests/.cache"
 faulthandler_timeout=5
 python_files="test_*.py"
-addopts="--maxfail=1"
