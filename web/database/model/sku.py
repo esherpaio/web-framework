@@ -17,6 +17,7 @@ class Sku(Base):
 
     product_id = Column(FKCascade("product.id"), nullable=False)
 
+    category_items = relationship("CategoryItem", back_populates="sku")
     details = relationship("SkuDetail", back_populates="sku")
     product = relationship("Product")
 
