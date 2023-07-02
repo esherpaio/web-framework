@@ -7,7 +7,7 @@ from ._utils import price, rate
 
 class Coupon(Base):
     __tablename__ = "coupon"
-    __table_args__ = (CheckConstraint("amount IS NULL OR rate IS NULL"),)
+    __table_args__ = (CheckConstraint("amount IS NOT NULL OR rate IS NOT NULL"),)
 
     amount = Column(price)
     code = Column(String(16), nullable=False)

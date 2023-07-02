@@ -7,7 +7,9 @@ from ._utils import FKRestrict
 
 class ShipmentZone(Base):
     __tablename__ = "shipment_zone"
-    __table_args__ = (CheckConstraint("country_id IS NULL OR region_id IS NULL"),)
+    __table_args__ = (
+        CheckConstraint("country_id IS NOT NULL OR region_id IS NOT NULL"),
+    )
 
     is_deleted = Column(Boolean, nullable=False, default=False)
     order = Column(Integer)

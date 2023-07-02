@@ -8,7 +8,7 @@ from ._utils import FKCascade, FKRestrict
 class CategoryItem(Base):
     __tablename__ = "category_item"
     __table_args__ = (
-        CheckConstraint("sku_id IS NULL OR article_id IS NULL"),
+        CheckConstraint("sku_id IS NOT NULL OR article_id IS NOT NULL"),
         UniqueConstraint("category_id", "article_id"),
         UniqueConstraint("category_id", "sku_id"),
     )

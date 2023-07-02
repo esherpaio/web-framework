@@ -19,6 +19,7 @@ Improvements:
 - Fixed a bug where the PATCH sku endpoint did not process is_visible correctly
 - Fixed a bug where CDN auto naming did not extract the last sequence number correctly
 - Fixed multiple bugs where objects where not correctly deleted
+- Fixed multiple bugs where check constraints was not checking correctly if one of two fields where null
 
 ### 2023-06-26
 

@@ -10,7 +10,7 @@ from .order_status import OrderStatusId
 class Order(Base):
     __tablename__ = "order"
     __table_args__ = (
-        CheckConstraint("coupon_amount IS NULL OR coupon_rate IS NULL"),
+        CheckConstraint("coupon_amount IS NOT NULL OR coupon_rate IS NOT NULL"),
         CheckConstraint("shipment_price >= 0"),
         CheckConstraint("total_price >= 0"),
         CheckConstraint("vat_rate >= 1"),
