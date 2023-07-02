@@ -4,7 +4,14 @@ from flask import Response
 
 from web.api_v1 import api_v1_bp
 from web.database.client import conn
-from web.database.model import Product, ProductValue, Sku, SkuDetail, UserRoleLevel
+from web.database.model import (
+    CategoryItem,
+    Product,
+    ProductValue,
+    Sku,
+    SkuDetail,
+    UserRoleLevel,
+)
 from web.helper.api import ApiText, json_get, response
 from web.helper.user import access_control
 from web.helper.validation import gen_slug
@@ -101,12 +108,15 @@ def patch_skus_id(sku_id: int) -> Response:
 @api_v1_bp.delete("/skus/<int:sku_id>")
 def delete_skus_id(sku_id: int) -> Response:
     with conn.begin() as s:
-        # Get sku
+        # Delete sku
         sku = s.query(Sku).filter_by(id=sku_id).first()
         if not sku:
             return response(404, ApiText.HTTP_404)
-
-        # Update sku
         sku.is_deleted = True
+
+        # Delete category items
+        category_items = s.query(CategoryItem).filter_by(sku_id=sku_id).all()
+        for category_item in category_items:
+            s.delete(category_item)
 
     return response()

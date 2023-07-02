@@ -2,7 +2,7 @@ from flask import Response
 
 from web.api_v1 import api_v1_bp
 from web.database.client import conn
-from web.database.model import Product, ProductTypeId, Sku, UserRoleLevel
+from web.database.model import CategoryItem, Product, ProductTypeId, Sku, UserRoleLevel
 from web.helper.api import ApiText, json_get, response
 from web.helper.user import access_control
 from web.helper.validation import gen_slug
@@ -39,7 +39,6 @@ def post_products() -> Response:
 def patch_products_id(product_id: int) -> Response:
     file_url, has_file_url = json_get("file_url", str)
     html, has_html = json_get("html", str)
-    name, has_name = json_get("name", str)
     read_html, has_read_html = json_get("read_html", bool)
     shipment_class_id, has_shipment_class_id = json_get("shipment_class_id", int)
     summary, has_summary = json_get("summary", str)
@@ -57,8 +56,6 @@ def patch_products_id(product_id: int) -> Response:
             product.type_id = type_id
         if has_shipment_class_id:
             product.shipment_class_id = shipment_class_id
-        if has_name:
-            product.name = name
         if has_summary:
             product.summary = summary
         if has_html:
@@ -84,12 +81,13 @@ def delete_products_id(product_id: int) -> Response:
         product.is_deleted = True
 
         # Delete skus
-        skus = (
-            s.query(Sku)
-            .filter(Sku.product_id == product_id, Sku.is_deleted == False)
-            .all()
-        )
+        skus = s.query(Sku).filter(Sku.product_id == product_id).all()
         for sku in skus:
             sku.is_deleted = True
+
+            # Delete category items
+            category_items = s.query(CategoryItem).filter_by(sku_id=sku.id).all()
+            for category_item in category_items:
+                s.delete(category_item)
 
     return response()
