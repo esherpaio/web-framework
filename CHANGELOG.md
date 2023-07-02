@@ -17,6 +17,7 @@ Improvements:
 - Fixed a bug where database objects where referenced with an underscore at the end, making it an invalid reference
 - Fixed a bug where the sequence number for cdn auto naming was not correctly set
 - Fixed a bug where the PATCH sku endpoint did not process is_visible correctly
+- Fixed a bug where CDN auto naming did not extract the last sequence number correctly
 
 ### 2023-06-26
 
