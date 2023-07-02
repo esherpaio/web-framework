@@ -4,7 +4,10 @@ This repository is a custom web framework for clients of Enlarge.
 
 ## Changelog
 
-### 2023-07-01
+### 2023-07-02
+
+Additions:
+- Added custom error messages for database email and phone validation
 
 Removals:
 - Removed the Access object, instead use request callback from Flask-Login
