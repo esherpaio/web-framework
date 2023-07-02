@@ -7,7 +7,7 @@ This repository is a custom web framework for clients of Enlarge.
 ### 2023-07-01
 
 Removals:
-- Removed the Access object, instead use the request callback from Flask-Login
+- Removed the Access object, instead use request callback from Flask-Login
 
 Improvements:
 - Move changelog from README.md to CHANGELOG.md
@@ -16,6 +16,7 @@ Improvements:
 - Fixed a bug where shipment zones where not deleted if either the class or zone was deleted
 - Fixed a bug where database objects where referenced with an underscore at the end, making it an invalid reference
 - Fixed a bug where the sequence number for cdn auto naming was not correctly set
+- Fixed a bug where the PATCH sku endpoint did not process is_visible correctly
 
 ### 2023-06-26
 
