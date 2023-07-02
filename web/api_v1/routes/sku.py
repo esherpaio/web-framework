@@ -92,7 +92,7 @@ def patch_skus_id(sku_id: int) -> Response:
 
         # Update sku
         if has_is_visible:
-            sku.in_header = is_visible
+            sku.is_visible = is_visible
 
     return response()
 
