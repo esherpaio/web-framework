@@ -3,7 +3,7 @@ from typing import Callable
 import flask_login
 from flask import Response, redirect, request, url_for
 from flask_login import current_user
-from sqlalchemy.orm import Session, joinedload
+from sqlalchemy.orm import joinedload
 
 from web import config
 from web.database.client import conn
@@ -47,7 +47,8 @@ def load_request(*args, **kwargs) -> FlaskUser:
     with conn.begin() as s:
         user = User(is_active=True, role_id=UserRoleId.GUEST)
         s.add(user)
-    flask_login.login_user(FlaskUser(user))
+    flask_user = FlaskUser(user)
+    flask_login.login_user(flask_user, remember=True)
     return user
 
 

@@ -2,6 +2,7 @@ from flask import Response
 from flask_login import current_user
 
 from web.api_v1 import api_v1_bp
+from web.api_v1.common.cart_item import update_cart_shipment_methods
 from web.api_v1.resource.shipping import get_resource
 from web.database.client import conn
 from web.database.model import Cart, Order, Shipping, User
@@ -117,6 +118,11 @@ def patch_shippings_id(shipping_id: int) -> Response:
             shipping.zip_code = zip_code
         if has_country_id:
             shipping.country_id = country_id
+
+        # Sync carts
+        carts = s.query(Cart).filter_by(shipping_id=shipping.id).all()
+        for cart in carts:
+            update_cart_shipment_methods(s, cart)
 
     resource = get_resource(shipping_id)
     return response(data=resource)

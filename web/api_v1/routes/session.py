@@ -45,7 +45,8 @@ def post_session() -> Response:
     time.sleep(sleep_s)
 
     # Login user
-    flask_login.login_user(FlaskUser(user), remember=True)
+    flask_user = FlaskUser(user)
+    flask_login.login_user(flask_user, remember=True)
 
     return response()
 
