@@ -56,7 +56,7 @@ def predict_cart_info(
     This is useful for pre-filling forms on a frontend.
     """
 
-    if current_user.is_authenticated:
+    if current_user and current_user.id:
         user = s.query(User).filter_by(id=current_user.id).first()
     else:
         user = None

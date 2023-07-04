@@ -4,6 +4,12 @@ This repository is a custom web framework for clients of Enlarge.
 
 ## Changelog
 
+### 2023-07-04
+
+Improvements:
+- Fixed a bug where the shipment method id was not correctly updated
+- Fixed a bug where current_user.is_authenticated() was called when the current_user was None
+
 ### 2023-07-02
 
 Additions:
