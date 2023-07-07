@@ -85,7 +85,7 @@ def delete_products_id_values_id(product_id: int, value_id: int) -> Response:
             s.query(Sku)
             .join(Sku.details)
             .options(contains_eager(Sku.details))
-            .filter(SkuDetail.value_id == value_id, Sku.is_deleted == False)
+            .filter(SkuDetail.value_id == value_id, Sku.is_deleted is False)
             .all()
         )
         for sku in skus:

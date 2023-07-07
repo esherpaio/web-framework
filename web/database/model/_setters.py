@@ -1,4 +1,3 @@
-import urllib.parse
 from typing import Callable, Type
 
 from sqlalchemy.orm import validates
