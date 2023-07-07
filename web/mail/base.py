@@ -1,4 +1,3 @@
-import base64
 import os
 from email.mime.application import MIMEApplication
 from email.mime.multipart import MIMEMultipart
@@ -10,7 +9,6 @@ from sendgrid import Attachment, Mail, SendGridAPIClient
 
 from web import config
 from web.helper.logger import logger
-from web.i18n.base import _
 from web.mail.utils import file_to_str
 
 

@@ -2,7 +2,7 @@ from enum import StrEnum
 
 from flask import Blueprint, Response
 
-from web.database.errors import DbEmailError, DbPhoneError
+from web.database.errors import DbEmailError, DbError, DbPhoneError
 from web.helper.api import response
 from web.helper.errors import handle_backend_exception
 from web.i18n.base import _
@@ -19,14 +19,12 @@ class _Text(StrEnum):
     PHONE_ERROR = _("DATABASE_PHONE_ERROR")
 
 
-@api_v1_bp.errorhandler(DbEmailError)
-def error_handler(error: DbEmailError) -> Response:
-    return response(400, _Text.EMAIL_ERROR)
-
-
-@api_v1_bp.errorhandler(DbPhoneError)
-def error_handler(error: DbPhoneError) -> Response:
-    return response(400, _Text.PHONE_ERROR)
+@api_v1_bp.errorhandler(DbError)
+def error_handler_db(error: DbError) -> Response:
+    if isinstance(error, DbEmailError):
+        return response(400, _Text.EMAIL_ERROR)
+    elif isinstance(error, DbPhoneError):
+        return response(400, _Text.PHONE_ERROR)
 
 
 @api_v1_bp.errorhandler(Exception)

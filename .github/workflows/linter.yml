@@ -19,6 +19,6 @@ jobs:
           pip install -r requirements-dev.txt
       - name: Check with linters
         run: |
+          ruff check .
           black . --check --quiet --diff --color
-          isort . --check-only
           djlint . --check

@@ -11,7 +11,7 @@ requirements:
 ## lint : run linters
 .PHONY: lint
 lint:
-	isort . --check-only
+	ruff check .
 	black . --check --quiet --diff --color
 	djlint . --check
 
@@ -20,7 +20,7 @@ lint:
 ## format : run formatters
 .PHONY: format
 format:
-	isort .
+	ruff check . --fix
 	black .
 	djlint . --reformat
 
