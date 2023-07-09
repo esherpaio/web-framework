@@ -15,4 +15,4 @@ class Invoice(Base):
 
     order_id = Column(FKRestrict("order.id"), nullable=False)
 
-    order = relationship("Order", back_populates="invoices")
+    order = relationship("Order", back_populates="invoice")
