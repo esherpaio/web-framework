@@ -35,6 +35,7 @@ class _Text(StrEnum):
 
 @api_v1_bp.post("/users")
 def post_users() -> Response:
+    attributes, _ = json_get("attributes", dict, default={})
     billing_id, _ = json_get("billing_id", int)
     email, _ = json_get("email", str, nullable=False, lower_str=True)
     password_eval, _ = json_get("password_eval", str, nullable=False)
@@ -62,6 +63,7 @@ def post_users() -> Response:
 
         # Insert user
         user = User(
+            attributes=attributes,
             email=email,
             password_hash=password_hash,
             billing_id=billing_id,

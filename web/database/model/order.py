@@ -1,4 +1,4 @@
-from sqlalchemy import JSON, Boolean, CheckConstraint, Column, String
+from sqlalchemy import Boolean, CheckConstraint, Column, String
 from sqlalchemy.ext.hybrid import hybrid_method, hybrid_property
 from sqlalchemy.orm import relationship
 
@@ -16,7 +16,6 @@ class Order(Base):
         CheckConstraint("vat_rate >= 1"),
     )
 
-    attributes = Column(JSON)
     coupon_amount = Column(default_price)
     coupon_code = Column(String(16))
     coupon_rate = Column(default_rate)

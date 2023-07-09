@@ -89,6 +89,7 @@ def post_skus() -> Response:
 @access_control(UserRoleLevel.ADMIN)
 @api_v1_bp.patch("/skus/<int:sku_id>")
 def patch_skus_id(sku_id: int) -> Response:
+    attributes, has_attributes = json_get("attributes", dict, default={})
     is_visible, has_is_visible = json_get("is_visible", bool)
 
     with conn.begin() as s:
@@ -98,6 +99,8 @@ def patch_skus_id(sku_id: int) -> Response:
             return response(404, ApiText.HTTP_404)
 
         # Update sku
+        if has_attributes:
+            sku.attributes = attributes
         if has_is_visible:
             sku.is_visible = is_visible
 
