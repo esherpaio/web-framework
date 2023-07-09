@@ -7,8 +7,8 @@ This repository is a custom web framework for clients of Enlarge.
 ### 2023-07-08
 
 Additions:
+- Added attributes property to various tables
 - Added is_valid property to Verification
-- Added is_available attribute to Sku
 
 Improvements:
 - Invoices now have references back to the order

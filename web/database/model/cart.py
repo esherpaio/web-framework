@@ -1,4 +1,4 @@
-from sqlalchemy import JSON, Boolean, CheckConstraint, Column
+from sqlalchemy import Boolean, CheckConstraint, Column
 from sqlalchemy.ext.hybrid import hybrid_method, hybrid_property
 from sqlalchemy.orm import relationship
 
@@ -13,7 +13,6 @@ class Cart(Base):
         CheckConstraint("vat_rate >= 1"),
     )
 
-    attributes = Column(JSON)
     shipment_price = Column(default_price, nullable=False, default=0)
     vat_rate = Column(default_vat, nullable=False, default=1)
     vat_reverse = Column(Boolean, nullable=False, default=False)

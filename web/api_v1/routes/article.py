@@ -33,6 +33,7 @@ def post_articles() -> Response:
 @access_control(UserRoleLevel.ADMIN)
 @api_v1_bp.patch("/articles/<int:article_id>")
 def patch_articles_id(article_id: int) -> Response:
+    attributes, has_attributes = json_get("attributes", dict, default={})
     html, has_html = json_get("html", str)
     name, has_name = json_get("name", str)
     summary, has_summary = json_get("summary", str)
@@ -45,6 +46,8 @@ def patch_articles_id(article_id: int) -> Response:
             return response(404, ApiText.HTTP_404)
 
         # Update article
+        if has_attributes:
+            article.attributes = attributes
         if has_name:
             article.name = name
         if has_summary:

@@ -37,6 +37,7 @@ def post_products() -> Response:
 @api_v1_bp.patch("/products/<int:product_id>")
 @sync_after(SkuSyncer)
 def patch_products_id(product_id: int) -> Response:
+    attributes, has_attributes = json_get("attributes", dict, default={})
     file_url, has_file_url = json_get("file_url", str)
     html, has_html = json_get("html", str)
     read_html, has_read_html = json_get("read_html", bool)
@@ -52,6 +53,8 @@ def patch_products_id(product_id: int) -> Response:
             return response(404, ApiText.HTTP_404)
 
         # Update product
+        if has_attributes:
+            product.attributes = attributes
         if has_type_id:
             product.type_id = type_id
         if has_shipment_class_id:
