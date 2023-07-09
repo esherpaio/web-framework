@@ -104,6 +104,8 @@ def get_users() -> Response:
             verification = s.query(Verification).filter_by(key=verification_key).first()
             if verification is None:
                 return response(404, _Text.VERIFICATION_KEY_NOT_FOUND)
+            if not verification.is_valid:
+                return response(400, _Text.VERIFICATION_FAILED)
             resource = [get_resource(verification.user_id)]
             return response(data=resource)
 
@@ -155,6 +157,8 @@ def patch_users_id(user_id: int) -> Response:
             # Authorize request with verification key
             verification = s.query(Verification).filter_by(key=verification_key).first()
             if verification is None:
+                return response(401, _Text.VERIFICATION_FAILED)
+            if not verification.is_valid:
                 return response(401, _Text.VERIFICATION_FAILED)
             if verification.user_id != user_id:
                 return response(401, _Text.VERIFICATION_FAILED)

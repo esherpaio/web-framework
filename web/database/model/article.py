@@ -1,4 +1,4 @@
-from sqlalchemy import JSON, Boolean, Column, String, Text
+from sqlalchemy import JSON, Boolean, Column, String
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
 
@@ -13,7 +13,6 @@ class Article(Base):
     __tablename__ = "article"
 
     attributes = Column(JSON)
-    html = Column(Text)
     is_deleted = Column(Boolean, nullable=False, default=False)
     is_visible = Column(Boolean, nullable=False, default=False)
     name = Column(String(64), nullable=False)

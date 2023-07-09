@@ -39,7 +39,6 @@ def post_products() -> Response:
 def patch_products_id(product_id: int) -> Response:
     attributes, has_attributes = json_get("attributes", dict, default={})
     file_url, has_file_url = json_get("file_url", str)
-    html, has_html = json_get("html", str)
     read_html, has_read_html = json_get("read_html", bool)
     shipment_class_id, has_shipment_class_id = json_get("shipment_class_id", int)
     summary, has_summary = json_get("summary", str)
@@ -61,8 +60,6 @@ def patch_products_id(product_id: int) -> Response:
             product.shipment_class_id = shipment_class_id
         if has_summary:
             product.summary = summary
-        if has_html:
-            product.html = html
         if has_unit_price:
             product.unit_price = unit_price
         if has_read_html:
