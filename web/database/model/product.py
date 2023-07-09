@@ -18,7 +18,7 @@ class Product(Base):
     file_url = Column(String(128))
     is_deleted = Column(Boolean, nullable=False, default=False)
     name = Column(String(64), nullable=False)
-    read_html = Column(Boolean, nullable=False, default=False)
+    consent_required = Column(Boolean, nullable=False, default=False)
     slug = Column(String(64), unique=True, nullable=False)
     summary = Column(String(64))
     unit_price = Column(default_price, nullable=False)

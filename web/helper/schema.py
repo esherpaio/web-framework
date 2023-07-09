@@ -154,5 +154,5 @@ def gen_schemas(page: Page = None, schemas: list[Schema] | None = None) -> list[
         if page.endpoint == config.ENDPOINT_HOME:
             schemas.append(SchemaWebsite())
             schemas.append(SchemaOrganization())
-        schemas.append(SchemaWebPage(page.name, page.desc))
+        schemas.append(SchemaWebPage(page.name, page.description))
     return schemas

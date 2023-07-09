@@ -97,7 +97,7 @@ def patch_products_id_media_id(product_id: int, media_id: int) -> Response:
         if has_order:
             product_media.order = order
         if has_desc:
-            file.desc = desc
+            file.description = desc
 
     return response()
 

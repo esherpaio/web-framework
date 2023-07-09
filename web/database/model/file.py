@@ -9,7 +9,7 @@ from .file_type import FileTypeId
 class File(Base):
     __tablename__ = "file"
 
-    desc = Column(String(64))
+    description = Column(String(64))
     path = Column(String(256), nullable=False, unique=True)
 
     type_id = Column(FKRestrict("file_type.id"), nullable=False)
