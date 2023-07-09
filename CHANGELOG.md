@@ -20,6 +20,7 @@ Todo:
 - Rename desc to description in all tables
 - Rename img_url to image_url in all tables
 - Rename read_html to consent_required in all tables
+- Refactor Invoice, Refund and Shipment under Order
 
 ### 2023-07-04
 
