@@ -29,7 +29,6 @@ class Order(Base):
 
     billing_id = Column(FKRestrict("billing.id"), nullable=False)
     currency_id = Column(FKRestrict("currency.id"), nullable=False)
-    invoice_id = Column(FKRestrict("invoice.id"))
     shipping_id = Column(FKRestrict("shipping.id"), nullable=False)
     status_id = Column(FKRestrict("order_status.id"), nullable=False)
     user_id = Column(FKRestrict("user.id"), nullable=False)
