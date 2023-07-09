@@ -3,7 +3,7 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
 
 from . import Base
-from ._utils import FKCascade, FKRestrict, price
+from ._utils import FKCascade, FKRestrict, default_price
 
 
 class OrderLine(Base):
@@ -15,7 +15,7 @@ class OrderLine(Base):
     )
 
     quantity = Column(Integer, nullable=False)
-    total_price = Column(price, nullable=False)
+    total_price = Column(default_price, nullable=False)
 
     order_id = Column(FKCascade("order.id"), nullable=False)
     sku_id = Column(FKRestrict("sku.id"), nullable=False)

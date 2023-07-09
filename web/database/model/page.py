@@ -1,4 +1,4 @@
-from sqlalchemy import Boolean, Column, String
+from sqlalchemy import JSON, Boolean, Column, String
 
 from . import Base
 
@@ -6,6 +6,7 @@ from . import Base
 class Page(Base):
     __tablename__ = "page"
 
+    attributes = Column(JSON)
     desc = Column(String(256))
     endpoint = Column(String(64), unique=True, nullable=False)
     in_sitemap = Column(Boolean, nullable=False)

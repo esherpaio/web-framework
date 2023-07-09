@@ -9,7 +9,7 @@ from sqlalchemy import (
 from sqlalchemy.orm import relationship
 
 from . import Base
-from ._utils import FKRestrict, FKSetNull, price
+from ._utils import FKSetNull, default_price, FKCascade
 from ._validation import set_slug
 
 
@@ -24,10 +24,10 @@ class ProductValue(Base):
     name = Column(String(64), nullable=False)
     order = Column(Integer)
     slug = Column(String(64), nullable=False)
-    unit_price = Column(price, nullable=False, default=0)
+    unit_price = Column(default_price, nullable=False, default=0)
 
     media_id = Column(FKSetNull("product_media.id"))
-    option_id = Column(FKRestrict("product_option.id"), nullable=False)
+    option_id = Column(FKCascade("product_option.id"), nullable=False)
 
     media = relationship("ProductMedia")
     option = relationship("ProductOption", back_populates="values")

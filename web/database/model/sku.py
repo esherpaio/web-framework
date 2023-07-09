@@ -1,21 +1,22 @@
-from sqlalchemy import Boolean, CheckConstraint, Column, String
+from sqlalchemy import JSON, Boolean, CheckConstraint, Column, String
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
 
 from . import Base
-from ._utils import FKCascade, price
+from ._utils import default_price, FKRestrict
 
 
 class Sku(Base):
     __tablename__ = "sku"
     __table_args__ = (CheckConstraint("unit_price >= 0"),)
 
+    attributes = Column(JSON)
     is_deleted = Column(Boolean, nullable=False, default=False)
     is_visible = Column(Boolean, nullable=False, default=False)
     slug = Column(String(128), unique=True, nullable=False)
-    unit_price = Column(price, nullable=False)
+    unit_price = Column(default_price, nullable=False)
 
-    product_id = Column(FKCascade("product.id"), nullable=False)
+    product_id = Column(FKRestrict("product.id"), nullable=False)
 
     category_items = relationship("CategoryItem", back_populates="sku")
     details = relationship("SkuDetail", back_populates="sku")

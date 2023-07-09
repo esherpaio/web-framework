@@ -2,7 +2,7 @@ from sqlalchemy import Boolean, CheckConstraint, Column, String
 from sqlalchemy.orm import relationship
 
 from . import Base
-from ._utils import FKRestrict, price
+from ._utils import FKRestrict, default_price
 
 
 class ShipmentMethod(Base):
@@ -12,7 +12,7 @@ class ShipmentMethod(Base):
     is_deleted = Column(Boolean, nullable=False, default=False)
     name = Column(String(64), nullable=False)
     phone_required = Column(Boolean, nullable=False, default=False)
-    unit_price = Column(price, nullable=False, default=0)
+    unit_price = Column(default_price, nullable=False, default=0)
 
     class_id = Column(FKRestrict("shipment_class.id"), nullable=False)
     zone_id = Column(FKRestrict("shipment_zone.id"), nullable=False)

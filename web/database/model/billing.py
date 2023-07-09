@@ -26,12 +26,10 @@ class Billing(Base):
 
     # Validation
 
-    @check_str_len(2, "address", "city", "zip_code")
+    @check_str_len(
+        2, "address", "city", "zip_code", "company", "first_name", "last_name"
+    )
     def validate_location(self, *args) -> str:
-        pass
-
-    @check_str_len(2, "company", "first_name", "last_name")
-    def validate_names(self, *args) -> str:
         pass
 
     @check_email("email")

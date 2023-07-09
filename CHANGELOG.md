@@ -4,6 +4,23 @@ This repository is a custom web framework for clients of Enlarge.
 
 ## Changelog
 
+### 2023-07-08
+
+Additions:
+- Added is_valid property to Verification
+- Added is_available attribute to Sku
+
+Improvements:
+- Invoices now have references back to the order
+- Updated various foreign key on delete actions
+- Relationships with an order attribute will be ordered by default
+
+Todo:
+- Remove html from Article and Product, instead use attributes
+- Rename desc to description in all tables
+- Rename img_url to image_url in all tables
+- Rename read_html to consent_required in all tables
+
 ### 2023-07-04
 
 Improvements:

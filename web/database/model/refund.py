@@ -1,18 +1,19 @@
-from sqlalchemy import CheckConstraint, Column, String
+from sqlalchemy import JSON, CheckConstraint, Column, String
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
 
 from . import Base
-from ._utils import FKRestrict, price
+from ._utils import FKRestrict, default_price
 
 
 class Refund(Base):
     __tablename__ = "refund"
     __table_args__ = (CheckConstraint("total_price < 0"),)
 
+    attributes = Column(JSON)
     mollie_id = Column(String(64), unique=True)
     number = Column(String(16), nullable=False, unique=True)
-    total_price = Column(price, nullable=False)
+    total_price = Column(default_price, nullable=False)
 
     order_id = Column(FKRestrict("order.id"), nullable=False)
 

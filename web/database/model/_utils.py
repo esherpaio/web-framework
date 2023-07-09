@@ -1,9 +1,8 @@
-from sqlalchemy import ForeignKey, Numeric, func
+from sqlalchemy import ForeignKey, Numeric
 
-current_time = func.now()
-price = Numeric(10, 4, asdecimal=False)
-vat = Numeric(4, 2, asdecimal=False)
-rate = Numeric(10, 4, asdecimal=False)
+default_price = Numeric(10, 4, asdecimal=False)
+default_vat = Numeric(4, 2, asdecimal=False)
+default_rate = Numeric(10, 4, asdecimal=False)
 
 
 class FKRestrict(ForeignKey):

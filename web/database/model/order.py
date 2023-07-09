@@ -1,9 +1,9 @@
-from sqlalchemy import Boolean, CheckConstraint, Column, String
+from sqlalchemy import JSON, Boolean, CheckConstraint, Column, String
 from sqlalchemy.ext.hybrid import hybrid_method, hybrid_property
 from sqlalchemy.orm import relationship
 
 from . import Base
-from ._utils import FKCascade, FKRestrict, price, rate, vat
+from ._utils import FKRestrict, default_price, default_rate, default_vat
 from .order_status import OrderStatusId
 
 
@@ -16,26 +16,27 @@ class Order(Base):
         CheckConstraint("vat_rate >= 1"),
     )
 
-    coupon_amount = Column(price)
+    attributes = Column(JSON)
+    coupon_amount = Column(default_price)
     coupon_code = Column(String(16))
-    coupon_rate = Column(rate)
+    coupon_rate = Column(default_rate)
     mollie_id = Column(String(64), unique=True)
     shipment_name = Column(String(64))
-    shipment_price = Column(price, nullable=False)
-    total_price = Column(price, nullable=False)
-    vat_rate = Column(vat, nullable=False)
+    shipment_price = Column(default_price, nullable=False)
+    total_price = Column(default_price, nullable=False)
+    vat_rate = Column(default_vat, nullable=False)
     vat_reverse = Column(Boolean, nullable=False)
 
-    billing_id = Column(FKCascade("billing.id"))
+    billing_id = Column(FKRestrict("billing.id"), nullable=False)
     currency_id = Column(FKRestrict("currency.id"), nullable=False)
     invoice_id = Column(FKRestrict("invoice.id"))
-    shipping_id = Column(FKCascade("shipping.id"))
+    shipping_id = Column(FKRestrict("shipping.id"), nullable=False)
     status_id = Column(FKRestrict("order_status.id"), nullable=False)
     user_id = Column(FKRestrict("user.id"), nullable=False)
 
     billing = relationship("Billing")
     currency = relationship("Currency")
-    invoice = relationship("Invoice")
+    invoice = relationship("Invoice", back_populates="order")
     lines = relationship("OrderLine", back_populates="order")
     refunds = relationship("Refund", back_populates="order")
     shipments = relationship("Shipment", back_populates="order")
@@ -123,7 +124,10 @@ class Order(Base):
 
     @hybrid_method
     def _get_price(
-        self, include_vat: bool, with_coupon: bool = False, with_shipment: bool = False
+        self,
+        include_vat: bool,
+        with_coupon: bool = False,
+        with_shipment: bool = False,
     ) -> float:
         price_ = 0
         # Add order lines

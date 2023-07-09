@@ -18,7 +18,9 @@ class ProductOption(Base):
     product_id = Column(FKCascade("product.id"), nullable=False)
 
     product = relationship("Product", back_populates="options")
-    values = relationship("ProductValue", back_populates="option")
+    values = relationship(
+        "ProductValue", back_populates="option", order_by="ProductValue.order"
+    )
 
     # Validations
 
