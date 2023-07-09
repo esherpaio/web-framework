@@ -152,6 +152,6 @@ class Meta:
 
 def gen_meta(page: Page | None = None) -> Meta:
     if isinstance(page, Page):
-        return Meta(page.name, page.desc, page.robots, page.img_url)
+        return Meta(page.name, page.description, page.robots, page.img_url)
     else:
         return Meta()

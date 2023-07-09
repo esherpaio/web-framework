@@ -17,8 +17,6 @@ Improvements:
 - Invoices now have references back to the order
 - Updated various foreign key on delete actions
 - Relationships with an order attribute will be ordered by default
-
-Todo:
 - Rename desc to description in all tables
 - Rename img_url to image_url in all tables
 - Rename read_html to consent_required in all tables
