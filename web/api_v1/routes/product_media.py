@@ -79,7 +79,7 @@ def post_products_id_media(product_id: int) -> Response:
 @access_control(UserRoleLevel.ADMIN)
 @api_v1_bp.patch("/products/<int:product_id>/media/<int:media_id>")
 def patch_products_id_media_id(product_id: int, media_id: int) -> Response:
-    desc, has_desc = json_get("desc", str)
+    description, has_description = json_get("description", str)
     order, has_order = json_get("order", int)
 
     with conn.begin() as s:
@@ -96,8 +96,8 @@ def patch_products_id_media_id(product_id: int, media_id: int) -> Response:
         # Update product media and file
         if has_order:
             product_media.order = order
-        if has_desc:
-            file.description = desc
+        if has_description:
+            file.description = description
 
     return response()
 

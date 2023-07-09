@@ -39,12 +39,12 @@ class Meta:
         title: str | None = None,
         description: str | None = None,
         robots: str | None = None,
-        img_url: str | None = None,
+        image_url: str | None = None,
     ) -> None:
         self._title = title
         self._description = description
         self._robots = robots
-        self._img_url = img_url
+        self._image_url = image_url
 
     # Properties
 
@@ -60,9 +60,9 @@ class Meta:
         return self._description
 
     @property
-    def img_url(self) -> str:
-        if self._img_url:
-            return self._img_url
+    def image_url(self) -> str:
+        if self._image_url:
+            return self._image_url
         else:
             return config.WEBSITE_LOGO_URL
 
@@ -137,8 +137,8 @@ class Meta:
             yield Markup(MetaTag.OG_TITLE % self.title)
         if self.description:
             yield Markup(MetaTag.OG_DESCRIPTION % self.description)
-        if self.img_url:
-            yield Markup(MetaTag.OG_IMAGE % self.img_url)
+        if self.image_url:
+            yield Markup(MetaTag.OG_IMAGE % self.image_url)
         if self.website_name:
             yield Markup(MetaTag.OG_SITE_NAME % self.website_name)
         if self.facebook_url:
@@ -152,6 +152,6 @@ class Meta:
 
 def gen_meta(page: Page | None = None) -> Meta:
     if isinstance(page, Page):
-        return Meta(page.name, page.description, page.robots, page.img_url)
+        return Meta(page.name, page.description, page.robots, page.image_url)
     else:
         return Meta()
