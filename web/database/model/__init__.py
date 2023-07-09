@@ -11,7 +11,7 @@ from .coupon import Coupon
 from .currency import Currency, CurrencyId
 from .file import File
 from .file_type import FileType, FileTypeId
-from .invoice import Invoice
+from .order_invoice import Invoice
 from .language import Language
 from .order import Order
 from .order_line import OrderLine
@@ -25,9 +25,9 @@ from .product_option import ProductOption
 from .product_type import ProductType, ProductTypeId
 from .product_value import ProductValue
 from .redirect import Redirect
-from .refund import Refund
+from .order_refund import Refund
 from .region import Region
-from .shipment import Shipment
+from .order_shipment import Shipment
 from .shipment_class import ShipmentClass
 from .shipment_method import ShipmentMethod
 from .shipment_zone import ShipmentZone

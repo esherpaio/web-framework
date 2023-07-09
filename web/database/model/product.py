@@ -1,4 +1,4 @@
-from sqlalchemy import JSON, Boolean, Column, String, Text
+from sqlalchemy import JSON, Boolean, Column, String
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
 
@@ -16,7 +16,6 @@ class Product(Base):
 
     attributes = Column(JSON)
     file_url = Column(String(128))
-    html = Column(Text)
     is_deleted = Column(Boolean, nullable=False, default=False)
     name = Column(String(64), nullable=False)
     read_html = Column(Boolean, nullable=False, default=False)

@@ -34,7 +34,6 @@ def post_articles() -> Response:
 @api_v1_bp.patch("/articles/<int:article_id>")
 def patch_articles_id(article_id: int) -> Response:
     attributes, has_attributes = json_get("attributes", dict, default={})
-    html, has_html = json_get("html", str)
     name, has_name = json_get("name", str)
     summary, has_summary = json_get("summary", str)
     is_visible, has_is_visible = json_get("is_visible", bool)
@@ -52,8 +51,6 @@ def patch_articles_id(article_id: int) -> Response:
             article.name = name
         if has_summary:
             article.summary = summary
-        if has_html:
-            article.html = html
         if has_is_visible:
             article.is_visible = is_visible
 
