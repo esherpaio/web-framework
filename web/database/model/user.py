@@ -1,4 +1,4 @@
-from sqlalchemy import Boolean, Column, String
+from sqlalchemy import JSON, Boolean, Column, String
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
 
@@ -11,6 +11,7 @@ from .user_role import UserRoleId
 class User(Base):
     __tablename__ = "user"
 
+    attributes = Column(JSON)
     email = Column(String(64), unique=True)
     is_active = Column(Boolean, nullable=False, default=False)
     password_hash = Column(String(256))

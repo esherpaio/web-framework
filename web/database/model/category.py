@@ -1,4 +1,4 @@
-from sqlalchemy import Boolean, Column, Integer, String
+from sqlalchemy import JSON, Boolean, Column, Integer, String
 from sqlalchemy.orm import relationship
 
 from . import Base
@@ -9,6 +9,7 @@ from ._validation import set_slug
 class Category(Base):
     __tablename__ = "category"
 
+    attributes = Column(JSON)
     in_header = Column(Boolean, nullable=False, default=False)
     is_deleted = Column(Boolean, nullable=False, default=False)
     is_locked = Column(Boolean, nullable=False, default=False)
@@ -19,7 +20,9 @@ class Category(Base):
     child_id = Column(FKRestrict("category.id"))
 
     child = relationship("Category", remote_side="Category.id")
-    items = relationship("CategoryItem", back_populates="category")
+    items = relationship(
+        "CategoryItem", back_populates="category", order_by="CategoryItem.order"
+    )
 
     # Validations
 

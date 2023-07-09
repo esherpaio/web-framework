@@ -2,7 +2,7 @@ from sqlalchemy import CheckConstraint, Column, Integer, UniqueConstraint
 from sqlalchemy.orm import relationship
 
 from . import Base
-from ._utils import FKCascade, FKRestrict
+from ._utils import FKCascade
 
 
 class CategoryItem(Base):
@@ -15,10 +15,10 @@ class CategoryItem(Base):
 
     order = Column(Integer)
 
-    article_id = Column(FKRestrict("article.id"))
     category_id = Column(FKCascade("category.id"), nullable=False)
-    sku_id = Column(FKRestrict("sku.id"))
+    article_id = Column(FKCascade("article.id"))
+    sku_id = Column(FKCascade("sku.id"))
 
-    article = relationship("Article", back_populates="category_items")
     category = relationship("Category", back_populates="items")
+    article = relationship("Article", back_populates="category_items")
     sku = relationship("Sku", back_populates="category_items")

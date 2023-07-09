@@ -1,9 +1,9 @@
-from sqlalchemy import Boolean, CheckConstraint, Column
+from sqlalchemy import JSON, Boolean, CheckConstraint, Column
 from sqlalchemy.ext.hybrid import hybrid_method, hybrid_property
 from sqlalchemy.orm import relationship
 
 from . import Base
-from ._utils import FKCascade, FKRestrict, price, vat
+from ._utils import FKCascade, FKRestrict, default_price, default_vat, FKSetNull
 
 
 class Cart(Base):
@@ -13,14 +13,15 @@ class Cart(Base):
         CheckConstraint("vat_rate >= 1"),
     )
 
-    shipment_price = Column(price, nullable=False, default=0)
-    vat_rate = Column(vat, nullable=False, default=1)
+    attributes = Column(JSON)
+    shipment_price = Column(default_price, nullable=False, default=0)
+    vat_rate = Column(default_vat, nullable=False, default=1)
     vat_reverse = Column(Boolean, nullable=False, default=False)
 
     billing_id = Column(FKRestrict("billing.id"))
     coupon_id = Column(FKRestrict("coupon.id"))
     currency_id = Column(FKRestrict("currency.id"), nullable=False)
-    shipment_method_id = Column(FKRestrict("shipment_method.id"))
+    shipment_method_id = Column(FKSetNull("shipment_method.id"))
     shipping_id = Column(FKRestrict("shipping.id"))
     user_id = Column(FKCascade("user.id"), nullable=False, unique=True)
 
@@ -86,7 +87,10 @@ class Cart(Base):
 
     @hybrid_method
     def _calc_price(
-        self, include_vat: bool, with_coupon: bool = False, with_shipment: bool = False
+        self,
+        include_vat: bool,
+        with_coupon: bool = False,
+        with_shipment: bool = False,
     ) -> float:
         price_ = 0
         # Add order lines

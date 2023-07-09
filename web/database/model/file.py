@@ -11,6 +11,7 @@ class File(Base):
 
     desc = Column(String(64))
     path = Column(String(256), nullable=False, unique=True)
+
     type_id = Column(FKRestrict("file_type.id"), nullable=False)
 
     # Properties - types

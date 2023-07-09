@@ -1,4 +1,4 @@
-from sqlalchemy import Boolean, Column, String, Text
+from sqlalchemy import JSON, Boolean, Column, String, Text
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
 
@@ -12,6 +12,7 @@ from .article_media import ArticleMedia
 class Article(Base):
     __tablename__ = "article"
 
+    attributes = Column(JSON)
     html = Column(Text)
     is_deleted = Column(Boolean, nullable=False, default=False)
     is_visible = Column(Boolean, nullable=False, default=False)
@@ -20,7 +21,9 @@ class Article(Base):
     summary = Column(String(64))
 
     category_items = relationship("CategoryItem", back_populates="article")
-    medias = relationship("ArticleMedia", back_populates="article")
+    medias = relationship(
+        "ArticleMedia", back_populates="article", order_by="ArticleMedia.order"
+    )
 
     # Validation
 

@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, UniqueConstraint
+from sqlalchemy import JSON, Column, String, UniqueConstraint
 from sqlalchemy.orm import relationship
 
 from . import Base
@@ -9,6 +9,7 @@ class Shipment(Base):
     __tablename__ = "shipment"
     __table_args__ = (UniqueConstraint("url", "order_id"),)
 
+    attributes = Column(JSON)
     url = Column(String(256), nullable=False)
 
     order_id = Column(FKRestrict("order.id"), nullable=False)
