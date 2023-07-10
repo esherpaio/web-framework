@@ -4,6 +4,11 @@ This repository is a custom web framework for clients of Enlarge.
 
 ## Changelog
 
+### 2023-07-09
+
+Improvements:
+- Check constraint for coupons on orders was always resulting in conflict
+
 ### 2023-07-08
 
 Additions:
