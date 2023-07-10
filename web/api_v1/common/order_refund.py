@@ -36,7 +36,7 @@ def create_refund(
     send_order_refunded(
         order_id=order.id,
         billing_email=order.billing.email,
-        refund_id=refund.id,
+        refund_number=refund.number,
         pdf_path=pdf_path,
     )
     remove_file(pdf_path)

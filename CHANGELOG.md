@@ -7,7 +7,8 @@ This repository is a custom web framework for clients of Enlarge.
 ### 2023-07-09
 
 Improvements:
-- Check constraint for coupons on orders was always resulting in conflict
+- Fixed a bug in a CheckConstraint for Order that checks the coupons
+- Fixed a bug where a PDF for an Order was generated with the wrong filename
 
 ### 2023-07-08
 

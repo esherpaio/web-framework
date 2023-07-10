@@ -24,7 +24,7 @@ def send_order_received(
 def send_order_paid(
     order_id: int,
     billing_email: str,
-    invoice_id: int,
+    invoice_number: str,
     pdf_path: str,
 ) -> None:
     to = [billing_email]
@@ -33,7 +33,7 @@ def send_order_paid(
     )
     title = _("MAIL_ORDER_TITLE", order_id=order_id)
     paragraphs = [_("MAIL_ORDER_PAID_P1"), _("MAIL_ORDER_PAID_P2")]
-    pdf_name = _("MAIL_ORDER_PAID_FILENAME", invoice_id=str(invoice_id))
+    pdf_name = _("MAIL_ORDER_PAID_FILENAME", invoice_number=invoice_number)
     html = render_email(title, paragraphs)
     send_email(to, subject, html, pdf_path, pdf_name)
 
@@ -62,7 +62,7 @@ def send_order_shipped(
 def send_order_refunded(
     order_id: int,
     billing_email: str,
-    refund_id: int,
+    refund_number: int,
     pdf_path: str,
 ) -> None:
     to = [billing_email]
@@ -71,6 +71,6 @@ def send_order_refunded(
     )
     title = _("MAIL_ORDER_TITLE", order_id=order_id)
     paragraphs = [_("MAIL_ORDER_REFUNDED_P1"), _("MAIL_ORDER_REFUNDED_P2")]
-    pdf_name = _("MAIL_ORDER_REFUNDED_FILENAME", refund_id=refund_id)
+    pdf_name = _("MAIL_ORDER_REFUNDED_FILENAME", refund_number=refund_number)
     html = render_email(title, paragraphs)
     send_email(to, subject, html, pdf_path, pdf_name)
