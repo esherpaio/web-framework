@@ -4,7 +4,7 @@ from flask import Response, url_for
 from flask_login import current_user
 
 from web import config
-from web.api_v1 import api_v1_bp
+from web.blueprints.api_v1 import api_v1_bp
 from web.database.client import conn
 from web.database.model import Order
 from web.helper.api import ApiText, response

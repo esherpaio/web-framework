@@ -1,7 +1,8 @@
-from datetime import timedelta, datetime
+from datetime import datetime, timedelta
+
 from sqlalchemy import Column, String
-from sqlalchemy.orm import relationship
 from sqlalchemy.ext.hybrid import hybrid_property
+from sqlalchemy.orm import relationship
 
 from . import Base
 from ._utils import FKCascade

@@ -4,9 +4,9 @@ from flask import Response
 from flask_login import current_user
 from pyvat import check_vat_number
 
-from web.api_v1 import api_v1_bp
-from web.api_v1.common.order_refund import create_refund
-from web.api_v1.resource.order import get_resource
+from web.blueprints.api_v1 import api_v1_bp
+from web.blueprints.api_v1.common.order_refund import create_refund
+from web.blueprints.api_v1.resource.order import get_resource
 from web.database.client import conn
 from web.database.model import Cart, Order, OrderLine, OrderStatusId, UserRoleLevel
 from web.helper.api import ApiText, json_get, response

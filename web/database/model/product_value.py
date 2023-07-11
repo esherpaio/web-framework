@@ -9,7 +9,7 @@ from sqlalchemy import (
 from sqlalchemy.orm import relationship
 
 from . import Base
-from ._utils import FKSetNull, default_price, FKCascade
+from ._utils import FKCascade, FKSetNull, default_price
 from ._validation import set_slug
 
 

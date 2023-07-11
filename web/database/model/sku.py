@@ -3,7 +3,7 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
 
 from . import Base
-from ._utils import default_price, FKRestrict
+from ._utils import FKRestrict, default_price
 
 
 class Sku(Base):
