@@ -2,7 +2,7 @@ from enum import StrEnum
 
 from flask import Response
 
-from web.blueprints.api_v1 import api_v1_bp
+from web.blueprint.api_v1 import api_v1_bp
 from web.helper.api import json_get, response
 from web.i18n.base import _
 from web.mail.routes.contact import send_contact_business, send_contact_customer

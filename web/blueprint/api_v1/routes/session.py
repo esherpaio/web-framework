@@ -6,7 +6,7 @@ import flask_login
 from flask import Response
 from werkzeug.security import check_password_hash
 
-from web.blueprints.api_v1 import api_v1_bp
+from web.blueprint.api_v1 import api_v1_bp
 from web.database.client import conn
 from web.database.model import User
 from web.helper.api import json_get, response

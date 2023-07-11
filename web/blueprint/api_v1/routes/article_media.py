@@ -5,7 +5,7 @@ from flask import Response, request
 from werkzeug.utils import secure_filename
 
 from web import config
-from web.blueprints.api_v1 import api_v1_bp
+from web.blueprint.api_v1 import api_v1_bp
 from web.database.client import conn
 from web.database.model import Article, ArticleMedia, File, FileTypeId, UserRoleLevel
 from web.helper import cdn

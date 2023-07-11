@@ -1,9 +1,9 @@
 from flask import Response
 from flask_login import current_user
 
-from web.blueprints.api_v1 import api_v1_bp
-from web.blueprints.api_v1.common.cart_item import update_cart_shipment_methods
-from web.blueprints.api_v1.resource.shipping import get_resource
+from web.blueprint.api_v1 import api_v1_bp
+from web.blueprint.api_v1.common.cart_item import update_cart_shipment_methods
+from web.blueprint.api_v1.resource.shipping import get_resource
 from web.database.client import conn
 from web.database.model import Cart, Order, Shipping, User
 from web.helper.api import ApiText, json_get, response
