@@ -5,7 +5,7 @@ from web.helper.errors import handle_backend_exception
 webhook_v1_bp = Blueprint(
     name="webhook_v1",
     import_name=__name__,
-    url_prefix="/webhook_v1",
+    url_prefix="/webhook/v1",
 )
 
 

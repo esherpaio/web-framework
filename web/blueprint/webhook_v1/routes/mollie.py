@@ -1,7 +1,7 @@
 from flask import Response, request
 from mollie.api.error import NotFoundError
 
-from web.blueprints.webhook_v1 import webhook_v1_bp
+from web.blueprint.webhook_v1 import webhook_v1_bp
 from web.database.client import conn
 from web.database.model import Invoice, Order
 from web.database.model.order_status import OrderStatusId
