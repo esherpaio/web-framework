@@ -4,6 +4,12 @@ This repository is a custom web framework for clients of Enlarge.
 
 ## Changelog
 
+### 2023-07-10
+
+Additions:
+- Added a blueprint for webhooks
+- Included a Mollie payment webhook endpoint
+
 ### 2023-07-09
 
 Improvements:
