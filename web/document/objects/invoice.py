@@ -83,6 +83,14 @@ def _build_order_info(
         ],
         [
             Paragraph(
+                _("PDF_ORDER_DATE"),
+                font=FONT_BOLD,
+                horizontal_alignment=Alignment.RIGHT,
+            ),
+            Paragraph(order.created_at.strftime("%Y-%m-%d")),
+        ],
+        [
+            Paragraph(
                 _("PDF_INVOICE_NUMBER"),
                 font=FONT_BOLD,
                 horizontal_alignment=Alignment.RIGHT,
@@ -91,11 +99,11 @@ def _build_order_info(
         ],
         [
             Paragraph(
-                _("PDF_ORDER_DATE"),
+                _("PDF_INVOICE_DATE"),
                 font=FONT_BOLD,
                 horizontal_alignment=Alignment.RIGHT,
             ),
-            Paragraph(order.created_at.strftime("%Y-%m-%d")),
+            Paragraph(invoice.created_at.strftime("%Y-%m-%d")),
         ],
     ]
 
