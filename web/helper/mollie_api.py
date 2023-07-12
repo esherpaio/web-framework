@@ -26,5 +26,5 @@ def mollie_webhook() -> str | None:
     if not config.LOCALHOST:
         webhook = url_for("webhook_v1.mollie_payment", _external=True)
     else:
-        webhook = os.path.join(config.LOCALHOST, "webhook_v1", "mollie", "payment")
+        webhook = os.path.join(config.LOCALHOST, "webhook", "v1", "mollie", "payment")
     return webhook
