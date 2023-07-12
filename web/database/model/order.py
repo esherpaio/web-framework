@@ -78,7 +78,7 @@ class Order(Base):
 
     @hybrid_property
     def is_refundable(self) -> bool:
-        return self.invoice_id and self.remaining_refund_amount > 0
+        return self.invoice and self.remaining_refund_amount > 0
 
     # Properties - pricing
 
