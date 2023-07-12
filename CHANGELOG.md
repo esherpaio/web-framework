@@ -10,6 +10,7 @@ Improvements:
 - Require session for document generation to ensure database connection
 - Provide full SKU name in Invoice document
 - Fixed a bug when it could not be determined whether an order is refundable
+- Fixed a bug where the Mollie webhook URL was not generated correctly
 
 ### 2023-07-10
 
