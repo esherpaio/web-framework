@@ -8,6 +8,7 @@ This repository is a custom web framework for clients of Enlarge.
 
 Improvements:
 - Require session for document generation to ensure database connection
+- Provide full SKU name in Invoice document
 
 ### 2023-07-10
 
