@@ -6,6 +6,9 @@ This repository is a custom web framework for clients of Enlarge.
 
 ### 2023-07-12
 
+Additions:
+- Add more invoice and refund details to invoices and refunds
+
 Improvements:
 - Require session for document generation to ensure database connection
 - Provide full SKU name in Invoice document

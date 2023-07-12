@@ -85,11 +85,27 @@ def _build_refund_info(
         ],
         [
             Paragraph(
+                _("PDF_ORDER_DATE"),
+                font=FONT_BOLD,
+                horizontal_alignment=Alignment.RIGHT,
+            ),
+            Paragraph(order.created_at.strftime("%Y-%m-%d")),
+        ],
+        [
+            Paragraph(
                 _("PDF_INVOICE_NUMBER"),
                 font=FONT_BOLD,
                 horizontal_alignment=Alignment.RIGHT,
             ),
             Paragraph(invoice.number),
+        ],
+        [
+            Paragraph(
+                _("PDF_INVOICE_DATE"),
+                font=FONT_BOLD,
+                horizontal_alignment=Alignment.RIGHT,
+            ),
+            Paragraph(invoice.created_at.strftime("%Y-%m-%d")),
         ],
         [
             Paragraph(
@@ -101,11 +117,11 @@ def _build_refund_info(
         ],
         [
             Paragraph(
-                _("PDF_ORDER_DATE"),
+                _("PDF_REFUND_DATE"),
                 font=FONT_BOLD,
                 horizontal_alignment=Alignment.RIGHT,
             ),
-            Paragraph(order.created_at.strftime("%Y-%m-%d")),
+            Paragraph(refund.created_at.strftime("%Y-%m-%d")),
         ],
     ]
 
