@@ -10,6 +10,7 @@ from doc.pdf import (
     Page,
     SingleColumnLayout,
 )
+from sqlalchemy.orm import Session
 
 from web import config
 from web.database.model import Invoice, Order
@@ -19,6 +20,7 @@ from web.i18n.base import _
 
 
 def gen_invoice(
+    s: Session,
     order: Order,
     invoice: Invoice,
 ) -> tuple[str, str]:
@@ -40,16 +42,16 @@ def gen_invoice(
             layout = SingleColumnLayout(page, margin, margin)
         layout.add(table)
 
-    pdf_name_ext = _("PDF_INVOICE_FILENAME", invoice_number=invoice.number)
-    pdf_path = save_pdf(pdf, pdf_name_ext)
-    return pdf_name_ext, pdf_path
+    pdf_base = _("PDF_INVOICE_FILENAME", invoice_number=invoice.number)
+    pdf_path = save_pdf(pdf, pdf_base)
+    return pdf_base, pdf_path
 
 
 def _build_order_info(
     order: Order,
     invoice: Invoice,
 ) -> FixedColumnWidthTable:
-    # Left 1 column.
+    # Left 1 column
     left_items = []
     if order.billing.company:
         left_items.append(Paragraph(order.billing.company))
@@ -59,7 +61,7 @@ def _build_order_info(
     left_items.append(Paragraph(order.billing.country.name))
     left_items.append(Paragraph(order.billing.email))
 
-    # Middle 1 column.
+    # Middle 1 column
     middle_items = [
         Paragraph(config.BUSINESS_NAME),
         Paragraph(config.BUSINESS_STREET),
@@ -69,7 +71,7 @@ def _build_order_info(
         Paragraph(_("PDF_VAT_NUMBER", vat=config.BUSINESS_VAT)),
     ]
 
-    # Right 2 columns.
+    # Right 2 columns
     right_groups = [
         [
             Paragraph(
@@ -97,14 +99,14 @@ def _build_order_info(
         ],
     ]
 
-    # Create the table.
+    # Create the table
     row_count = max(len(left_items), len(middle_items), len(right_groups))
     column_widths = [Decimal(4), Decimal(4), Decimal(2), Decimal(2)]
     table = FixedColumnWidthTable(
         number_of_rows=row_count, number_of_columns=4, column_widths=column_widths
     )
 
-    # Append all the rows.
+    # Append all the rows
     combined = list(zip_longest(left_items, middle_items, right_groups))
     for le, mi, ri in combined:
         if le is not None:
@@ -122,7 +124,7 @@ def _build_order_info(
             table.add(Paragraph(" "))
             table.add(Paragraph(" "))
 
-    # Finish the table.
+    # Finish the table
     table.set_padding_on_all_cells(Decimal(0), Decimal(2), Decimal(2), Decimal(2))
     table.no_borders()
     return table
@@ -136,16 +138,16 @@ def _build_order_lines(
     h_widths = [Decimal(64), Decimal(10), Decimal(16)]
     h_count = len(h_texts)
 
-    # headers
+    # Headers
     for h_text in h_texts:
         h_paragraph = Paragraph(h_text, color=HexColor("ffffff"))
         h_cell = TableCell(h_paragraph, HexColor("646464"))
         cells.append(h_cell)
 
-    # order lines
+    # Order lines
     for num, order_line in enumerate(order.lines):
         background_color = HexColor("f0f0f0") if num % 2 else HexColor("ffffff")
-        name_text = f"{order_line.sku.product.name}"
+        name_text = f"{order_line.sku.name}"
         name_p = Paragraph(name_text)
         cells.append(TableCell(name_p, background_color))
         quantity_text = f"{order_line.quantity}"
@@ -155,13 +157,13 @@ def _build_order_lines(
         price_p = Paragraph(price_text)
         cells.append(TableCell(price_p, background_color))
 
-    # empty line
+    # Empty line
     empty_p = Paragraph(" ")
     cells.append(
         TableCell(empty_p, col_span=h_count, background_color=HexColor("ffffff"))
     )
 
-    # subtotal
+    # Subtotal
     subtotal_head_p = Paragraph(
         _("PDF_ITEMS"),
         font=FONT_BOLD,
@@ -172,7 +174,7 @@ def _build_order_lines(
     cells.append(TableCell(subtotal_head_p, col_span=h_count - 1))
     cells.append(TableCell(subtotal_value_p, col_span=1))
 
-    # discount
+    # Discount
     subtotal_head_p = Paragraph(
         _("PDF_DISCOUNT"),
         font=FONT_BOLD,
@@ -183,7 +185,7 @@ def _build_order_lines(
     cells.append(TableCell(subtotal_head_p, col_span=h_count - 1))
     cells.append(TableCell(subtotal_value_p, col_span=1))
 
-    # shipment
+    # Shipment
     subtotal_head_p = Paragraph(
         _("PDF_SHIPMENT"),
         font=FONT_BOLD,
@@ -205,7 +207,7 @@ def _build_order_lines(
     cells.append(TableCell(vat_head_p, col_span=h_count - 1))
     cells.append(TableCell(vat_p, col_span=1))
 
-    # total
+    # Total
     total_head_p = Paragraph(
         _("PDF_TOTAL"),
         font=FONT_BOLD,
@@ -216,13 +218,13 @@ def _build_order_lines(
     cells.append(TableCell(total_head_p, col_span=h_count - 1))
     cells.append(TableCell(total_value_p, col_span=1))
 
-    # empty line
+    # Empty line
     empty_p = Paragraph(" ")
     cells.append(
         TableCell(empty_p, col_span=h_count, background_color=HexColor("ffffff"))
     )
 
-    # note
+    # Note
     note_1_text = _("PDF_NOTE")
     note_1_p = Paragraph(note_1_text, horizontal_alignment=Alignment.RIGHT)
     cells.append(TableCell(note_1_p, col_span=h_count))
