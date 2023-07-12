@@ -4,6 +4,11 @@ This repository is a custom web framework for clients of Enlarge.
 
 ## Changelog
 
+### 2023-07-12
+
+Improvements:
+- Require session for document generation to ensure database connection
+
 ### 2023-07-10
 
 Additions:

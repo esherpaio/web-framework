@@ -45,7 +45,7 @@ def mollie_payment() -> Response:
             s.add(invoice)
             order.status_id = OrderStatusId.PAID
             s.flush()
-            _, pdf_path = gen_invoice(order, invoice)
+            _, pdf_path = gen_invoice(s, order, invoice)
             send_order_paid(
                 order_id=order.id,
                 billing_email=order.billing.email,

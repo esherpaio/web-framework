@@ -32,7 +32,7 @@ def create_refund(
     s.flush()
 
     # Send email
-    _, pdf_path = gen_refund(order, order.invoice, refund)
+    _, pdf_path = gen_refund(s, order, order.invoice, refund)
     send_order_refunded(
         order_id=order.id,
         billing_email=order.billing.email,
