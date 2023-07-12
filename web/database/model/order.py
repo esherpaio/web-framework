@@ -34,7 +34,7 @@ class Order(Base):
 
     billing = relationship("Billing")
     currency = relationship("Currency")
-    invoice = relationship("Invoice", back_populates="order")
+    invoice = relationship("Invoice", uselist=False, back_populates="order")
     lines = relationship("OrderLine", back_populates="order")
     refunds = relationship("Refund", back_populates="order")
     shipments = relationship("Shipment", back_populates="order")

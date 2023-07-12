@@ -11,6 +11,7 @@ Improvements:
 - Provide full SKU name in Invoice document
 - Fixed a bug when it could not be determined whether an order is refundable
 - Fixed a bug where the Mollie webhook URL was not generated correctly
+- Fixed a bug where a list of invoices was returned while an order can have only one invoice
 
 ### 2023-07-10
 
