@@ -6,8 +6,14 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - name: Get version number
-        run: |
-          echo "VERSION=1.9.8" >> $GITHUB_ENV
-          echo "${{ env.VERSION }}"
+        - name: Checkout
+          uses: actions/checkout@v2
+          with:
+            fetch-depth: 0
+        - name: Release
+          uses: paulhatch/semantic-version@v5.0.2
+          with:
+            tag_prefix: "v"
+            major_pattern: "(MAJOR)"
+            minor_pattern: "(MINOR)"
+            version_format: "${major}.${minor}.${patch}-pre${increment}"
