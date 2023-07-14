@@ -10,4 +10,4 @@ jobs:
       - name: Get version number
         run: |
           echo "VERSION=1.9.8" >> $GITHUB_ENV
-          echo ${{ env.VERSION }}
+          echo "${{ env.VERSION }}"
