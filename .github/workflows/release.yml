@@ -17,3 +17,9 @@ jobs:
             major_pattern: "(MAJOR)"
             minor_pattern: "(MINOR)"
             version_format: "${major}.${minor}.${patch}-pre${increment}"
+        - name: Echo
+          run: |
+            echo "Version: ${{ steps.release.outputs.version }}"
+            echo "Outputs: ${{ steps.release.outputs }}"
+            echo "Release: ${{ steps.release }}"
+            echo "Steps: ${{ steps }}"
