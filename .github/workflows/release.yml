@@ -13,3 +13,4 @@ jobs:
         run: |
           echo "VERSION=$(echo "__version__ = "1.9.8"" | sed 's/[^0-9\.]*//g')" >> $GITHUB_ENV
           echo $VERSION
+          echo "test"
