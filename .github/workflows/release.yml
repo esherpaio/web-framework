@@ -11,6 +11,7 @@ jobs:
           with:
             fetch-depth: 0
         - name: Release
+          id: release
           uses: paulhatch/semantic-version@v5.0.2
           with:
             tag_prefix: "v"
@@ -22,4 +23,3 @@ jobs:
             echo "Version: ${{ steps.release.outputs.version }}"
             echo "Outputs: ${{ steps.release.outputs }}"
             echo "Release: ${{ steps.release }}"
-            echo "Steps: ${{ steps }}"
