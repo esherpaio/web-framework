@@ -1,0 +1,21 @@
+name: Release
+
+on: [ push ]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11"]
+    env:
+        VERSION: null
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v3
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Get version number
+        run: |
+          echo "VERSION=$(echo "__version__ = "1.9.8"" | sed 's/[^0-9\.]*//g')" >> $VERSION
+          echo $VERSION
