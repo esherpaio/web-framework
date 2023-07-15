@@ -5,7 +5,6 @@ from email.mime.text import MIMEText
 from smtplib import SMTP_SSL as SMTP
 
 import jinja2
-from sendgrid import Attachment, Mail, SendGridAPIClient
 
 from web import config
 from web.helper.logger import logger
@@ -66,10 +65,6 @@ def send_email(
         ):
             raise EnvironmentError("SMTP is not configured")
         send_over_smtp(from_, to, subject, html, blob_path, blob_name)
-    elif config.EMAIL_METHOD == "sendgrid":
-        if not config.SENDGRID_KEY:
-            raise EnvironmentError("SendGrid is not configured")
-        send_over_sengrid(from_, to, subject, html, blob_path, blob_name)
     else:
         raise EnvironmentError("No email method is configured")
 
@@ -105,39 +100,5 @@ def send_over_smtp(
             conn.sendmail(from_, to, message.as_string())
         finally:
             conn.quit()
-    except Exception as error:
-        logger.critical(error)
-
-
-def send_over_sengrid(
-    from_: str,
-    to: list[str],
-    subject: str,
-    html: str,
-    blob_path: str = None,
-    blob_name: str = None,
-) -> None:
-    # Build the email
-    mail = Mail(
-        from_email=from_,
-        to_emails=to,
-        subject=subject,
-        html_content=html,
-    )
-
-    # Add attachment
-    if blob_path and blob_name:
-        blob_str = file_to_str(blob_path, encode=True)
-        attachment = Attachment(
-            file_content=blob_str,
-            file_name=blob_name,
-            disposition="attachment",
-        )
-        mail.add_attachment(attachment)
-
-    # Send the email
-    try:
-        sendgrid = SendGridAPIClient(config.SENDGRID_KEY)
-        sendgrid.send(mail)
     except Exception as error:
         logger.critical(error)

@@ -20,7 +20,6 @@ env:
   LOCALHOST: ${{ vars.LOCALHOST }}
   MOLLIE_KEY: ${{ secrets.MOLLIE_KEY }}
   SEED_EXTERNAL: ${{ vars.SEED_EXTERNAL }}
-  SENDGRID_KEY: ${{ secrets.SENDGRID_KEY }}
   SMTP_HOST: ${{ vars.SMTP_HOST }}
   SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
   SMTP_PORT: ${{ vars.SMTP_PORT }}
