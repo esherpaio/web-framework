@@ -1,11 +1,11 @@
 import json
 
-from flask import request, url_for
+from flask import request
 from markupsafe import Markup
 
 from web import config
 from web.database.model import Page
-from web.helper.localization import current_locale
+from web.helper.localization import current_locale, url_for_locale
 
 
 class Schema:
@@ -51,11 +51,12 @@ class SchemaWebPage(Schema):
 class SchemaWebsite(Schema):
     def __init__(self) -> None:
         super().__init__()
-        home_url = url_for(
+        home_url = url_for_locale(
             config.ENDPOINT_HOME,
             _locale=current_locale.locale,
             _external=True,
         )
+        print(home_url)
         self.data = {
             "@context": "https://schema.org",
             "@type": "WebSite",
@@ -68,7 +69,7 @@ class SchemaWebsite(Schema):
 class SchemaOrganization(Schema):
     def __init__(self) -> None:
         super().__init__()
-        home_url = url_for(
+        home_url = url_for_locale(
             config.ENDPOINT_HOME,
             _locale=current_locale.locale,
             _external=True,

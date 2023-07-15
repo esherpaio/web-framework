@@ -1,7 +1,7 @@
 import re
 from functools import cached_property
 
-from flask import current_app, g, has_request_context, request
+from flask import current_app, g, has_request_context, request, url_for
 from werkzeug.local import LocalProxy
 
 from web import config
@@ -60,6 +60,12 @@ def gen_locale(
     """
 
     return f"{language_code}-{country_code}".lower()
+
+
+def url_for_locale(endpoint: str, *args, **kwargs) -> str:
+    if not expects_locale(endpoint) and "_locale" in kwargs:
+        kwargs.pop("_locale")
+    return url_for(endpoint, *args, **kwargs)
 
 
 current_locale = LocalProxy(lambda: _get_locale())
