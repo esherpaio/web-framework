@@ -56,7 +56,7 @@ class Translator:
         except KeyError:
             logger.error(f"Translation for {key} not found")
             return self.fallback_translation
-        # Try to  fill in keyword arguments
+        # Try to fill in keyword arguments
         try:
             return text % kwargs
         except KeyError:
