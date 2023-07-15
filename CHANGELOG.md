@@ -4,6 +4,15 @@ This repository is a custom web framework for clients of Enlarge.
 
 ## Changelog
 
+### 2023-07-14
+
+Removals:
+- Dropped support for SendGrid
+
+Improvements:
+- Fixed a bug where _locale was added in URLs that don't have a locale
+- 
+
 ### 2023-07-12
 
 Additions:
