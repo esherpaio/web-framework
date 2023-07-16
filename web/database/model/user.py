@@ -11,7 +11,7 @@ from .user_role import UserRoleId
 class User(Base):
     __tablename__ = "user"
 
-    attributes = Column(JSON)
+    attributes = Column(JSON, nullable=False, server_default='{}')
     email = Column(String(64), unique=True)
     is_active = Column(Boolean, nullable=False, default=False)
     password_hash = Column(String(256))
