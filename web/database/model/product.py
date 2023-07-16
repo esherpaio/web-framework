@@ -14,7 +14,7 @@ from .product_type import ProductTypeId
 class Product(Base):
     __tablename__ = "product"
 
-    attributes = Column(JSON)
+    attributes = Column(JSON, nullable=False, server_default='{}')
     file_url = Column(String(128))
     is_deleted = Column(Boolean, nullable=False, default=False)
     name = Column(String(64), nullable=False)
