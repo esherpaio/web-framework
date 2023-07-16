@@ -29,5 +29,5 @@ def get_verifications() -> Response:
         if not verification.is_valid:
             return response(400, _Text.VERIFICATION_INVALID)
 
-    resource = [get_resource(verification.user_id)]
+    resource = [get_resource(verification.id)]
     return response(data=resource)
