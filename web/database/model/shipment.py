@@ -9,7 +9,7 @@ class Shipment(Base):
     __tablename__ = "shipment"
     __table_args__ = (UniqueConstraint("url", "order_id"),)
 
-    attributes = Column(JSON)
+    attributes = Column(JSON, nullable=False, server_default='{}')
     url = Column(String(256), nullable=False)
 
     order_id = Column(FKRestrict("order.id"), nullable=False)

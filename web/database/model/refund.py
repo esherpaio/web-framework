@@ -10,7 +10,7 @@ class Refund(Base):
     __tablename__ = "refund"
     __table_args__ = (CheckConstraint("total_price < 0"),)
 
-    attributes = Column(JSON)
+    attributes = Column(JSON, nullable=False, server_default='{}')
     mollie_id = Column(String(64), unique=True)
     number = Column(String(16), nullable=False, unique=True)
     total_price = Column(default_price, nullable=False)

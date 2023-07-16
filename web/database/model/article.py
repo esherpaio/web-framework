@@ -12,7 +12,7 @@ from .article_media import ArticleMedia
 class Article(Base):
     __tablename__ = "article"
 
-    attributes = Column(JSON)
+    attributes = Column(JSON, nullable=False, server_default='{}')
     is_deleted = Column(Boolean, nullable=False, default=False)
     is_visible = Column(Boolean, nullable=False, default=False)
     name = Column(String(64), nullable=False)
