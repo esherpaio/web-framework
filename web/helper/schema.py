@@ -56,7 +56,6 @@ class SchemaWebsite(Schema):
             _locale=current_locale.locale,
             _external=True,
         )
-        print(home_url)
         self.data = {
             "@context": "https://schema.org",
             "@type": "WebSite",
