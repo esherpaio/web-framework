@@ -57,12 +57,12 @@ def delete_shipment_classes_id(shipment_class_id: int) -> Response:
         shipment_class.is_deleted = True
 
         # Delete shipment zones
-        shipment_zones = (
+        shipment_methods = (
             s.query(ShipmentMethod)
             .filter_by(class_id=shipment_class_id, is_deleted=False)
             .all()
         )
-        for shipment_zone in shipment_zones:
-            shipment_zone.is_deleted = True
+        for shipment_method in shipment_methods:
+            shipment_method.is_deleted = True
 
     return response()
