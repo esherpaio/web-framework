@@ -33,9 +33,11 @@ def post_session() -> Response:
     # Check if user exists
     if not user:
         return response(400, _Text.CHECK_DETAILS)
+
     # Check if user activation is pending
     if not user.is_active:
         return response(400, _Text.CHECK_ACTIVATION)
+
     # Check if password is correct
     if not check_password_hash(user.password_hash, password):
         return response(400, _Text.CHECK_DETAILS)
