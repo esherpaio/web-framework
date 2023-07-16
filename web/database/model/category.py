@@ -9,7 +9,7 @@ from ._validation import set_slug
 class Category(Base):
     __tablename__ = "category"
 
-    attributes = Column(JSON, nullable=False, server_default='{}')
+    attributes = Column(JSON, nullable=False, server_default="{}")
     in_header = Column(Boolean, nullable=False, default=False)
     is_deleted = Column(Boolean, nullable=False, default=False)
     is_locked = Column(Boolean, nullable=False, default=False)
