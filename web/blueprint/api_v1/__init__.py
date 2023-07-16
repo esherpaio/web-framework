@@ -25,4 +25,5 @@ from .routes import (
     shipping,
     sku,
     user,
+    verification,
 )
