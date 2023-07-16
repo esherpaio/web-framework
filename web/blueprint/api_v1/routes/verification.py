@@ -17,11 +17,11 @@ class _Text(StrEnum):
 
 @api_v1_bp.get("/verifications")
 def get_verifications() -> Response:
-    verification_key, _ = args_get("verification_key", str)
+    key, _ = args_get("key", str)
 
     with conn.begin() as s:
         # Get verification
-        verification = s.query(Verification).filter_by(key=verification_key).first()
+        verification = s.query(Verification).filter_by(key=key).first()
         if verification is None:
             return response(404, _Text.VERIFICATION_KEY_NOT_FOUND)
 
