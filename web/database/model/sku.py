@@ -10,7 +10,7 @@ class Sku(Base):
     __tablename__ = "sku"
     __table_args__ = (CheckConstraint("unit_price >= 0"),)
 
-    attributes = Column(JSON)
+    attributes = Column(JSON, nullable=False, server_default='{}')
     is_deleted = Column(Boolean, nullable=False, default=False)
     is_visible = Column(Boolean, nullable=False, default=False)
     slug = Column(String(128), unique=True, nullable=False)
