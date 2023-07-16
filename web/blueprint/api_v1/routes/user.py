@@ -17,6 +17,7 @@ from web.mail.routes.user import send_new_password, send_verification_url
 
 
 class _Text(StrEnum):
+    ACTIVATION_CHECK = _("API_USER_ACTIVATION_CHECK")
     ACTIVATION_SUCCESS = _("API_USER_ACTIVATION_SUCCESS")
     EMAIL_IN_USE = _("API_USER_EMAIL_IN_USE")
     EMAIL_INVALID = _("API_USER_EMAIL_INVALID")
@@ -132,7 +133,7 @@ def post_users_id_activation(user_id: int) -> Response:
         )
         send_verification_url(email=user.email, verification_url=verification_url)
 
-    return response(200)
+    return response(200, message=_Text.ACTIVATION_CHECK)
 
 
 @api_v1_bp.patch("/users/<int:user_id>/activation")
