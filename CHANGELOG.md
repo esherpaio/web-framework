@@ -4,6 +4,15 @@ This repository is a custom web framework for clients of Enlarge.
 
 ## Changelog
 
+### 2023-07-15
+
+Additions:
+- Add endpoint for verification
+
+Improvements:
+- Splitted endpoints for user, user-activation and user-password
+- Database objects with attributes now are non-nullable and contain a default value
+
 ### 2023-07-14
 
 Removals:
@@ -11,7 +20,6 @@ Removals:
 
 Improvements:
 - Fixed a bug where _locale was added in URLs that don't have a locale
-- 
 
 ### 2023-07-12
 
