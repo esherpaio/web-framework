@@ -1,13 +1,28 @@
-from typing import Callable
+from web.database.client import conn
+from web.seeder.model import (
+    CountrySyncer,
+    CurrencySyncer,
+    FileTypeSyncer,
+    OrderStatusSyncer,
+    ProductLinkeTypeSyncer,
+    ProductTypeSyncer,
+    RegionSyncer,
+    SkuSyncer,
+    UserRoleSyncer,
+)
 
-from web import config
 
-
-def external_seed(f: Callable) -> Callable[..., None]:
-    def wrap(*args, **kwargs) -> None:
-        if not config.SEED_EXTERNAL:
-            return
-        return f(*args, **kwargs)
-
-    wrap.__name__ = f.__name__
-    return wrap
+def run_seeders() -> None:
+    with conn.begin() as s:
+        # Locale
+        CountrySyncer().sync(s)
+        RegionSyncer().sync(s)
+        CurrencySyncer().sync(s)
+        # Types
+        FileTypeSyncer().sync(s)
+        OrderStatusSyncer().sync(s)
+        ProductLinkeTypeSyncer().sync(s)
+        ProductTypeSyncer().sync(s)
+        UserRoleSyncer().sync(s)
+        # Data
+        SkuSyncer().sync(s)

@@ -6,7 +6,7 @@ from web.database.client import conn
 from web.database.model import Region
 from web.helper.logger import logger
 from web.seeder.abc import Syncer
-from web.seeder.utils import external_seed
+from web.seeder.decorators import external_seed
 
 
 class RegionSyncer(Syncer):

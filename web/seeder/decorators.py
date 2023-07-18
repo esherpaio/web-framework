@@ -2,8 +2,19 @@ from typing import Callable, Type
 
 from flask import Response
 
+from web import config
 from web.database.client import conn
 from web.seeder.abc import Syncer
+
+
+def external_seed(f: Callable) -> Callable[..., None]:
+    def wrap(*args, **kwargs) -> None:
+        if not config.SEED_EXTERNAL:
+            return
+        return f(*args, **kwargs)
+
+    wrap.__name__ = f.__name__
+    return wrap
 
 
 def sync_before(

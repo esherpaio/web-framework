@@ -8,7 +8,7 @@ from web.database.model import Currency
 from web.database.seeds import currency_seeds
 from web.helper.logger import logger
 from web.seeder.abc import Syncer
-from web.seeder.utils import external_seed
+from web.seeder.decorators import external_seed
 
 
 class CurrencySyncer(Syncer):
