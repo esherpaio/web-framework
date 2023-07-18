@@ -11,6 +11,7 @@ from .user_role import UserRoleId
 class User(Base):
     __tablename__ = "user"
 
+    api_key = Column(String(64), unique=True)
     attributes = Column(JSON, nullable=False, server_default="{}")
     email = Column(String(64), unique=True)
     is_active = Column(Boolean, nullable=False, default=False)
@@ -20,9 +21,9 @@ class User(Base):
     role_id = Column(FKRestrict("user_role.id"), nullable=False)
     shipping_id = Column(FKSetNull("shipping.id"))
 
-    billing = relationship("Billing")
+    billing = relationship("Billing", foreign_keys=[billing_id])
     role = relationship("UserRole")
-    shipping = relationship("Shipping")
+    shipping = relationship("Shipping", foreign_keys=[shipping_id])
     verifications = relationship("Verification", back_populates="user")
 
     # Validation
