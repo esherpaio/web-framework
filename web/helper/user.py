@@ -1,7 +1,8 @@
+import base64
 from typing import Callable
 
 import flask_login
-from flask import Response, redirect, request, url_for
+from flask import Response, abort, redirect, request, url_for
 from flask_login import current_user
 from sqlalchemy.orm import joinedload
 
@@ -44,11 +45,23 @@ def load_user(user_id: int, *args, **kwargs) -> FlaskUser | None:
 
 
 def load_request(*args, **kwargs) -> FlaskUser:
+    # If authorization header is present, try to authenticate the user
+    authorization = request.headers.get("Authorization")
+    if authorization is not None:
+        encoded = authorization.replace("Basic ", "", 1).encode()
+        api_key = base64.b64decode(encoded).decode()
+        with conn.begin() as s:
+            user = s.query(User).filter_by(api_key=api_key).first()
+        if user:
+            return FlaskUser(user)
+        return abort(response(401, ApiText.HTTP_401))
+
+    # If no authorization header is present, create a guest user
     with conn.begin() as s:
         user = User(is_active=True, role_id=UserRoleId.GUEST)
         s.add(user)
     flask_user = FlaskUser(user)
-    flask_login.login_user(flask_user, remember=True)
+    flask_login.login_user(flask_user)
     return user
 
 
