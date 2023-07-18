@@ -20,6 +20,7 @@ class Shipping(Base):
     zip_code = Column(String(64), nullable=False)
 
     country_id = Column(FKRestrict("country.id"), nullable=False)
+    user_id = Column(FKRestrict("user.id", use_alter=True), nullable=False)
 
     country = relationship("Country", lazy="joined")
 
