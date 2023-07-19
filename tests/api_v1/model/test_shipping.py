@@ -1,10 +1,10 @@
-billing_id = None
+shipping_id = None
 
 
-class TestBillingAPI:
+class TestShippingAPI:
     def test_post(self, client, user_headers) -> None:
         resp = client.post(
-            "/api/v1/billings",
+            "/api/v1/shippings",
             headers={**user_headers},
             json={
                 "address": "Eisenhowerlaan 128",
@@ -15,7 +15,6 @@ class TestBillingAPI:
                 "first_name": "Stan",
                 "last_name": "Mertens",
                 "phone": "+31615389916",
-                "vat": "NL002329215B02",
                 "zip_code": "3527HJ",
             },
         )
@@ -23,12 +22,12 @@ class TestBillingAPI:
         assert 200 <= resp.status_code <= 299
         assert resp.json
 
-        global billing_id
-        billing_id = resp.json["data"]["id"]
+        global shipping_id
+        shipping_id = resp.json["data"]["id"]
 
     def test_patch(self, client, user_headers) -> None:
         resp = client.patch(
-            f"/api/v1/billings/{billing_id}",
+            f"/api/v1/shippings/{shipping_id}",
             headers={**user_headers},
             json={
                 "address": "Beethovenlaan 2",
@@ -39,7 +38,6 @@ class TestBillingAPI:
                 "first_name": "Stan",
                 "last_name": "Mertens",
                 "phone": "+31615389916",
-                "vat": None,
                 "zip_code": "5251HL",
             },
         )
@@ -49,7 +47,7 @@ class TestBillingAPI:
 
     def test_get(self, client, user_headers) -> None:
         resp = client.get(
-            f"/api/v1/billings/{billing_id}",
+            f"/api/v1/shippings/{shipping_id}",
             headers={**user_headers},
         )
 
