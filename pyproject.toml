@@ -32,8 +32,12 @@ filterwarnings="ignore::DeprecationWarning:pycountry"
 [tool.mypy]
 cache_dir=".cache/mypy"
 ignore_missing_imports=true
-exclude="web/config.py"
+exclude="web/(config|database)/*"
 
 [[tool.mypy.overrides]]
 module = "web.config"
+follow_imports="skip"
+
+[[tool.mypy.overrides]]
+module = "web.database.*"
 follow_imports="skip"
