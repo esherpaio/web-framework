@@ -17,7 +17,10 @@ from web.seeder.utils import run_seeders
 
 
 def pytest_configure(*args) -> None:
-    config.SEED_EXTERNAL = True
+    # todo: external seeds do not work in GitHub Actions,
+    #  instead we should create API endpoints
+    #  and run those tests first so we can use that data in other tests
+    config.SEED_EXTERNAL = False
     alembic.config.main(argv=["upgrade", "head"])
     run_seeders()
     create_users()
