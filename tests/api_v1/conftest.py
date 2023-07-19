@@ -17,7 +17,7 @@ from web.seeder.utils import run_seeders
 
 
 def pytest_configure(*args) -> None:
-    config.SEED_EXTERNAL = False
+    config.SEED_EXTERNAL = True
     alembic.config.main(argv=["upgrade", "head"])
     run_seeders()
     create_users()
