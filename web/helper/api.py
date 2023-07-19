@@ -54,7 +54,6 @@ def json_get(
     type_: any,
     nullable: bool = True,
     default: any = None,
-    allow_empty_str: bool = True,
     lower_str: bool = False,
 ) -> tuple[any, bool] | None:
     """Get a value from the request body."""
@@ -62,8 +61,6 @@ def json_get(
     value = request.json.get(key, default)
     has_key = key in request.json
 
-    if not allow_empty_str and value == "":
-        value = None
     if lower_str and isinstance(value, str):
         value = value.lower()
 
