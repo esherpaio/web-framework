@@ -7,7 +7,11 @@ from web import config
 def upload(file, path: str) -> None:
     folder = os.path.dirname(path)
     name = os.path.basename(path)
-    with FTP(config.CDN_HOSTNAME, config.CDN_USERNAME, config.CDN_PASSWORD) as ftp:
+    with FTP(
+        config.CDN_HOSTNAME,
+        config.CDN_USERNAME,
+        config.CDN_PASSWORD,
+    ) as ftp:
         try:
             ftp.mkd(folder)
         except error_perm as error:
@@ -18,7 +22,11 @@ def upload(file, path: str) -> None:
 
 
 def delete(path: str) -> None:
-    with FTP(config.CDN_HOSTNAME, config.CDN_USERNAME, config.CDN_PASSWORD) as ftp:
+    with FTP(
+        config.CDN_HOSTNAME,
+        config.CDN_USERNAME,
+        config.CDN_PASSWORD,
+    ) as ftp:
         try:
             ftp.delete(path)
         except error_perm as error:
@@ -26,5 +34,5 @@ def delete(path: str) -> None:
                 raise
 
 
-def url(*args) -> str:
+def url(*args: str) -> str:
     return os.path.join(config.CDN_URL, *args)

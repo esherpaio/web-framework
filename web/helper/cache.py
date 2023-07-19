@@ -1,16 +1,15 @@
 import zlib
-from typing import Callable
+from typing import Any, Callable
 
-from flask import Response, request
+from flask import request
+from werkzeug import Response
 
-from web.helper.objects import Singleton
 
-
-class Cache(dict, metaclass=Singleton):
+class Cache(dict):
     """A simple cache mechanism for objects and routes."""
 
-    def route(self, f: Callable) -> Callable[..., Response]:
-        def wrap(*args, **kwargs) -> Response:
+    def route(self, f: Callable) -> Callable[..., Response | str]:
+        def wrap(*args, **kwargs) -> Response | str:
             if request.full_path in self:
                 compressed = self[request.full_path]
                 response = zlib.decompress(compressed).decode()
@@ -24,10 +23,10 @@ class Cache(dict, metaclass=Singleton):
         wrap.__name__ = f.__name__
         return wrap
 
-    def __setattr__(self, key: str, value: any) -> None:
+    def __setattr__(self, key: str, value: Any) -> None:
         self[key] = value
 
-    def __getattr__(self, key: str) -> any:
+    def __getattr__(self, key: str) -> Any:
         if key not in self:
             raise KeyError
         return self[key]

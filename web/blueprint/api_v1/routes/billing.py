@@ -1,6 +1,6 @@
-from flask import Response
 from flask_login import current_user
 from sqlalchemy.orm.session import Session
+from werkzeug import Response
 
 from web.blueprint.api_v1 import api_v1_bp
 from web.blueprint.api_v1._base import API

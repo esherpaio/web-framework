@@ -12,7 +12,7 @@ class Schema:
     """A class to generate schema.org JSON-LD."""
 
     def __init__(self) -> None:
-        self._data = None
+        self._data: dict = {}
 
     @property
     def data(self) -> dict:
@@ -147,7 +147,9 @@ class SchemaProduct(Schema):
         self.data = data
 
 
-def gen_schemas(page: Page = None, schemas: list[Schema] | None = None) -> list[Schema]:
+def gen_schemas(
+    page: Page | None = None, schemas: list[Schema] | None = None
+) -> list[Schema]:
     if schemas is None:
         schemas = []
     if isinstance(page, Page):

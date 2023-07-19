@@ -1,5 +1,6 @@
 import re
 from functools import cached_property
+from typing import Any
 
 from flask import current_app, g, has_request_context, request, url_for
 from werkzeug.local import LocalProxy
@@ -18,9 +19,10 @@ def set_locale(data: dict, locale: str = config.WEBSITE_LOCALE) -> None:
 def cur_locale() -> str | None:
     """Get the locale."""
 
-    if has_request_context and request.endpoint:
-        if "_locale" in request.view_args:
+    if has_request_context() and request.endpoint:
+        if request.view_args is not None and "_locale" in request.view_args:
             return request.view_args["_locale"]
+    return None
 
 
 def expects_locale(endpoint: str | None) -> bool:
@@ -38,7 +40,7 @@ def requires_locale(endpoint: str | None, values: dict) -> bool:
     return expects_locale(endpoint) and "_locale" not in values
 
 
-def match_locale(locale: str) -> tuple[str | None, str | None]:
+def match_locale(locale: str) -> tuple[str | Any, ...]:
     """Match a locale and return the result."""
 
     match = re.fullmatch(r"^([a-z]{2})-([a-z]{2})$", locale)
@@ -68,7 +70,7 @@ def url_for_locale(endpoint: str, *args, **kwargs) -> str:
     return url_for(endpoint, *args, **kwargs)
 
 
-current_locale = LocalProxy(lambda: _get_locale())
+current_locale: Any = LocalProxy(lambda: _get_locale())
 
 
 class Locale:
@@ -111,8 +113,9 @@ class Locale:
                 return language
 
 
-def _get_locale() -> Locale:
+def _get_locale() -> Locale | None:
     if has_request_context():
         if "_locale" not in g:
             g._locale = Locale()
         return g._locale
+    return None

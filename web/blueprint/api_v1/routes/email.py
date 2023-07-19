@@ -1,6 +1,6 @@
 from enum import StrEnum
 
-from flask import Response
+from werkzeug import Response
 
 from web.blueprint.api_v1 import api_v1_bp
 from web.helper.api import json_get, response

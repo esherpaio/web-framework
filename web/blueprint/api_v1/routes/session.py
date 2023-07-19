@@ -3,7 +3,7 @@ from enum import StrEnum
 from random import randint
 
 import flask_login
-from flask import Response
+from werkzeug import Response
 from werkzeug.security import check_password_hash
 
 from web.blueprint.api_v1 import api_v1_bp

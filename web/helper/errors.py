@@ -1,6 +1,7 @@
 from typing import Callable
 
-from flask import Response, redirect, url_for
+from flask import redirect, url_for
+from werkzeug import Response
 from werkzeug.exceptions import HTTPException
 
 from web import config

@@ -6,15 +6,15 @@ default_rate = Numeric(10, 4, asdecimal=False)
 
 
 class FKRestrict(ForeignKey):
-    def __init__(self, *args, **kwargs) -> None:
-        super().__init__(*args, ondelete="RESTRICT", **kwargs)
+    def __init__(self, *args, ondelete: str | None = "RESTRICT", **kwargs) -> None:
+        super().__init__(*args, ondelete=ondelete, **kwargs)
 
 
 class FKCascade(ForeignKey):
-    def __init__(self, *args, **kwargs) -> None:
-        super().__init__(*args, ondelete="CASCADE", **kwargs)
+    def __init__(self, *args, ondelete: str | None = "CASCADE", **kwargs) -> None:
+        super().__init__(*args, ondelete=ondelete, **kwargs)
 
 
 class FKSetNull(ForeignKey):
-    def __init__(self, *args, **kwargs) -> None:
-        super().__init__(*args, ondelete="SET NULL", **kwargs)
+    def __init__(self, *args, ondelete: str | None = "SET NULL", **kwargs) -> None:
+        super().__init__(*args, ondelete=ondelete, **kwargs)

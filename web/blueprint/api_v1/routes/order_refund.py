@@ -1,6 +1,6 @@
 from enum import StrEnum
 
-from flask import Response
+from werkzeug import Response
 
 from web.blueprint.api_v1 import api_v1_bp
 from web.blueprint.api_v1.common.order_refund import create_refund
@@ -40,7 +40,7 @@ def post_orders_id_refund(order_id: int) -> Response:
 
         # Check if Mollie allows a refund
         mollie_payment = Mollie().payments.get(order.mollie_id)
-        if not mollie_payment.can_be_refunded:
+        if not mollie_payment.can_be_refunded():
             return response(404, _Text.REFUND_NOT_ALLOWED)
 
         # Check if the refund amount is not too high

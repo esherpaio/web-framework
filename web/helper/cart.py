@@ -2,12 +2,12 @@ from datetime import datetime
 from typing import Callable
 
 import pyvat
-from flask import Response
 from flask_login import current_user
 from pyvat import ItemType, Party, VatChargeAction
 from sqlalchemy import or_
 from sqlalchemy.orm import Session
 from sqlalchemy.sql.expression import false
+from werkzeug import Response
 
 from web import config
 from web.database.client import conn

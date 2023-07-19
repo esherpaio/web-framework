@@ -2,9 +2,10 @@ import base64
 from typing import Callable
 
 import flask_login
-from flask import Response, abort, redirect, request, url_for
+from flask import abort, redirect, request, url_for
 from flask_login import current_user
 from sqlalchemy.orm import joinedload
+from werkzeug import Response
 
 from web import config
 from web.database.client import conn
@@ -42,6 +43,7 @@ def load_user(user_id: int, *args, **kwargs) -> FlaskUser | None:
         )
     if user is not None:
         return FlaskUser(user)
+    return None
 
 
 def load_request(*args, **kwargs) -> FlaskUser:
@@ -54,7 +56,7 @@ def load_request(*args, **kwargs) -> FlaskUser:
             user = s.query(User).filter_by(api_key=api_key).first()
         if user:
             return FlaskUser(user)
-        return abort(response(401, ApiText.HTTP_401))
+        abort(response(401, ApiText.HTTP_401))
 
     # If no authorization header is present, create a guest user
     with conn.begin() as s:
@@ -74,7 +76,7 @@ def access_control(
         def wrap(*args, **kwargs) -> Response:
             if current_user.is_authenticated and current_user.role.level >= level:
                 return f(*args, **kwargs)
-            elif "api" in request.blueprint:
+            elif request.blueprint is not None and "api" in request.blueprint:
                 return response(403, ApiText.HTTP_403)
             else:
                 return redirect(url_for(config.ENDPOINT_LOGIN))

@@ -1,8 +1,9 @@
 import json
 from enum import StrEnum
-from typing import Callable
+from typing import Any, Callable
 
-from flask import Response, request
+from flask import request
+from werkzeug import Response
 
 from web.i18n.base import _
 
@@ -51,15 +52,21 @@ def response(
 
 def json_get(
     key: str,
-    type_: any,
+    type_: Any,
     nullable: bool = True,
-    default: any = None,
+    default: Any = None,
     lower_str: bool = False,
-) -> tuple[any, bool] | None:
+) -> tuple[Any, bool]:
     """Get a value from the request body."""
 
-    value = request.json.get(key, default)
-    has_key = key in request.json
+    if request.is_json and request.json is not None:
+        value = request.json.get(key, default)
+        data = request.json
+    else:
+        value = None
+        data = {}
+
+    has_key = key in data
 
     if lower_str and isinstance(value, str):
         value = value.lower()
@@ -76,11 +83,11 @@ def json_get(
 
 def args_get(
     key: str,
-    type_: any,
+    type_: Any,
     nullable: bool = True,
-    default: any = None,
+    default: Any = None,
     lower_str: bool = False,
-) -> tuple[any, bool] | None:
+) -> tuple[Any, bool]:
     """Get a value from the request args."""
 
     value = request.args.get(key, default, type_)
@@ -99,12 +106,12 @@ def args_get(
 
 def modify_request(
     mapping: dict[str, Callable]
-) -> Callable[[Callable[..., Response]], Callable[..., Response]]:
+) -> Callable[[Callable[..., None]], Callable[..., None]]:
     """Modify the request body."""
 
-    def decorate(f: Callable) -> Callable[..., Response]:
-        def wrap() -> Response:
-            if request.is_json:
+    def decorate(f: Callable) -> Callable[..., None]:
+        def wrap() -> None:
+            if request.is_json and request.endpoint is not None:
                 for name, func in mapping.items():
                     if f".{name}" in request.endpoint:
                         func(request.json)
@@ -122,7 +129,11 @@ def modify_response(
 
     def decorate(f: Callable) -> Callable[..., Response]:
         def wrap(resp: Response) -> Response:
-            if resp.is_json:
+            if (
+                resp.is_json
+                and request.endpoint is not None
+                and request.view_args is not None
+            ):
                 for name, func in mapping.items():
                     if f".{name}" in request.endpoint:
                         return func(resp, **request.view_args)

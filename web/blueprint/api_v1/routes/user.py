@@ -2,8 +2,9 @@ import re
 import uuid
 from enum import StrEnum
 
-from flask import Response, url_for
+from flask import url_for
 from flask_login import current_user
+from werkzeug import Response
 from werkzeug.security import generate_password_hash
 
 from web import config

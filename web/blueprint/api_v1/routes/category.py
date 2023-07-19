@@ -1,4 +1,4 @@
-from flask import Response
+from werkzeug import Response
 
 from web.blueprint.api_v1 import api_v1_bp
 from web.database.client import conn

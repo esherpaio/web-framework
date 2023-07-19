@@ -1,5 +1,6 @@
-from flask import Response, request
+from flask import request
 from mollie.api.error import NotFoundError
+from werkzeug import Response
 
 from web.blueprint.webhook_v1 import webhook_v1_bp
 from web.database.client import conn

@@ -17,7 +17,9 @@ class Sitemap:
 
 
 class SitemapUrl:
-    def __init__(self, endpoint: str, updated_at: datetime = None, **kwargs) -> None:
+    def __init__(
+        self, endpoint: str, updated_at: datetime | None = None, **kwargs
+    ) -> None:
         self._endpoint = endpoint
         self._updated_at = updated_at
         self._kwargs = kwargs
@@ -30,9 +32,10 @@ class SitemapUrl:
     def lastmod(self) -> str | None:
         if self._updated_at:
             return self._updated_at.strftime("%Y-%m-%d")
+        return None
 
 
-def str_to_xml(string: str) -> minidom:
+def str_to_xml(string: str) -> bytes:
     """Convert a string to an XML object."""
 
     def _remove_blanks(node_: Node) -> None:
@@ -71,3 +74,4 @@ def get_page(pages: list[Page]) -> Page | None:
     for page in pages:
         if page.endpoint == request.endpoint:
             return page
+    return None
