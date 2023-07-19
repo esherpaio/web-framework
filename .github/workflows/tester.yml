@@ -1,6 +1,6 @@
 name: Tester
 
-on: [ ]
+on: [ push, pull_request ]
 
 env:
   APP_DEBUG: ${{ vars.APP_DEBUG }}
@@ -11,7 +11,7 @@ env:
   CDN_USERNAME: ${{ vars.CDN_USERNAME }}
   CDN_ZONE: ${{ vars.CDN_ZONE }}
   CONFIG_PATH: ${{ vars.CONFIG_PATH }}
-  DATABASE_URL: ${{ vars.DATABASE_URL }}
+  DATABASE_URL: ${{ secrets.DATABASE_URL }}
   EMAIL_METHOD: ${{ vars.EMAIL_METHOD }}
   EMAIL_FROM: ${{ vars.EMAIL_FROM }}
   EMAIL_TO: ${{ vars.EMAIL_TO }}
