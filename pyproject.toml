@@ -1,7 +1,7 @@
 [tool.ruff]
 select = ["F", "E", "W", "I"]
 line-length = 88
-cache-dir = "~/.cache/ruff"
+cache-dir = ".cache/ruff"
 target-version = "py311"
 ignore = ["E501"]
 
@@ -24,7 +24,16 @@ use_gitignore=true
 
 [tool.pytest.ini_options]
 addopts="--maxfail=1"
-cache_dir="~/.cache/pytest"
+cache_dir=".cache/pytest"
 faulthandler_timeout=5
 python_files="test_*.py"
 filterwarnings="ignore::DeprecationWarning:pycountry"
+
+[tool.mypy]
+cache_dir=".cache/mypy"
+ignore_missing_imports=true
+exclude="web/config.py"
+
+[[tool.mypy.overrides]]
+module = "web.config"
+follow_imports="skip"
