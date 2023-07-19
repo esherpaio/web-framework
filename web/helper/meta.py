@@ -1,5 +1,6 @@
 import re
 from enum import StrEnum
+from typing import Generator
 
 from flask import has_request_context, request
 from markupsafe import Markup
@@ -85,11 +86,13 @@ class Meta:
     def canonical_url(self) -> str | None:
         if has_request_context():
             return request.base_url
+        return None
 
     @property
     def locale(self) -> str | None:
         if config.WEBSITE_LANGUAGE_CODE and config.WEBSITE_COUNTRY_CODE:
             return f"{config.WEBSITE_LANGUAGE_CODE}_{config.WEBSITE_COUNTRY_CODE}"
+        return None
 
     @property
     def website_name(self) -> str:
@@ -105,11 +108,12 @@ class Meta:
             match = re.match(r"^.*twitter\.com/(.*)$", config.SOCIAL_TWITTER)
             if match:
                 return f"@{match.group(1)}"
+        return None
 
     # Tags
 
     @property
-    def tags(self) -> list[str]:
+    def tags(self) -> Generator[str, None, None]:
         # Meta
         yield Markup(MetaTag.META_CHARSET)
         yield Markup(MetaTag.META_VIEWPORT)

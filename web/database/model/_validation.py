@@ -1,5 +1,5 @@
 import urllib.parse
-from typing import Callable, Type
+from typing import Any, Callable, Type
 
 from sqlalchemy.orm import validates
 
@@ -11,10 +11,10 @@ from web.helper.validation import gen_slug, is_email, is_phone
 def check_str_len(
     length: int,
     *names: str,
-) -> Callable[[Callable[..., any]], Callable[..., any]]:
-    def decorate(f: Callable) -> Callable[..., any]:
+) -> Callable[[Callable[..., Any]], Callable[..., Any]]:
+    def decorate(f: Callable) -> Callable[..., Any]:
         @validates(*names)
-        def wrap(self: Type[Base], key: str, value: any) -> any:
+        def wrap(self: Type[Base], key: str, value: Any) -> Any:
             if isinstance(value, str):
                 value = value.strip()
                 if len(value) <= length:
@@ -26,10 +26,10 @@ def check_str_len(
     return decorate
 
 
-def check_email(*names: str) -> Callable[[Callable[..., any]], Callable[..., any]]:
-    def decorate(f: Callable) -> Callable[..., any]:
+def check_email(*names: str) -> Callable[[Callable[..., Any]], Callable[..., Any]]:
+    def decorate(f: Callable) -> Callable[..., Any]:
         @validates(*names)
-        def wrap(self: Type[Base], key: str, value: any) -> any:
+        def wrap(self: Type[Base], key: str, value: Any) -> Any:
             if isinstance(value, str):
                 value = value.lower().strip()
                 if not is_email(value):
@@ -41,10 +41,10 @@ def check_email(*names: str) -> Callable[[Callable[..., any]], Callable[..., any
     return decorate
 
 
-def check_phone(*names: str) -> Callable[[Callable[..., any]], Callable[..., any]]:
-    def decorate(f: Callable) -> Callable[..., any]:
+def check_phone(*names: str) -> Callable[[Callable[..., Any]], Callable[..., Any]]:
+    def decorate(f: Callable) -> Callable[..., Any]:
         @validates(*names)
-        def wrap(self: Type[Base], key: str, value: any) -> any:
+        def wrap(self: Type[Base], key: str, value: Any) -> Any:
             if isinstance(value, str):
                 value = value.strip()
                 if not is_phone(value):
@@ -56,10 +56,10 @@ def check_phone(*names: str) -> Callable[[Callable[..., any]], Callable[..., any
     return decorate
 
 
-def check_slug(*names: str) -> Callable[[Callable[..., any]], Callable[..., any]]:
-    def decorate(f: Callable) -> Callable[..., any]:
+def check_slug(*names: str) -> Callable[[Callable[..., Any]], Callable[..., Any]]:
+    def decorate(f: Callable) -> Callable[..., Any]:
         @validates(*names)
-        def wrap(self: Type[Base], key: str, value: any) -> any:
+        def wrap(self: Type[Base], key: str, value: Any) -> Any:
             if isinstance(value, str):
                 value = urllib.parse.urlsplit(value).path
                 if not value:
@@ -74,10 +74,10 @@ def check_slug(*names: str) -> Callable[[Callable[..., any]], Callable[..., any]
     return decorate
 
 
-def set_slug(*names: str) -> Callable[[Callable[..., any]], Callable[..., any]]:
-    def decorate(f: Callable) -> Callable[..., any]:
+def set_slug(*names: str) -> Callable[[Callable[..., Any]], Callable[..., Any]]:
+    def decorate(f: Callable) -> Callable[..., Any]:
         @validates(*names)
-        def wrap(self: Type[Base], key: str, value: any) -> any:
+        def wrap(self: Type[Base], key: str, value: Any) -> Any:
             self.slug = gen_slug(value)
             return value
 

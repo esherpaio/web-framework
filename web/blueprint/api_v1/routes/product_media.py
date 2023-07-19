@@ -1,7 +1,8 @@
 import os
 import re
 
-from flask import Response, request
+from flask import request
+from werkzeug import Response
 from werkzeug.utils import secure_filename
 
 from web import config
@@ -33,13 +34,16 @@ def post_products_id_media(product_id: int) -> Response:
             )
             if last_media:
                 match = re.search(r"(\d+)\.\w+$", last_media.file.path)
-                sequence = int(match.group(1))
+                if match is not None:
+                    sequence = int(match.group(1))
 
         for request_file in request.files.getlist("file"):
             # Increment sequence
             sequence += 1
 
             # Create details
+            if request_file.filename is None:
+                continue
             name, extension = os.path.splitext(request_file.filename)
             if config.CDN_AUTO_NAMING:
                 name = f"{product.slug}-{sequence}"

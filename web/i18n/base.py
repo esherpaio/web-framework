@@ -11,7 +11,7 @@ class Translator:
     fallback_language_code = "en"
 
     def __init__(self) -> None:
-        self.translations = {}
+        self.translations: dict = {}
         self._load()
 
     def _load(self) -> None:

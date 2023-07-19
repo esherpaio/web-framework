@@ -1,5 +1,6 @@
-from flask import Response
+from sqlalchemy import false
 from sqlalchemy.orm import contains_eager
+from werkzeug import Response
 
 from web.blueprint.api_v1 import api_v1_bp
 from web.database.client import conn
@@ -85,7 +86,7 @@ def delete_products_id_values_id(product_id: int, value_id: int) -> Response:
             s.query(Sku)
             .join(Sku.details)
             .options(contains_eager(Sku.details))
-            .filter(SkuDetail.value_id == value_id, Sku.is_deleted is False)
+            .filter(SkuDetail.value_id == value_id, Sku.is_deleted == false())
             .all()
         )
         for sku in skus:

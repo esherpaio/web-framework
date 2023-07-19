@@ -1,7 +1,7 @@
 from enum import StrEnum
 
-from flask import Response
 from flask_login import current_user
+from werkzeug import Response
 
 from web.blueprint.api_v1 import api_v1_bp
 from web.blueprint.api_v1.common.cart_item import update_cart_shipment_methods

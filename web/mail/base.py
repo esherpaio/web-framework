@@ -16,10 +16,9 @@ def render_email(
     paragraphs: list[str],
     **kwargs,
 ) -> str:
-    curr_dir = os.path.dirname(os.path.realpath(__file__))
-
     # Add CSS and config to kwargs
-    css_path = os.path.join(curr_dir, "template", "template.css")
+    dir_ = os.path.dirname(os.path.realpath(__file__))
+    css_path = os.path.join(dir_, "template", "template.css")
     with open(css_path, "r") as file:
         css = file.read()
     kwargs.update(
@@ -30,13 +29,11 @@ def render_email(
             "paragraphs": paragraphs,
         }
     )
-
     # Render with Jinja2
-    loader = jinja2.FileSystemLoader(curr_dir)
+    loader = jinja2.FileSystemLoader(dir_)
     environment = jinja2.Environment(loader=loader)
     html_path = "template/template.html"  # Jinja requires relative path
     html = environment.get_template(html_path).render(kwargs)
-
     return html
 
 
@@ -44,38 +41,25 @@ def send_email(
     to: list[str],
     subject: str,
     html: str,
-    blob_path: str = None,
-    blob_name: str = None,
+    blob_path: str | None = None,
+    blob_name: str | None = None,
 ) -> None:
-    # Check environment variables
-    from_ = config.EMAIL_FROM
-    if not from_:
-        raise EnvironmentError("No email address is configured")
-
     # Create list of unique to-addresses
     to = list(set(to))
-
     # Send email
     if config.EMAIL_METHOD == "smtp":
-        if not (
-            config.SMTP_HOST
-            and config.SMTP_PORT
-            and config.SMTP_USERNAME
-            and config.SMTP_PASSWORD
-        ):
-            raise EnvironmentError("SMTP is not configured")
-        send_over_smtp(from_, to, subject, html, blob_path, blob_name)
+        _send_smtp(config.EMAIL_FROM, to, subject, html, blob_path, blob_name)
     else:
-        raise EnvironmentError("No email method is configured")
+        raise EnvironmentError
 
 
-def send_over_smtp(
+def _send_smtp(
     from_: str,
     to: list[str],
     subject: str,
     html: str,
-    blob_path: str = None,
-    blob_name: str = None,
+    blob_path: str | None = None,
+    blob_name: str | None = None,
 ) -> None:
     # Build the message
     message = MIMEMultipart()
@@ -83,14 +67,12 @@ def send_over_smtp(
     message["From"] = from_
     body = MIMEText(html, "html")
     message.attach(body)
-
     # Add attachment
     if blob_path and blob_name:
         blob_str = file_to_str(blob_path)
         attachment = MIMEApplication(blob_str)
         attachment.add_header("Content-Disposition", "attachment", filename=blob_name)
         message.attach(attachment)
-
     # Send the message
     try:
         conn = SMTP(config.SMTP_HOST, port=config.SMTP_PORT, timeout=10)

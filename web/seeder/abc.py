@@ -4,9 +4,8 @@ from sqlalchemy.orm import Session
 
 
 class Syncer(metaclass=ABCMeta):
-    @staticmethod
     @abstractmethod
-    def sync(s: Session) -> None:
+    def sync(self, s: Session) -> None:
         """Run a synchronizing function"""
 
         pass

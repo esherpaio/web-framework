@@ -3,7 +3,7 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
 
 from . import Base
-from ._utils import FKRestrict
+from ._utils import FKCascade, FKRestrict
 from ._validation import check_email, check_phone, check_str_len
 
 
@@ -20,7 +20,7 @@ class Shipping(Base):
     zip_code = Column(String(64), nullable=False)
 
     country_id = Column(FKRestrict("country.id"), nullable=False)
-    user_id = Column(FKRestrict("user.id", use_alter=True), nullable=False)
+    user_id = Column(FKCascade("user.id", use_alter=True), nullable=False)
 
     country = relationship("Country", lazy="joined")
 

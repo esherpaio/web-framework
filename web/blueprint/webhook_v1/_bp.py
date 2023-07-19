@@ -1,4 +1,4 @@
-from flask import Blueprint, Response
+from flask import Blueprint
 
 from web.helper.errors import handle_backend_exception
 
@@ -11,5 +11,5 @@ webhook_v1_bp = Blueprint(
 
 @webhook_v1_bp.errorhandler(Exception)
 @handle_backend_exception
-def error_handler() -> Response:
-    pass
+def error_handler() -> None:
+    return None

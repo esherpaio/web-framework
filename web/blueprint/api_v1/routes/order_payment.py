@@ -1,7 +1,8 @@
 from datetime import datetime, timedelta
 
-from flask import Response, url_for
+from flask import url_for
 from flask_login import current_user
+from werkzeug import Response
 
 from web import config
 from web.blueprint.api_v1 import api_v1_bp

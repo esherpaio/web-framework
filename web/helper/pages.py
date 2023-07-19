@@ -1,7 +1,8 @@
 import math
+from typing import Any
 
 
-def render_pages(offset: int, limit: int, total: int) -> list[dict[str, str, str]]:
+def render_pages(offset: int, limit: int, total: int) -> list[dict[str, Any]]:
     def _append_page(number_: int, name_: str, disabled: bool = False) -> None:
         class_list = []
         if disabled:
@@ -12,7 +13,7 @@ def render_pages(offset: int, limit: int, total: int) -> list[dict[str, str, str
         pages.append({"number": number_, "name": name_, "classes": class_str})
 
     # Initialize
-    pages = []
+    pages: list = []
     if total < 1:
         return pages
     page = int(offset / limit + 1)
