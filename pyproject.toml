@@ -1,5 +1,6 @@
 [tool.ruff]
 select = ["F", "E", "W", "I"]
+ignore = ["E501"]
 line-length = 88
 target-version = "py311"
 cache-dir = ".cache/ruff"

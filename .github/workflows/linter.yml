@@ -20,7 +20,7 @@ jobs:
         run: |
           pip install --upgrade pip
           pip install -r requirements-dev.txt
-      - name: Check with ruff
+      - name: Check with Ruff
         run: ruff check .
       - name: Check with Black
         run: black . --check --quiet --diff --color
