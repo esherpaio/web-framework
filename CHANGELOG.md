@@ -4,6 +4,16 @@ This repository is a custom web framework for clients of Enlarge.
 
 ## Changelog
 
+## 2023-07-19
+
+Additions:
+- Add Mypy as linter
+- API automation class
+
+Improvements:
+- Billing and Shipping endpoints are using the API class
+- Fixed a bug where an error was generated if a user was still in the cookies but no longer in the database
+
 ### 2023-07-15
 
 Additions:
