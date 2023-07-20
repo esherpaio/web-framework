@@ -44,29 +44,36 @@ def load_user(user_id: int, *args, **kwargs) -> FlaskUser | None:
         )
     if user is not None:
         return FlaskUser(user)
-    # Otherwise, make sure the user is logged out
-    flask_login.logout_user()
 
 
-def load_request(*args, **kwargs) -> FlaskUser:
-    # If authorization header is present, try to authenticate the user
+def load_request(*args, **kwargs) -> FlaskUser | None:
+    user = _load_request_api()
+    if user is not None:
+        return user
+    user = _load_request_session()
+    if user is not None:
+        return user
+
+
+def _load_request_api() -> FlaskUser | None:
     authorization = request.headers.get("Authorization")
     if authorization is not None:
         encoded = authorization.replace("Basic ", "", 1).encode()
         api_key = base64.b64decode(encoded).decode()
         with conn.begin() as s:
             user = s.query(User).filter_by(api_key=api_key).first()
-        if user:
+        if user is not None:
             return FlaskUser(user)
         abort(response(401, ApiText.HTTP_401))
 
-    # Otherwise, create a guest user with using cookies
+
+def _load_request_session() -> FlaskUser | None:
     with conn.begin() as s:
         user = User(is_active=True, role_id=UserRoleId.GUEST)
         s.add(user)
     flask_user = FlaskUser(user)
     flask_login.login_user(flask_user)
-    return user
+    return flask_user
 
 
 def access_control(
