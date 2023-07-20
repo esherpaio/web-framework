@@ -34,6 +34,7 @@ class FlaskUser(User):
 
 
 def load_user(user_id: int, *args, **kwargs) -> FlaskUser | None:
+    # Try to load the user from the database
     with conn.begin() as s:
         user = (
             s.query(User)
@@ -43,6 +44,8 @@ def load_user(user_id: int, *args, **kwargs) -> FlaskUser | None:
         )
     if user is not None:
         return FlaskUser(user)
+    # Otherwise, make sure the user is logged out
+    flask_login.logout_user()
 
 
 def load_request(*args, **kwargs) -> FlaskUser:
@@ -57,7 +60,7 @@ def load_request(*args, **kwargs) -> FlaskUser:
             return FlaskUser(user)
         abort(response(401, ApiText.HTTP_401))
 
-    # If no authorization header is present, create a guest user
+    # Otherwise, create a guest user with using cookies
     with conn.begin() as s:
         user = User(is_active=True, role_id=UserRoleId.GUEST)
         s.add(user)
