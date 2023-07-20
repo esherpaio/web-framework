@@ -13,6 +13,7 @@ requirements:
 lint:
 	ruff check .
 	black . --check --quiet --diff --color
+	mypy .
 	djlint . --check
 
 ## FORMATTING
@@ -23,6 +24,13 @@ format:
 	ruff check . --fix
 	black .
 	djlint . --reformat
+
+## TESTING
+## ----------
+## test : run testers
+.PHONY: test
+test:
+	pytest -s .
 
 ## TRANSLATIONS
 ## ----------

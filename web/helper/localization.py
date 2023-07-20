@@ -22,7 +22,6 @@ def cur_locale() -> str | None:
     if has_request_context() and request.endpoint:
         if request.view_args is not None and "_locale" in request.view_args:
             return request.view_args["_locale"]
-    return None
 
 
 def expects_locale(endpoint: str | None) -> bool:
@@ -40,7 +39,7 @@ def requires_locale(endpoint: str | None, values: dict) -> bool:
     return expects_locale(endpoint) and "_locale" not in values
 
 
-def match_locale(locale: str) -> tuple[str | Any, ...]:
+def match_locale(locale: str) -> tuple[str | None, ...]:
     """Match a locale and return the result."""
 
     match = re.fullmatch(r"^([a-z]{2})-([a-z]{2})$", locale)
@@ -83,9 +82,9 @@ class Locale:
     @cached_property
     def locale_info(self) -> tuple[str, str]:
         language_code, country_code = match_locale(self.locale)
-        if not language_code:
+        if language_code is None:
             language_code = config.WEBSITE_LANGUAGE_CODE
-        if not country_code:
+        if country_code is None:
             country_code = config.BUSINESS_COUNTRY_CODE
         language_code = language_code.lower()
         country_code = country_code.upper()
@@ -118,4 +117,3 @@ def _get_locale() -> Locale | None:
         if "_locale" not in g:
             g._locale = Locale()
         return g._locale
-    return None

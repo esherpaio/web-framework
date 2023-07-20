@@ -43,7 +43,6 @@ def load_user(user_id: int, *args, **kwargs) -> FlaskUser | None:
         )
     if user is not None:
         return FlaskUser(user)
-    return None
 
 
 def load_request(*args, **kwargs) -> FlaskUser:

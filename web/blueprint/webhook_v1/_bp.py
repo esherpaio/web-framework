@@ -12,4 +12,4 @@ webhook_v1_bp = Blueprint(
 @webhook_v1_bp.errorhandler(Exception)
 @handle_backend_exception
 def error_handler() -> None:
-    return None
+    pass

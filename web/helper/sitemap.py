@@ -32,7 +32,6 @@ class SitemapUrl:
     def lastmod(self) -> str | None:
         if self._updated_at:
             return self._updated_at.strftime("%Y-%m-%d")
-        return None
 
 
 def str_to_xml(string: str) -> bytes:
@@ -74,4 +73,3 @@ def get_page(pages: list[Page]) -> Page | None:
     for page in pages:
         if page.endpoint == request.endpoint:
             return page
-    return None
