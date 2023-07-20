@@ -22,5 +22,5 @@ jobs:
         run: |
           ruff check .
           black . --check --quiet --diff --color
-          mypy --install-types .
+          mypy --install-types --non-interactive .
           djlint . --check
