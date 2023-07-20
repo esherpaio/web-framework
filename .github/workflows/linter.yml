@@ -19,4 +19,8 @@ jobs:
           pip install --upgrade pip
           pip install -r requirements-dev.txt
       - name: Check with linters
-        run: make lint
+        run: |
+          ruff check .
+          black . --check --quiet --diff --color
+          mypy .
+          djlint . --check
