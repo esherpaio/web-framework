@@ -18,10 +18,9 @@ jobs:
         run: |
           pip install --upgrade pip
           pip install -r requirements-dev.txt
-          mypy --install-types
       - name: Check with linters
         run: |
           ruff check .
           black . --check --quiet --diff --color
-          mypy .
+          mypy --install-types .
           djlint . --check
