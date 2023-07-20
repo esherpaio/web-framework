@@ -19,7 +19,6 @@ def env_int(key: str) -> int | None:
             return int(value)
         except (ValueError, TypeError):
             pass
-    return None
 
 
 def env_bool(key: str) -> bool:
