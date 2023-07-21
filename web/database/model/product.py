@@ -1,12 +1,14 @@
+from typing import Any
+
 from sqlalchemy import JSON, Boolean, Column, String
 from sqlalchemy.ext.hybrid import hybrid_property
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, validates
 
 from web.helper.objects import none_aware_attrgetter
 
 from . import Base
 from ._utils import FKRestrict, default_price
-from ._validation import set_slug
+from ._validation import get_slug, val_number
 from .product_media import ProductMedia
 from .product_type import ProductTypeId
 
@@ -38,9 +40,15 @@ class Product(Base):
 
     # Validation
 
-    @set_slug("name")
-    def validate_slug(self, *args) -> str:
-        pass
+    @validates("name")
+    def validate_name(self, key: str, value: Any) -> Any:
+        self.slug = get_slug(value)
+        return value
+
+    @validates("unit_price")
+    def validate_unit_price(self, key: str, value: Any) -> Any:
+        val_number(value, min_=0)
+        return value
 
     # Properties - statuses
 

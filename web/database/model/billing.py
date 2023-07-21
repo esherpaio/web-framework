@@ -1,10 +1,13 @@
+from typing import Any
+
 from sqlalchemy import Column, String
 from sqlalchemy.ext.hybrid import hybrid_property
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, validates
 
-from . import Base
+from web.database.model import Base
+
 from ._utils import FKCascade, FKRestrict
-from ._validation import check_email, check_phone, check_str_len
+from ._validation import del_emoji, get_lower, val_email, val_length, val_phone
 
 
 class Billing(Base):
@@ -27,19 +30,22 @@ class Billing(Base):
 
     # Validation
 
-    @check_str_len(
-        2, "address", "city", "zip_code", "company", "first_name", "last_name"
-    )
-    def validate_location(self, *args) -> str:
-        pass
+    @validates("address", "city", "zip_code", "company", "first_name", "last_name")
+    def validate_address(self, key: str, value: Any) -> Any:
+        val_length(value, min_=2)
+        value = del_emoji(value)
+        return value
 
-    @check_email("email")
-    def validate_email(self, *args) -> str:
-        pass
+    @validates("email")
+    def validate_email(self, key: str, value: Any) -> Any:
+        val_email(value)
+        value = get_lower(value)
+        return value
 
-    @check_phone("phone")
-    def validate_phone(self, *args) -> str:
-        pass
+    @validates("phone")
+    def validate_phone(self, key: str, value: Any) -> Any:
+        val_phone(value)
+        return value
 
     # Properties - general
 

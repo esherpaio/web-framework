@@ -1,19 +1,19 @@
-from sqlalchemy import CheckConstraint, Column, Integer, UniqueConstraint
+from typing import Any
+
+from sqlalchemy import Column, Integer, UniqueConstraint
 from sqlalchemy.ext.hybrid import hybrid_property
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, validates
 
 from web import config
 
 from . import Base
 from ._utils import FKCascade, FKRestrict
+from ._validation import val_number
 
 
 class CartItem(Base):
     __tablename__ = "cart_item"
-    __table_args__ = (
-        UniqueConstraint("cart_id", "sku_id"),
-        CheckConstraint("quantity >= 1"),
-    )
+    __table_args__ = (UniqueConstraint("cart_id", "sku_id"),)
 
     quantity = Column(Integer, nullable=False)
 
@@ -22,6 +22,13 @@ class CartItem(Base):
 
     cart = relationship("Cart", back_populates="items", lazy="joined")
     sku = relationship("Sku", lazy="joined")
+
+    # Validations
+
+    @validates("quantity")
+    def validate_quantity(self, key: str, value: Any) -> Any:
+        val_number(value, min_=1)
+        return value
 
     # Properties - pricing
 

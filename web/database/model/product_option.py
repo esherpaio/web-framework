@@ -1,9 +1,13 @@
+from typing import Any
+
 from sqlalchemy import Boolean, Column, Integer, String, UniqueConstraint
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, validates
 
 from . import Base
 from ._utils import FKCascade
-from ._validation import set_slug
+from ._validation import (
+    get_slug,
+)
 
 
 class ProductOption(Base):
@@ -24,6 +28,7 @@ class ProductOption(Base):
 
     # Validations
 
-    @set_slug("name")
-    def validate_slug(self, *args) -> str:
-        pass
+    @validates("name")
+    def validate_name(self, key: str, value: Any) -> Any:
+        self.slug = get_slug(value)
+        return value

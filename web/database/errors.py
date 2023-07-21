@@ -5,7 +5,19 @@ class DbError(Exception):
 
 
 class DbLengthError(DbError):
-    """Raised when the validation length is not met."""
+    """Raised when a string length cannot be validated.."""
+
+    pass
+
+
+class DbNumberError(DbError):
+    """Raised when a number cannot be validated ."""
+
+    pass
+
+
+class DbRegexError(DbError):
+    """Raised when a regex pattern is not matched."""
 
     pass
 
@@ -18,11 +30,5 @@ class DbEmailError(DbError):
 
 class DbPhoneError(DbError):
     """Raised when a phone number cannot be validated."""
-
-    pass
-
-
-class DbSlugError(DbError):
-    """Raised when a slug cannot be validated."""
 
     pass

@@ -1,17 +1,16 @@
-from sqlalchemy import Boolean, CheckConstraint, Column
+from typing import Any
+
+from sqlalchemy import Boolean, Column
 from sqlalchemy.ext.hybrid import hybrid_method, hybrid_property
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, validates
 
 from . import Base
 from ._utils import FKCascade, FKRestrict, FKSetNull, default_price, default_vat
+from ._validation import val_number
 
 
 class Cart(Base):
     __tablename__ = "cart"
-    __table_args__ = (
-        CheckConstraint("shipment_price >= 0"),
-        CheckConstraint("vat_rate >= 1"),
-    )
 
     shipment_price = Column(default_price, nullable=False, default=0)
     vat_rate = Column(default_vat, nullable=False, default=1)
@@ -31,6 +30,18 @@ class Cart(Base):
     shipment_method = relationship("ShipmentMethod")
     shipping = relationship("Shipping")
     user = relationship("User")
+
+    # Validations
+
+    @validates("shipment_price")
+    def validate_shipment_price(self, key: str, value: Any) -> Any:
+        val_number(value, min_=0)
+        return value
+
+    @validates("vat_rate")
+    def validate_vat_rate(self, key: str, value: Any) -> Any:
+        val_number(value, min_=1, max_=2)
+        return value
 
     # Properties - general
 

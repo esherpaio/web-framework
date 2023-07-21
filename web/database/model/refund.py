@@ -1,14 +1,16 @@
-from sqlalchemy import JSON, CheckConstraint, Column, String
+from typing import Any
+
+from sqlalchemy import JSON, Column, String
 from sqlalchemy.ext.hybrid import hybrid_property
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, validates
 
 from . import Base
 from ._utils import FKRestrict, default_price
+from ._validation import val_number
 
 
 class Refund(Base):
     __tablename__ = "refund"
-    __table_args__ = (CheckConstraint("total_price < 0"),)
 
     attributes = Column(JSON, nullable=False, server_default="{}")
     mollie_id = Column(String(64), unique=True)
@@ -18,6 +20,13 @@ class Refund(Base):
     order_id = Column(FKRestrict("order.id"), nullable=False)
 
     order = relationship("Order", back_populates="refunds")
+
+    # Validation
+
+    @validates("total_price")
+    def validate_total_price(self, key: str, value: Any) -> Any:
+        val_number(value, max_=0)
+        return value
 
     # Properties - pricing
 

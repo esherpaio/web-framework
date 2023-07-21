@@ -1,10 +1,12 @@
+from typing import Any
+
 from sqlalchemy import JSON, Boolean, Column, String
 from sqlalchemy.ext.hybrid import hybrid_property
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, validates
 
 from . import Base
 from ._utils import FKRestrict, FKSetNull
-from ._validation import check_email
+from ._validation import get_lower, val_email
 from .user_role import UserRoleId
 
 
@@ -28,9 +30,11 @@ class User(Base):
 
     # Validation
 
-    @check_email("email")
-    def validate_email(self, *args) -> str:
-        pass
+    @validates("email")
+    def validate_email(self, key: str, value: Any) -> Any:
+        val_email(value)
+        value = get_lower(value)
+        return value
 
     # Properties - roles
 
