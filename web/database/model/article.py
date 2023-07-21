@@ -1,11 +1,13 @@
+from typing import Any
+
 from sqlalchemy import JSON, Boolean, Column, String
 from sqlalchemy.ext.hybrid import hybrid_property
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, validates
 
 from web.helper.objects import none_aware_attrgetter
 
 from . import Base
-from ._validation import set_slug
+from ._validation import get_slug
 from .article_media import ArticleMedia
 
 
@@ -26,9 +28,10 @@ class Article(Base):
 
     # Validation
 
-    @set_slug("name")
-    def validate_slug(self, *args) -> str:
-        pass
+    @validates("name")
+    def validate_name(self, key: str, value: Any) -> Any:
+        self.slug = get_slug(value)
+        return value
 
     # Properties - media
 

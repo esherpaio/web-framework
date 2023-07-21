@@ -1,13 +1,15 @@
-from sqlalchemy import Boolean, CheckConstraint, Column, String
-from sqlalchemy.orm import relationship
+from typing import Any
+
+from sqlalchemy import Boolean, Column, String
+from sqlalchemy.orm import relationship, validates
 
 from . import Base
 from ._utils import FKRestrict, default_price
+from ._validation import val_number
 
 
 class ShipmentMethod(Base):
     __tablename__ = "shipment_method"
-    __table_args__ = (CheckConstraint("unit_price >= 0"),)
 
     is_deleted = Column(Boolean, nullable=False, default=False)
     name = Column(String(64), nullable=False)
@@ -20,5 +22,9 @@ class ShipmentMethod(Base):
     class_ = relationship("ShipmentClass")
     zone = relationship("ShipmentZone")
 
-    def __lt__(self, other: "ShipmentMethod") -> bool:
-        return self.unit_price < other.unit_price
+    # Validations
+
+    @validates("unit_price")
+    def validate_unit_price(self, key: str, value: Any) -> Any:
+        val_number(value, min_=0)
+        return value

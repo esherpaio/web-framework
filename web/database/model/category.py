@@ -1,9 +1,13 @@
+from typing import Any
+
 from sqlalchemy import JSON, Boolean, Column, Integer, String
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, validates
 
 from . import Base
 from ._utils import FKRestrict
-from ._validation import set_slug
+from ._validation import (
+    get_slug,
+)
 
 
 class Category(Base):
@@ -26,6 +30,7 @@ class Category(Base):
 
     # Validations
 
-    @set_slug("name")
-    def validate_slug(self, *args) -> str:
-        pass
+    @validates("name")
+    def validate_name(self, key: str, value: Any) -> Any:
+        self.slug = get_slug(value)
+        return value

@@ -1,86 +1,64 @@
-import urllib.parse
-from typing import Any, Callable, Type
+import emoji
 
-from sqlalchemy.orm import validates
-
-from web.database.errors import DbEmailError, DbLengthError, DbPhoneError, DbSlugError
-from web.database.model import Base
+from web.database.errors import DbEmailError, DbLengthError, DbNumberError, DbPhoneError
 from web.helper.validation import gen_slug, is_email, is_phone
 
 
-def check_str_len(
-    length: int,
-    *names: str,
-) -> Callable[[Callable[..., Any]], Callable[..., Any]]:
-    def decorate(f: Callable) -> Callable[..., Any]:
-        @validates(*names)
-        def wrap(self: Type[Base], key: str, value: Any) -> Any:
-            if isinstance(value, str):
-                value = value.strip()
-                if len(value) <= length:
-                    raise DbLengthError
-            return value
-
-        return wrap
-
-    return decorate
+def val_length(
+    value: str | None,
+    min_: int | None = None,
+    max_: int | None = None,
+) -> None:
+    if isinstance(value, str):
+        if min_ is not None:
+            if not min_ <= len(value):
+                raise DbLengthError
+        if max_ is not None:
+            if not len(value) <= max_:
+                raise DbLengthError
 
 
-def check_email(*names: str) -> Callable[[Callable[..., Any]], Callable[..., Any]]:
-    def decorate(f: Callable) -> Callable[..., Any]:
-        @validates(*names)
-        def wrap(self: Type[Base], key: str, value: Any) -> Any:
-            if isinstance(value, str):
-                value = value.lower().strip()
-                if not is_email(value):
-                    raise DbEmailError
-            return value
-
-        return wrap
-
-    return decorate
+def val_email(value: str | None) -> None:
+    if isinstance(value, str):
+        if not is_email(value):
+            raise DbEmailError
 
 
-def check_phone(*names: str) -> Callable[[Callable[..., Any]], Callable[..., Any]]:
-    def decorate(f: Callable) -> Callable[..., Any]:
-        @validates(*names)
-        def wrap(self: Type[Base], key: str, value: Any) -> Any:
-            if isinstance(value, str):
-                value = value.strip()
-                if not is_phone(value):
-                    raise DbPhoneError
-            return value
-
-        return wrap
-
-    return decorate
+def val_phone(value: str | None) -> None:
+    if isinstance(value, str):
+        if not is_phone(value):
+            raise DbPhoneError
 
 
-def check_slug(*names: str) -> Callable[[Callable[..., Any]], Callable[..., Any]]:
-    def decorate(f: Callable) -> Callable[..., Any]:
-        @validates(*names)
-        def wrap(self: Type[Base], key: str, value: Any) -> Any:
-            if isinstance(value, str):
-                value = urllib.parse.urlsplit(value).path
-                if not value:
-                    raise DbSlugError
-                if not value.startswith("/"):
-                    value = f"/{value}"
-                value = value.rstrip("/")
-            return value
-
-        return wrap
-
-    return decorate
+def val_number(
+    value: int | float | None,
+    min_: int | None,
+    max_: int | None,
+) -> None:
+    if isinstance(value, (int, float)):
+        if min_ is not None:
+            if not value >= min:
+                raise DbNumberError
+        if max_ is not None:
+            if not value <= max:
+                raise DbNumberError
 
 
-def set_slug(*names: str) -> Callable[[Callable[..., Any]], Callable[..., Any]]:
-    def decorate(f: Callable) -> Callable[..., Any]:
-        @validates(*names)
-        def wrap(self: Type[Base], key: str, value: Any) -> Any:
-            self.slug = gen_slug(value)
-            return value
+def get_slug(value: str | None) -> str | None:
+    if isinstance(value, str):
+        return gen_slug(value)
 
-        return wrap
 
-    return decorate
+def get_lower(value: str | None) -> str | None:
+    if isinstance(value, str):
+        return value.lower()
+
+
+def get_upper(value: str | None) -> str | None:
+    if isinstance(value, str):
+        return value.upper()
+
+
+def del_emoji(value: str | None) -> str | None:
+    if isinstance(value, str):
+        return emoji.replace_emoji(value, replace="")

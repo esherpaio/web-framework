@@ -1,9 +1,12 @@
 from enum import IntEnum
+from typing import Any
 
 from sqlalchemy import Column, String
+from sqlalchemy.orm import validates
 
 from . import Base
 from ._utils import default_rate
+from ._validation import get_upper, val_length, val_number
 
 
 class Currency(Base):
@@ -12,6 +15,19 @@ class Currency(Base):
     code = Column(String(3), nullable=False, unique=True)
     rate = Column(default_rate, nullable=False, default=1)
     symbol = Column(String(3), nullable=False)
+
+    # Validation
+
+    @validates("code")
+    def validate_code(self, key: str, value: Any) -> Any:
+        val_length(value, min_=3, max_=3)
+        value = get_upper(value)
+        return value
+
+    @validates("rate")
+    def validate_rate(self, key: str, value: Any) -> Any:
+        val_number(value, min_=0)
+        return value
 
 
 class CurrencyId(IntEnum):

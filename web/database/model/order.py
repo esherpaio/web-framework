@@ -1,23 +1,21 @@
+from typing import Any
+
 from sqlalchemy import Boolean, CheckConstraint, Column, String
 from sqlalchemy.ext.hybrid import hybrid_method, hybrid_property
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, validates
 
 from . import Base
 from ._utils import FKRestrict, default_price, default_rate, default_vat
+from ._validation import get_upper, val_length, val_number
 from .order_status import OrderStatusId
 
 
 class Order(Base):
     __tablename__ = "order"
-    __table_args__ = (
-        CheckConstraint("coupon_amount IS NULL OR coupon_rate IS NULL"),
-        CheckConstraint("shipment_price >= 0"),
-        CheckConstraint("total_price >= 0"),
-        CheckConstraint("vat_rate >= 1"),
-    )
+    __table_args__ = (CheckConstraint("coupon_amount IS NULL OR coupon_rate IS NULL"),)
 
-    coupon_amount = Column(default_price)
     coupon_code = Column(String(16))
+    coupon_amount = Column(default_price)
     coupon_rate = Column(default_rate)
     mollie_id = Column(String(64), unique=True)
     shipment_name = Column(String(64))
@@ -41,6 +39,39 @@ class Order(Base):
     shipping = relationship("Shipping")
     status = relationship("OrderStatus")
     user = relationship("User")
+
+    # Validation
+
+    @validates("coupon_code")
+    def validate_coupon_code(self, key: str, value: Any) -> Any:
+        val_length(value, min_=2)
+        value = get_upper(value)
+        return value
+
+    @validates("coupon_amount")
+    def validate_coupon_rate(self, key: str, value: Any) -> Any:
+        val_number(value, min_=0)
+        return value
+
+    @validates("coupon_rate")
+    def validate_coupon_rate(self, key: str, value: Any) -> Any:
+        val_number(value, min_=0, max_=1)
+        return value
+
+    @validates("shipment_price")
+    def validate_shipment_price(self, key: str, value: Any) -> Any:
+        val_number(value, min_=0)
+        return value
+
+    @validates("total_price")
+    def validate_total_price(self, key: str, value: Any) -> Any:
+        val_number(value, min_=0)
+        return value
+
+    @validates("vat_rate")
+    def validate_vat_rate(self, key: str, value: Any) -> Any:
+        val_number(value, min_=1, max_=2)
+        return value
 
     # Properties - statuses
 

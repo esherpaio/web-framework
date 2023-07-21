@@ -1,8 +1,11 @@
+from typing import Any
+
 from sqlalchemy import Boolean, Column, String
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, validates
 
 from . import Base
 from ._utils import FKRestrict
+from ._validation import get_upper, val_length
 
 
 class Country(Base):
@@ -17,3 +20,11 @@ class Country(Base):
 
     currency = relationship("Currency")
     region = relationship("Region")
+
+    # Validation
+
+    @validates("code")
+    def validate_code(self, key: str, value: Any) -> Any:
+        val_length(value, min_=2, max_=2)
+        value = get_upper(value)
+        return value

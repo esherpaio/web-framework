@@ -1,24 +1,22 @@
+from typing import Any
+
 from sqlalchemy import (
     Boolean,
-    CheckConstraint,
     Column,
     Integer,
     String,
     UniqueConstraint,
 )
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, validates
 
 from . import Base
 from ._utils import FKCascade, FKSetNull, default_price
-from ._validation import set_slug
+from ._validation import get_slug, val_number
 
 
 class ProductValue(Base):
     __tablename__ = "product_value"
-    __table_args__ = (
-        UniqueConstraint("option_id", "slug"),
-        CheckConstraint("unit_price >= 0"),
-    )
+    __table_args__ = (UniqueConstraint("option_id", "slug"),)
 
     is_deleted = Column(Boolean, nullable=False, default=False)
     name = Column(String(64), nullable=False)
@@ -34,6 +32,12 @@ class ProductValue(Base):
 
     # Validations
 
-    @set_slug("name")
-    def validate_slug(self, *args) -> str:
-        pass
+    @validates("name")
+    def validate_name(self, key: str, value: Any) -> Any:
+        self.slug = get_slug(value)
+        return value
+
+    @validates("unit_price")
+    def validate_unit_price(self, key: str, value: Any) -> Any:
+        val_number(value, min_=0)
+        return value

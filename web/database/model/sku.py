@@ -1,14 +1,16 @@
-from sqlalchemy import JSON, Boolean, CheckConstraint, Column, String
+from typing import Any
+
+from sqlalchemy import JSON, Boolean, Column, String
 from sqlalchemy.ext.hybrid import hybrid_property
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, validates
 
 from . import Base
 from ._utils import FKRestrict, default_price
+from ._validation import val_number
 
 
 class Sku(Base):
     __tablename__ = "sku"
-    __table_args__ = (CheckConstraint("unit_price >= 0"),)
 
     attributes = Column(JSON, nullable=False, server_default="{}")
     is_deleted = Column(Boolean, nullable=False, default=False)
@@ -21,6 +23,13 @@ class Sku(Base):
     category_items = relationship("CategoryItem", back_populates="sku")
     details = relationship("SkuDetail", back_populates="sku")
     product = relationship("Product")
+
+    # Validation
+
+    @validates("unit_price")
+    def validate_unit_price(self, key: str, value: Any) -> Any:
+        val_number(value, min_=0)
+        return value
 
     # Properties - general
 
