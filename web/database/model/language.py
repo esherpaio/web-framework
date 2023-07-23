@@ -4,7 +4,7 @@ from sqlalchemy import Boolean, Column, String
 from sqlalchemy.orm import validates
 
 from . import Base
-from ._validation import get_upper, val_length
+from ._validation import get_lower, val_length
 
 
 class Language(Base):
@@ -19,5 +19,5 @@ class Language(Base):
     @validates("code")
     def validate_code(self, key: str, value: Any) -> Any:
         val_length(value, min_=2, max_=2)
-        value = get_upper(value)
+        value = get_lower(value)
         return value
