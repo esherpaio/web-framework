@@ -49,7 +49,7 @@ class Order(Base):
         return value
 
     @validates("coupon_amount")
-    def validate_coupon_rate(self, key: str, value: Any) -> Any:
+    def validate_coupon_amount(self, key: str, value: Any) -> Any:
         val_number(value, min_=0)
         return value
 
