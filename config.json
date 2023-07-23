@@ -15,6 +15,8 @@
     "ENDPOINT_HOME": null,
     "ENDPOINT_LOGIN": null,
     "ENDPOINT_USER": null,
+    "ENDPOINT_PASSWORD": null,
+    "ENDPOINT_ORDER": null,
     "ROBOT_DEFAULT_TAGS": "noindex, follow",
     "ROBOT_DISALLOW_URLS": [],
     "SOCIAL_DISCORD": null,
