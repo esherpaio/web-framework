@@ -16,12 +16,6 @@ class DbNumberError(DbError):
     pass
 
 
-class DbRegexError(DbError):
-    """Raised when a regex pattern is not matched."""
-
-    pass
-
-
 class DbEmailError(DbError):
     """Raised when an email address cannot be validated."""
 
