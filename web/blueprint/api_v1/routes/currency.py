@@ -23,7 +23,7 @@ def post_currencies() -> Response:
 @api_v1_bp.get("/currencies")
 def get_currencies() -> Response:
     api = CurrencyAPI()
-    return api.get(as_list=True)
+    return api.get(reference=None, as_list=True)
 
 
 @api_v1_bp.get("/currencies/<int:currency_id>")

@@ -1,8 +1,7 @@
 from typing import Any, Callable, Type
 
-from flask import abort, request
+from flask import abort, has_request_context, request
 from sqlalchemy import Column, ColumnExpressionArgument
-from sqlalchemy.exc import IntegrityError
 from werkzeug import Response
 
 from web.database.client import conn
@@ -27,6 +26,11 @@ class API:
     def _gen_request_data(
         attrs: set[Column],
     ) -> dict[str, Any]:
+        if not has_request_context():
+            raise RuntimeError
+        if request.json is None:
+            raise RuntimeError
+
         data = {}
         for attr in attrs:
             if attr.name not in request.json:
@@ -105,8 +109,7 @@ class API:
         include_request: bool = True,
         add_data: dict | None = None,
     ) -> Response:
-        """Post a resource from `post_attrs`."""
-
+        # Sanity checks
         if cls.model is None:
             raise NotImplementedError
 
@@ -114,17 +117,15 @@ class API:
         data: dict = {}
         if include_request:
             request_data = cls._gen_request_data(cls.post_attrs)
-            data.update(**request_data)
+            data.update(request_data)
         if add_data is not None:
             data.update(add_data)
 
         # Insert model
-        try:
-            with conn.begin() as s:
-                model = cls.model(**data)
-                s.add(model)
-        except IntegrityError:
-            abort(response(409, ApiText.HTTP_409))
+        with conn.begin() as s:
+            model = cls.model(**data)
+            s.add(model)
+
         return cls.get(model)
 
     @classmethod
@@ -135,8 +136,7 @@ class API:
         add_data: dict | None = None,
         conditions: tuple[ColumnExpressionArgument[bool], ...] | None = None,
     ) -> Response:
-        """Patch a resource from `patch_attrs`."""
-
+        # Sanity checks
         if cls.model is None:
             raise NotImplementedError
         if conditions is None:
@@ -146,26 +146,23 @@ class API:
         data: dict = {}
         if include_request:
             request_data = cls._gen_request_data(cls.post_attrs)
-            data.update(**request_data)
+            data.update(request_data)
         if add_data is not None:
             data.update(add_data)
 
-        # Get model
+        # Patch model
         with conn.begin() as s:
             model = (
                 s.query(cls.model).filter(cls.model.id == model_id, *conditions).first()
             )
-
             # Check if model exists
             if model is None:
                 abort(response(404, ApiText.HTTP_404))
-
             # Update model from data
             for k, v in data.items():
                 if hasattr(model, k):
                     setattr(model, k, v)
             s.flush()
-
             # Run callbacks
             for callback in cls.patch_callbacks:
                 callback(s, model)
@@ -179,14 +176,13 @@ class API:
         conditions: tuple[ColumnExpressionArgument[bool], ...] | None = None,
         as_list: bool = False,
     ) -> Response:
-        """Get a resource from `get_attrs`."""
-
+        # Sanity checks
         if cls.model is None:
             raise NotImplementedError
         if conditions is None:
             conditions = ()
 
-        # Parse reference to model
+        # Parse reference to models
         if reference is None:
             with conn.begin() as s:
                 models = s.query(cls.model).filter(*conditions).all()
@@ -213,11 +209,12 @@ class API:
             for attr in cls.get_attrs:
                 model_data[attr.name] = getattr(model, attr.name)
             data.append(model_data)
-        if not as_list:
-            data = data[0]
 
         # Create response
-        return response(data=data)
+        if as_list:
+            return response(data=data)
+        else:
+            return response(data=data[0])
 
     @classmethod
     def delete(
@@ -225,24 +222,19 @@ class API:
         model_id: int,
         conditions: tuple[ColumnExpressionArgument[bool], ...] | None = None,
     ) -> Response:
-        """Delete a resource."""
-
+        # Sanity checks
         if cls.model is None:
             raise NotImplementedError
         if conditions is None:
             conditions = ()
 
-        try:
-            with conn.begin() as s:
-                model = (
-                    s.query(cls.model)
-                    .filter(cls.model.id == model_id, *conditions)
-                    .first()
-                )
-                if model is None:
-                    abort(response(404, ApiText.HTTP_404))
-                s.delete(model)
-        except IntegrityError:
-            abort(response(409, ApiText.HTTP_409))
+        # Delete model
+        with conn.begin() as s:
+            model = (
+                s.query(cls.model).filter(cls.model.id == model_id, *conditions).first()
+            )
+            if model is None:
+                abort(response(404, ApiText.HTTP_404))
+            s.delete(model)
 
         return response()

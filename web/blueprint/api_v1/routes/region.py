@@ -23,7 +23,7 @@ def post_regions() -> Response:
 @api_v1_bp.get("/regions")
 def get_regions() -> Response:
     api = RegionAPI()
-    return api.get(as_list=True)
+    return api.get(reference=None, as_list=True)
 
 
 @api_v1_bp.get("/regions/<int:region_id>")
