@@ -42,7 +42,7 @@ def post_countries() -> Response:
 @api_v1_bp.get("/countries")
 def get_countries() -> Response:
     api = CountryAPI()
-    return api.get(as_list=True)
+    return api.get(reference=None, as_list=True)
 
 
 @api_v1_bp.get("/countries/<int:country_id>")
