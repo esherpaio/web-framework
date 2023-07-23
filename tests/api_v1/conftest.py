@@ -1,4 +1,5 @@
 import base64
+import contextlib
 from typing import Generator
 
 import alembic.config
@@ -10,20 +11,43 @@ from flask_login import LoginManager
 from web import config
 from web.blueprint.api_v1 import api_v1_bp
 from web.blueprint.webhook_v1 import webhook_v1_bp
-from web.database.client import conn
-from web.database.model import User, UserRoleId
+from web.database.client import conn, engine
+from web.database.model import Base, User, UserRoleId
 from web.helper.user import load_request, load_user
-from web.seeder.utils import run_seeders
+from web.seeder.model import (
+    FileTypeSyncer,
+    OrderStatusSyncer,
+    ProductLinkeTypeSyncer,
+    ProductTypeSyncer,
+    UserRoleSyncer,
+)
+
+# Configuration
 
 
 def pytest_configure(*args) -> None:
-    # todo: external seeds do not work in GitHub Actions,
-    #  instead we should create API endpoints
-    #  and run those tests first so we can use that data in other tests
-    config.SEED_EXTERNAL = False
     alembic.config.main(argv=["upgrade", "head"])
+    drop_tables()
     run_seeders()
     create_users()
+
+
+def drop_tables() -> None:
+    meta = Base.metadata
+    with contextlib.closing(engine.connect()) as conn:
+        trans = conn.begin()
+        for table in reversed(meta.sorted_tables):
+            conn.execute(table.delete())
+        trans.commit()
+
+
+def run_seeders() -> None:
+    with conn.begin() as s:
+        FileTypeSyncer().sync(s)
+        OrderStatusSyncer().sync(s)
+        ProductLinkeTypeSyncer().sync(s)
+        ProductTypeSyncer().sync(s)
+        UserRoleSyncer().sync(s)
 
 
 def create_users() -> None:
@@ -55,30 +79,36 @@ def create_app() -> Flask:
     return app
 
 
-@pytest.fixture
+# Flask app
+
+
+@pytest.fixture(scope="session")
 def app() -> Generator[Flask, None, None]:
     app = create_app()
     yield app
 
 
-@pytest.fixture
+@pytest.fixture(scope="session")
 def client(app) -> FlaskClient:
     return app.test_client()
 
 
+# Authorization headers
+
+
 @pytest.fixture(scope="session")
-def guest_headers() -> dict[str, str]:
+def guest() -> dict[str, str]:
     credentials = base64.b64encode(b"guest").decode()
     return {"Authorization": f"Basic {credentials}"}
 
 
 @pytest.fixture(scope="session")
-def user_headers() -> dict[str, str]:
+def user() -> dict[str, str]:
     credentials = base64.b64encode(b"user").decode()
     return {"Authorization": f"Basic {credentials}"}
 
 
 @pytest.fixture(scope="session")
-def admin_headers() -> dict[str, str]:
+def admin() -> dict[str, str]:
     credentials = base64.b64encode(b"admin").decode()
     return {"Authorization": f"Basic {credentials}"}
