@@ -23,12 +23,12 @@ class _Text(StrEnum):
 @api_v1_bp.post("/sessions")
 @transfer_cart
 def post_session() -> Response:
-    email, _ = json_get("email", str, nullable=False, lower_str=True)
+    email, _ = json_get("email", str, nullable=False)
     password, _ = json_get("password", str, nullable=False)
 
     # Get user
     with conn.begin() as s:
-        user = s.query(User).filter_by(email=email).first()
+        user = s.query(User).filter_by(email=email.lower()).first()
 
     # Check if user exists
     if not user:
