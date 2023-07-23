@@ -4,7 +4,18 @@ This repository is a custom web framework for clients of Enlarge.
 
 ## Changelog
 
-## 2023-07-19
+### 2023-07-23
+
+Additions:
+- Add ENDPOINT_PASSWORD and ENDPOINT_ORDER for in API use
+
+Removals:
+- Remove database validation from API
+
+Improvements:
+- Add more types of validation to database
+
+### 2023-07-19
 
 Additions:
 - Add Mypy as linter
