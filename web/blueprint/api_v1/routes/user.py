@@ -34,7 +34,7 @@ class _Text(StrEnum):
 
 @api_v1_bp.post("/users")
 def post_users() -> Response:
-    email, _ = json_get("email", str, nullable=False, lower_str=True)
+    email, _ = json_get("email", str, nullable=False)
     password_eval, _ = json_get("password_eval", str, nullable=False)
     password, _ = json_get("password", str, nullable=False)
     billing_id, _ = json_get("billing_id", int)
@@ -75,11 +75,11 @@ def post_users() -> Response:
 
 @api_v1_bp.get("/users")
 def get_users() -> Response:
-    email, _ = args_get("email", str, nullable=False, lower_str=True)
+    email, _ = args_get("email", str, nullable=False)
 
     with conn.begin() as s:
         # Get user
-        user = s.query(User).filter(User.email == email).first()
+        user = s.query(User).filter(User.email == email.lower()).first()
         if user is None:
             return response(404, _Text.EMAIL_NOT_FOUND)
 
@@ -179,7 +179,7 @@ def post_users_id_password(user_id: int) -> Response:
 
         # Send email
         reset_url = url_for(
-            "auth.password_reset",
+            config.ENDPOINT_PASSWORD,
             verification_key=verification_key,
             _external=True,
         )

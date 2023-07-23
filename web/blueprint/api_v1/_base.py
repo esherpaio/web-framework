@@ -1,16 +1,17 @@
 from typing import Any, Callable, Type
 
-from flask import abort
+from flask import abort, request
 from sqlalchemy import Column, ColumnExpressionArgument
+from sqlalchemy.exc import IntegrityError
 from werkzeug import Response
 
 from web.database.client import conn
-from web.database.model import Base, Model
+from web.database.model import Model
 from web.helper.api import ApiText, json_get, response
 
 
 class API:
-    model: Type[Base] | None = None
+    model: Type[Model] | None = None
     post_attrs: set[Column] = set()
     post_callbacks: list[Callable] = []
     patch_attrs: set[Column] = set()
@@ -28,6 +29,8 @@ class API:
     ) -> dict[str, Any]:
         data = {}
         for attr in attrs:
+            if attr.name not in request.json:
+                continue
             value, _ = json_get(
                 attr.name,
                 attr.type.python_type,
@@ -116,9 +119,12 @@ class API:
             data.update(add_data)
 
         # Insert model
-        with conn.begin() as s:
-            model = cls.model(**data)
-            s.add(model)
+        try:
+            with conn.begin() as s:
+                model = cls.model(**data)
+                s.add(model)
+        except IntegrityError:
+            abort(response(409, ApiText.HTTP_409))
         return cls.get(model)
 
     @classmethod
@@ -133,6 +139,8 @@ class API:
 
         if cls.model is None:
             raise NotImplementedError
+        if conditions is None:
+            conditions = ()
 
         # Generate data
         data: dict = {}
@@ -143,15 +151,13 @@ class API:
             data.update(add_data)
 
         # Get model
-        if conditions is None:
-            conditions = ()
         with conn.begin() as s:
             model = (
                 s.query(cls.model).filter(cls.model.id == model_id, *conditions).first()
             )
 
             # Check if model exists
-            if not model:
+            if model is None:
                 abort(response(404, ApiText.HTTP_404))
 
             # Update model from data
@@ -169,35 +175,74 @@ class API:
     @classmethod
     def get(
         cls,
-        reference: Type[Base] | int,
+        reference: Type[Model] | int | None = None,
         conditions: tuple[ColumnExpressionArgument[bool], ...] | None = None,
+        as_list: bool = False,
     ) -> Response:
         """Get a resource from `get_attrs`."""
 
         if cls.model is None:
             raise NotImplementedError
+        if conditions is None:
+            conditions = ()
 
         # Parse reference to model
-        if isinstance(reference, int):
-            if conditions is None:
-                conditions = ()
+        if reference is None:
             with conn.begin() as s:
-                model = (
-                    s.query(cls.model)
-                    .filter(cls.model.id == reference, *conditions)
-                    .first()
-                )
+                models = s.query(cls.model).filter(*conditions).all()
+        elif isinstance(reference, int):
+            with conn.begin() as s:
+                models = [
+                    (
+                        s.query(cls.model)
+                        .filter(cls.model.id == reference, *conditions)
+                        .first()
+                    )
+                ]
         elif isinstance(reference, Model):
-            model = reference
+            models = [reference]
 
         # Check if model exists
-        if not model:
+        if not models and not as_list:
             abort(response(404, ApiText.HTTP_404))
 
         # Generate data
-        data = {}
-        for attr in cls.get_attrs:
-            data[attr.name] = getattr(model, attr.name)
+        data = []
+        for model in models:
+            model_data = {}
+            for attr in cls.get_attrs:
+                model_data[attr.name] = getattr(model, attr.name)
+            data.append(model_data)
+        if not as_list:
+            data = data[0]
 
         # Create response
         return response(data=data)
+
+    @classmethod
+    def delete(
+        cls,
+        model_id: int,
+        conditions: tuple[ColumnExpressionArgument[bool], ...] | None = None,
+    ) -> Response:
+        """Delete a resource."""
+
+        if cls.model is None:
+            raise NotImplementedError
+        if conditions is None:
+            conditions = ()
+
+        try:
+            with conn.begin() as s:
+                model = (
+                    s.query(cls.model)
+                    .filter(cls.model.id == model_id, *conditions)
+                    .first()
+                )
+                if model is None:
+                    abort(response(404, ApiText.HTTP_404))
+                s.delete(model)
+        except IntegrityError:
+            abort(response(409, ApiText.HTTP_409))
+
+        return response()

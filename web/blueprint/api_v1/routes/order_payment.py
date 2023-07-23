@@ -24,7 +24,7 @@ def post_orders_id_payments(order_id: int) -> Response:
         order_price_vat = order.total_price * order.vat_rate
         amount = mollie_amount(order_price_vat, order.currency.code)
         description = f"Order {order.id}"
-        redirect = url_for("checkout.confirmation", order_id=order.id, _external=True)
+        redirect = url_for(config.ENDPOINT_ORDER, order_id=order.id, _external=True)
         is_test = config.MOLLIE_KEY.startswith("test")
         due_date = (datetime.utcnow() + timedelta(days=100)).strftime("%Y-%m-%d")
         mollie_payment = Mollie().payments.create(
