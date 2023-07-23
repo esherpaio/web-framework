@@ -7,7 +7,7 @@
     "API_HTTP_401": "Unauthorized request.",
     "API_HTTP_403": "Access is forbidden.",
     "API_HTTP_404": "The resource(s) could not be found.",
-    "API_HTTP_409": "The resource(s) already exists.",
+    "API_HTTP_409": "There is a conflict with the resource(s).",
     "API_HTTP_410": "The resource(s) is no longer available.",
     "API_HTTP_500": "Something went wrong on our end.",
     "API_MAIL_CONTACT_SUCCESS": "We hebben uw bericht ontvangen en nemen zo snel mogelijk contact met u op.",
