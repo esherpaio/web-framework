@@ -55,7 +55,6 @@ def json_get(
     type_: Any,
     nullable: bool = True,
     default: Any = None,
-    lower_str: bool = False,
 ) -> tuple[Any, bool]:
     """Get a value from the request body."""
 
@@ -68,8 +67,11 @@ def json_get(
 
     has_key = key in data
 
-    if lower_str and isinstance(value, str):
-        value = value.lower()
+    if type_ in (float, int):
+        type_ = (
+            float,
+            int,
+        )
 
     if nullable and value is None:
         pass
@@ -86,15 +88,11 @@ def args_get(
     type_: Any,
     nullable: bool = True,
     default: Any = None,
-    lower_str: bool = False,
 ) -> tuple[Any, bool]:
     """Get a value from the request args."""
 
     value = request.args.get(key, default, type_)
     has_key = key in request.args
-
-    if lower_str and isinstance(value, str):
-        value = value.lower()
 
     if nullable and value is None:
         pass
