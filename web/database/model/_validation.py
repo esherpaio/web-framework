@@ -14,7 +14,7 @@ def val_length(
             if not min_ <= len(value):
                 raise DbLengthError
         if max_ is not None:
-            if not len(value) <= max_:
+            if not max_ >= len(value):
                 raise DbLengthError
 
 
@@ -32,15 +32,15 @@ def val_phone(value: str | None) -> None:
 
 def val_number(
     value: int | float | None,
-    min_: int | None,
-    max_: int | None,
+    min_: int | None = None,
+    max_: int | None = None,
 ) -> None:
     if isinstance(value, (int, float)):
         if min_ is not None:
-            if not value >= min:
+            if not value >= min_:
                 raise DbNumberError
         if max_ is not None:
-            if not value <= max:
+            if not value <= max_:
                 raise DbNumberError
 
 
