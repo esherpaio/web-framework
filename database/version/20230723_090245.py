@@ -1,7 +1,7 @@
 import sqlalchemy as sa
 from alembic import op
 
-revision = "028e32355247"
+revision = "9d8057e06970"
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -287,12 +287,16 @@ def upgrade() -> None:
         sa.Column("vat", sa.String(length=64), nullable=True),
         sa.Column("zip_code", sa.String(length=64), nullable=False),
         sa.Column("country_id", sa.Integer(), nullable=False),
+        sa.Column("user_id", sa.Integer(), nullable=False),
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column(
             "created_at", sa.DateTime(), server_default=sa.text("now()"), nullable=True
         ),
         sa.Column("updated_at", sa.DateTime(), nullable=True),
         sa.ForeignKeyConstraint(["country_id"], ["country.id"], ondelete="RESTRICT"),
+        sa.ForeignKeyConstraint(
+            ["user_id"], ["user.id"], ondelete="CASCADE", use_alter=True
+        ),
         sa.PrimaryKeyConstraint("id"),
     )
     op.create_table(
@@ -353,12 +357,16 @@ def upgrade() -> None:
         sa.Column("phone", sa.String(length=64), nullable=True),
         sa.Column("zip_code", sa.String(length=64), nullable=False),
         sa.Column("country_id", sa.Integer(), nullable=False),
+        sa.Column("user_id", sa.Integer(), nullable=False),
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column(
             "created_at", sa.DateTime(), server_default=sa.text("now()"), nullable=True
         ),
         sa.Column("updated_at", sa.DateTime(), nullable=True),
         sa.ForeignKeyConstraint(["country_id"], ["country.id"], ondelete="RESTRICT"),
+        sa.ForeignKeyConstraint(
+            ["user_id"], ["user.id"], ondelete="CASCADE", use_alter=True
+        ),
         sa.PrimaryKeyConstraint("id"),
     )
     op.create_table(
@@ -378,7 +386,6 @@ def upgrade() -> None:
             "created_at", sa.DateTime(), server_default=sa.text("now()"), nullable=True
         ),
         sa.Column("updated_at", sa.DateTime(), nullable=True),
-        sa.CheckConstraint("unit_price >= 0"),
         sa.ForeignKeyConstraint(["product_id"], ["product.id"], ondelete="RESTRICT"),
         sa.PrimaryKeyConstraint("id"),
         sa.UniqueConstraint("slug"),
@@ -438,7 +445,6 @@ def upgrade() -> None:
             "created_at", sa.DateTime(), server_default=sa.text("now()"), nullable=True
         ),
         sa.Column("updated_at", sa.DateTime(), nullable=True),
-        sa.CheckConstraint("unit_price >= 0"),
         sa.ForeignKeyConstraint(
             ["media_id"], ["product_media.id"], ondelete="SET NULL"
         ),
@@ -465,7 +471,6 @@ def upgrade() -> None:
             "created_at", sa.DateTime(), server_default=sa.text("now()"), nullable=True
         ),
         sa.Column("updated_at", sa.DateTime(), nullable=True),
-        sa.CheckConstraint("unit_price >= 0"),
         sa.ForeignKeyConstraint(
             ["class_id"], ["shipment_class.id"], ondelete="RESTRICT"
         ),
@@ -474,6 +479,7 @@ def upgrade() -> None:
     )
     op.create_table(
         "user",
+        sa.Column("api_key", sa.String(length=64), nullable=True),
         sa.Column("attributes", sa.JSON(), server_default="{}", nullable=False),
         sa.Column("email", sa.String(length=64), nullable=True),
         sa.Column("is_active", sa.Boolean(), nullable=False),
@@ -490,6 +496,7 @@ def upgrade() -> None:
         sa.ForeignKeyConstraint(["role_id"], ["user_role.id"], ondelete="RESTRICT"),
         sa.ForeignKeyConstraint(["shipping_id"], ["shipping.id"], ondelete="SET NULL"),
         sa.PrimaryKeyConstraint("id"),
+        sa.UniqueConstraint("api_key"),
         sa.UniqueConstraint("email"),
     )
     op.create_table(
@@ -516,8 +523,6 @@ def upgrade() -> None:
             "created_at", sa.DateTime(), server_default=sa.text("now()"), nullable=True
         ),
         sa.Column("updated_at", sa.DateTime(), nullable=True),
-        sa.CheckConstraint("shipment_price >= 0"),
-        sa.CheckConstraint("vat_rate >= 1"),
         sa.ForeignKeyConstraint(["billing_id"], ["billing.id"], ondelete="RESTRICT"),
         sa.ForeignKeyConstraint(["coupon_id"], ["coupon.id"], ondelete="RESTRICT"),
         sa.ForeignKeyConstraint(["currency_id"], ["currency.id"], ondelete="RESTRICT"),
@@ -531,12 +536,12 @@ def upgrade() -> None:
     )
     op.create_table(
         "order",
+        sa.Column("coupon_code", sa.String(length=16), nullable=True),
         sa.Column(
             "coupon_amount",
             sa.Numeric(precision=10, scale=4, asdecimal=False),
             nullable=True,
         ),
-        sa.Column("coupon_code", sa.String(length=16), nullable=True),
         sa.Column(
             "coupon_rate",
             sa.Numeric(precision=10, scale=4, asdecimal=False),
@@ -571,9 +576,6 @@ def upgrade() -> None:
         ),
         sa.Column("updated_at", sa.DateTime(), nullable=True),
         sa.CheckConstraint("coupon_amount IS NULL OR coupon_rate IS NULL"),
-        sa.CheckConstraint("shipment_price >= 0"),
-        sa.CheckConstraint("total_price >= 0"),
-        sa.CheckConstraint("vat_rate >= 1"),
         sa.ForeignKeyConstraint(["billing_id"], ["billing.id"], ondelete="RESTRICT"),
         sa.ForeignKeyConstraint(["currency_id"], ["currency.id"], ondelete="RESTRICT"),
         sa.ForeignKeyConstraint(["shipping_id"], ["shipping.id"], ondelete="RESTRICT"),
@@ -626,7 +628,6 @@ def upgrade() -> None:
             "created_at", sa.DateTime(), server_default=sa.text("now()"), nullable=True
         ),
         sa.Column("updated_at", sa.DateTime(), nullable=True),
-        sa.CheckConstraint("quantity >= 1"),
         sa.ForeignKeyConstraint(["cart_id"], ["cart.id"], ondelete="CASCADE"),
         sa.ForeignKeyConstraint(["sku_id"], ["sku.id"], ondelete="RESTRICT"),
         sa.PrimaryKeyConstraint("id"),
@@ -664,8 +665,6 @@ def upgrade() -> None:
             "created_at", sa.DateTime(), server_default=sa.text("now()"), nullable=True
         ),
         sa.Column("updated_at", sa.DateTime(), nullable=True),
-        sa.CheckConstraint("quantity >= 1"),
-        sa.CheckConstraint("total_price >= 0"),
         sa.ForeignKeyConstraint(["order_id"], ["order.id"], ondelete="CASCADE"),
         sa.ForeignKeyConstraint(["sku_id"], ["sku.id"], ondelete="RESTRICT"),
         sa.PrimaryKeyConstraint("id"),
@@ -687,7 +686,6 @@ def upgrade() -> None:
             "created_at", sa.DateTime(), server_default=sa.text("now()"), nullable=True
         ),
         sa.Column("updated_at", sa.DateTime(), nullable=True),
-        sa.CheckConstraint("total_price < 0"),
         sa.ForeignKeyConstraint(["order_id"], ["order.id"], ondelete="RESTRICT"),
         sa.PrimaryKeyConstraint("id"),
         sa.UniqueConstraint("mollie_id"),
