@@ -63,11 +63,11 @@ def post_shippings() -> Response:
 @api_v1_bp.get("/shippings/<int:shipping_id>")
 def get_shippings_id(shipping_id: int) -> Response:
     api = ShippingAPI()
-    return api.get(shipping_id, conditions=(Shipping.user_id == current_user.id,))
+    return api.get(shipping_id, conditions={Shipping.user_id == current_user.id})
 
 
 @api_v1_bp.patch("/shippings/<int:shipping_id>")
 def patch_shippings_id(shipping_id: int) -> Response:
     api = ShippingAPI()
-    api.raise_any_is_not_none({Order: (Order.billing_id == shipping_id,)})
+    api.raise_any_is_not_none({Order: {Order.billing_id == shipping_id}})
     return api.patch(shipping_id)

@@ -52,9 +52,21 @@ def run_seeders() -> None:
 
 def create_users() -> None:
     user_data = [
-        {"api_key": "guest", "role_id": UserRoleId.GUEST},
-        {"api_key": "user", "role_id": UserRoleId.USER},
-        {"api_key": "admin", "role_id": UserRoleId.ADMIN},
+        {
+            "api_key": "guest",
+            "email": "guest@enlarge-online.nl",
+            "role_id": UserRoleId.GUEST,
+        },
+        {
+            "api_key": "user",
+            "email": "user@enlarge-online.nl",
+            "role_id": UserRoleId.USER,
+        },
+        {
+            "api_key": "admin",
+            "email": "admin@enlarge-online.nl",
+            "role_id": UserRoleId.ADMIN,
+        },
     ]
     with conn.begin() as s:
         for data in user_data:
@@ -62,6 +74,7 @@ def create_users() -> None:
             if user is None:
                 user = User(**data)
                 s.add(user)
+                s.flush()
 
 
 def create_app() -> Flask:

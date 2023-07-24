@@ -72,11 +72,11 @@ def post_billings() -> Response:
 @api_v1_bp.get("/billings/<int:billing_id>")
 def get_billings_id(billing_id: int) -> Response:
     api = BillingAPI()
-    return api.get(billing_id, conditions=(Billing.user_id == current_user.id,))
+    return api.get(billing_id, conditions={Billing.user_id == current_user.id})
 
 
 @api_v1_bp.patch("/billings/<int:billing_id>")
 def patch_billings(billing_id: int) -> Response:
     api = BillingAPI()
-    api.raise_any_is_not_none({Order: (Order.billing_id == billing_id,)})
+    api.raise_any_is_not_none({Order: {Order.billing_id == billing_id}})
     return api.patch(billing_id)
