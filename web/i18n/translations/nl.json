@@ -35,7 +35,6 @@
     "API_USER_UPDATE_SUCCESS": "Uw account is bijgewerkt.",
     "API_USER_VERIFICATION_FAILED": "We kunnen uw account niet verifiëren.",
     "API_VERIFICATION_INVALID": "De verificatie sleutel is niet meer geldig.",
-    "API_VERIFICATION_KEY_NOT_FOUND": "We konden de verificatie sleutel niet vinden.",
     "DATABASE_EMAIL_ERROR": "Controleer uw emailadres.",
     "DATABASE_PHONE_ERROR": "Controleer uw telefoonnummer.",
     "MAIL_CONTACT_CONFIRMATION": "We hebben uw bericht ontvangen en nemen zo snel mogelijk contact met u op.",
