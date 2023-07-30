@@ -18,10 +18,10 @@ from web.mail.routes.order import send_order_received
 
 
 class _Text(StrEnum):
-    VAT_NO_CONNECTION = _("API_ORDER_VAT_NO_CONNECTION")
-    VAT_INVALID = _("API_ORDER_VAT_INVALID")
-    VAT_REQUIRED = _("API_ORDER_VAT_REQUIRED")
     PHONE_REQUIRED = _("API_ORDER_PHONE_REQUIRED")
+    VAT_INVALID = _("API_ORDER_VAT_INVALID")
+    VAT_NO_CONNECTION = _("API_ORDER_VAT_NO_CONNECTION")
+    VAT_REQUIRED = _("API_ORDER_VAT_REQUIRED")
 
 
 @api_v1_bp.post("/orders")

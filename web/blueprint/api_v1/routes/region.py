@@ -8,9 +8,7 @@ from web.helper.user import access_control
 
 class RegionAPI(API):
     model = Region
-    post_columns = {
-        Region.name,
-    }
+    post_columns = {Region.name}
     get_columns = {
         Region.name,
         Region.id,
