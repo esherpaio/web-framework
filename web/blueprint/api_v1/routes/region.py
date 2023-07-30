@@ -8,9 +8,13 @@ from web.helper.user import access_control
 
 class RegionAPI(API):
     model = Region
-    post_attrs = {Region.name}
-    patch_attrs = {Region.name}
-    get_attrs = {Region.name, Region.id}
+    post_columns = {
+        Region.name,
+    }
+    get_columns = {
+        Region.name,
+        Region.id,
+    }
 
 
 @access_control(UserRoleLevel.ADMIN)

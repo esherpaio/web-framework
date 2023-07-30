@@ -8,15 +8,9 @@ from web.blueprint.api_v1.common.cart_item import update_cart_shipment_methods
 from web.database.model import Cart, Order, Shipping
 
 
-def update_carts(s: Session, shipping: Shipping) -> None:
-    carts = s.query(Cart).filter_by(shipping_id=shipping.id).all()
-    for cart in carts:
-        update_cart_shipment_methods(s, cart)
-
-
 class ShippingAPI(API):
     model = Shipping
-    post_attrs = {
+    post_columns = {
         Shipping.address,
         Shipping.city,
         Shipping.company,
@@ -27,7 +21,7 @@ class ShippingAPI(API):
         Shipping.phone,
         Shipping.zip_code,
     }
-    patch_attrs = {
+    patch_columns = {
         Shipping.address,
         Shipping.city,
         Shipping.company,
@@ -38,8 +32,7 @@ class ShippingAPI(API):
         Shipping.phone,
         Shipping.zip_code,
     }
-    patch_callbacks = [update_carts]
-    get_attrs = {
+    get_columns = {
         Shipping.address,
         Shipping.city,
         Shipping.company,
@@ -57,17 +50,22 @@ class ShippingAPI(API):
 @api_v1_bp.post("/shippings")
 def post_shippings() -> Response:
     api = ShippingAPI()
-    return api.post(add_data={"user_id": current_user.id})
+    return api.post(add_request={"user_id": current_user.id})
 
 
 @api_v1_bp.get("/shippings/<int:shipping_id>")
 def get_shippings_id(shipping_id: int) -> Response:
     api = ShippingAPI()
-    return api.get(shipping_id, conditions={Shipping.user_id == current_user.id})
+    return api.get(shipping_id, filters={Shipping.user_id == current_user.id})
 
 
 @api_v1_bp.patch("/shippings/<int:shipping_id>")
 def patch_shippings_id(shipping_id: int) -> Response:
+    def update_carts(s: Session, shipping: Shipping, data: dict) -> None:
+        carts = s.query(Cart).filter_by(shipping_id=shipping.id).all()
+        for cart in carts:
+            update_cart_shipment_methods(s, cart)
+
     api = ShippingAPI()
     api.raise_any_is_not_none({Order: {Order.billing_id == shipping_id}})
-    return api.patch(shipping_id)
+    return api.patch(shipping_id, post_calls=[update_carts])

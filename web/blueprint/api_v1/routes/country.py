@@ -8,21 +8,14 @@ from web.helper.user import access_control
 
 class CountryAPI(API):
     model = Country
-    post_attrs = {
+    post_columns = {
         Country.code,
         Country.in_sitemap,
         Country.name,
         Country.currency_id,
         Country.region_id,
     }
-    patch_attrs = {
-        Country.code,
-        Country.in_sitemap,
-        Country.name,
-        Country.currency_id,
-        Country.region_id,
-    }
-    get_attrs = {
+    get_columns = {
         Country.code,
         Country.in_sitemap,
         Country.name,

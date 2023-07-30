@@ -11,6 +11,7 @@ from .routes import (
     coupon,
     currency,
     email,
+    language,
     order,
     order_payment,
     order_refund,
@@ -28,5 +29,7 @@ from .routes import (
     shipping,
     sku,
     user,
+    user_activation,
+    user_password,
     verification,
 )

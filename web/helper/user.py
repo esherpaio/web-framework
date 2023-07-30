@@ -34,7 +34,6 @@ class FlaskUser(User):
 
 
 def load_user(user_id: int, *args, **kwargs) -> FlaskUser | None:
-    # Try to load the user from the database
     with conn.begin() as s:
         user = (
             s.query(User)
@@ -61,7 +60,12 @@ def _load_request_api() -> FlaskUser | None:
         encoded = authorization.replace("Basic ", "", 1).encode()
         api_key = base64.b64decode(encoded).decode()
         with conn.begin() as s:
-            user = s.query(User).filter_by(api_key=api_key).first()
+            user = (
+                s.query(User)
+                .options(joinedload(User.role))
+                .filter_by(api_key=api_key)
+                .first()
+            )
         if user is not None:
             return FlaskUser(user)
         abort(response(401, ApiText.HTTP_401))

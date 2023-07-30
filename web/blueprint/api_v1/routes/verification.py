@@ -11,23 +11,30 @@ from web.helper.api import response
 from web.i18n.base import _
 
 
-def check_is_valid(s: Session, verification: Verification) -> None:
-    if not verification.is_valid:
-        abort(response(400, _Text.VERIFICATION_INVALID))
-
-
 class _Text(StrEnum):
     VERIFICATION_INVALID = _("API_VERIFICATION_INVALID")
 
 
 class VerificationAPI(API):
     model = Verification
-    get_args = {Verification.key}
-    get_attrs = {Verification.id, Verification.key, Verification.user_id}
-    get_callbacks = [check_is_valid]
+    get_args = {
+        Verification.key,
+    }
+    get_args_required = {
+        Verification.key,
+    }
+    get_columns = {
+        Verification.id,
+        Verification.key,
+        Verification.user_id,
+    }
 
 
 @api_v1_bp.get("/verifications")
 def get_verifications() -> Response:
+    def validate(s: Session, verification: Verification, data: dict) -> None:
+        if not verification.is_valid:
+            abort(response(400, _Text.VERIFICATION_INVALID))
+
     api = VerificationAPI()
-    return api.get(as_list=True)
+    return api.get(as_list=True, max_size=1, post_calls=[validate])

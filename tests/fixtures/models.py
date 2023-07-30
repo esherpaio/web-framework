@@ -1,5 +1,9 @@
 import pytest
 
+#
+# Locale related
+#
+
 
 @pytest.fixture(scope="package")
 def post_currency(client, admin) -> dict:
@@ -43,6 +47,24 @@ def post_country(client, admin, post_currency, post_region) -> dict:
 
 
 @pytest.fixture(scope="package")
+def post_language(client, admin) -> dict:
+    return client.post(
+        "/api/v1/languages",
+        headers={**admin},
+        json={
+            "code": "nl",
+            "in_sitemap": False,
+            "name": "Dutch",
+        },
+    )
+
+
+#
+# User details
+#
+
+
+@pytest.fixture(scope="package")
 def post_billing(post_country, client, user) -> dict:
     country_id = post_country.json["data"]["id"]
     return client.post(
@@ -80,4 +102,32 @@ def post_shipping(post_country, client, user) -> dict:
             "phone": "+31615389916",
             "zip_code": "3527HJ",
         },
+    )
+
+
+#
+# Users
+#
+
+
+@pytest.fixture(scope="package")
+def post_user(client, user) -> dict:
+    return client.post(
+        "/api/v1/users",
+        headers={**user},
+        json={
+            "email": "contact@enlarge-online.nl",
+            "password": "password",
+            "password_eval": "password",
+        },
+    )
+
+
+@pytest.fixture(scope="package")
+def post_user_activation(client, user, post_user) -> dict:
+    user_id = post_user.json["data"]["id"]
+    return client.post(
+        f"/api/v1/users/{user_id}/activation",
+        headers={**user},
+        json={},
     )

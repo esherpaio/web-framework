@@ -1,0 +1,85 @@
+import uuid
+from enum import StrEnum
+
+from flask import url_for
+from werkzeug import Response
+from werkzeug.security import generate_password_hash
+
+from web import config
+from web.blueprint.api_v1 import api_v1_bp
+from web.database.client import conn
+from web.database.model import User, Verification
+from web.helper.api import ApiText, json_get, response
+from web.i18n.base import _
+from web.mail.routes.user import send_new_password
+
+
+class _Text(StrEnum):
+    PASSWORD_LENGTH = _("API_USER_PASSWORD_LENGTH")
+    PASSWORD_NO_MATCH = _("API_USER_PASSWORD_NO_MATCH")
+    PASSWORD_REQUEST_SEND = _("API_USER_PASSWORD_REQUEST_SEND")
+    PASSWORD_RESET_SUCCESS = _("API_USER_PASSWORD_RESET_SUCCESS")
+    VERIFICATION_FAILED = _("API_USER_VERIFICATION_FAILED")
+
+
+@api_v1_bp.post("/users/<int:user_id>/password")
+def post_users_id_password(user_id: int) -> Response:
+    with conn.begin() as s:
+        # Get user
+        user = s.query(User).filter_by(id=user_id).first()
+        if not user:
+            return response(404, ApiText.HTTP_404)
+
+        # Insert verification
+        verification_key = str(uuid.uuid4())
+        verification = Verification(user_id=user.id, key=verification_key)
+        s.add(verification)
+        s.flush()
+
+        # Send email
+        reset_url = url_for(
+            config.ENDPOINT_PASSWORD,
+            verification_key=verification_key,
+            _external=True,
+        )
+        send_new_password(
+            email=user.email,
+            reset_url=reset_url,
+        )
+
+    return response(200, _Text.PASSWORD_REQUEST_SEND)
+
+
+@api_v1_bp.patch("/users/<int:user_id>/password")
+def patch_users_id_password(user_id: int) -> Response:
+    password, _ = json_get("password", str)
+    password_eval, _ = json_get("password_eval", str)
+    verification_key, _ = json_get("verification_key", str)
+
+    with conn.begin() as s:
+        # Get user
+        user = s.query(User).filter_by(id=user_id).first()
+        if not user:
+            return response(404, ApiText.HTTP_404)
+
+        # Check verification
+        verification = s.query(Verification).filter_by(key=verification_key).first()
+        if verification is None:
+            return response(401, _Text.VERIFICATION_FAILED)
+        if not verification.is_valid:
+            return response(401, _Text.VERIFICATION_FAILED)
+        if verification.user_id != user_id:
+            return response(401, _Text.VERIFICATION_FAILED)
+
+        # Check password
+        if len(password) < 8:
+            return response(400, _Text.PASSWORD_LENGTH)
+        if password != password_eval:
+            return response(400, _Text.PASSWORD_NO_MATCH)
+
+        # Update password
+        password_hash = generate_password_hash(password, method="pbkdf2:sha256:1000000")
+        user.password_hash = password_hash
+        s.delete(verification)
+
+    return response(200, _Text.PASSWORD_RESET_SUCCESS)

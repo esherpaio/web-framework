@@ -8,9 +8,17 @@ from web.helper.user import access_control
 
 class CurrencyAPI(API):
     model = Currency
-    post_attrs = {Currency.code, Currency.rate, Currency.symbol}
-    patch_attrs = {Currency.code, Currency.rate, Currency.symbol}
-    get_attrs = {Currency.code, Currency.rate, Currency.symbol, Currency.id}
+    post_columns = {
+        Currency.code,
+        Currency.rate,
+        Currency.symbol,
+    }
+    get_columns = {
+        Currency.code,
+        Currency.rate,
+        Currency.symbol,
+        Currency.id,
+    }
 
 
 @access_control(UserRoleLevel.ADMIN)
