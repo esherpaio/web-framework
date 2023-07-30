@@ -56,8 +56,6 @@ def patch_cart_id_items_id(cart_id: int, cart_item_id: int) -> Response:
 
         # Update quantity
         if has_quantity:
-            if quantity < 1:
-                return response(400, ApiText.HTTP_400)
             cart_item = (
                 s.query(CartItem).filter_by(id=cart_item_id, cart_id=cart_id).first()
             )

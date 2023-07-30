@@ -25,12 +25,14 @@ class ApiText(StrEnum):
 
 def response(
     code: int = 200,
-    message: str | StrEnum = ApiText.HTTP_200,
+    message: str | StrEnum | None = None,
     data: list | dict | None = None,
     links: dict | None = None,
 ) -> Response:
     """Create a default API response."""
 
+    if message is None:
+        message = ApiText.HTTP_200
     if data is None:
         data = {}
     if links is None:

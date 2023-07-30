@@ -31,7 +31,7 @@ format:
 ## test : run testers
 .PHONY: test
 test:
-	pytest -s .
+	pytest .
 
 ## TRANSLATIONS
 ## ----------
