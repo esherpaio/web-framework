@@ -30,15 +30,11 @@ def post_session() -> Response:
     with conn.begin() as s:
         user = s.query(User).filter_by(email=email.lower()).first()
 
-    # Check if user exists
+    # Validate user
     if not user:
         return response(400, _Text.CHECK_DETAILS)
-
-    # Check if user activation is pending
     if not user.is_active:
         return response(400, _Text.CHECK_ACTIVATION)
-
-    # Check if password is correct
     if not check_password_hash(user.password_hash, password):
         return response(400, _Text.CHECK_DETAILS)
 

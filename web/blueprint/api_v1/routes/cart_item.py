@@ -13,7 +13,7 @@ from web.i18n.base import _
 
 
 class _Text(StrEnum):
-    ADDED = _("API_CART_ITEM_ADDED")
+    CART_ITEM_ADDED = _("API_CART_ITEM_ADDED")
 
 
 @api_v1_bp.post("/carts/<int:cart_id>/items")
@@ -41,7 +41,7 @@ def post_carts_id_items(cart_id: int) -> Response:
         update_cart_shipment_methods(s, cart)
 
     resource = get_resource(cart_item.id)
-    return response(message=_Text.ADDED, data=resource)
+    return response(message=_Text.CART_ITEM_ADDED, data=resource)
 
 
 @api_v1_bp.patch("/carts/<int:cart_id>/items/<int:cart_item_id>")

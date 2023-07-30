@@ -10,8 +10,8 @@ from web.mail.routes.custom import send_custom_1
 
 
 class _Text(StrEnum):
-    INVALID_TEMPLATE_ID = _("API_MAIL_INVALID_TEMPLATE_ID")
     CONTACT_SUCCESS = _("API_MAIL_CONTACT_SUCCESS")
+    TEMPLATE_ID_INVALID = _("API_MAIL_INVALID_TEMPLATE_ID")
 
 
 @api_v1_bp.post("/emails")
@@ -28,4 +28,4 @@ def post_emails_contact() -> Response:
         send_contact_customer(email=data["email"], message=data["message"])
         return response(200, _Text.CONTACT_SUCCESS)
 
-    return response(403, _Text.INVALID_TEMPLATE_ID)
+    return response(403, _Text.TEMPLATE_ID_INVALID)

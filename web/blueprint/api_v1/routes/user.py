@@ -22,8 +22,8 @@ class _Text(StrEnum):
     EMAIL_INVALID = _("API_USER_EMAIL_INVALID")
     PASSWORD_LENGTH = _("API_USER_PASSWORD_LENGTH")
     PASSWORD_NO_MATCH = _("API_USER_PASSWORD_NO_MATCH")
-    REGISTER_SUCCESS = _("API_USER_REGISTER_SUCCESS")
-    UPDATE_SUCCESS = _("API_USER_UPDATE_SUCCESS")
+    USER_CREATED = _("API_USER_REGISTER_SUCCESS")
+    USER_UPDATED = _("API_USER_UPDATE_SUCCESS")
 
 
 class UserAPI(API):
@@ -34,12 +34,12 @@ class UserAPI(API):
         User.shipping_id,
         User.attributes,
     }
-    post_message = _Text.REGISTER_SUCCESS
+    post_message = _Text.USER_CREATED
     patch_columns = {
         User.billing_id,
         User.shipping_id,
     }
-    patch_message = _Text.UPDATE_SUCCESS
+    patch_message = _Text.USER_UPDATED
     get_args = {
         User.email,
     }

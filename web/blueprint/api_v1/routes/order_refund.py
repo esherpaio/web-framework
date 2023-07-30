@@ -13,10 +13,10 @@ from web.i18n.base import _
 
 
 class _Text(StrEnum):
+    INVOICE_NOT_FOUND = _("API_ORDER_REFUND_INVOICE_NOT_FOUND")
     PAYMENT_INCOMPLETE = _("API_ORDER_REFUND_PAYMENT_INCOMPLETE")
     REFUND_NOT_ALLOWED = _("API_ORDER_REFUND_NOT_ALLOWED")
     REFUND_TOO_HIGH = _("API_ORDER_REFUND_TOO_HIGH")
-    INVOICE_NOT_FOUND = _("API_ORDER_REFUND_INVOICE_NOT_FOUND")
 
 
 @access_control(UserRoleLevel.ADMIN)
@@ -34,7 +34,7 @@ def post_orders_id_refund(order_id: int) -> Response:
         if not order.invoice:
             return response(400, _Text.INVOICE_NOT_FOUND)
 
-        # Check if the order has an Mollie ID
+        # Check if the order has a Mollie ID
         if not order.mollie_id:
             return response(404, _Text.PAYMENT_INCOMPLETE)
 
