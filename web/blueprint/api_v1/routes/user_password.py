@@ -13,6 +13,10 @@ from web.helper.api import ApiText, json_get, response
 from web.i18n.base import _
 from web.mail.routes.user import send_new_password
 
+#
+# Configuration
+#
+
 
 class _Text(StrEnum):
     PASSWORD_LENGTH = _("API_USER_PASSWORD_LENGTH")
@@ -20,6 +24,11 @@ class _Text(StrEnum):
     PASSWORD_REQUEST_SEND = _("API_USER_PASSWORD_REQUEST_SEND")
     PASSWORD_RESET_SUCCESS = _("API_USER_PASSWORD_RESET_SUCCESS")
     VERIFICATION_FAILED = _("API_USER_VERIFICATION_FAILED")
+
+
+#
+# Endpoints
+#
 
 
 @api_v1_bp.post("/users/<int:user_id>/password")
@@ -78,7 +87,7 @@ def patch_users_id_password(user_id: int) -> Response:
             return response(400, _Text.PASSWORD_NO_MATCH)
 
         # Update password
-        password_hash = generate_password_hash(password, method="pbkdf2:sha256:1000000")
+        password_hash = generate_password_hash(password, "pbkdf2:sha256:1000000")
         user.password_hash = password_hash
         s.delete(verification)
 

@@ -1,29 +1,29 @@
-class TestCreateShipping:
+class TestShipping:
     #
     # Creating
     #
 
-    def test_create_currency(self, post_currency):
+    def test_post_currency(self, post_currency):
         resp = post_currency
         assert 200 <= resp.status_code <= 299
         assert resp.json
 
-    def test_create_region(self, post_region):
+    def test_post_region(self, post_region):
         resp = post_region
         assert 200 <= resp.status_code <= 299
         assert resp.json
 
-    def test_create_country(self, post_country):
+    def test_post_country(self, post_country):
         resp = post_country
         assert 200 <= resp.status_code <= 299
         assert resp.json
 
-    def test_create_language(self, post_language):
+    def test_post_language(self, post_language):
         resp = post_language
         assert 200 <= resp.status_code <= 299
         assert resp.json
 
-    def test_create_shipping(self, post_shipping):
+    def test_post_shipping(self, post_shipping):
         resp = post_shipping
         assert 200 <= resp.status_code <= 299
         assert resp.json

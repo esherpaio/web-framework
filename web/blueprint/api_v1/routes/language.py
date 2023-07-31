@@ -5,6 +5,10 @@ from web.blueprint.api_v1._base import API
 from web.database.model import Language, UserRoleLevel
 from web.helper.user import access_control
 
+#
+# Configuration
+#
+
 
 class LanguageAPI(API):
     model = Language
@@ -20,6 +24,11 @@ class LanguageAPI(API):
     }
 
 
+#
+# Endpoints
+#
+
+
 @access_control(UserRoleLevel.ADMIN)
 @api_v1_bp.post("/languages")
 def post_languages() -> Response:
@@ -30,7 +39,7 @@ def post_languages() -> Response:
 @api_v1_bp.get("/languages")
 def get_languages() -> Response:
     api = LanguageAPI()
-    return api.get(reference=None, as_list=True)
+    return api.get(as_list=True)
 
 
 @api_v1_bp.get("/languages/<int:language_id>")

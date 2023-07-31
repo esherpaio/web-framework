@@ -5,6 +5,10 @@ from web.blueprint.api_v1._base import API
 from web.database.model import Country, UserRoleLevel
 from web.helper.user import access_control
 
+#
+# Configuration
+#
+
 
 class CountryAPI(API):
     model = Country
@@ -25,6 +29,11 @@ class CountryAPI(API):
     }
 
 
+#
+# Endpoints
+#
+
+
 @access_control(UserRoleLevel.ADMIN)
 @api_v1_bp.post("/countries")
 def post_countries() -> Response:
@@ -35,7 +44,7 @@ def post_countries() -> Response:
 @api_v1_bp.get("/countries")
 def get_countries() -> Response:
     api = CountryAPI()
-    return api.get(reference=None, as_list=True)
+    return api.get(as_list=True)
 
 
 @api_v1_bp.get("/countries/<int:country_id>")

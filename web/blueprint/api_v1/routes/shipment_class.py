@@ -6,6 +6,15 @@ from web.database.model import ShipmentClass, ShipmentMethod, UserRoleLevel
 from web.helper.api import ApiText, json_get, response
 from web.helper.user import access_control
 
+#
+# Configuration
+#
+
+
+#
+# Endpoints
+#
+
 
 @access_control(UserRoleLevel.ADMIN)
 @api_v1_bp.post("/shipment-classes")

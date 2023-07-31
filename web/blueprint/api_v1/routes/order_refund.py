@@ -11,12 +11,21 @@ from web.helper.mollie_api import Mollie
 from web.helper.user import access_control
 from web.i18n.base import _
 
+#
+# Configuration
+#
+
 
 class _Text(StrEnum):
     INVOICE_NOT_FOUND = _("API_ORDER_REFUND_INVOICE_NOT_FOUND")
     PAYMENT_INCOMPLETE = _("API_ORDER_REFUND_PAYMENT_INCOMPLETE")
     REFUND_NOT_ALLOWED = _("API_ORDER_REFUND_NOT_ALLOWED")
     REFUND_TOO_HIGH = _("API_ORDER_REFUND_TOO_HIGH")
+
+
+#
+# Endpoints
+#
 
 
 @access_control(UserRoleLevel.ADMIN)

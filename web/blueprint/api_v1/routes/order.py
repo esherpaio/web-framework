@@ -16,12 +16,21 @@ from web.helper.user import access_control
 from web.i18n.base import _
 from web.mail.routes.order import send_order_received
 
+#
+# Configuration
+#
+
 
 class _Text(StrEnum):
     PHONE_REQUIRED = _("API_ORDER_PHONE_REQUIRED")
     VAT_INVALID = _("API_ORDER_VAT_INVALID")
     VAT_NO_CONNECTION = _("API_ORDER_VAT_NO_CONNECTION")
     VAT_REQUIRED = _("API_ORDER_VAT_REQUIRED")
+
+
+#
+# Endpoints
+#
 
 
 @api_v1_bp.post("/orders")

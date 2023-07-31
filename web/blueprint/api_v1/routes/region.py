@@ -5,6 +5,10 @@ from web.blueprint.api_v1._base import API
 from web.database.model import Region, UserRoleLevel
 from web.helper.user import access_control
 
+#
+# Configuration
+#
+
 
 class RegionAPI(API):
     model = Region
@@ -13,6 +17,11 @@ class RegionAPI(API):
         Region.name,
         Region.id,
     }
+
+
+#
+# Endpoints
+#
 
 
 @access_control(UserRoleLevel.ADMIN)
@@ -25,7 +34,7 @@ def post_regions() -> Response:
 @api_v1_bp.get("/regions")
 def get_regions() -> Response:
     api = RegionAPI()
-    return api.get(reference=None, as_list=True)
+    return api.get(as_list=True)
 
 
 @api_v1_bp.get("/regions/<int:region_id>")

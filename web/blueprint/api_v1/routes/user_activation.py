@@ -12,11 +12,20 @@ from web.helper.api import ApiText, json_get, response
 from web.i18n.base import _
 from web.mail.routes.user import send_verification_url
 
+#
+# Configuration
+#
+
 
 class _Text(StrEnum):
     ACTIVATION_CHECK = _("API_USER_ACTIVATION_CHECK")
     ACTIVATION_SUCCESS = _("API_USER_ACTIVATION_SUCCESS")
     VERIFICATION_FAILED = _("API_USER_VERIFICATION_FAILED")
+
+
+#
+# Endpoints
+#
 
 
 @api_v1_bp.post("/users/<int:user_id>/activation")

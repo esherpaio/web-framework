@@ -9,6 +9,15 @@ from web.helper.validation import gen_slug
 from web.seeder.decorators import sync_after
 from web.seeder.model.sku import SkuSyncer
 
+#
+# Configuration
+#
+
+
+#
+# Endpoints
+#
+
 
 @access_control(UserRoleLevel.ADMIN)
 @api_v1_bp.post("/products")

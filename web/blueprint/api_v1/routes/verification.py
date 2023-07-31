@@ -10,6 +10,10 @@ from web.database.model import Verification
 from web.helper.api import response
 from web.i18n.base import _
 
+#
+# Configuration
+#
+
 
 class _Text(StrEnum):
     VERIFICATION_INVALID = _("API_VERIFICATION_INVALID")
@@ -17,12 +21,7 @@ class _Text(StrEnum):
 
 class VerificationAPI(API):
     model = Verification
-    get_args = {
-        Verification.key,
-    }
-    get_args_required = {
-        Verification.key,
-    }
+    get_args = {Verification.key}
     get_columns = {
         Verification.id,
         Verification.key,
@@ -30,11 +29,22 @@ class VerificationAPI(API):
     }
 
 
+def val_expiration(s: Session, data: dict, verification: Verification) -> None:
+    if not verification.is_valid:
+        abort(response(400, _Text.VERIFICATION_INVALID))
+
+
+#
+# Endpoints
+#
+
+
 @api_v1_bp.get("/verifications")
 def get_verifications() -> Response:
-    def validate(s: Session, verification: Verification, data: dict) -> None:
-        if not verification.is_valid:
-            abort(response(400, _Text.VERIFICATION_INVALID))
-
     api = VerificationAPI()
-    return api.get(as_list=True, max_size=1, post_calls=[validate])
+    return api.get(
+        as_list=True,
+        max_size=1,
+        args_required=True,
+        post_calls=[val_expiration],
+    )

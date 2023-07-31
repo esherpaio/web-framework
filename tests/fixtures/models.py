@@ -123,11 +123,14 @@ def post_user(client, user) -> dict:
     )
 
 
+#
+# Cart
+#
+
+
 @pytest.fixture(scope="package")
-def post_user_activation(client, user, post_user) -> dict:
-    user_id = post_user.json["data"]["id"]
+def post_cart(client, user) -> dict:
     return client.post(
-        f"/api/v1/users/{user_id}/activation",
+        "/api/v1/carts",
         headers={**user},
-        json={},
     )

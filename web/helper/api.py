@@ -70,10 +70,7 @@ def json_get(
     has_key = key in data
 
     if type_ in (float, int):
-        type_ = (
-            float,
-            int,
-        )
+        type_ = (float, int)
 
     if nullable and value is None:
         pass
