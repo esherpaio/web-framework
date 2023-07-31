@@ -1,4 +1,4 @@
-class TestCreateVerification:
+class TestVerification:
     #
     # Create user
     #

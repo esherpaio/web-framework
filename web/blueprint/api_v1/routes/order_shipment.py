@@ -7,6 +7,15 @@ from web.helper.api import json_get, response
 from web.helper.user import access_control
 from web.mail.routes.order import send_order_shipped
 
+#
+# Configuration
+#
+
+
+#
+# Endpoints
+#
+
 
 @access_control(UserRoleLevel.ADMIN)
 @api_v1_bp.post("/orders/<int:order_id>/shipments")

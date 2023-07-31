@@ -8,10 +8,19 @@ from web.i18n.base import _
 from web.mail.routes.contact import send_contact_business, send_contact_customer
 from web.mail.routes.custom import send_custom_1
 
+#
+# Configuration
+#
+
 
 class _Text(StrEnum):
     CONTACT_SUCCESS = _("API_MAIL_CONTACT_SUCCESS")
     TEMPLATE_ID_INVALID = _("API_MAIL_INVALID_TEMPLATE_ID")
+
+
+#
+# Endpoints
+#
 
 
 @api_v1_bp.post("/emails")
@@ -28,4 +37,4 @@ def post_emails_contact() -> Response:
         send_contact_customer(email=data["email"], message=data["message"])
         return response(200, _Text.CONTACT_SUCCESS)
 
-    return response(403, _Text.TEMPLATE_ID_INVALID)
+    return response(400, _Text.TEMPLATE_ID_INVALID)

@@ -5,6 +5,10 @@ from web.blueprint.api_v1._base import API
 from web.database.model import Currency, UserRoleLevel
 from web.helper.user import access_control
 
+#
+# Configuration
+#
+
 
 class CurrencyAPI(API):
     model = Currency
@@ -21,6 +25,11 @@ class CurrencyAPI(API):
     }
 
 
+#
+# Endpoints
+#
+
+
 @access_control(UserRoleLevel.ADMIN)
 @api_v1_bp.post("/currencies")
 def post_currencies() -> Response:
@@ -31,7 +40,7 @@ def post_currencies() -> Response:
 @api_v1_bp.get("/currencies")
 def get_currencies() -> Response:
     api = CurrencyAPI()
-    return api.get(reference=None, as_list=True)
+    return api.get(as_list=True)
 
 
 @api_v1_bp.get("/currencies/<int:currency_id>")

@@ -14,10 +14,19 @@ from web.helper.cart import transfer_cart
 from web.helper.user import FlaskUser
 from web.i18n.base import _
 
+#
+# Configuration
+#
+
 
 class _Text(StrEnum):
     CHECK_DETAILS = _("API_SESSION_CHECK_DETAILS")
     CHECK_ACTIVATION = _("API_SESSION_CHECK_ACTIVATION")
+
+
+#
+# Endpoints
+#
 
 
 @api_v1_bp.post("/sessions")
@@ -39,23 +48,21 @@ def post_session() -> Response:
         return response(400, _Text.CHECK_DETAILS)
 
     # Wait random interval
-    sleep_s = randint(0, 2000) / 1000
+    sleep_s = randint(0, 1000) / 1000
     time.sleep(sleep_s)
 
     # Login user
     flask_user = FlaskUser(user)
     flask_login.login_user(flask_user, remember=True)
-
     return response()
 
 
 @api_v1_bp.delete("/sessions")
 def delete_session() -> Response:
     # Wait random interval
-    sleep_s = randint(0, 2000) / 1000
+    sleep_s = randint(0, 1000) / 1000
     time.sleep(sleep_s)
 
     # Logout user
     flask_login.logout_user()
-
     return response()

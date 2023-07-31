@@ -30,7 +30,7 @@ def transfer_cart(
 
     def wrap(*args, **kwargs) -> Response:
         with conn.begin() as s:
-            # Get before and after access objects
+            # Get before and after user ids
             prev_user_id = current_user.id
             resp = f(*args, **kwargs)
             curr_user_id = current_user.id

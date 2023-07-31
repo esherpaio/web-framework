@@ -11,6 +11,15 @@ from web.database.model import Order
 from web.helper.api import ApiText, response
 from web.helper.mollie_api import Mollie, mollie_amount, mollie_webhook
 
+#
+# Configuration
+#
+
+
+#
+# Endpoints
+#
+
 
 @api_v1_bp.post("/orders/<int:order_id>/payments")
 def post_orders_id_payments(order_id: int) -> Response:

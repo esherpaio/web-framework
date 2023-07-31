@@ -1,89 +1,76 @@
 from enum import StrEnum
 
 from flask_login import current_user
+from sqlalchemy.orm.session import Session
 from werkzeug import Response
 
 from web.blueprint.api_v1 import api_v1_bp
+from web.blueprint.api_v1._base import API
 from web.blueprint.api_v1.common.cart_item import update_cart_shipment_methods
-from web.blueprint.api_v1.resource.cart_item import get_resource
-from web.database.client import conn
 from web.database.model import Cart, CartItem
-from web.helper.api import ApiText, json_get, response
 from web.i18n.base import _
+
+#
+# Configuration
+#
 
 
 class _Text(StrEnum):
     CART_ITEM_ADDED = _("API_CART_ITEM_ADDED")
 
 
+class CartItemAPI(API):
+    model = CartItem
+    post_columns = {
+        CartItem.quantity,
+        CartItem.sku_id,
+    }
+    post_message = _Text.CART_ITEM_ADDED
+    patch_columns = {CartItem.quantity}
+    get_columns = {
+        CartItem.cart_id,
+        CartItem.id,
+        CartItem.quantity,
+        CartItem.sku_id,
+    }
+
+
+def update_shipment_methods(s: Session, data: dict, *args) -> None:
+    cart_id = data["cart_id"]
+    cart = s.query(Cart).filter(Cart.id == cart_id).first()
+    update_cart_shipment_methods(s, cart)
+
+
+#
+# Endpoints
+#
+
+
 @api_v1_bp.post("/carts/<int:cart_id>/items")
 def post_carts_id_items(cart_id: int) -> Response:
-    quantity, _ = json_get("quantity", int, default=1)
-    sku_id, _ = json_get("sku_id", int, nullable=False)
-
-    with conn.begin() as s:
-        # Check if cart is in use by the user
-        cart = s.query(Cart).filter_by(user_id=current_user.id, id=cart_id).first()
-        if not cart:
-            return response(403, ApiText.HTTP_403)
-
-        # Update or insert cart item
-        for cart_item in cart.items:
-            if cart_item.sku_id == sku_id:
-                cart_item.quantity += quantity
-                break
-        else:
-            cart_item = CartItem(cart_id=cart.id, sku_id=sku_id, quantity=quantity)
-            cart.items.append(cart_item)
-        s.flush()
-
-        # Update shipment method
-        update_cart_shipment_methods(s, cart)
-
-    resource = get_resource(cart_item.id)
-    return response(message=_Text.CART_ITEM_ADDED, data=resource)
+    api = CartItemAPI()
+    api.raise_any_is_none({Cart: {Cart.id == cart_id, Cart.user_id == current_user.id}})
+    return api.post(
+        add_request={"cart_id": cart_id},
+        post_calls=[update_shipment_methods],
+    )
 
 
 @api_v1_bp.patch("/carts/<int:cart_id>/items/<int:cart_item_id>")
 def patch_cart_id_items_id(cart_id: int, cart_item_id: int) -> Response:
-    quantity, has_quantity = json_get("quantity", int)
-
-    with conn.begin() as s:
-        # Check if cart is in use by the user
-        cart = s.query(Cart).filter_by(user_id=current_user.id, id=cart_id).first()
-        if not cart:
-            return response(403, ApiText.HTTP_403)
-
-        # Update quantity
-        if has_quantity:
-            cart_item = (
-                s.query(CartItem).filter_by(id=cart_item_id, cart_id=cart_id).first()
-            )
-            cart_item.quantity = quantity
-        s.flush()
-
-        # Update shipment methods
-        update_cart_shipment_methods(s, cart)
-
-    resource = get_resource(cart_item_id)
-    return response(data=resource)
+    api = CartItemAPI()
+    api.raise_any_is_none({Cart: {Cart.id == cart_id, Cart.user_id == current_user.id}})
+    return api.patch(
+        cart_item_id,
+        post_calls=[update_shipment_methods],
+    )
 
 
 @api_v1_bp.delete("/carts/<int:cart_id>/items/<int:cart_item_id>")
 def delete_cart_id_items_id(cart_id: int, cart_item_id: int) -> Response:
-    with conn.begin() as s:
-        # Check if cart is in use by the user
-        cart = s.query(Cart).filter_by(user_id=current_user.id, id=cart_id).first()
-        if not cart:
-            return response(403, ApiText.HTTP_403)
-
-        # Delete cart item
-        cart_item = (
-            s.query(CartItem).filter_by(id=cart_item_id, cart_id=cart_id).first()
-        )
-        s.delete(cart_item)
-
-        # Update shipment methods
-        update_cart_shipment_methods(s, cart)
-
-    return response()
+    api = CartItemAPI()
+    api.raise_any_is_none({Cart: {Cart.id == cart_id, Cart.user_id == current_user.id}})
+    return api.delete(
+        cart_item_id,
+        post_calls=[update_shipment_methods],
+    )
