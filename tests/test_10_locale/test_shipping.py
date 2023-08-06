@@ -81,7 +81,7 @@ class TestShipping:
         assert resp.json
 
     #
-    # Removing
+    # Deleting
     #
 
     def test_delete_currency(self, post_currency, client, admin) -> None:

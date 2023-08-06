@@ -81,7 +81,7 @@ class TestBilling:
         assert resp.json
 
     #
-    # Removing
+    # Deleting
     #
 
     def test_delete_country(self, post_country, client, admin) -> None:
