@@ -12,9 +12,9 @@ from web.helper.logger import logger
 
 class API:
     model: Type[Model] | None = None
-    post_columns: set[Column] = set()
-    patch_columns: set[Column] = set()
-    get_args: set[Column] = set()
+    post_columns: set[Column | str] = set()
+    patch_columns: set[Column | str] = set()
+    get_args: set[Column | str] = set()
     get_columns: set[Column | str] = set()
 
     #
@@ -24,7 +24,7 @@ class API:
     @classmethod
     def gen_request_data(
         cls,
-        columns: set[Column],
+        columns: set[Column | str],
         include_view_args: bool = True,
     ) -> dict[str, Any]:
         if not has_request_context():
@@ -36,17 +36,26 @@ class API:
         if not isinstance(request_json, dict):
             abort(response(400, ApiText.HTTP_400))
 
-        data = {}
+        data: dict = {}
         for column in columns:
-            if column.name not in request_json:
-                continue
-            value, _ = json_get(
-                column.name,
-                column.type.python_type,
-                nullable=bool(column.nullable),
-                default=column.default,
-            )
-            data[column.name] = value
+            key, value = None, None
+            if isinstance(column, InstrumentedAttribute):
+                if column.name not in request_json:
+                    continue
+                key = column.name
+                value, _ = json_get(
+                    key,
+                    column.type.python_type,
+                    nullable=column.nullable,
+                    default=column.default,
+                )
+            elif isinstance(column, str):
+                key = column
+                if key not in request_json:
+                    continue
+                value = request_json.get(column)
+            if key is not None:
+                data[key] = value
 
         if include_view_args:
             view_args = cls.gen_view_args_data()
@@ -66,7 +75,7 @@ class API:
     @classmethod
     def gen_query_data(
         cls,
-        args: set[Column],
+        args: set[Column | str],
     ) -> dict[str, Any]:
         if not has_request_context():
             raise RuntimeError
@@ -76,15 +85,24 @@ class API:
         request_args = request.args.to_dict()
         data = {}
         for arg in args:
-            if arg.name not in request_args:
-                continue
-            value, _ = args_get(
-                arg.name,
-                arg.type.python_type,
-                nullable=bool(arg.nullable),
-                default=arg.default,
-            )
-            data[arg.name] = value
+            key, value = None, None
+            if isinstance(arg, InstrumentedAttribute):
+                if arg.name not in request_args:
+                    continue
+                key = arg.name
+                value, _ = args_get(
+                    key,
+                    arg.type.python_type,
+                    nullable=arg.nullable,
+                    default=arg.default,
+                )
+            elif isinstance(arg, str):
+                key = arg
+                if key not in request_args:
+                    continue
+                value = request_args.get(arg)
+            if key is not None:
+                data[key] = value
 
         return data
 

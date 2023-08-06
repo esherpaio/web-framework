@@ -7,7 +7,7 @@ from werkzeug import Response
 
 from web.blueprint.api_v1 import api_v1_bp
 from web.blueprint.api_v1._base import API
-from web.blueprint.api_v1._common import update_cart_shipment_methods
+from web.blueprint.api_v1._common import authorize_cart, update_cart_shipment_methods
 from web.database.client import conn
 from web.database.model import Cart, CartItem
 from web.helper.api import ApiText, response
@@ -49,7 +49,7 @@ def post_carts_id_items(cart_id: int) -> Response:
     api = CartItemAPI()
     data = api.gen_request_data(api.post_columns)
     with conn.begin() as s:
-        model = update_or_insert_cart_item(s, data)
+        model = upsert_cart_item(s, data)
         update_cart(s, data)
         resource = api.gen_resource(s, model)
     return response(message=Text.CART_ITEM_ADDED, data=resource)
@@ -60,7 +60,7 @@ def patch_cart_id_items_id(cart_id: int, cart_item_id: int) -> Response:
     api = CartItemAPI()
     data = api.gen_request_data(api.patch_columns)
     with conn.begin() as s:
-        validate_cart(s, data)
+        authorize_cart(s, data)
         model = api.get(s, cart_item_id)
         api.update(s, data, model)
         update_cart(s, data)
@@ -84,7 +84,7 @@ def delete_cart_id_items_id(cart_id: int, cart_item_id: int) -> Response:
 #
 
 
-def update_or_insert_cart_item(s: Session, data: dict) -> CartItem:
+def upsert_cart_item(s: Session, data: dict) -> CartItem:
     cart_id = data["cart_id"]
     sku_id = data["sku_id"]
     quantity = data.get("quantity", 1)
@@ -106,14 +106,6 @@ def update_or_insert_cart_item(s: Session, data: dict) -> CartItem:
 
     s.flush()
     return model
-
-
-def validate_cart(s: Session, data: dict) -> None:
-    cart_id = data["cart_id"]
-    filters = {Cart.id == cart_id, Cart.user_id == current_user.id}
-    cart = s.query(Cart).filter(*filters).first()
-    if cart is None:
-        abort(response(404, ApiText.HTTP_404))
 
 
 def update_cart(s: Session, data: dict) -> None:
