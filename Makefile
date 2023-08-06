@@ -14,7 +14,7 @@ requirements:
 lint:
 	ruff check .
 	black . --check --quiet --diff --color
-	mypy .
+	mypy --install-types --non-interactive .
 	djlint . --check
 
 ## FORMATTING

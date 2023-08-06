@@ -91,7 +91,7 @@ def get_users_id(user_id: int) -> Response:
     api = UserAPI()
     with conn.begin() as s:
         filters = {User.id == current_user.id, User.is_active == true()}
-        model = api.get(s, user_id, filters)
+        model = api.get(s, user_id, *filters)
         resource = api.gen_resource(s, model)
     return response(data=resource)
 
@@ -102,8 +102,8 @@ def patch_users_id(user_id: int) -> Response:
     data = api.gen_request_data(api.patch_columns)
     with conn.begin() as s:
         filters = {User.id == current_user.id, User.is_active == true()}
-        model = api.get(s, user_id, filters)
-        api.patch(s, data, model)
+        model = api.get(s, user_id, *filters)
+        api.update(s, data, model)
         resource = api.gen_resource(s, model)
     return response(message=Text.USER_UPDATED, data=resource)
 
