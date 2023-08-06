@@ -1,8 +1,11 @@
+from flask import abort
+from flask_login import current_user
 from mollie.api.objects.payment import Payment
 from sqlalchemy.orm import Session
 
 from web.database.model import Cart, Order, Refund
 from web.document.objects.refund import gen_refund
+from web.helper.api import ApiText, response
 from web.helper.cart import get_shipment_methods
 from web.helper.fso import remove_file
 from web.helper.mollie_api import Mollie, mollie_amount
@@ -38,6 +41,15 @@ def create_refund(
         pdf_path=pdf_path,
     )
     remove_file(pdf_path)
+
+
+def authorize_cart(s: Session, data: dict) -> Cart:
+    cart_id = data["cart_id"]
+    filters = {Cart.id == cart_id, Cart.user_id == current_user.id}
+    cart = s.query(Cart).filter(*filters).first()
+    if cart is None:
+        abort(response(404, ApiText.HTTP_404))
+    return cart
 
 
 def update_cart_shipment_methods(s: Session, cart: Cart) -> None:

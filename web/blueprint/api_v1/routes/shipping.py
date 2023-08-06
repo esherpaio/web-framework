@@ -105,8 +105,8 @@ def set_user_id(s: Session, data: dict, shipping: Shipping) -> None:
 
 
 def update_cart(s: Session, data: dict, shipping: Shipping) -> None:
-    cart = s.query(Cart).filter_by(shipping_id=shipping.id).first()
-    if cart is not None:
+    carts = s.query(Cart).filter_by(shipping_id=shipping.id).all()
+    for cart in carts:
         update_cart_shipment_methods(s, cart)
 
 

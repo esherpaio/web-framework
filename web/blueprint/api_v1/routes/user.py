@@ -13,7 +13,7 @@ from web.blueprint.api_v1._base import API
 from web.database.client import conn
 from web.database.model import User
 from web.database.model.user_role import UserRoleId
-from web.helper.api import json_get, response
+from web.helper.api import response
 from web.i18n.base import _
 
 #
@@ -37,6 +37,9 @@ class UserAPI(API):
         User.billing_id,
         User.email,
         User.shipping_id,
+        "password",
+        "password_eval",
+        "email",
     }
     patch_columns = {
         User.billing_id,
@@ -114,8 +117,8 @@ def patch_users_id(user_id: int) -> Response:
 
 
 def set_password(s: Session, data: dict, model: User) -> None:
-    password, _ = json_get("password", str, nullable=False)
-    password_eval, _ = json_get("password_eval", str, nullable=False)
+    password = data["password"]
+    password_eval = data["password_eval"]
 
     if len(password) < 8:
         abort(response(400, Text.PASSWORD_LENGTH))
@@ -127,7 +130,8 @@ def set_password(s: Session, data: dict, model: User) -> None:
 
 
 def validate_email(s: Session, data: dict, model: User) -> None:
-    email, _ = json_get("email", str, nullable=False)
+    email = data["email"]
+
     if not re.match(r"[^@]+@[^@]+\.[^@]+", email):
         abort(response(400, Text.EMAIL_INVALID))
     user = s.query(User).filter(User.email == email.lower()).first()

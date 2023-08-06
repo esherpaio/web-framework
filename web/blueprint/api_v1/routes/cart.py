@@ -1,5 +1,6 @@
 from typing import Any
 
+from flask import abort
 from flask_login import current_user
 from sqlalchemy.orm.session import Session
 from werkzeug import Response
@@ -8,7 +9,7 @@ from web.blueprint.api_v1 import api_v1_bp
 from web.blueprint.api_v1._base import API
 from web.database.client import conn
 from web.database.model import Cart, Coupon, ShipmentMethod
-from web.helper.api import response
+from web.helper.api import ApiText, response
 from web.helper.cart import get_vat
 from web.helper.localization import current_locale
 
@@ -24,6 +25,7 @@ class CartAPI(API):
         Cart.shipping_id,
         Cart.coupon_id,
         Cart.shipment_method_id,
+        "coupon_code",
     }
     get_columns = {
         Cart.id,
@@ -95,7 +97,7 @@ def set_user_id(s: Session, data: dict, cart: Cart) -> None:
 
 
 def set_currency(s: Session, data: dict, cart: Cart) -> None:
-    if cart.billing is not None:
+    if cart.billing:
         country_code = cart.billing.country.code
         is_business = cart.billing.company is not None
         currency_id = cart.billing.country.currency_id
@@ -112,21 +114,23 @@ def set_currency(s: Session, data: dict, cart: Cart) -> None:
 
 def set_shipment(s: Session, data: dict, cart: Cart) -> None:
     shipment_method_id = data.get("shipment_method_id")
-    if cart.shipping_id and shipment_method_id:
+    if shipment_method_id is not None:
         shipment_method = (
             s.query(ShipmentMethod)
             .filter_by(id=shipment_method_id, is_deleted=False)
             .first()
         )
-        if shipment_method is not None:
-            cart.shipment_method_id = shipment_method.id
-            shipment_price = shipment_method.unit_price * cart.currency.rate
-            cart.shipment_price = shipment_price
+        if shipment_method is None:
+            abort(response(400, ApiText.HTTP_400))
+        shipment_price = shipment_method.unit_price * cart.currency.rate
+        cart.shipment_method_id = shipment_method.id
+        cart.shipment_price = shipment_price
 
 
 def set_coupon(s: Session, data: dict, cart: Cart) -> None:
     coupon_code = data.get("coupon_code")
-    if coupon_code:
+    if coupon_code is not None:
         coupon = s.query(Coupon).filter_by(code=coupon_code, is_deleted=False).first()
-        if coupon is not None:
-            cart.coupon_id = coupon.id
+        if coupon is None:
+            abort(response(400, ApiText.HTTP_400))
+        cart.coupon_id = coupon.id
