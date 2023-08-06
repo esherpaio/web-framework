@@ -1,3 +1,5 @@
+from typing import Any
+
 from flask_login import current_user
 from sqlalchemy.orm.session import Session
 from werkzeug import Response
@@ -48,7 +50,7 @@ class CartAPI(API):
 @api_v1_bp.post("/carts")
 def post_carts() -> Response:
     api = CartAPI()
-    data = {}
+    data: dict[str, Any] = {}
     with conn.begin() as s:
         model = api.model()
         set_user_id(s, data, model)
@@ -74,7 +76,7 @@ def patch_carts_id(cart_id: int) -> Response:
     data = api.gen_request_data(api.patch_columns)
     with conn.begin() as s:
         filters = {Cart.user_id == current_user.id}
-        model = api.get(s, cart_id, filters)
+        model = api.get(s, cart_id, *filters)
         set_currency(s, data, model)
         set_shipment(s, data, model)
         set_coupon(s, data, model)

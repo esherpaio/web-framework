@@ -48,7 +48,6 @@ class CartItemAPI(API):
 def post_carts_id_items(cart_id: int) -> Response:
     api = CartItemAPI()
     data = api.gen_request_data(api.post_columns)
-    data["cart_id"] = cart_id
     with conn.begin() as s:
         model = update_or_insert_cart_item(s, data)
         update_cart(s, data)
@@ -72,10 +71,10 @@ def patch_cart_id_items_id(cart_id: int, cart_item_id: int) -> Response:
 @api_v1_bp.delete("/carts/<int:cart_id>/items/<int:cart_item_id>")
 def delete_cart_id_items_id(cart_id: int, cart_item_id: int) -> Response:
     api = CartItemAPI()
-    data = {"cart_id": cart_id, "cart_item_id": cart_item_id}
+    data = api.gen_view_args_data()
     with conn.begin() as s:
         model = api.get(s, cart_item_id)
-        api.delete(model)
+        api.delete(s, model)
         update_cart(s, data)
     return response()
 
@@ -87,8 +86,8 @@ def delete_cart_id_items_id(cart_id: int, cart_item_id: int) -> Response:
 
 def update_or_insert_cart_item(s: Session, data: dict) -> CartItem:
     cart_id = data["cart_id"]
-    quantity = data["quantity"]
     sku_id = data["sku_id"]
+    quantity = data.get("quantity", 1)
 
     filters = {Cart.user_id == current_user.id, Cart.id == cart_id}
     cart = s.query(Cart).filter(*filters).first()

@@ -21,9 +21,11 @@ class API:
     # Parsing
     #
 
-    @staticmethod
+    @classmethod
     def gen_request_data(
+        cls,
         columns: set[Column],
+        include_view_args: bool = True,
     ) -> dict[str, Any]:
         if not has_request_context():
             raise RuntimeError
@@ -46,7 +48,20 @@ class API:
             )
             data[column.name] = value
 
+        if include_view_args:
+            view_args = cls.gen_view_args_data()
+            data.update(view_args)
+
         return data
+
+    @staticmethod
+    def gen_view_args_data() -> dict[str, Any]:
+        if not has_request_context():
+            raise RuntimeError
+        if request.view_args is None:
+            return {}
+
+        return request.view_args
 
     @classmethod
     def gen_query_data(
@@ -144,12 +159,10 @@ class API:
         cls,
         s: Session,
         id_: int,
-        filters: set[ColumnExpressionArgument[bool]] = None,
+        *filters: ColumnExpressionArgument[bool],
     ) -> Type[Model]:
         if cls.model is None:
             raise NotImplementedError
-        if filters is None:
-            filters = set()
 
         model = s.query(cls.model).filter(cls.model.id == id_, *filters).first()
         if model is None:
