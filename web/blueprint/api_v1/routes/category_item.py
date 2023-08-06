@@ -78,3 +78,8 @@ def delete_categories_id_items_id(category_id: int, item_id: int) -> Response:
         s.delete(category_item)
 
     return response()
+
+
+#
+# Functions
+#

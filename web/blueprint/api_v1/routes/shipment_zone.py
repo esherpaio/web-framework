@@ -104,3 +104,8 @@ def delete_shipment_zones_id(shipment_zone_id: int) -> Response:
             shipment_method.is_deleted = True
 
     return response()
+
+
+#
+# Functions
+#

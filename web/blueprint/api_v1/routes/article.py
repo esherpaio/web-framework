@@ -77,3 +77,8 @@ def delete_articles_id(article_id: int) -> Response:
         article.is_deleted = True
 
     return response()
+
+
+#
+# Functions
+#

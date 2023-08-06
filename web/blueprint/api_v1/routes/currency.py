@@ -2,7 +2,9 @@ from werkzeug import Response
 
 from web.blueprint.api_v1 import api_v1_bp
 from web.blueprint.api_v1._base import API
+from web.database.client import conn
 from web.database.model import Currency, UserRoleLevel
+from web.helper.api import response
 from web.helper.user import access_control
 
 #
@@ -34,23 +36,42 @@ class CurrencyAPI(API):
 @api_v1_bp.post("/currencies")
 def post_currencies() -> Response:
     api = CurrencyAPI()
-    return api.post()
+    data = api.gen_request_data(api.post_columns)
+    with conn.begin() as s:
+        model = api.model()
+        api.insert(s, data, model)
+        resource = api.gen_resource(s, model)
+    return response(data=resource)
 
 
 @api_v1_bp.get("/currencies")
 def get_currencies() -> Response:
     api = CurrencyAPI()
-    return api.get(as_list=True)
+    with conn.begin() as s:
+        models = api.list_(s)
+        resources = api.gen_resources(s, models)
+    return response(data=resources)
 
 
 @api_v1_bp.get("/currencies/<int:currency_id>")
 def get_currencies_id(currency_id: int) -> Response:
     api = CurrencyAPI()
-    return api.get(currency_id)
+    with conn.begin() as s:
+        model = api.get(s, currency_id)
+        resource = api.gen_resource(s, model)
+    return response(data=resource)
 
 
 @access_control(UserRoleLevel.ADMIN)
 @api_v1_bp.delete("/currencies/<int:currency_id>")
 def delete_currencies_id(currency_id: int) -> Response:
     api = CurrencyAPI()
-    return api.delete(currency_id)
+    with conn.begin() as s:
+        model = api.get(s, currency_id)
+        api.delete(s, model)
+    return response()
+
+
+#
+# Functions
+#

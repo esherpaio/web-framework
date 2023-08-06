@@ -48,3 +48,8 @@ def delete_coupons_id(coupon_id: int) -> Response:
         coupon.is_deleted = True
 
     return response()
+
+
+#
+# Functions
+#

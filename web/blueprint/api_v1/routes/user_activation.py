@@ -17,7 +17,7 @@ from web.mail.routes.user import send_verification_url
 #
 
 
-class _Text(StrEnum):
+class Text(StrEnum):
     ACTIVATION_CHECK = _("API_USER_ACTIVATION_CHECK")
     ACTIVATION_SUCCESS = _("API_USER_ACTIVATION_SUCCESS")
     VERIFICATION_FAILED = _("API_USER_VERIFICATION_FAILED")
@@ -53,7 +53,7 @@ def post_users_id_activation(user_id: int) -> Response:
             verification_url=verification_url,
         )
 
-    return response(200, message=_Text.ACTIVATION_CHECK)
+    return response(200, message=Text.ACTIVATION_CHECK)
 
 
 @api_v1_bp.patch("/users/<int:user_id>/activation")
@@ -69,14 +69,19 @@ def patch_users_id_activation(user_id: int) -> Response:
         # Check verification
         verification = s.query(Verification).filter_by(key=verification_key).first()
         if verification is None:
-            return response(401, _Text.VERIFICATION_FAILED)
+            return response(401, Text.VERIFICATION_FAILED)
         if not verification.is_valid:
-            return response(401, _Text.VERIFICATION_FAILED)
+            return response(401, Text.VERIFICATION_FAILED)
         if verification.user_id != user_id:
-            return response(401, _Text.VERIFICATION_FAILED)
+            return response(401, Text.VERIFICATION_FAILED)
 
         # Update activation
         user.is_active = True
         s.delete(verification)
 
-    return response(200, message=_Text.ACTIVATION_SUCCESS)
+    return response(200, message=Text.ACTIVATION_SUCCESS)
+
+
+#
+# Functions
+#

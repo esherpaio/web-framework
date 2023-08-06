@@ -5,6 +5,7 @@ from pyvat import check_vat_number
 from werkzeug import Response
 
 from web.blueprint.api_v1 import api_v1_bp
+from web.blueprint.api_v1._base import API
 from web.blueprint.api_v1.common.order_refund import create_refund
 from web.blueprint.api_v1.resource.order import get_resource
 from web.database.client import conn
@@ -21,11 +22,15 @@ from web.mail.routes.order import send_order_received
 #
 
 
-class _Text(StrEnum):
+class Text(StrEnum):
     PHONE_REQUIRED = _("API_ORDER_PHONE_REQUIRED")
     VAT_INVALID = _("API_ORDER_VAT_INVALID")
     VAT_NO_CONNECTION = _("API_ORDER_VAT_NO_CONNECTION")
     VAT_REQUIRED = _("API_ORDER_VAT_REQUIRED")
+
+
+class OrderAPI(API):
+    model = Order
 
 
 #
@@ -65,7 +70,7 @@ def post_orders() -> Response:
         # Check if phone is required for shipment method
         if cart.shipment_method:
             if cart.shipment_method.phone_required and not cart.billing.phone:
-                return response(400, _Text.PHONE_REQUIRED)
+                return response(400, Text.PHONE_REQUIRED)
 
         # Check if VAT is required in Europe
         if (
@@ -73,7 +78,7 @@ def post_orders() -> Response:
             and cart.billing.country.region.is_europe
             and not cart.billing.vat
         ):
-            return response(400, _Text.VAT_REQUIRED)
+            return response(400, Text.VAT_REQUIRED)
 
         # Check if VAT number is valid
         if cart.billing.vat:
@@ -82,9 +87,9 @@ def post_orders() -> Response:
                 vat_parsed, country_code=cart.billing.country.code
             )
             if vat_result.is_valid is None:
-                return response(500, _Text.VAT_NO_CONNECTION)
+                return response(500, Text.VAT_NO_CONNECTION)
             if not vat_result.is_valid:
-                return response(400, _Text.VAT_INVALID)
+                return response(400, Text.VAT_INVALID)
 
         # Insert order
         coupon_amount = cart.coupon.amount if cart.coupon else None
@@ -154,3 +159,8 @@ def delete_orders_id(order_id: int) -> Response:
             order.status_id = OrderStatusId.COMPLETED
 
     return response()
+
+
+#
+# Functions
+#

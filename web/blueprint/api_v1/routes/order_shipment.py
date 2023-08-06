@@ -45,3 +45,8 @@ def post_orders_id_shipments(order_id: int) -> Response:
         )
 
     return response()
+
+
+#
+# Functions
+#

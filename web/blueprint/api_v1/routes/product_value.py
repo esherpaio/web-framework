@@ -102,3 +102,8 @@ def delete_products_id_values_id(product_id: int, value_id: int) -> Response:
             sku.is_deleted = True
 
     return response()
+
+
+#
+# Functions
+#

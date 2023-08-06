@@ -132,3 +132,8 @@ def delete_skus_id(sku_id: int) -> Response:
             s.delete(category_item)
 
     return response()
+
+
+#
+# Functions
+#

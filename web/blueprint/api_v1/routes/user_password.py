@@ -18,7 +18,7 @@ from web.mail.routes.user import send_new_password
 #
 
 
-class _Text(StrEnum):
+class Text(StrEnum):
     PASSWORD_LENGTH = _("API_USER_PASSWORD_LENGTH")
     PASSWORD_NO_MATCH = _("API_USER_PASSWORD_NO_MATCH")
     PASSWORD_REQUEST_SEND = _("API_USER_PASSWORD_REQUEST_SEND")
@@ -56,7 +56,7 @@ def post_users_id_password(user_id: int) -> Response:
             reset_url=reset_url,
         )
 
-    return response(200, _Text.PASSWORD_REQUEST_SEND)
+    return response(200, Text.PASSWORD_REQUEST_SEND)
 
 
 @api_v1_bp.patch("/users/<int:user_id>/password")
@@ -74,21 +74,26 @@ def patch_users_id_password(user_id: int) -> Response:
         # Check verification
         verification = s.query(Verification).filter_by(key=verification_key).first()
         if verification is None:
-            return response(401, _Text.VERIFICATION_FAILED)
+            return response(401, Text.VERIFICATION_FAILED)
         if not verification.is_valid:
-            return response(401, _Text.VERIFICATION_FAILED)
+            return response(401, Text.VERIFICATION_FAILED)
         if verification.user_id != user_id:
-            return response(401, _Text.VERIFICATION_FAILED)
+            return response(401, Text.VERIFICATION_FAILED)
 
         # Check password
         if len(password) < 8:
-            return response(400, _Text.PASSWORD_LENGTH)
+            return response(400, Text.PASSWORD_LENGTH)
         if password != password_eval:
-            return response(400, _Text.PASSWORD_NO_MATCH)
+            return response(400, Text.PASSWORD_NO_MATCH)
 
         # Update password
         password_hash = generate_password_hash(password, "pbkdf2:sha256:1000000")
         user.password_hash = password_hash
         s.delete(verification)
 
-    return response(200, _Text.PASSWORD_RESET_SUCCESS)
+    return response(200, Text.PASSWORD_RESET_SUCCESS)
+
+
+#
+# Functions
+#
