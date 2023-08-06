@@ -136,3 +136,8 @@ def delete_articles_id_media_id(article_id: int, media_id: int) -> Response:
         s.delete(article_media)
 
     return response()
+
+
+#
+# Functions
+#

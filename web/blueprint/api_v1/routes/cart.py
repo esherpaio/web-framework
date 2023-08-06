@@ -4,7 +4,9 @@ from werkzeug import Response
 
 from web.blueprint.api_v1 import api_v1_bp
 from web.blueprint.api_v1._base import API
+from web.database.client import conn
 from web.database.model import Cart, Coupon, ShipmentMethod
+from web.helper.api import response
 from web.helper.cart import get_vat
 from web.helper.localization import current_locale
 
@@ -38,6 +40,58 @@ class CartAPI(API):
     }
 
 
+#
+# Endpoints
+#
+
+
+@api_v1_bp.post("/carts")
+def post_carts() -> Response:
+    api = CartAPI()
+    data = {}
+    with conn.begin() as s:
+        model = api.model()
+        set_user_id(s, data, model)
+        set_currency(s, data, model)
+        api.insert(s, data, model)
+        resource = api.gen_resource(s, model)
+    return response(data=resource)
+
+
+@api_v1_bp.get("/carts")
+def get_carts() -> Response:
+    api = CartAPI()
+    with conn.begin() as s:
+        filters = {Cart.user_id == current_user.id}
+        models = api.list_(s, *filters, limit=1)
+        resources = api.gen_resources(s, models)
+    return response(data=resources)
+
+
+@api_v1_bp.patch("/carts/<int:cart_id>")
+def patch_carts_id(cart_id: int) -> Response:
+    api = CartAPI()
+    data = api.gen_request_data(api.patch_columns)
+    with conn.begin() as s:
+        filters = {Cart.user_id == current_user.id}
+        model = api.get(s, cart_id, filters)
+        set_currency(s, data, model)
+        set_shipment(s, data, model)
+        set_coupon(s, data, model)
+        api.update(s, data, model)
+        resource = api.gen_resource(s, model)
+    return response(data=resource)
+
+
+#
+# Functions
+#
+
+
+def set_user_id(s: Session, data: dict, cart: Cart) -> None:
+    cart.user_id = current_user.id
+
+
 def set_currency(s: Session, data: dict, cart: Cart) -> None:
     if cart.billing is not None:
         country_code = cart.billing.country.code
@@ -64,7 +118,8 @@ def set_shipment(s: Session, data: dict, cart: Cart) -> None:
         )
         if shipment_method is not None:
             cart.shipment_method_id = shipment_method.id
-            cart.shipment_price = shipment_method.unit_price * cart.currency.rate
+            shipment_price = shipment_method.unit_price * cart.currency.rate
+            cart.shipment_price = shipment_price
 
 
 def set_coupon(s: Session, data: dict, cart: Cart) -> None:
@@ -73,37 +128,3 @@ def set_coupon(s: Session, data: dict, cart: Cart) -> None:
         coupon = s.query(Coupon).filter_by(code=coupon_code, is_deleted=False).first()
         if coupon is not None:
             cart.coupon_id = coupon.id
-
-
-#
-# Endpoints
-#
-
-
-@api_v1_bp.post("/carts")
-def post_carts() -> Response:
-    api = CartAPI()
-    return api.post(
-        add_request={"user_id": current_user.id},
-        pre_calls=[set_currency],
-    )
-
-
-@api_v1_bp.get("/carts")
-def get_carts() -> Response:
-    api = CartAPI()
-    return api.get(
-        filters={Cart.user_id == current_user.id},
-        as_list=True,
-        max_size=1,
-    )
-
-
-@api_v1_bp.patch("/carts/<int:cart_id>")
-def patch_carts_id(cart_id: int) -> Response:
-    api = CartAPI()
-    return api.patch(
-        cart_id,
-        filters={Cart.user_id == current_user.id},
-        post_calls=[set_currency, set_shipment, set_coupon],
-    )

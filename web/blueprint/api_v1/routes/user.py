@@ -10,6 +10,7 @@ from werkzeug.security import generate_password_hash
 
 from web.blueprint.api_v1 import api_v1_bp
 from web.blueprint.api_v1._base import API
+from web.database.client import conn
 from web.database.model import User
 from web.database.model.user_role import UserRoleId
 from web.helper.api import json_get, response
@@ -37,13 +38,13 @@ class UserAPI(API):
         User.email,
         User.shipping_id,
     }
-    post_message = Text.USER_CREATED
     patch_columns = {
         User.billing_id,
         User.shipping_id,
     }
-    patch_message = Text.USER_UPDATED
-    get_args = {User.email}
+    get_args = {
+        User.email,
+    }
     get_columns = {
         User.attributes,
         User.billing_id,
@@ -55,34 +56,6 @@ class UserAPI(API):
     }
 
 
-def val_password(s: Session, data: dict, *args) -> None:
-    password, _ = json_get("password", str, nullable=False)
-    password_eval, _ = json_get("password_eval", str, nullable=False)
-    if len(password) < 8:
-        abort(response(400, Text.PASSWORD_LENGTH))
-    if password != password_eval:
-        abort(response(400, Text.PASSWORD_NO_MATCH))
-
-
-def val_email(s: Session, data: dict, *args) -> None:
-    email, _ = json_get("email", str, nullable=False)
-    if not re.match(r"[^@]+@[^@]+\.[^@]+", email):
-        abort(response(400, Text.EMAIL_INVALID))
-    user = s.query(User).filter(User.email == email.lower()).first()
-    if user is not None:
-        abort(response(409, Text.EMAIL_IN_USE))
-
-
-def set_password(s: Session, data: dict, *args) -> None:
-    password, _ = json_get("password", str, nullable=False)
-    password_hash = generate_password_hash(password, "pbkdf2:sha256:1000000")
-    data["password_hash"] = password_hash
-
-
-def set_role_id(s: Session, data: dict, *args) -> None:
-    data["role_id"] = UserRoleId.USER
-
-
 #
 # Endpoints
 #
@@ -91,34 +64,76 @@ def set_role_id(s: Session, data: dict, *args) -> None:
 @api_v1_bp.post("/users")
 def post_users() -> Response:
     api = UserAPI()
-    return api.post(
-        pre_calls=[val_password, val_email, set_password, set_role_id],
-    )
+    data = api.gen_request_data(api.post_columns)
+    with conn.begin() as s:
+        model = api.model()
+        set_password(s, data, model)
+        validate_email(s, data, model)
+        set_role_id(s, data, model)
+        api.insert(s, data, model)
+        resource = api.gen_resource(s, model)
+    return response(message=Text.USER_CREATED, data=resource)
 
 
 @api_v1_bp.get("/users")
 def get_users() -> Response:
     api = UserAPI()
-    return api.get(
-        as_list=True,
-        max_size=1,
-        args_required=True,
-    )
+    data = api.gen_query_data(api.get_args)
+    with conn.begin() as s:
+        filters = api.gen_query_filters(data, required=True)
+        models = api.list_(s, *filters, limit=1)
+        resources = api.gen_resources(s, models)
+    return response(data=resources)
 
 
 @api_v1_bp.get("/users/<int:user_id>")
 def get_users_id(user_id: int) -> Response:
     api = UserAPI()
-    return api.get(
-        user_id,
-        filters={User.id == current_user.id, User.is_active == true()},
-    )
+    with conn.begin() as s:
+        filters = {User.id == current_user.id, User.is_active == true()}
+        model = api.get(s, user_id, filters)
+        resource = api.gen_resource(s, model)
+    return response(data=resource)
 
 
 @api_v1_bp.patch("/users/<int:user_id>")
 def patch_users_id(user_id: int) -> Response:
     api = UserAPI()
-    return api.patch(
-        user_id,
-        filters={User.id == current_user.id, User.is_active == true()},
-    )
+    data = api.gen_request_data(api.patch_columns)
+    with conn.begin() as s:
+        filters = {User.id == current_user.id, User.is_active == true()}
+        model = api.get(s, user_id, filters)
+        api.patch(s, data, model)
+        resource = api.gen_resource(s, model)
+    return response(message=Text.USER_UPDATED, data=resource)
+
+
+#
+# Functions
+#
+
+
+def set_password(s: Session, data: dict, model: User) -> None:
+    password, _ = json_get("password", str, nullable=False)
+    password_eval, _ = json_get("password_eval", str, nullable=False)
+
+    if len(password) < 8:
+        abort(response(400, Text.PASSWORD_LENGTH))
+    if password != password_eval:
+        abort(response(400, Text.PASSWORD_NO_MATCH))
+
+    password_hash = generate_password_hash(password, "pbkdf2:sha256:1000000")
+    model.password_hash = password_hash
+
+
+def validate_email(s: Session, data: dict, model: User) -> None:
+    email, _ = json_get("email", str, nullable=False)
+    if not re.match(r"[^@]+@[^@]+\.[^@]+", email):
+        abort(response(400, Text.EMAIL_INVALID))
+    user = s.query(User).filter(User.email == email.lower()).first()
+    if user is not None:
+        abort(response(409, Text.EMAIL_IN_USE))
+
+
+def set_role_id(s: Session, data: dict, model: User) -> None:
+    model.role_id = UserRoleId.USER

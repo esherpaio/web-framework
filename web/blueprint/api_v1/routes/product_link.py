@@ -58,3 +58,8 @@ def delete_products_id_links_id(product_id: int, link_id: int) -> Response:
         s.delete(product_link)
 
     return response()
+
+
+#
+# Functions
+#

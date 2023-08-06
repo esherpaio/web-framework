@@ -100,3 +100,8 @@ def delete_products_id(product_id: int) -> Response:
                 s.delete(category_item)
 
     return response()
+
+
+#
+# Functions
+#

@@ -13,7 +13,7 @@ from web.mail.routes.custom import send_custom_1
 #
 
 
-class _Text(StrEnum):
+class Text(StrEnum):
     CONTACT_SUCCESS = _("API_MAIL_CONTACT_SUCCESS")
     TEMPLATE_ID_INVALID = _("API_MAIL_INVALID_TEMPLATE_ID")
 
@@ -31,10 +31,15 @@ def post_emails_contact() -> Response:
     if template_id == "contact":
         send_contact_business(**data)
         send_contact_customer(email=data["email"], message=data["message"])
-        return response(200, _Text.CONTACT_SUCCESS)
+        return response(200, Text.CONTACT_SUCCESS)
     elif template_id == "custom_1":
         send_custom_1(**data)
         send_contact_customer(email=data["email"], message=data["message"])
-        return response(200, _Text.CONTACT_SUCCESS)
+        return response(200, Text.CONTACT_SUCCESS)
 
-    return response(400, _Text.TEMPLATE_ID_INVALID)
+    return response(400, Text.TEMPLATE_ID_INVALID)
+
+
+#
+# Functions
+#

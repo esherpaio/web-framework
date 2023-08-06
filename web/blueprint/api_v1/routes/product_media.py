@@ -137,3 +137,8 @@ def delete_products_id_media_id(product_id: int, media_id) -> Response:
         s.delete(product_media)
 
     return response()
+
+
+#
+# Functions
+#

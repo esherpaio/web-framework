@@ -52,3 +52,8 @@ def post_orders_id_payments(order_id: int) -> Response:
 
     links = {"payment": mollie_payment.checkout_url}
     return response(links=links)
+
+
+#
+# Functions
+#

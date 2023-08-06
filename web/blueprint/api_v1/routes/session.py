@@ -19,7 +19,7 @@ from web.i18n.base import _
 #
 
 
-class _Text(StrEnum):
+class Text(StrEnum):
     CHECK_DETAILS = _("API_SESSION_CHECK_DETAILS")
     CHECK_ACTIVATION = _("API_SESSION_CHECK_ACTIVATION")
 
@@ -41,11 +41,11 @@ def post_session() -> Response:
 
     # Validate user
     if not user:
-        return response(400, _Text.CHECK_DETAILS)
+        return response(400, Text.CHECK_DETAILS)
     if not user.is_active:
-        return response(400, _Text.CHECK_ACTIVATION)
+        return response(400, Text.CHECK_ACTIVATION)
     if not check_password_hash(user.password_hash, password):
-        return response(400, _Text.CHECK_DETAILS)
+        return response(400, Text.CHECK_DETAILS)
 
     # Wait random interval
     sleep_s = randint(0, 1000) / 1000
@@ -66,3 +66,8 @@ def delete_session() -> Response:
     # Logout user
     flask_login.logout_user()
     return response()
+
+
+#
+# Functions
+#

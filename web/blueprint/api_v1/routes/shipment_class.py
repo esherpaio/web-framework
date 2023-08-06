@@ -75,3 +75,8 @@ def delete_shipment_classes_id(shipment_class_id: int) -> Response:
             shipment_method.is_deleted = True
 
     return response()
+
+
+#
+# Functions
+#

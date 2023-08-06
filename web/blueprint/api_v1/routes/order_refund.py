@@ -16,7 +16,7 @@ from web.i18n.base import _
 #
 
 
-class _Text(StrEnum):
+class Text(StrEnum):
     INVOICE_NOT_FOUND = _("API_ORDER_REFUND_INVOICE_NOT_FOUND")
     PAYMENT_INCOMPLETE = _("API_ORDER_REFUND_PAYMENT_INCOMPLETE")
     REFUND_NOT_ALLOWED = _("API_ORDER_REFUND_NOT_ALLOWED")
@@ -41,23 +41,28 @@ def post_orders_id_refund(order_id: int) -> Response:
 
         # Check if an invoice exists
         if not order.invoice:
-            return response(400, _Text.INVOICE_NOT_FOUND)
+            return response(400, Text.INVOICE_NOT_FOUND)
 
         # Check if the order has a Mollie ID
         if not order.mollie_id:
-            return response(404, _Text.PAYMENT_INCOMPLETE)
+            return response(404, Text.PAYMENT_INCOMPLETE)
 
         # Check if Mollie allows a refund
         mollie_payment = Mollie().payments.get(order.mollie_id)
         if not mollie_payment.can_be_refunded():
-            return response(404, _Text.REFUND_NOT_ALLOWED)
+            return response(404, Text.REFUND_NOT_ALLOWED)
 
         # Check if the refund amount is not too high
         if price > order.remaining_refund_amount:
-            return response(400, _Text.REFUND_TOO_HIGH)
+            return response(400, Text.REFUND_TOO_HIGH)
 
         # Create refund
         price_vat = round(price * order.vat_rate, 2)
         create_refund(s, mollie_payment, order, price, price_vat)
 
     return response()
+
+
+#
+# Functions
+#

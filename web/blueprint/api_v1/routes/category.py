@@ -78,3 +78,8 @@ def delete_categories_id(category_id: int) -> Response:
         category.is_deleted = True
 
     return response()
+
+
+#
+# Functions
+#

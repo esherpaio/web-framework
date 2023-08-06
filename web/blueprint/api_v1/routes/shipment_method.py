@@ -78,3 +78,8 @@ def delete_shipment_methods_id(shipment_method_id: int) -> Response:
         shipment_method.is_deleted = True
 
     return response()
+
+
+#
+# Functions
+#
