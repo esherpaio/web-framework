@@ -1,19 +1,19 @@
-function postcurrencies(data, silent = false) {
-    const url = `/api/v1/countries`;
+function postCurrencies(data, silent = false) {
+    const url = `/api/v1/currencies`;
     return callApi('POST', url, data, 'application/json', silent);
 }
 
-function getcurrencies(silent = false) {
-    const url = `/api/v1/countries`;
+function getCurrencies(silent = false) {
+    const url = `/api/v1/currencies`;
     return callApi('GET', url, null, null, silent);
 }
 
-function getcurrenciesId(countryId, silent = false) {
-    const url = `/api/v1/countries/${countryId}`;
+function getCurrenciesId(currencyId, silent = false) {
+    const url = `/api/v1/currencies/${currencyId}`;
     return callApi('GET', url, null, null, silent);
 }
 
-function deletecurrenciesId(countryId, silent = false) {
-    const url = `/api/v1/countries/${countryId}`;
+function deleteCurrenciesId(currencyId, silent = false) {
+    const url = `/api/v1/currencies/${currencyId}`;
     return callApi('DELETE', url, null, null, silent);
 }
