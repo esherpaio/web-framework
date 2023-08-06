@@ -58,7 +58,7 @@ def post_orders() -> Response:
         order_lines = get_order_lines(s, data, order, cart)
         s.add_all(order_lines)
         s.flush()
-        email_order(s, order)
+        email_order(s, data, order)
         resource = api.gen_resource(s, order)
     return response(data=resource)
 
@@ -147,7 +147,7 @@ def get_order_lines(
     return order_lines
 
 
-def email_order(s: Session, order: Order) -> None:
+def email_order(s: Session, data: dict, order: Order) -> None:
     send_order_received(
         order_id=order.id,
         billing_email=order.billing.email,
