@@ -52,12 +52,12 @@ def post_orders_id_refund(order_id: int) -> Response:
         if not mollie_payment.can_be_refunded():
             return response(404, Text.REFUND_NOT_ALLOWED)
 
-        # Check if the refund amount is not too high
+        # Generate price
         if price > order.remaining_refund_amount:
-            return response(400, Text.REFUND_TOO_HIGH)
+            price = order.remaining_refund_amount
+        price_vat = round(price * order.vat_rate, 2)
 
         # Create refund
-        price_vat = round(price * order.vat_rate, 2)
         create_refund(s, mollie_payment, order, price, price_vat)
 
     return response()
