@@ -4,6 +4,12 @@ This repository is a custom web framework for clients of Enlarge.
 
 ## Changelog
 
+### 2023-08-15
+
+Improvements:
+- Moved the generate sku endpoint to the product domain
+- Refund the maximum amount when the amount is too high
+
 ### 2023-07-23
 
 Additions:
