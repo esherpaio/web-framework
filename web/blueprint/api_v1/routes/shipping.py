@@ -65,7 +65,7 @@ def post_shippings() -> Response:
     data = api.gen_request_data(api.post_columns)
     with conn.begin() as s:
         model = api.model()
-        set_user_id(s, data, model)
+        set_user(s, data, model)
         api.insert(s, data, model)
         resource = api.gen_resource(s, model)
     return response(data=resource)
@@ -88,9 +88,9 @@ def patch_shippings_id(shipping_id: int) -> Response:
     with conn.begin() as s:
         filters = {Shipping.user_id == current_user.id}
         model = api.get(s, shipping_id, *filters)
-        check_order(s, data, model)
+        val_order(s, data, model)
         api.update(s, data, model)
-        update_cart(s, data, model)
+        set_cart(s, data, model)
         resource = api.gen_resource(s, model)
     return response(data=resource)
 
@@ -100,17 +100,17 @@ def patch_shippings_id(shipping_id: int) -> Response:
 #
 
 
-def set_user_id(s: Session, data: dict, shipping: Shipping) -> None:
+def set_user(s: Session, data: dict, shipping: Shipping) -> None:
     shipping.user_id = current_user.id
 
 
-def update_cart(s: Session, data: dict, shipping: Shipping) -> None:
+def set_cart(s: Session, data: dict, shipping: Shipping) -> None:
     carts = s.query(Cart).filter_by(shipping_id=shipping.id).all()
     for cart in carts:
         update_cart_shipment_methods(s, cart)
 
 
-def check_order(s: Session, data: dict, shipping: Shipping) -> None:
+def val_order(s: Session, data: dict, shipping: Shipping) -> None:
     filters = {Order.shipping_id == shipping.id}
     order = s.query(Order).filter(*filters).first()
     if order is not None:

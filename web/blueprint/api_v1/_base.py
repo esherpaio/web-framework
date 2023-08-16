@@ -6,7 +6,7 @@ from sqlalchemy.orm.attributes import InstrumentedAttribute
 from sqlalchemy.orm.session import Session
 
 from web.database.model import Model
-from web.helper.api import ApiText, args_get, json_get, response
+from web.helper.api import ApiText, json_get, response
 from web.helper.logger import logger
 
 
@@ -20,6 +20,24 @@ class API:
     #
     # Parsing
     #
+
+    @staticmethod
+    def parse_column(data: dict, column: Column | str) -> tuple[str | None, Any]:
+        key, value = None, None
+        if isinstance(column, InstrumentedAttribute):
+            if column.name in data:
+                key = column.name
+                value, _ = json_get(
+                    key,
+                    column.type.python_type,
+                    nullable=column.nullable,
+                    default=column.default,
+                )
+        elif isinstance(column, str):
+            if column in data:
+                key = column
+                value = data.get(column)
+        return key, value
 
     @classmethod
     def gen_request_data(
@@ -36,24 +54,9 @@ class API:
         if not isinstance(request_json, dict):
             abort(response(400, ApiText.HTTP_400))
 
-        data: dict = {}
+        data = {}
         for column in columns:
-            key, value = None, None
-            if isinstance(column, InstrumentedAttribute):
-                if column.name not in request_json:
-                    continue
-                key = column.name
-                value, _ = json_get(
-                    key,
-                    column.type.python_type,
-                    nullable=column.nullable,
-                    default=column.default,
-                )
-            elif isinstance(column, str):
-                key = column
-                if key not in request_json:
-                    continue
-                value = request_json.get(column)
+            key, value = cls.parse_column(request_json, column)
             if key is not None:
                 data[key] = value
 
@@ -83,24 +86,10 @@ class API:
             return {}
 
         request_args = request.args.to_dict()
+
         data = {}
         for arg in args:
-            key, value = None, None
-            if isinstance(arg, InstrumentedAttribute):
-                if arg.name not in request_args:
-                    continue
-                key = arg.name
-                value, _ = args_get(
-                    key,
-                    arg.type.python_type,
-                    nullable=arg.nullable,
-                    default=arg.default,
-                )
-            elif isinstance(arg, str):
-                key = arg
-                if key not in request_args:
-                    continue
-                value = request_args.get(arg)
+            key, value = cls.parse_column(request_args, arg)
             if key is not None:
                 data[key] = value
 
@@ -152,6 +141,8 @@ class API:
     ) -> set[ColumnExpressionArgument[bool]]:
         filters = set()
         for key, value in query_data.items():
+            if not hasattr(cls.model, key):
+                continue
             filter_ = getattr(cls.model, key) == value
             filters.add(filter_)
 
