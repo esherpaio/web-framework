@@ -45,7 +45,7 @@ def get_verifications() -> Response:
         filters = api.gen_query_filters(data, required=True)
         models = api.list_(s, *filters, limit=1)
         for model in models:
-            val_expiration(s, data, model)
+            val_verification(s, data, model)
         resources = api.gen_resources(s, models)
     return response(data=resources)
 
@@ -55,6 +55,6 @@ def get_verifications() -> Response:
 #
 
 
-def val_expiration(s: Session, data: dict, verification: Verification) -> None:
+def val_verification(s: Session, data: dict, verification: Verification) -> None:
     if not verification.is_valid:
         abort(response(400, Text.VERIFICATION_INVALID))

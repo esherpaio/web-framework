@@ -34,6 +34,7 @@ class Text(StrEnum):
 def post_session() -> Response:
     email, _ = json_get("email", str, nullable=False)
     password, _ = json_get("password", str, nullable=False)
+    remember, _ = json_get("remember", bool, default=False)
 
     # Get user
     with conn.begin() as s:
@@ -53,7 +54,7 @@ def post_session() -> Response:
 
     # Login user
     flask_user = FlaskUser(user)
-    flask_login.login_user(flask_user, remember=True)
+    flask_login.login_user(flask_user, remember=remember)
     return response()
 
 

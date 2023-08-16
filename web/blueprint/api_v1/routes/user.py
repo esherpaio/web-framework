@@ -71,8 +71,8 @@ def post_users() -> Response:
     with conn.begin() as s:
         model = api.model()
         set_password(s, data, model)
-        validate_email(s, data, model)
-        set_role_id(s, data, model)
+        val_email(s, data, model)
+        set_role(s, data, model)
         api.insert(s, data, model)
         resource = api.gen_resource(s, model)
     return response(message=Text.USER_CREATED, data=resource)
@@ -129,7 +129,7 @@ def set_password(s: Session, data: dict, model: User) -> None:
     model.password_hash = password_hash
 
 
-def validate_email(s: Session, data: dict, model: User) -> None:
+def val_email(s: Session, data: dict, model: User) -> None:
     email = data["email"]
 
     if not re.match(r"[^@]+@[^@]+\.[^@]+", email):
@@ -139,5 +139,5 @@ def validate_email(s: Session, data: dict, model: User) -> None:
         abort(response(409, Text.EMAIL_IN_USE))
 
 
-def set_role_id(s: Session, data: dict, model: User) -> None:
+def set_role(s: Session, data: dict, model: User) -> None:
     model.role_id = UserRoleId.USER

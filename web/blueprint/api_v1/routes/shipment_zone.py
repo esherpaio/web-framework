@@ -1,4 +1,3 @@
-from sqlalchemy import and_, or_
 from werkzeug import Response
 
 from web.blueprint.api_v1 import api_v1_bp
@@ -29,16 +28,8 @@ def post_shipment_zones() -> Response:
         shipment_zone = (
             s.query(ShipmentZone)
             .filter(
-                or_(
-                    and_(
-                        ShipmentZone.country_id.is_(None),
-                        ShipmentZone.region_id == region_id,
-                    ),
-                    and_(
-                        ShipmentZone.country_id == country_id,
-                        ShipmentZone.region_id.is_(None),
-                    ),
-                ),
+                ShipmentZone.country_id == country_id,
+                ShipmentZone.region_id == region_id,
             )
             .first()
         )

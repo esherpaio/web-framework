@@ -1,6 +1,6 @@
 from enum import StrEnum
 
-from flask import abort
+from flask import abort, g
 from flask_login import current_user
 from pyvat import check_vat_number
 from sqlalchemy.orm.session import Session
@@ -8,7 +8,7 @@ from werkzeug import Response
 
 from web.blueprint.api_v1 import api_v1_bp
 from web.blueprint.api_v1._base import API
-from web.blueprint.api_v1._common import authorize_cart, create_refund
+from web.blueprint.api_v1._common import create_refund
 from web.database.client import conn
 from web.database.model import Cart, Order, OrderLine, OrderStatusId, UserRoleLevel
 from web.helper.api import ApiText, response
@@ -50,15 +50,13 @@ def post_orders() -> Response:
     api = OrderAPI()
     data = api.gen_request_data(api.post_columns)
     with conn.begin() as s:
-        cart = authorize_cart(s, data)
-        check_cart(s, data, cart)
-        order = get_order(s, data, cart)
-        s.add(order)
-        s.flush()
-        order_lines = get_order_lines(s, data, order, cart)
-        s.add_all(order_lines)
-        s.flush()
-        email_order(s, data, order)
+        get_cart(s, data)
+        val_cart(s, data)
+        order = api.model()
+        set_order(s, data, order)
+        api.insert(s, data, order)
+        set_order_lines(s, data, order)
+        mail_order(s, data, order)
         resource = api.gen_resource(s, order)
     return response(data=resource)
 
@@ -67,9 +65,10 @@ def post_orders() -> Response:
 @api_v1_bp.delete("/orders/<int:order_id>")
 def delete_orders_id(order_id: int) -> Response:
     api = OrderAPI()
+    data = api.gen_view_args_data()
     with conn.begin() as s:
         order = api.get(s, order_id)
-        cancel_mollie(s, order)
+        cancel_mollie(s, data, order)
     return response()
 
 
@@ -78,7 +77,18 @@ def delete_orders_id(order_id: int) -> Response:
 #
 
 
-def check_cart(s: Session, data: dict, cart: Cart) -> None:
+def get_cart(s: Session, data: dict, *args) -> None:
+    cart_id = data["cart_id"]
+    filters = {Cart.id == cart_id, Cart.user_id == current_user.id}
+    cart = s.query(Cart).filter(*filters).first()
+    if cart is None:
+        abort(response(404, ApiText.HTTP_404))
+    g.cart = cart
+
+
+def val_cart(s: Session, data: dict, *args) -> None:
+    cart = g.cart
+
     # Check shipment method
     shipment_methods = get_shipment_methods(s, cart)
     if shipment_methods is not None:
@@ -113,8 +123,9 @@ def check_cart(s: Session, data: dict, cart: Cart) -> None:
             abort(response(400, Text.VAT_INVALID))
 
 
-def get_order(s: Session, data: dict, cart: Cart) -> Order:
-    order = Order()
+def set_order(s: Session, data: dict, order: Order) -> None:
+    cart = g.cart
+
     if cart.coupon is not None:
         order.coupon_amount = cart.coupon.amount
         order.coupon_code = cart.coupon.code
@@ -130,13 +141,12 @@ def get_order(s: Session, data: dict, cart: Cart) -> Order:
     order.vat_reverse = cart.vat_reverse
     order.user_id = current_user.id
     order.status_id = OrderStatusId.PENDING
-    return order
 
 
-def get_order_lines(
-    s: Session, data: dict, order: Order, cart: Cart
-) -> list[OrderLine]:
+def set_order_lines(s: Session, data: dict, order: Order) -> None:
+    cart = g.cart
     order_lines = []
+
     for cart_item in cart.items:
         order_line = OrderLine()
         order_line.order_id = order.id
@@ -144,10 +154,13 @@ def get_order_lines(
         order_line.quantity = cart_item.quantity
         order_line.total_price = cart_item.total_price
         order_lines.append(order_line)
-    return order_lines
+
+    s.add_all(order_lines)
+    s.flush()
+    g.order_lines = order_lines
 
 
-def email_order(s: Session, data: dict, order: Order) -> None:
+def mail_order(s: Session, data: dict, order: Order) -> None:
     send_order_received(
         order_id=order.id,
         billing_email=order.billing.email,
@@ -155,16 +168,16 @@ def email_order(s: Session, data: dict, order: Order) -> None:
     )
 
 
-def cancel_mollie(s: Session, order: Order) -> None:
-    # Try to cancel Mollie payment
-    mollie_payment = Mollie().payments.get(order.mollie_id)
-    if mollie_payment.is_cancelable:
+def cancel_mollie(s: Session, data: dict, order: Order) -> None:
+    # Try to cancel the Mollie payment
+    mollie = Mollie().payments.get(order.mollie_id)
+    if mollie.is_cancelable:
         Mollie().payments.delete(order.mollie_id)
         order.status_id = OrderStatusId.COMPLETED
 
-    # Try to refund Mollie payment
+    # Try to refund the order
     if order.is_refundable:
         price = order.remaining_refund_amount
         price_vat = price * order.vat_rate
-        create_refund(s, mollie_payment, order, price, price_vat)
+        create_refund(s, mollie, order, price, price_vat)
         order.status_id = OrderStatusId.COMPLETED
