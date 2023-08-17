@@ -51,7 +51,6 @@ def post_users_id_password(user_id: int) -> Response:
             verification_key=verification_key,
             _external=True,
         )
-        print(user.email)
         send_new_password(
             email=user.email,
             reset_url=reset_url,
