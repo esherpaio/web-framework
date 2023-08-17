@@ -55,7 +55,7 @@ def post_carts() -> Response:
     data: dict[str, Any] = {}
     with conn.begin() as s:
         model = api.model()
-        set_user_id(s, data, model)
+        set_user(s, data, model)
         set_currency(s, data, model)
         api.insert(s, data, model)
         resource = api.gen_resource(s, model)
@@ -92,7 +92,7 @@ def patch_carts_id(cart_id: int) -> Response:
 #
 
 
-def set_user_id(s: Session, data: dict, cart: Cart) -> None:
+def set_user(s: Session, data: dict, cart: Cart) -> None:
     cart.user_id = current_user.id
 
 
