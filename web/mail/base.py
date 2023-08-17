@@ -74,13 +74,8 @@ def _send_smtp(
         attachment.add_header("Content-Disposition", "attachment", filename=blob_name)
         message.attach(attachment)
     # Send the message
-    try:
-        conn = SMTP(config.SMTP_HOST, port=config.SMTP_PORT, timeout=10)
-        conn.set_debuglevel(False)
-        conn.login(config.SMTP_USERNAME, config.SMTP_PASSWORD)
-        try:
-            conn.sendmail(from_, to, message.as_string())
-        finally:
-            conn.quit()
-    except Exception as error:
-        logger.critical(error)
+    conn = SMTP(config.SMTP_HOST, port=config.SMTP_PORT, timeout=10)
+    conn.set_debuglevel(False)
+    conn.login(config.SMTP_USERNAME, config.SMTP_PASSWORD)
+    conn.sendmail(from_, to, message.as_string())
+    conn.quit()
