@@ -8,6 +8,7 @@ This repository is a custom web framework for clients of Enlarge.
 
 Improvements:
 - Fixed a bug where the GET /users endpoint would not work
+- Add extra space in emails to customer with an URL.
 
 ### 2023-08-15
 
