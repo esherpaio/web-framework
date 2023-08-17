@@ -1,4 +1,4 @@
-from typing import Any, Type
+from typing import Any, Callable, Type
 
 from flask import abort, has_request_context, request
 from sqlalchemy import Column, ColumnExpressionArgument
@@ -6,7 +6,7 @@ from sqlalchemy.orm.attributes import InstrumentedAttribute
 from sqlalchemy.orm.session import Session
 
 from web.database.model import Model
-from web.helper.api import ApiText, json_get, response
+from web.helper.api import ApiText, args_get, json_get, response
 from web.helper.logger import logger
 
 
@@ -22,12 +22,14 @@ class API:
     #
 
     @staticmethod
-    def parse_column(data: dict, column: Column | str) -> tuple[str | None, Any]:
+    def parse_column(
+        data: dict, column: Column | str, func: Callable
+    ) -> tuple[str | None, Any]:
         key, value = None, None
         if isinstance(column, InstrumentedAttribute):
             if column.name in data:
                 key = column.name
-                value, _ = json_get(
+                value, _ = func(
                     key,
                     column.type.python_type,
                     nullable=column.nullable,
@@ -56,7 +58,7 @@ class API:
 
         data = {}
         for column in columns:
-            key, value = cls.parse_column(request_json, column)
+            key, value = cls.parse_column(request_json, column, json_get)
             if key is not None:
                 data[key] = value
 
@@ -89,7 +91,7 @@ class API:
 
         data = {}
         for arg in args:
-            key, value = cls.parse_column(request_args, arg)
+            key, value = cls.parse_column(request_args, arg, args_get)
             if key is not None:
                 data[key] = value
 

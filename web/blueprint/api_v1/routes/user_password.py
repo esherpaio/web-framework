@@ -36,7 +36,7 @@ def post_users_id_password(user_id: int) -> Response:
     with conn.begin() as s:
         # Get user
         user = s.query(User).filter_by(id=user_id).first()
-        if not user:
+        if user is None:
             return response(404, ApiText.HTTP_404)
 
         # Insert verification
@@ -51,6 +51,7 @@ def post_users_id_password(user_id: int) -> Response:
             verification_key=verification_key,
             _external=True,
         )
+        print(user.email)
         send_new_password(
             email=user.email,
             reset_url=reset_url,

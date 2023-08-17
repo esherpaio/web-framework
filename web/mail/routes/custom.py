@@ -23,7 +23,10 @@ def send_custom_1(
             phone=phone,
             found_by=found_by,
         ),
-        _("MAIL_CUSTOM_1_MESSAGE", message=message),
+        _(
+            "MAIL_CUSTOM_1_MESSAGE",
+            message=message,
+        ),
     ]
     html = render_email(title, paragraphs)
     send_email(to, subject, html)
