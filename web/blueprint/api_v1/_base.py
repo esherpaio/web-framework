@@ -171,7 +171,7 @@ class API:
         s: Session,
         id_: int,
         *filters: ColumnExpressionArgument[bool],
-    ) -> Type[Model]:
+    ) -> Type[Any]:
         if cls.model is None:
             raise NotImplementedError
 
