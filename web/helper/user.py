@@ -12,6 +12,10 @@ from web.database.client import conn
 from web.database.model import User, UserRoleId, UserRoleLevel
 from web.helper.api import ApiText, response
 
+#
+# User object
+#
+
 
 class FlaskUser(User):
     def __init__(self, user: User) -> None:
@@ -23,7 +27,7 @@ class FlaskUser(User):
 
     @property
     def is_authenticated(self) -> bool:
-        return not self.is_guest
+        return not self.is_guest and self.is_active
 
     @property
     def is_anonymous(self) -> bool:
@@ -33,7 +37,12 @@ class FlaskUser(User):
         return self.id
 
 
-def load_user(user_id: int, *args, **kwargs) -> FlaskUser | None:
+#
+# Cookie based authentication
+#
+
+
+def cookie_loader(user_id: int, *args, **kwargs) -> FlaskUser | None:
     with conn.begin() as s:
         user = (
             s.query(User)
@@ -45,7 +54,12 @@ def load_user(user_id: int, *args, **kwargs) -> FlaskUser | None:
         return FlaskUser(user)
 
 
-def load_request(*args, **kwargs) -> FlaskUser | None:
+#
+# Session based authentication
+#
+
+
+def session_loader(*args, **kwargs) -> FlaskUser | None:
     user = _load_request_api()
     if user is not None:
         return user
@@ -80,6 +94,11 @@ def _load_request_session() -> FlaskUser | None:
     return flask_user
 
 
+#
+# Route decorators
+#
+
+
 def access_control(
     level: UserRoleLevel,
 ) -> Callable[[Callable[..., Response]], Callable[..., Response]]:
@@ -89,10 +108,9 @@ def access_control(
         def wrap(*args, **kwargs) -> Response:
             if current_user.is_authenticated and current_user.role.level >= level:
                 return f(*args, **kwargs)
-            elif request.blueprint is not None and "api" in request.blueprint:
+            if request.blueprint is not None and "api" in request.blueprint:
                 return response(403, ApiText.HTTP_403)
-            else:
-                return redirect(url_for(config.ENDPOINT_LOGIN))
+            return redirect(url_for(config.ENDPOINT_LOGIN))
 
         wrap.__name__ = f.__name__
         return wrap

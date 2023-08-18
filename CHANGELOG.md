@@ -4,6 +4,11 @@ This repository is a custom web framework for clients of Enlarge.
 
 ## Changelog
 
+## 2023-08-18
+
+Improvements:
+- Organized and improved the user helpers
+
 ### 2023-08-17
 
 Improvements:

@@ -23,7 +23,7 @@ from web.database.model import (
     UserRoleId,
 )
 from web.helper.cache import cache
-from web.helper.user import load_request, load_user
+from web.helper.user import cookie_loader, session_loader
 from web.seeder.model import (
     FileTypeSyncer,
     OrderStatusSyncer,
@@ -105,8 +105,8 @@ def create_app() -> Flask:
     login_manager = LoginManager(app)
     login_manager.session_protection = "strong"
     login_manager.login_view = config.ENDPOINT_LOGIN
-    login_manager.user_loader(load_user)
-    login_manager.request_loader(load_request)
+    login_manager.user_loader(cookie_loader)
+    login_manager.request_loader(session_loader)
     app.add_url_rule("/login", endpoint=config.ENDPOINT_LOGIN, view_func=url_response)
     return app
 
