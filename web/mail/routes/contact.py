@@ -11,7 +11,11 @@ def send_contact_business(
     phone: str | None = None,
 ) -> None:
     to = [config.EMAIL_TO]
-    subject = _("MAIL_CONTACT_SUBJECT", business_name=config.BUSINESS_NAME)
+    subject = _(
+        "MAIL_CONTACT_SUBJECT_BUSINESS",
+        business_name=config.BUSINESS_NAME,
+        name=name,
+    )
     title = _("MAIL_CONTACT_TITLE")
     paragraphs = [
         _("MAIL_CONTACT_DETAILS", name=name, company=company, email=email, phone=phone),
@@ -26,7 +30,7 @@ def send_contact_customer(
     message: str,
 ) -> None:
     to = [email]
-    subject = _("MAIL_CONTACT_SUBJECT", business_name=config.BUSINESS_NAME)
+    subject = _("MAIL_CONTACT_SUBJECT_CUSTOMER", business_name=config.BUSINESS_NAME)
     title = _("MAIL_CONTACT_TITLE")
     paragraphs = [
         _("MAIL_CONTACT_CONFIRMATION"),
