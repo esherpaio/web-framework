@@ -5,6 +5,10 @@ from mollie.api.client import Client
 
 from web import config
 
+#
+# Classes
+#
+
 
 class Mollie(Client):
     """Mollie API wrapper."""
@@ -12,6 +16,11 @@ class Mollie(Client):
     def __init__(self):
         super().__init__()
         self.set_api_key(config.MOLLIE_KEY)
+
+
+#
+# Functions
+#
 
 
 def mollie_amount(number: int | float, currency: str) -> dict:

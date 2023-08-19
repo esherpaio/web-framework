@@ -1,5 +1,9 @@
 import sass
 
+#
+# Functions
+#
+
 
 def compile_scss(src: str, out: str) -> None:
     """Compile SCSS to CSS."""

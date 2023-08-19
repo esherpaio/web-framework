@@ -1,6 +1,10 @@
 import logging
 from enum import StrEnum
 
+#
+# Classes
+#
+
 
 class AnsiCode(StrEnum):
     """ANSI escape codes for colored logging."""
@@ -24,6 +28,11 @@ class Formatter(logging.Formatter):
         return formatter.format(record)
 
 
+#
+# Functions
+#
+
+
 def get_logger(name: str) -> logging.Logger:
     """Get a logger."""
 
@@ -33,6 +42,9 @@ def get_logger(name: str) -> logging.Logger:
     base.setLevel(logging.DEBUG)
     base.addHandler(stream)
     return base
+
+
+# Variables
 
 
 logger = get_logger(__name__)

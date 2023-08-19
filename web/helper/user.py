@@ -13,7 +13,7 @@ from web.database.model import User, UserRoleId, UserRoleLevel
 from web.helper.api import ApiText, response
 
 #
-# User object
+# Classes
 #
 
 
@@ -38,7 +38,7 @@ class FlaskUser(User):
 
 
 #
-# Cookie based authentication
+# Functions
 #
 
 
@@ -52,11 +52,6 @@ def cookie_loader(user_id: int, *args, **kwargs) -> FlaskUser | None:
         )
     if user is not None:
         return FlaskUser(user)
-
-
-#
-# Session based authentication
-#
 
 
 def session_loader(*args, **kwargs) -> FlaskUser | None:
@@ -95,7 +90,7 @@ def _load_request_session() -> FlaskUser | None:
 
 
 #
-# Route decorators
+# Decorators
 #
 
 

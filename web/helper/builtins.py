@@ -1,6 +1,10 @@
 from operator import attrgetter
 from typing import Any, Callable
 
+#
+# Functions
+#
+
 
 def none_aware_attrgetter(attr: str) -> Callable[[list], tuple[bool, Any]]:
     """Attribute getter that accepts None values."""
@@ -11,15 +15,3 @@ def none_aware_attrgetter(attr: str) -> Callable[[list], tuple[bool, Any]]:
 
     getter = attrgetter(attr)
     return wrap
-
-
-class Singleton(type):
-    """Singleton metaclass."""
-
-    _instances: dict = {}
-
-    def __call__(cls, *args, **kwargs) -> dict:
-        if cls not in cls._instances:
-            class_ = super(Singleton, cls).__call__(*args, **kwargs)
-            cls._instances[cls] = class_
-        return cls._instances[cls]

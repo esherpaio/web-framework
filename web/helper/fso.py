@@ -3,6 +3,10 @@ import os
 import time
 from threading import Thread
 
+#
+# Functions
+#
+
 
 def remove_dir(path: str) -> None:
     """Remove the content of a directory."""

@@ -7,6 +7,10 @@ from web import config
 from web.database.model import Page
 from web.helper.localization import current_locale, url_for_locale
 
+#
+# Classes
+#
+
 
 class Schema:
     """A class to generate schema.org JSON-LD."""
@@ -145,6 +149,11 @@ class SchemaProduct(Schema):
         if description:
             data["description"] = description
         self.data = data
+
+
+#
+# Functions
+#
 
 
 def gen_schemas(

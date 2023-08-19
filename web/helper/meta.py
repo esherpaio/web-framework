@@ -8,6 +8,10 @@ from markupsafe import Markup
 from web import config
 from web.database.model import Page
 
+#
+# Enumerators
+#
+
 
 class MetaTag(StrEnum):
     LINK_APPLE_TOUCH_ICON = "<link rel='apple-touch-icon' href='%s'/>"
@@ -30,6 +34,11 @@ class MetaTag(StrEnum):
     TWITTER_CARD = "<meta name='twitter:card' content='summary_large_image'/>"
     TWITTER_CREATOR = "<meta name='twitter:creator' content='%s'/>"
     TWITTER_SITE = "<meta name='twitter:site' content='%s'/>"
+
+
+#
+# Classes
+#
 
 
 class Meta:
@@ -149,6 +158,11 @@ class Meta:
         if self.twitter_at:
             yield Markup(MetaTag.TWITTER_SITE % self.twitter_at)
             yield Markup(MetaTag.TWITTER_CREATOR % self.twitter_at)
+
+
+#
+# Functions
+#
 
 
 def gen_meta(page: Page | None = None) -> Meta:

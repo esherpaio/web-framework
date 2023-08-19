@@ -5,7 +5,12 @@ from typing import Any, Callable
 from flask import request
 from werkzeug import Response
 
+from web.helper.exceptions import WebError
 from web.i18n.base import _
+
+#
+# Enumerators
+#
 
 
 class ApiText(StrEnum):
@@ -21,6 +26,34 @@ class ApiText(StrEnum):
     HTTP_409 = _("API_HTTP_409")
     HTTP_410 = _("API_HTTP_410")
     HTTP_500 = _("API_HTTP_500")
+
+
+#
+# Exceptions
+#
+
+
+class APIError(WebError):
+    """Base class for API errors."""
+
+    pass
+
+
+class APITypeError(APIError):
+    """Raised when a type does not match."""
+
+    code = 400
+
+
+class APINullError(APIError):
+    """Raised when a value is null but cannot be null."""
+
+    code = 400
+
+
+#
+# Functions
+#
 
 
 def response(
@@ -75,9 +108,9 @@ def json_get(
     if nullable and value is None:
         pass
     elif not isinstance(value, type_):
-        raise TypeError
+        raise APITypeError
     elif not nullable and value is None:
-        raise TypeError
+        raise APINullError
 
     return value, has_key
 
@@ -96,9 +129,14 @@ def args_get(
     if nullable and value is None:
         pass
     elif not nullable and value is None:
-        raise TypeError
+        raise APINullError
 
     return value, has_key
+
+
+#
+# Decorators
+#
 
 
 def modify_request(

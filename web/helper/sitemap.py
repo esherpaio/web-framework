@@ -6,6 +6,10 @@ from flask import current_app, request, url_for
 
 from web.database.model import Page
 
+#
+# Classes
+#
+
 
 class Sitemap:
     def __init__(self, endpoint: str) -> None:
@@ -32,6 +36,11 @@ class SitemapUrl:
     def lastmod(self) -> str | None:
         if self._updated_at:
             return self._updated_at.strftime("%Y-%m-%d")
+
+
+#
+# Functions
+#
 
 
 def str_to_xml(string: str) -> bytes:
