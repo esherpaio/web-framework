@@ -200,6 +200,7 @@ class API:
             if hasattr(model, k):
                 setattr(model, k, v)
         s.flush()
+        s.expire(model)
 
     @staticmethod
     def delete(s: Session, model: Type[Model]) -> None:
