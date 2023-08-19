@@ -56,8 +56,6 @@ def update_cart_shipment_methods(s: Session, cart: Cart) -> None:
     shipment_methods = get_shipment_methods(s, cart)
     if shipment_methods:
         shipment_method = min(shipment_methods, key=none_aware_attrgetter("unit_price"))
-        print(shipment_method.unit_price)  # temporary
-        print([x.unit_price for x in shipment_methods])  # temporary
         cart.shipment_method_id = shipment_method.id
         cart.shipment_price = shipment_method.unit_price * cart.currency.rate
     else:
