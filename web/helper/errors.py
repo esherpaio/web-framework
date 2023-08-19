@@ -1,7 +1,7 @@
 from enum import StrEnum
 from typing import Callable
 
-from flask import redirect, url_for
+from flask import redirect, url_for, request
 from sqlalchemy.exc import IntegrityError
 from werkzeug import Response
 from werkzeug.exceptions import HTTPException
@@ -41,7 +41,8 @@ def handle_backend_exception(f: Callable) -> Callable[[Exception], Response]:
         elif isinstance(error, DbPhoneError):
             code, message = 400, _Text.PHONE_ERROR
         else:
-            logger.error("", exc_info=True)
+            data = request.get_json() if request.is_json else None
+            logger.error(f"Backend exception with data: {str(data)}", exc_info=True)
             code, message = 500, ApiText.HTTP_500
         return response(code, message)
 
