@@ -3,6 +3,10 @@ from ftplib import FTP, error_perm
 
 from web import config
 
+#
+# Functions
+#
+
 
 def upload(file, path: str) -> None:
     folder = os.path.dirname(path)

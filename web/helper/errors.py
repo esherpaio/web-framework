@@ -1,24 +1,24 @@
-from enum import StrEnum
 from typing import Callable
 
-from flask import redirect, url_for, request
+from flask import redirect, request, url_for
 from sqlalchemy.exc import IntegrityError
 from werkzeug import Response
 from werkzeug.exceptions import HTTPException
 
 from web import config
-from web.database.errors import DbEmailError, DbPhoneError
 from web.helper.api import ApiText, response
+from web.helper.exceptions import WebError
 from web.helper.logger import logger
 from web.i18n.base import _
 
+#
+# Decorators
+#
 
-class _Text(StrEnum):
-    EMAIL_ERROR = _("DATABASE_EMAIL_ERROR")
-    PHONE_ERROR = _("DATABASE_PHONE_ERROR")
 
+def handle_frontend_error(f: Callable) -> Callable[[Exception], Response]:
+    """Decorator to handle frontend errors."""
 
-def handle_frontend_exception(f: Callable) -> Callable[[Exception], Response]:
     def wrap(error: Exception) -> Response:
         if isinstance(error, HTTPException):
             logger.warning(f"HTTP {error.code}: {error.description}")
@@ -30,19 +30,28 @@ def handle_frontend_exception(f: Callable) -> Callable[[Exception], Response]:
     return wrap
 
 
-def handle_backend_exception(f: Callable) -> Callable[[Exception], Response]:
+def handle_backend_error(f: Callable) -> Callable[[Exception], Response]:
+    """Decorator to handle backend errors."""
+
     def wrap(error: Exception) -> Response:
         code: int
-        message: StrEnum
+        message: str | ApiText
         if isinstance(error, IntegrityError):
-            code, message = 409, ApiText.HTTP_409
-        elif isinstance(error, DbEmailError):
-            code, message = 400, _Text.EMAIL_ERROR
-        elif isinstance(error, DbPhoneError):
-            code, message = 400, _Text.PHONE_ERROR
+            code = 409
+            message = ApiText.HTTP_409
+        elif isinstance(error, WebError):
+            code = getattr(error, "code", 500)
+            translation_key = getattr(error, "translation_key", None)
+            if isinstance(translation_key, str):
+                message = _(translation_key)
+            else:
+                message = ApiText.HTTP_500
         else:
-            data = request.get_json() if request.is_json else None
-            logger.error(f"Backend exception with data: {str(data)}", exc_info=True)
+            if request.is_json:
+                info = f"Backend error with data: {str(request.get_json())}"
+            else:
+                info = ""
+            logger.error(info, exc_info=True)
             code, message = 500, ApiText.HTTP_500
         return response(code, message)
 

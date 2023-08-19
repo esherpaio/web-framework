@@ -22,28 +22,9 @@ from web.database.model import (
 )
 from web.helper.localization import current_locale
 
-
-def transfer_cart(
-    f: Callable,
-) -> Callable[..., Response]:
-    """Transfer a cart from one session to another."""
-
-    def wrap(*args, **kwargs) -> Response:
-        with conn.begin() as s:
-            # Get before and after user ids
-            prev_user_id = current_user.id
-            resp = f(*args, **kwargs)
-            curr_user_id = current_user.id
-            # Transfer cart
-            prev_cart = s.query(Cart).filter_by(user_id=prev_user_id).first()
-            if prev_cart:
-                s.query(Cart).filter_by(user_id=curr_user_id).delete()
-                prev_cart.user_id = curr_user_id
-
-        return resp
-
-    wrap.__name__ = f.__name__
-    return wrap
+#
+# Functions
+#
 
 
 def predict_cart_info(
@@ -162,3 +143,31 @@ def get_vat(
         vat_reverse = True
 
     return vat_rate, vat_reverse
+
+
+#
+# Decorators
+#
+
+
+def transfer_cart(
+    f: Callable,
+) -> Callable[..., Response]:
+    """Transfer a cart from one session to another."""
+
+    def wrap(*args, **kwargs) -> Response:
+        with conn.begin() as s:
+            # Get before and after user ids
+            prev_user_id = current_user.id
+            resp = f(*args, **kwargs)
+            curr_user_id = current_user.id
+            # Transfer cart
+            prev_cart = s.query(Cart).filter_by(user_id=prev_user_id).first()
+            if prev_cart:
+                s.query(Cart).filter_by(user_id=curr_user_id).delete()
+                prev_cart.user_id = curr_user_id
+
+        return resp
+
+    wrap.__name__ = f.__name__
+    return wrap

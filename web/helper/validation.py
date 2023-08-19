@@ -1,5 +1,9 @@
 import re
 
+#
+# Functions
+#
+
 
 def is_email(text: str) -> bool:
     return bool(re.match(r"[^@]+@[^@]+\.[^@]+", text))

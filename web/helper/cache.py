@@ -4,9 +4,13 @@ from typing import Any, Callable
 from flask import request
 from werkzeug import Response
 
+#
+# Classes
+#
+
 
 class Cache(dict):
-    """A simple cache mechanism for objects and routes."""
+    """A simple cache mechanism for routes and objects."""
 
     def route(self, f: Callable) -> Callable[..., Response | str]:
         def wrap(*args, **kwargs) -> Response | str:
@@ -31,5 +35,9 @@ class Cache(dict):
             raise KeyError
         return self[key]
 
+
+#
+# Variables
+#
 
 cache = Cache()

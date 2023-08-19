@@ -4,7 +4,7 @@ from sqlalchemy import JSON, Boolean, Column, String
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship, validates
 
-from web.helper.objects import none_aware_attrgetter
+from web.helper.builtins import none_aware_attrgetter
 
 from . import Base
 from ._utils import FKRestrict, default_price
