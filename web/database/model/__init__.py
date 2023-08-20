@@ -9,6 +9,7 @@ from .category_item import CategoryItem
 from .country import Country
 from .coupon import Coupon
 from .currency import Currency, CurrencyId
+from .email import Email
 from .file import File
 from .file_type import FileType, FileTypeId
 from .invoice import Invoice
