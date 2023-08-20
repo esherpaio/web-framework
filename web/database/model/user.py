@@ -5,7 +5,7 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship, validates
 
 from . import Base
-from ._utils import FKRestrict, FKSetNull
+from ._utils import FKCascade, FKRestrict
 from ._validation import get_lower, val_email
 from .user_role import UserRoleId
 
@@ -19,11 +19,13 @@ class User(Base):
     is_active = Column(Boolean, nullable=False, default=False)
     password_hash = Column(String(256))
 
-    billing_id = Column(FKSetNull("billing.id"))
+    billing_id = Column(FKCascade("billing.id"))
     role_id = Column(FKRestrict("user_role.id"), nullable=False)
-    shipping_id = Column(FKSetNull("shipping.id"))
+    shipping_id = Column(FKCascade("shipping.id"))
 
     billing = relationship("Billing", foreign_keys=[billing_id])
+    carts = relationship("Cart", back_populates="user")
+    orders = relationship("Order", back_populates="user")
     role = relationship("UserRole")
     shipping = relationship("Shipping", foreign_keys=[shipping_id])
     verifications = relationship("Verification", back_populates="user")
