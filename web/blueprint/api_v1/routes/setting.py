@@ -27,20 +27,20 @@ class SettingAPI(API):
 
 
 @api_v1_bp.get("/setting")
-def get_billings_id(billing_id: int) -> Response:
+def get_setting() -> Response:
     api = SettingAPI()
     with conn.begin() as s:
-        model = api.get(s, billing_id)
+        model = api.get(s, None)
         resource = api.gen_resource(s, model)
     return response(data=resource)
 
 
 @api_v1_bp.patch("/setting")
-def patch_billings_id(billing_id: int) -> Response:
+def patch_setting() -> Response:
     api = SettingAPI()
     data = api.gen_request_data(api.patch_columns)
     with conn.begin() as s:
-        model = api.get(s, billing_id)
+        model = api.get(s, None)
         api.update(s, data, model)
         resource = api.gen_resource(s, model)
     return response(data=resource)
