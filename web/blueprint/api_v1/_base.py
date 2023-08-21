@@ -169,13 +169,15 @@ class API:
     def get(
         cls,
         s: Session,
-        id_: int,
+        id_: int | None,
         *filters: ColumnExpressionArgument[bool],
     ) -> Any:
         if cls.model is None:
             raise NotImplementedError
+        if id_ is not None:
+            filters.add(cls.model.id == id_)
 
-        model = s.query(cls.model).filter(cls.model.id == id_, *filters).first()
+        model = s.query(cls.model).filter(*filters).first()
         if model is None:
             abort(response(404, ApiText.HTTP_404))
         return model
