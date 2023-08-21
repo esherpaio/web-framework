@@ -175,7 +175,7 @@ class API:
         if cls.model is None:
             raise NotImplementedError
         if id_ is not None:
-            filters.add(cls.model.id == id_)
+            filters += (cls.model.id == id_,)
 
         model = s.query(cls.model).filter(*filters).first()
         if model is None:
