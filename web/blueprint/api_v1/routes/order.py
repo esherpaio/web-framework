@@ -3,6 +3,7 @@ from enum import StrEnum
 from flask import abort, g
 from flask_login import current_user
 from pyvat import check_vat_number
+from pyvat.exceptions import ServerError
 from sqlalchemy.orm.session import Session
 from werkzeug import Response
 
@@ -116,7 +117,10 @@ def val_cart(s: Session, data: dict, *args) -> None:
     # Check VAT number
     if cart.billing.vat is not None:
         vat_parsed = "".join(x for x in cart.billing.vat if x.isalnum())
-        vat_result = check_vat_number(vat_parsed, cart.billing.country.code)
+        try:
+            vat_result = check_vat_number(vat_parsed, cart.billing.country.code)
+        except ServerError:
+            abort(response(500, Text.VAT_NO_CONNECTION))
         if vat_result.is_valid is None:
             abort(response(500, Text.VAT_NO_CONNECTION))
         if not vat_result.is_valid:
