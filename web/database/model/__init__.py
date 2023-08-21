@@ -28,6 +28,7 @@ from .product_value import ProductValue
 from .redirect import Redirect
 from .refund import Refund
 from .region import Region
+from .setting import Setting
 from .shipment import Shipment
 from .shipment_class import ShipmentClass
 from .shipment_method import ShipmentMethod
