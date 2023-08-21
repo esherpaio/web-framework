@@ -41,6 +41,7 @@ class CartAPI(API):
         "discount_price_vat",
         "shipment_price_vat",
         "total_price_vat",
+        "vat_percentage",
     }
 
 
