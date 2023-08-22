@@ -1,8 +1,9 @@
 from typing import Any
 
-from flask import abort, request
+from flask import abort
 from flask_login import current_user
 from sqlalchemy.orm.session import Session
+from sqlalchemy.orm.util import has_identity
 from werkzeug import Response
 
 from web.blueprint.api_v1 import api_v1_bp
@@ -13,7 +14,6 @@ from web.helper.api import ApiText, response
 from web.helper.builtins import none_aware_attrgetter
 from web.helper.cart import get_shipment_methods, get_vat
 from web.helper.localization import current_locale
-from sqlalchemy.orm.util import has_identity 
 
 #
 # Configuration
@@ -88,6 +88,16 @@ def patch_carts_id(cart_id: int) -> Response:
         api.update(s, data, model)
         resource = api.gen_resource(s, model)
     return response(data=resource)
+
+
+@api_v1_bp.delete("/carts/<int:cart_id>")
+def delete_carts_id(cart_id: int) -> Response:
+    api = CartAPI()
+    with conn.begin() as s:
+        filters = {Cart.user_id == current_user.id}
+        model = api.get(s, cart_id, *filters)
+        api.delete(s, model)
+    return response()
 
 
 #

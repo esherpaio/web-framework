@@ -12,3 +12,8 @@ function patchCartsId(cartId, data, silent = false) {
     const url = `/api/v1/carts/${cartId}`;
     return callApi('PATCH', url, data, 'application/json', silent);
 }
+
+function deleteCartsId(carts, silent = false) {
+    const url = `/api/v1/carts/${carts}`;
+    return callApi('DELETE', url, null, null, silent);
+}
