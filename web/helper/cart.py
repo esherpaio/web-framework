@@ -138,9 +138,14 @@ def get_vat(
     if vat.action == VatChargeAction.charge:
         vat_rate = int(vat.rate) / 100 + 1
         vat_reverse = False
-    else:
+    elif vat.action == VatChargeAction.reverse_charge:
+        vat_rate = 1
+        vat_reverse = False
+    elif vat.action == VatChargeAction.no_charge:
         vat_rate = 1
         vat_reverse = True
+    else:
+        raise NotImplementedError(f"Unknown VAT action: {vat.action}")
 
     return vat_rate, vat_reverse
 
