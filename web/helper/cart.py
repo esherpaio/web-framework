@@ -134,8 +134,14 @@ def get_vat(
     buyer = Party(country_code, is_business)
     seller = Party(config.BUSINESS_COUNTRY_CODE, True)
     vat = pyvat.get_sale_vat_charge(date, type_, buyer, seller)
-    vat_rate = int(vat.rate) / 100 + 1
-    vat_reverse = False
+
+    if vat.action == VatChargeAction.charge:
+        vat_rate = int(vat.rate) / 100 + 1
+        vat_reverse = False
+    else:
+        vat_rate = 1
+        vat_reverse = True
+
     return vat_rate, vat_reverse
 
 
