@@ -190,7 +190,11 @@ def set_shipment(s: Session, data: dict, cart: Cart) -> None:
 def set_coupon(s: Session, data: dict, cart: Cart) -> None:
     if "coupon_code" in data:
         coupon_code = data["coupon_code"]
-        coupon = s.query(Coupon).filter_by(code=coupon_code, is_deleted=False).first()
-        if coupon is None:
-            abort(response(400, ApiText.HTTP_400))
-        cart.coupon_id = coupon.id
+        if coupon_code is None:
+            coupon_id = None
+        else:
+            coupon = s.query(Coupon).filter_by(code=coupon_code, is_deleted=False).first()
+            if coupon is None:
+                abort(response(400, ApiText.HTTP_400))
+            coupon_id = coupon.id
+        cart.coupon_id = coupon_id
