@@ -5,10 +5,10 @@ from werkzeug import Response
 
 from web.blueprint.api_v1 import api_v1_bp
 from web.blueprint.api_v1._base import API
+from web.blueprint.api_v1.routes.cart import set_vat, set_shipment
 from web.database.client import conn
 from web.database.model import Billing, Cart, Order
 from web.helper.api import ApiText, response
-from web.helper.cart import get_vat
 
 #
 # Configuration
@@ -110,12 +110,8 @@ def set_user(s: Session, data: dict, billing: Billing) -> None:
 def set_cart(s: Session, data: dict, billing: Billing) -> None:
     carts = s.query(Cart).filter_by(billing_id=billing.id).all()
     for cart in carts:
-        country_code = billing.country.code
-        is_business = billing.company is not None
-        vat_rate, vat_reverse = get_vat(country_code, is_business)
-        cart.currency_id = billing.country.currency_id
-        cart.vat_rate = vat_rate
-        cart.vat_reverse = vat_reverse
+        set_vat(s, data, cart)
+        set_shipment(s, data, cart)
 
 
 def val_order(s: Session, data: dict, billing: Billing) -> None:

@@ -1,6 +1,6 @@
 from typing import Any
 
-from flask import abort
+from flask import abort, request
 from flask_login import current_user
 from sqlalchemy.orm.session import Session
 from werkzeug import Response
@@ -8,10 +8,12 @@ from werkzeug import Response
 from web.blueprint.api_v1 import api_v1_bp
 from web.blueprint.api_v1._base import API
 from web.database.client import conn
-from web.database.model import Cart, Coupon, ShipmentMethod, Billing, Shipping
+from web.database.model import Billing, Cart, Coupon, Shipping
 from web.helper.api import ApiText, response
-from web.helper.cart import get_vat
+from web.helper.builtins import none_aware_attrgetter
+from web.helper.cart import get_shipment_methods, get_vat
 from web.helper.localization import current_locale
+from sqlalchemy.orm.util import has_identity 
 
 #
 # Configuration
@@ -57,8 +59,8 @@ def post_carts() -> Response:
     with conn.begin() as s:
         model = api.model()
         set_user(s, data, model)
-        api.insert(s, data, model)
         set_vat(s, data, model)
+        api.insert(s, data, model)
         resource = api.gen_resource(s, model)
     return response(data=resource)
 
@@ -80,10 +82,10 @@ def patch_carts_id(cart_id: int) -> Response:
     with conn.begin() as s:
         filters = {Cart.user_id == current_user.id}
         model = api.get(s, cart_id, *filters)
+        set_vat(s, data, model)
         set_shipment(s, data, model)
         set_coupon(s, data, model)
         api.update(s, data, model)
-        set_vat(s, data, model)
         resource = api.gen_resource(s, model)
     return response(data=resource)
 
@@ -97,39 +99,31 @@ def set_user(s: Session, data: dict, cart: Cart) -> None:
     cart.user_id = current_user.id
 
 
-def set_shipment(s: Session, data: dict, cart: Cart) -> None:
-    shipment_method_id = data.get("shipment_method_id")
-    if shipment_method_id is not None:
-        shipment_method = (
-            s.query(ShipmentMethod)
-            .filter_by(id=shipment_method_id, is_deleted=False)
-            .first()
-        )
-        if shipment_method is None:
-            abort(response(400, ApiText.HTTP_400))
-        shipment_price = shipment_method.unit_price * cart.currency.rate
-        cart.shipment_method_id = shipment_method.id
-        cart.shipment_price = shipment_price
-
-
-def set_coupon(s: Session, data: dict, cart: Cart) -> None:
-    coupon_code = data.get("coupon_code")
-    if coupon_code is not None:
-        coupon = s.query(Coupon).filter_by(code=coupon_code, is_deleted=False).first()
-        if coupon is None:
-            abort(response(400, ApiText.HTTP_400))
-        cart.coupon_id = coupon.id
-
-
 def set_vat(s: Session, data: dict, cart: Cart) -> None:
-    if cart.billing is not None:
-        country_code = cart.billing.country.code
-        is_business = cart.billing.company is not None
-        currency_id = cart.billing.country.currency_id
+    if "billing_id" in data:
+        billing_id = data["billing_id"]
+        billing = s.query(Billing).filter_by(id=billing_id).first()
+    elif cart.billing is not None:
+        billing = cart.billing
+    else:
+        billing = None
+
+    if "shipping_id" in data:
+        shipping_id = data["shipping_id"]
+        shipping = s.query(Shipping).filter_by(id=shipping_id).first()
     elif cart.shipping is not None:
-        country_code = cart.shipping.country.code
-        is_business = cart.shipping.company is not None
-        currency_id = cart.shipping.country.currency_id
+        shipping = cart.shipping
+    else:
+        shipping = None
+
+    if billing is not None:
+        country_code = billing.country.code
+        is_business = billing.company is not None
+        currency_id = billing.country.currency_id
+    elif shipping is not None:
+        country_code = shipping.country.code
+        is_business = shipping.company is not None
+        currency_id = shipping.country.currency_id
     else:
         country_code = current_locale.country.code
         is_business = False
@@ -140,3 +134,53 @@ def set_vat(s: Session, data: dict, cart: Cart) -> None:
     cart.vat_rate = vat_rate
     cart.vat_reverse = vat_reverse
     s.flush()
+    if has_identity(cart):
+        s.expire(cart)
+
+
+def set_shipment(s: Session, data: dict, cart: Cart) -> None:
+    if "shipment_method_id" in data:
+        shipment_method_id = data["shipment_method_id"]
+    elif cart.shipment_method is not None:
+        shipment_method_id = cart.shipment_method_id
+    else:
+        shipment_method_id = None
+
+    shipment_methods = get_shipment_methods(s, cart)
+    if shipment_method_id is not None:
+        shipment_method = next(
+            (
+                shipment_method
+                for shipment_method in shipment_methods
+                if shipment_method.id == shipment_method_id
+            ),
+            None,
+        )
+    else:
+        shipment_method = None
+
+    if shipment_methods and shipment_method is None:
+        shipment_method = min(
+            shipment_methods,
+            key=none_aware_attrgetter("unit_price"),
+        )
+
+    if shipment_method is not None:
+        cart.shipment_method_id = shipment_method.id
+        cart.shipment_price = shipment_method.unit_price * cart.currency.rate
+    else:
+        cart.shipment_method_id = None
+        cart.shipment_price = 0
+
+    s.flush()
+    if has_identity(cart):
+        s.expire(cart)
+
+
+def set_coupon(s: Session, data: dict, cart: Cart) -> None:
+    if "coupon_id" in data:
+        coupon_id = data["coupon_id"]
+        coupon = s.query(Coupon).filter_by(id=coupon_id, is_deleted=False).first()
+        if coupon is None:
+            abort(response(400, ApiText.HTTP_400))
+        cart.coupon_id = coupon.id
