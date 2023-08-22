@@ -8,7 +8,7 @@ from werkzeug import Response
 from web.blueprint.api_v1 import api_v1_bp
 from web.blueprint.api_v1._base import API
 from web.database.client import conn
-from web.database.model import Cart, Coupon, ShipmentMethod
+from web.database.model import Cart, Coupon, ShipmentMethod, Billing, Shipping
 from web.helper.api import ApiText, response
 from web.helper.cart import get_vat
 from web.helper.localization import current_locale
@@ -57,8 +57,8 @@ def post_carts() -> Response:
     with conn.begin() as s:
         model = api.model()
         set_user(s, data, model)
-        set_currency(s, data, model)
         api.insert(s, data, model)
+        set_vat(s, data, model)
         resource = api.gen_resource(s, model)
     return response(data=resource)
 
@@ -80,10 +80,10 @@ def patch_carts_id(cart_id: int) -> Response:
     with conn.begin() as s:
         filters = {Cart.user_id == current_user.id}
         model = api.get(s, cart_id, *filters)
-        set_currency(s, data, model)
         set_shipment(s, data, model)
         set_coupon(s, data, model)
         api.update(s, data, model)
+        set_vat(s, data, model)
         resource = api.gen_resource(s, model)
     return response(data=resource)
 
@@ -95,22 +95,6 @@ def patch_carts_id(cart_id: int) -> Response:
 
 def set_user(s: Session, data: dict, cart: Cart) -> None:
     cart.user_id = current_user.id
-
-
-def set_currency(s: Session, data: dict, cart: Cart) -> None:
-    if cart.billing:
-        country_code = cart.billing.country.code
-        is_business = cart.billing.company is not None
-        currency_id = cart.billing.country.currency_id
-    else:
-        country_code = current_locale.country.code
-        is_business = False
-        currency_id = current_locale.currency.id
-
-    vat_rate, vat_reverse = get_vat(country_code, is_business)
-    cart.currency_id = currency_id
-    cart.vat_rate = vat_rate
-    cart.vat_reverse = vat_reverse
 
 
 def set_shipment(s: Session, data: dict, cart: Cart) -> None:
@@ -135,3 +119,24 @@ def set_coupon(s: Session, data: dict, cart: Cart) -> None:
         if coupon is None:
             abort(response(400, ApiText.HTTP_400))
         cart.coupon_id = coupon.id
+
+
+def set_vat(s: Session, data: dict, cart: Cart) -> None:
+    if cart.billing is not None:
+        country_code = cart.billing.country.code
+        is_business = cart.billing.company is not None
+        currency_id = cart.billing.country.currency_id
+    elif cart.shipping is not None:
+        country_code = cart.shipping.country.code
+        is_business = cart.shipping.company is not None
+        currency_id = cart.shipping.country.currency_id
+    else:
+        country_code = current_locale.country.code
+        is_business = False
+        currency_id = current_locale.currency.id
+
+    vat_rate, vat_reverse = get_vat(country_code, is_business)
+    cart.currency_id = currency_id
+    cart.vat_rate = vat_rate
+    cart.vat_reverse = vat_reverse
+    s.flush()
