@@ -5,7 +5,7 @@ from werkzeug import Response
 
 from web.blueprint.api_v1 import api_v1_bp
 from web.blueprint.api_v1._base import API
-from web.blueprint.api_v1.routes.cart import set_vat, set_shipment
+from web.blueprint.api_v1.routes.cart import set_shipment, set_vat
 from web.database.client import conn
 from web.database.model import Billing, Cart, Order
 from web.helper.api import ApiText, response
