@@ -58,6 +58,7 @@ def create_app() -> Flask:
         enable_locale=True,
     )
     web.setup()
+    web.stop_cache_timer()
     app.web = web  # type: ignore
     return app
 
