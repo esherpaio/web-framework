@@ -10,7 +10,6 @@ from threading import Thread
 
 def remove_dir(path: str) -> None:
     """Remove the content of a directory."""
-
     if os.path.isdir(path):
         for file in glob.glob(f"{path.rstrip('/')}/*"):
             if os.access(file, os.W_OK):
