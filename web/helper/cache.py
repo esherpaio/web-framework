@@ -19,7 +19,7 @@ class Cache(dict):
             if request.url in self:
                 compressed = self[request.url]
                 response = zlib.decompress(compressed).decode()
-                return Response(response)
+                return response
 
             response = f(*args, **kwargs)
             compressed = zlib.compress(response.encode())
