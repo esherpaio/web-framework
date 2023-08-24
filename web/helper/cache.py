@@ -13,24 +13,34 @@ class Cache(dict):
     """A simple cache mechanism for routes and objects."""
 
     def route(self, f: Callable) -> Callable[..., Response | str]:
+        """Cache a route."""
+
         def wrap(*args, **kwargs) -> Response | str:
-            if request.full_path in self:
-                compressed = self[request.full_path]
+            if request.url in self:
+                compressed = self[request.url]
                 response = zlib.decompress(compressed).decode()
                 return Response(response)
 
             response = f(*args, **kwargs)
             compressed = zlib.compress(response.encode())
-            self[request.full_path] = compressed
+            self[request.url] = compressed
             return response
 
         wrap.__name__ = f.__name__
         return wrap
 
+    def delete_routes(self) -> None:
+        """Delete all cached routes."""
+        for key in self.copy().keys():
+            if key.startswith("http"):
+                del self[key]
+
     def __setattr__(self, key: str, value: Any) -> None:
+        """Cache an object."""
         self[key] = value
 
     def __getattr__(self, key: str) -> Any:
+        """Get a cached object."""
         if key not in self:
             raise KeyError
         return self[key]

@@ -159,15 +159,13 @@ class FlaskWeb:
     def setup_cache(self) -> None:
         # Update cache
         self.update_cache()
-        # Run cache hook
-        if self._cache_hook is not None:
-            self._cache_hook(self._app)
         # Schedule cache updates
-        cache_timer = RepeatedTimer(1800, self.update_cache)
+        cache_timer = RepeatedTimer(600, self.update_cache)
         cache_timer.start()
         self._cache_timer = cache_timer
 
     def update_cache(self) -> None:
+        # Update cache
         with conn.begin() as s:
             # fmt: off
             # Localization
@@ -187,6 +185,10 @@ class FlaskWeb:
             cache.redirects = s.query(Redirect).order_by(Redirect.url_from.desc()).all()
             cache.setting = s.query(Setting).first()
             # fmt: on
+
+        # Run cache hook
+        if self._cache_hook is not None:
+            self._cache_hook(self._app)
 
     def stop_cache_timer(self) -> None:
         if self._cache_timer is not None:
