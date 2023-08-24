@@ -36,6 +36,14 @@ class MetaTag(StrEnum):
     TWITTER_SITE = "<meta name='twitter:site' content='%s'/>"
 
 
+class RobotTag(StrEnum):
+    INDEX_FOLLOW = "index, follow"
+    NOINDEX_FOLLOW = "noindex, follow"
+    INDEX_NOFOLLOW = "index, nofollow"
+    NOINDEX_NOFOLLOW = "noindex, nofollow"
+    INDEX_FOLLOW_MAX = "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"  # noqa: E501
+
+
 #
 # Classes
 #
