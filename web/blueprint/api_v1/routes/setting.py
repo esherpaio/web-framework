@@ -1,4 +1,6 @@
+from sqlalchemy.orm import Session
 from werkzeug import Response
+from datetime import datetime
 
 from web.blueprint.api_v1 import api_v1_bp
 from web.blueprint.api_v1._base import API
@@ -41,6 +43,7 @@ def patch_setting() -> Response:
     data = api.gen_request_data(api.patch_columns)
     with conn.begin() as s:
         model = api.get(s, None)
+        set_cache(s, data, model)
         api.update(s, data, model)
         resource = api.gen_resource(s, model)
     return response(data=resource)
@@ -49,3 +52,8 @@ def patch_setting() -> Response:
 #
 # Functions
 #
+
+
+def set_cache(s: Session, data: dict, model: Setting) -> None:
+    if "banner" in data:
+        model.cached_at = datetime.utcnow()
