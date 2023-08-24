@@ -60,7 +60,7 @@ class FlaskWeb:
         seed_hook: Callable | None = None,
         cache_hook: Callable | None = None,
         enable_packer: bool = False,
-        enable_localization: bool = False,
+        enable_locale: bool = False,
     ) -> None:
         if jinja_filter_hooks is None:
             jinja_filter_hooks = {}
@@ -78,7 +78,7 @@ class FlaskWeb:
         self._seed_hook = seed_hook
         self._cache_hook = cache_hook
         self._enable_packer = enable_packer
-        self._enable_localization = enable_localization
+        self._enable_locale = enable_locale
 
     def setup(self) -> "FlaskWeb":
         self.setup_flask()
@@ -89,7 +89,7 @@ class FlaskWeb:
         self.setup_database()
         self.setup_cache()
         self.setup_redirects()
-        self.setup_localization()
+        self.setup_locale()
         self.setup_error_handling()
         return self
 
@@ -155,13 +155,12 @@ class FlaskWeb:
 
     def setup_cache(self) -> None:
         with conn.begin() as s:
-            # Localization
             # fmt: off
-            if self._enable_localization:
-                cache.countries = s.query(Country).order_by(Country.name).all()
-                cache.currencies = s.query(Currency).order_by(Currency.code).all()
-                cache.languages = s.query(Language).order_by(Language.code).all()
-                cache.regions = s.query(Region).order_by(Region.name).all()
+            # Localization
+            cache.countries = s.query(Country).order_by(Country.name).all()
+            cache.currencies = s.query(Currency).order_by(Currency.code).all()
+            cache.languages = s.query(Language).order_by(Language.code).all()
+            cache.regions = s.query(Region).order_by(Region.name).all()
             # Types
             cache.file_types = s.query(FileType).order_by(FileType.name).all()
             cache.order_statuses = (s.query(OrderStatus).order_by(OrderStatus.order).all())
@@ -186,8 +185,8 @@ class FlaskWeb:
         # Register Flask hooks
         self._app.before_request(check_redirects)
 
-    def setup_localization(self) -> None:
-        if self._enable_localization:
+    def setup_locale(self) -> None:
+        if self._enable_locale:
             # Register Flask hooks
             self._app.before_request(_check_locale)
             self._app.after_request(_set_locale)
@@ -233,7 +232,7 @@ def _get_svg(name: str, classes: str = "") -> str:
 
 
 #
-# Functions - localization
+# Functions - locale
 #
 
 

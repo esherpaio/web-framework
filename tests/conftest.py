@@ -55,7 +55,7 @@ def create_app() -> Flask:
         accept_cookie_auth=True,
         accept_request_auth=True,
         seed_hook=seed_hook,
-        enable_localization=True,
+        enable_locale=True,
     )
     web.setup()
     app.web = web  # type: ignore
