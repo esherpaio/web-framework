@@ -61,13 +61,11 @@ def str_to_xml(string: str) -> bytes:
     # Prettify
     node.normalize()
     xml = node.toprettyxml(indent="  ", encoding="UTF-8")
-
     return xml
 
 
 def is_endpoint(endpoint: str) -> bool:
     """Check if an endpoint exists."""
-
     try:
         current_app.url_map.iter_rules(endpoint)
     except KeyError:
@@ -78,7 +76,6 @@ def is_endpoint(endpoint: str) -> bool:
 
 def get_page(pages: list[Page]) -> Page | None:
     """Get a page object for the current request."""
-
     for page in pages:
         if page.endpoint == request.endpoint:
             return page

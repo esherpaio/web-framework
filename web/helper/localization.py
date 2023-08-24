@@ -62,7 +62,6 @@ class Locale:
 
 def get_locale() -> str | None:
     """Get the locale."""
-
     if has_request_context() and request.endpoint:
         if request.view_args is not None and "_locale" in request.view_args:
             return request.view_args["_locale"]
@@ -70,7 +69,6 @@ def get_locale() -> str | None:
 
 def expects_locale(endpoint: str | None) -> bool:
     """Determine whether a locale is expected."""
-
     if endpoint:
         if current_app.url_map.is_endpoint_expecting(endpoint, "_locale"):
             return True
@@ -79,13 +77,11 @@ def expects_locale(endpoint: str | None) -> bool:
 
 def lacks_locale(endpoint: str | None, values: dict) -> bool:
     """Determine whether a locale is expected and not present."""
-
     return expects_locale(endpoint) and "_locale" not in values
 
 
 def match_locale(locale: str) -> tuple[str | None, ...]:
     """Match a locale and return the result."""
-
     match = re.fullmatch(r"^([a-z]{2})-([a-z]{2})$", locale)
     if match:
         return match.groups()
@@ -98,13 +94,11 @@ def gen_locale(
     country_code: str = config.BUSINESS_COUNTRY_CODE,
 ) -> str:
     """Generate a locale using a language code and country code."""
-
     return f"{language_code}-{country_code}".lower()
 
 
 def url_for_locale(endpoint: str, *args, **kwargs) -> str:
     """Generate a URL to a locale-aware endpoint."""
-
     if not expects_locale(endpoint) and "_locale" in kwargs:
         kwargs.pop("_locale")
     return url_for(endpoint, *args, **kwargs)

@@ -4,6 +4,8 @@ from typing import Any, Callable
 from flask import request
 from werkzeug import Response
 
+from web.helper.logger import logger
+
 #
 # Classes
 #
@@ -31,7 +33,9 @@ class Cache(dict):
 
     def delete_routes(self) -> None:
         """Delete all cached routes."""
-        for key in self.copy().keys():
+        keys = self.copy().keys()
+        logger.info(f"Removing {len(keys)} cached routes")
+        for key in keys:
             if key.startswith("http"):
                 del self[key]
 

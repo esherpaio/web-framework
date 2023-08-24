@@ -8,7 +8,11 @@ from typing import Any, Callable
 
 class RepeatedTimer(object):
     def __init__(
-        self, interval: int, function: Callable, *args: Any, **kwargs: Any
+        self,
+        interval: int,
+        function: Callable,
+        *args: Any,
+        **kwargs: Any,
     ) -> None:
         self._timer: Timer | None = None
         self.interval = interval

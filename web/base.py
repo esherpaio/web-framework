@@ -38,6 +38,7 @@ from web.helper.localization import (
     gen_locale,
     lacks_locale,
 )
+from web.helper.logger import logger
 from web.helper.redirects import check_redirects
 from web.helper.timer import RepeatedTimer
 from web.helper.user import cookie_loader, session_loader
@@ -167,6 +168,8 @@ class FlaskWeb:
             self._cache_timer = cache_timer
 
     def update_cache(self) -> None:
+        logger.info("Updating cache")
+
         # Update cache
         with conn.begin() as s:
             # fmt: off
@@ -188,7 +191,7 @@ class FlaskWeb:
             cache.setting = s.query(Setting).first()
             # fmt: on
 
-        # Clear cached routes
+        # Remove cached routes
         if cache.setting is None or cache.setting.cached_at is None:
             pass
         elif cache.setting.cached_at > self._cached_routes_at:
