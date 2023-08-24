@@ -81,6 +81,7 @@ class FlaskWeb:
         self._enable_packer = enable_packer
         self._enable_locale = enable_locale
 
+        self._cached_routes_at: datetime = datetime.utcnow()
         self._cache_timer: None | RepeatedTimer = None
 
     def setup(self) -> "FlaskWeb":
@@ -160,9 +161,10 @@ class FlaskWeb:
         # Update cache
         self.update_cache()
         # Schedule cache updates
-        cache_timer = RepeatedTimer(600, self.update_cache)
-        cache_timer.start()
-        self._cache_timer = cache_timer
+        if self._cache_timer is None:
+            cache_timer = RepeatedTimer(600, self.update_cache)
+            cache_timer.start()
+            self._cache_timer = cache_timer
 
     def update_cache(self) -> None:
         # Update cache
@@ -185,6 +187,13 @@ class FlaskWeb:
             cache.redirects = s.query(Redirect).order_by(Redirect.url_from.desc()).all()
             cache.setting = s.query(Setting).first()
             # fmt: on
+
+        # Clear cached routes
+        if cache.setting is None or cache.setting.cached_at is None:
+            pass
+        elif cache.setting.cached_at > self._cached_routes_at:
+            cache.delete_routes()
+            self._cached_routes_at = cache.setting.cached_at
 
         # Run cache hook
         if self._cache_hook is not None:
