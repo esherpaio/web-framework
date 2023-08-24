@@ -54,7 +54,7 @@ def create_app() -> Flask:
         blueprints=[api_v1_bp, webhook_v1_bp],
         accept_cookie_auth=True,
         accept_request_auth=True,
-        seed_hook=run_seeders,
+        seed_hook=seed_hook,
         enable_localization=True,
     )
     web.setup()
@@ -62,7 +62,7 @@ def create_app() -> Flask:
     return app
 
 
-def run_seeders() -> None:
+def seed_hook(*args) -> None:
     with conn.begin() as s:
         FileTypeSyncer().sync(s)
         OrderStatusSyncer().sync(s)

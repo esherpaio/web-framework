@@ -51,6 +51,7 @@ class FlaskWeb:
         self,
         app: Flask,
         blueprints: list[Blueprint],
+        jinja_filter_hooks: dict[str, Callable] | None = None,
         jinja_global_hooks: dict[str, Callable] | None = None,
         accept_cookie_auth: bool = False,
         accept_request_auth: bool = False,
@@ -61,10 +62,14 @@ class FlaskWeb:
         enable_packer: bool = False,
         enable_localization: bool = False,
     ) -> None:
+        if jinja_filter_hooks is None:
+            jinja_filter_hooks = {}
         if jinja_global_hooks is None:
             jinja_global_hooks = {}
+
         self._app = app
         self._blueprints = blueprints
+        self._jinja_filter_hooks = jinja_filter_hooks
         self._jinja_global_hooks = jinja_global_hooks
         self._accept_cookie_auth = accept_cookie_auth
         self._accept_request_auth = accept_request_auth
@@ -75,7 +80,7 @@ class FlaskWeb:
         self._enable_packer = enable_packer
         self._enable_localization = enable_localization
 
-    def setup(self) -> None:
+    def setup(self) -> "FlaskWeb":
         self.setup_flask()
         self.setup_jinja()
         self.setup_security()
@@ -86,6 +91,7 @@ class FlaskWeb:
         self.setup_redirects()
         self.setup_localization()
         self.setup_error_handling()
+        return self
 
     def setup_flask(self) -> None:
         # Setup Flask
@@ -100,6 +106,8 @@ class FlaskWeb:
         # Register filters
         self._app.add_template_filter(_get_price, name="price")
         self._app.add_template_filter(_get_datetime, name="datetime")
+        for key, value in self._jinja_filter_hooks.items():
+            self._app.add_template_filter(value, name=key)
         # Register globals
         self._app.add_template_global(_get_cdn_url, name="cdn_url")
         self._app.add_template_global(_get_svg, name="svg")
@@ -128,7 +136,7 @@ class FlaskWeb:
     def setup_static(self) -> None:
         # Run static hook
         if self._static_hook is not None:
-            self._static_hook()
+            self._static_hook(self._app)
         # Initialize FlaskPacker
         if self._enable_packer:
             FlaskPacker(self._app)
@@ -138,9 +146,9 @@ class FlaskWeb:
         alembic.config.main(argv=["upgrade", "head"])
         # Run hooks
         if self._event_hook is not None:
-            self._event_hook()
+            self._event_hook(self._app)
         if self._seed_hook is not None:
-            self._seed_hook()
+            self._seed_hook(self._app)
         # Run startup scripts
         clean_carts()
         clean_users()
@@ -169,7 +177,7 @@ class FlaskWeb:
 
         # Run cache hook
         if self._cache_hook is not None:
-            self._cache_hook()
+            self._cache_hook(self._app)
 
     def update_cache(self) -> None:
         self.setup_cache()
