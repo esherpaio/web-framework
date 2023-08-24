@@ -12,6 +12,7 @@ from markupsafe import Markup
 from werkzeug import Response
 
 from web import config
+from web.database.clean import clean_carts, clean_users
 from web.database.client import conn
 from web.database.model import (
     Category,
@@ -28,8 +29,6 @@ from web.database.model import (
 )
 from web.database.model.file_type import FileType
 from web.database.model.user_role import UserRole
-from web.database.script.cart import clean_carts
-from web.database.script.user import clean_users
 from web.helper import cdn
 from web.helper.cache import cache
 from web.helper.errors import _handle_frontend_error
