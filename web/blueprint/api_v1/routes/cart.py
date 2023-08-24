@@ -193,7 +193,9 @@ def set_coupon(s: Session, data: dict, cart: Cart) -> None:
         if coupon_code is None:
             coupon_id = None
         else:
-            coupon = s.query(Coupon).filter_by(code=coupon_code, is_deleted=False).first()
+            coupon = (
+                s.query(Coupon).filter_by(code=coupon_code, is_deleted=False).first()
+            )
             if coupon is None:
                 abort(response(400, ApiText.HTTP_400))
             coupon_id = coupon.id
