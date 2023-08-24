@@ -39,6 +39,7 @@ from web.helper.localization import (
     lacks_locale,
 )
 from web.helper.redirects import check_redirects
+from web.helper.timer import RepeatedTimer
 from web.helper.user import cookie_loader, session_loader
 
 #
@@ -79,6 +80,8 @@ class FlaskWeb:
         self._cache_hook = cache_hook
         self._enable_packer = enable_packer
         self._enable_locale = enable_locale
+
+        self._cache_timer: None | RepeatedTimer = None
 
     def setup(self) -> "FlaskWeb":
         self.setup_flask()
@@ -154,6 +157,17 @@ class FlaskWeb:
         clean_users()
 
     def setup_cache(self) -> None:
+        # Update cache
+        self.update_cache()
+        # Run cache hook
+        if self._cache_hook is not None:
+            self._cache_hook(self._app)
+        # Schedule cache updates
+        cache_timer = RepeatedTimer(1800, self.update_cache)
+        cache_timer.start()
+        self._cache_timer = cache_timer
+
+    def update_cache(self) -> None:
         with conn.begin() as s:
             # fmt: off
             # Localization
@@ -174,12 +188,10 @@ class FlaskWeb:
             cache.setting = s.query(Setting).first()
             # fmt: on
 
-        # Run cache hook
-        if self._cache_hook is not None:
-            self._cache_hook(self._app)
-
-    def update_cache(self) -> None:
-        self.setup_cache()
+    def stop_cache_timer(self) -> None:
+        if self._cache_timer is not None:
+            self._cache_timer.stop()
+            self._cache_timer = None
 
     def setup_redirects(self) -> None:
         # Register Flask hooks
