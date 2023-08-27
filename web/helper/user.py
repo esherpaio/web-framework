@@ -18,8 +18,12 @@ from web.helper.api import ApiText, response
 
 
 class FlaskUser(User):
-    def __init__(self, user: User) -> None:
+    def __init__(self, user: User | None = None) -> None:
         super().__init__()
+        if user is not None:
+            self._load_user(user)
+
+    def _load_user(self, user: User) -> None:
         for key, value in vars(user).items():
             if key.startswith("_"):
                 continue
