@@ -41,7 +41,7 @@ from web.helper.localization import (
 from web.helper.logger import logger
 from web.helper.redirects import check_redirects
 from web.helper.timer import RepeatedTimer
-from web.helper.user import cookie_loader, session_loader
+from web.helper.user import FlaskUser, cookie_loader, session_loader
 
 #
 # Classes
@@ -132,6 +132,7 @@ class FlaskWeb:
         manager = LoginManager(self._app)
         manager.session_protection = "basic"
         manager.login_view = config.ENDPOINT_LOGIN
+        manager.anonymous_user = FlaskUser
         # Register user loaders
         if self._accept_cookie_auth:
             manager.user_loader(cookie_loader)
