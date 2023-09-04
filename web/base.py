@@ -15,7 +15,6 @@ from web import config
 from web.database.clean import clean_carts, clean_users
 from web.database.client import conn
 from web.database.model import (
-    Category,
     Country,
     Currency,
     Language,
@@ -83,7 +82,7 @@ class FlaskWeb:
         self._enable_locale = enable_locale
 
         self._cached_at: datetime = datetime.utcnow()
-        self._cache_timer: None | RepeatedTimer = None
+        self._cache_thread: None | RepeatedTimer = None
 
     def setup(self) -> "FlaskWeb":
         self.setup_flask()
@@ -159,57 +158,6 @@ class FlaskWeb:
         clean_carts()
         clean_users()
 
-    def setup_cache(self) -> None:
-        # Update cache
-        self.update_cache()
-        # Schedule cache updates
-        self.stop_cache()
-        cache_timer = RepeatedTimer(600, self.update_cache)
-        cache_timer.start()
-        self._cache_timer = cache_timer
-
-    def update_cache(self) -> None:
-        logger.info("Updating cache")
-
-        # Update object cache
-        with conn.begin() as s:
-            # fmt: off
-            # Localization
-            cache.countries = s.query(Country).order_by(Country.name).all()
-            cache.currencies = s.query(Currency).order_by(Currency.code).all()
-            cache.languages = s.query(Language).order_by(Language.code).all()
-            cache.regions = s.query(Region).order_by(Region.name).all()
-            # Types
-            cache.file_types = s.query(FileType).order_by(FileType.name).all()
-            cache.order_statuses = (s.query(OrderStatus).order_by(OrderStatus.order).all())
-            cache.product_link_types = (s.query(ProductLinkType).order_by(ProductLinkType.name).all())
-            cache.product_types = s.query(ProductType).order_by(ProductType.name).all()
-            cache.user_roles = s.query(UserRole).order_by(UserRole.name).all()
-            # Objects
-            cache.categories = s.query(Category).order_by(Category.order).all()
-            cache.pages = s.query(Page).all()
-            cache.redirects = s.query(Redirect).order_by(Redirect.url_from.desc()).all()
-            cache.setting = s.query(Setting).first()
-            # fmt: on
-
-        # Remove cached routes
-        if cache.setting is None:
-            pass
-        elif cache.setting.cached_at is None:
-            pass
-        elif cache.setting.cached_at > self._cached_at:
-            cache.delete_routes()
-            self._cached_at = cache.setting.cached_at
-
-        # Run cache hook
-        if self._cache_hook is not None:
-            self._cache_hook(self._app)
-
-    def stop_cache(self) -> None:
-        if self._cache_timer is not None:
-            self._cache_timer.stop()
-            self._cache_timer = None
-
     def setup_redirects(self) -> None:
         # Register Flask hooks
         self._app.before_request(check_redirects)
@@ -225,6 +173,74 @@ class FlaskWeb:
     def setup_error_handling(self) -> None:
         # Register Flask hooks
         self._app.register_error_handler(Exception, _handle_frontend_error)
+
+    #
+    # Cache
+    #
+
+    def setup_cache(self) -> None:
+        # Update cache
+        self.update_cache(force=True)
+        # Schedule thread
+        self.stop_cache()
+        thread = RepeatedTimer(config.CACHE_S, self.update_cache)
+        thread.start()
+        self._cache_thread = thread
+
+    def update_cache(self, force: bool = False) -> None:
+        with conn.begin() as s:
+            cache.setting = s.query(Setting).first()
+        if force or self.cache_has_changed:
+            self.update_cache_objects()
+            self.update_cache_hook()
+            self.update_cache_routes()
+
+    @property
+    def cache_has_changed(self) -> bool:
+        status = False
+        if cache.setting is None:
+            pass
+        elif cache.setting.cached_at is None:
+            pass
+        elif cache.setting.cached_at > self._cached_at:
+            status = True
+            self._cached_at = cache.setting.cached_at
+        return status
+
+    def update_cache_objects(self) -> None:
+        logger.info("Updating cache objects")
+        with conn.begin() as s:
+            # fmt: off
+            # Localization
+            cache.countries = s.query(Country).order_by(Country.name).all()
+            cache.currencies = s.query(Currency).order_by(Currency.code).all()
+            cache.languages = s.query(Language).order_by(Language.code).all()
+            cache.regions = s.query(Region).order_by(Region.name).all()
+            # Types
+            cache.file_types = s.query(FileType).order_by(FileType.name).all()
+            cache.order_statuses = s.query(OrderStatus).order_by(OrderStatus.order).all()
+            cache.product_link_types = s.query(ProductLinkType).order_by(ProductLinkType.name).all()
+            cache.product_types = s.query(ProductType).order_by(ProductType.name).all()
+            cache.user_roles = s.query(UserRole).order_by(UserRole.name).all()
+            # Objects
+            cache.pages = s.query(Page).all()
+            cache.redirects = s.query(Redirect).order_by(Redirect.url_from.desc()).all()
+            cache.setting = s.query(Setting).first()
+            # fmt: on
+
+    def update_cache_hook(self) -> None:
+        if self._cache_hook is not None:
+            logger.info("Running cache hook")
+            self._cache_hook(self._app)
+
+    def update_cache_routes(self) -> None:
+        logger.info("Deleting cache routes")
+        cache.delete_routes()
+
+    def stop_cache(self) -> None:
+        if self._cache_thread is not None:
+            self._cache_thread.stop()
+            self._cache_thread = None
 
 
 #

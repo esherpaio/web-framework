@@ -56,5 +56,5 @@ def patch_setting() -> Response:
 
 
 def set_cache(s: Session, data: dict, model: Setting) -> None:
-    if "banner" in data:
+    if "cached_at" in data:
         model.cached_at = datetime.utcnow()
