@@ -82,7 +82,7 @@ class FlaskWeb:
         self._enable_packer = enable_packer
         self._enable_locale = enable_locale
 
-        self._cached_routes_at: datetime = datetime.utcnow()
+        self._cached_at: datetime = datetime.utcnow()
         self._cache_timer: None | RepeatedTimer = None
 
     def setup(self) -> "FlaskWeb":
@@ -163,15 +163,15 @@ class FlaskWeb:
         # Update cache
         self.update_cache()
         # Schedule cache updates
-        if self._cache_timer is None:
-            cache_timer = RepeatedTimer(600, self.update_cache)
-            cache_timer.start()
-            self._cache_timer = cache_timer
+        self.stop_cache()
+        cache_timer = RepeatedTimer(600, self.update_cache)
+        cache_timer.start()
+        self._cache_timer = cache_timer
 
     def update_cache(self) -> None:
         logger.info("Updating cache")
 
-        # Update cache
+        # Update object cache
         with conn.begin() as s:
             # fmt: off
             # Localization
@@ -193,17 +193,19 @@ class FlaskWeb:
             # fmt: on
 
         # Remove cached routes
-        if cache.setting is None or cache.setting.cached_at is None:
+        if cache.setting is None:
             pass
-        elif cache.setting.cached_at > self._cached_routes_at:
+        elif cache.setting.cached_at is None:
+            pass
+        elif cache.setting.cached_at > self._cached_at:
             cache.delete_routes()
-            self._cached_routes_at = cache.setting.cached_at
+            self._cached_at = cache.setting.cached_at
 
         # Run cache hook
         if self._cache_hook is not None:
             self._cache_hook(self._app)
 
-    def stop_cache_timer(self) -> None:
+    def stop_cache(self) -> None:
         if self._cache_timer is not None:
             self._cache_timer.stop()
             self._cache_timer = None
