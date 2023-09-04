@@ -234,7 +234,6 @@ class FlaskWeb:
             self._cache_hook(self._app)
 
     def update_cache_routes(self) -> None:
-        logger.info("Deleting cache routes")
         cache.delete_routes()
 
     def stop_cache(self) -> None:

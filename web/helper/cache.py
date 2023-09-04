@@ -36,7 +36,7 @@ class Cache(dict):
     def delete_routes(self) -> None:
         """Delete all cached routes."""
         keys = self.copy().keys()
-        logger.info(f"Removing {len(keys)} cached routes")
+        logger.info(f"Removing {len(keys)} cache routes")
         for key in keys:
             if key.startswith("http"):
                 del self[key]
