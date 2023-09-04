@@ -188,15 +188,13 @@ class FlaskWeb:
         self._cache_thread = thread
 
     def update_cache(self, force: bool = False) -> None:
-        with conn.begin() as s:
-            cache.setting = s.query(Setting).first()
-        if force or self.cache_has_changed:
-            self.update_cache_objects()
-            self.update_cache_hook()
-            self.update_cache_routes()
+        if force or self._cache_expired:
+            self._update_cache()
 
     @property
-    def cache_has_changed(self) -> bool:
+    def _cache_expired(self) -> bool:
+        with conn.begin() as s:
+            cache.setting = s.query(Setting).first()
         status = False
         if cache.setting is None:
             pass
@@ -207,33 +205,31 @@ class FlaskWeb:
             self._cached_at = cache.setting.cached_at
         return status
 
-    def update_cache_objects(self) -> None:
+    def _update_cache(self) -> None:
+        # Update cache objects
         logger.info("Updating cache objects")
         with conn.begin() as s:
             # fmt: off
-            # Localization
             cache.countries = s.query(Country).order_by(Country.name).all()
             cache.currencies = s.query(Currency).order_by(Currency.code).all()
             cache.languages = s.query(Language).order_by(Language.code).all()
             cache.regions = s.query(Region).order_by(Region.name).all()
-            # Types
             cache.file_types = s.query(FileType).order_by(FileType.name).all()
             cache.order_statuses = s.query(OrderStatus).order_by(OrderStatus.order).all()
             cache.product_link_types = s.query(ProductLinkType).order_by(ProductLinkType.name).all()
             cache.product_types = s.query(ProductType).order_by(ProductType.name).all()
             cache.user_roles = s.query(UserRole).order_by(UserRole.name).all()
-            # Objects
             cache.pages = s.query(Page).all()
             cache.redirects = s.query(Redirect).order_by(Redirect.url_from.desc()).all()
             cache.setting = s.query(Setting).first()
             # fmt: on
 
-    def update_cache_hook(self) -> None:
+        # Run cache hook
         if self._cache_hook is not None:
             logger.info("Running cache hook")
             self._cache_hook(self._app)
 
-    def update_cache_routes(self) -> None:
+        # Delete cache routes
         cache.delete_routes()
 
     def stop_cache(self) -> None:
