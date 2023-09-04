@@ -1,7 +1,7 @@
 import sqlalchemy as sa
 from alembic import op
 
-revision = "9d8057e06970"
+revision = "b84fc3d732c7"
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -175,6 +175,17 @@ def upgrade() -> None:
         sa.Column("updated_at", sa.DateTime(), nullable=True),
         sa.PrimaryKeyConstraint("id"),
         sa.UniqueConstraint("name"),
+    )
+    op.create_table(
+        "setting",
+        sa.Column("banner", sa.String(length=256), nullable=True),
+        sa.Column("cached_at", sa.DateTime(), nullable=True),
+        sa.Column("id", sa.Integer(), nullable=False),
+        sa.Column(
+            "created_at", sa.DateTime(), server_default=sa.text("now()"), nullable=True
+        ),
+        sa.Column("updated_at", sa.DateTime(), nullable=True),
+        sa.PrimaryKeyConstraint("id"),
     )
     op.create_table(
         "shipment_class",
@@ -492,9 +503,9 @@ def upgrade() -> None:
             "created_at", sa.DateTime(), server_default=sa.text("now()"), nullable=True
         ),
         sa.Column("updated_at", sa.DateTime(), nullable=True),
-        sa.ForeignKeyConstraint(["billing_id"], ["billing.id"], ondelete="SET NULL"),
+        sa.ForeignKeyConstraint(["billing_id"], ["billing.id"], ondelete="CASCADE"),
         sa.ForeignKeyConstraint(["role_id"], ["user_role.id"], ondelete="RESTRICT"),
-        sa.ForeignKeyConstraint(["shipping_id"], ["shipping.id"], ondelete="SET NULL"),
+        sa.ForeignKeyConstraint(["shipping_id"], ["shipping.id"], ondelete="CASCADE"),
         sa.PrimaryKeyConstraint("id"),
         sa.UniqueConstraint("api_key"),
         sa.UniqueConstraint("email"),
@@ -533,6 +544,19 @@ def upgrade() -> None:
         sa.ForeignKeyConstraint(["user_id"], ["user.id"], ondelete="CASCADE"),
         sa.PrimaryKeyConstraint("id"),
         sa.UniqueConstraint("user_id"),
+    )
+    op.create_table(
+        "email",
+        sa.Column("data", sa.JSON(), server_default="{}", nullable=False),
+        sa.Column("template_id", sa.String(length=64), nullable=False),
+        sa.Column("user_id", sa.Integer(), nullable=True),
+        sa.Column("id", sa.Integer(), nullable=False),
+        sa.Column(
+            "created_at", sa.DateTime(), server_default=sa.text("now()"), nullable=True
+        ),
+        sa.Column("updated_at", sa.DateTime(), nullable=True),
+        sa.ForeignKeyConstraint(["user_id"], ["user.id"], ondelete="CASCADE"),
+        sa.PrimaryKeyConstraint("id"),
     )
     op.create_table(
         "order",
