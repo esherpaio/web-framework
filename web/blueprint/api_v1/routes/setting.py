@@ -18,9 +18,11 @@ class SettingAPI(API):
     model = Setting
     patch_columns = {
         Setting.banner,
+        Setting.cached_at,
     }
     get_columns = {
         Setting.banner,
+        Setting.cached_at,
     }
 
 
@@ -57,4 +59,4 @@ def patch_setting() -> Response:
 
 def set_cache(s: Session, data: dict, model: Setting) -> None:
     if "cached_at" in data:
-        model.cached_at = datetime.utcnow()
+        data["cached_at"] = datetime.utcnow().isoformat()
