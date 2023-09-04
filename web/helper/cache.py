@@ -4,6 +4,7 @@ from typing import Any, Callable
 from flask import request
 from werkzeug import Response
 
+from web import config
 from web.helper.logger import logger
 
 #
@@ -24,8 +25,9 @@ class Cache(dict):
                 return response
 
             response = f(*args, **kwargs)
-            compressed = zlib.compress(response.encode())
-            self[request.url] = compressed
+            if not config.APP_DEBUG:
+                compressed = zlib.compress(response.encode())
+                self[request.url] = compressed
             return response
 
         wrap.__name__ = f.__name__
