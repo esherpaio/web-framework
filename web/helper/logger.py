@@ -37,10 +37,12 @@ def get_logger(name: str) -> logging.Logger:
     """Get a logger."""
     base = logging.getLogger(name)
     base.setLevel(logging.DEBUG)
-    if not base.handlers:
-        stream = logging.StreamHandler()
-        stream.setFormatter(Formatter())
-        base.addHandler(stream)
+    if base.hasHandlers():
+        base.handlers.clear()
+    stream = logging.StreamHandler()
+    stream.setFormatter(Formatter())
+    base.addHandler(stream)
+    base.propagate = False
     return base
 
 
