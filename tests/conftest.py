@@ -97,16 +97,19 @@ user_data = [
         "api_key": "guest",
         "email": "guest@enlarge-online.nl",
         "role_id": UserRoleId.GUEST,
+        "is_active": True,
     },
     {
         "api_key": "user",
         "email": "user@enlarge-online.nl",
         "role_id": UserRoleId.USER,
+        "is_active": True,
     },
     {
         "api_key": "admin",
         "email": "admin@enlarge-online.nl",
         "role_id": UserRoleId.ADMIN,
+        "is_active": True,
     },
 ]
 

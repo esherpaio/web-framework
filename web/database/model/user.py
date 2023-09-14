@@ -10,7 +10,26 @@ from ._validation import get_lower, val_email
 from .user_role import UserRoleId
 
 
-class User(Base):
+class FlaskUserMixin:
+    @property
+    def is_authenticated(self) -> bool:
+        return not self.is_guest and self.is_active
+
+    @property
+    def is_anonymous(self) -> bool:
+        return self.is_guest
+
+    def get_id(self) -> int:
+        return self.id
+
+    def __eq__(self, other: "FlaskUserMixin") -> bool:
+        return self.get_id() == other.get_id()
+
+    def __ne__(self, other: "FlaskUserMixin") -> bool:
+        return not self.__eq__(other)
+
+
+class User(Base, FlaskUserMixin):
     __tablename__ = "user"
 
     api_key = Column(String(64), unique=True)
