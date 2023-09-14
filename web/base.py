@@ -93,7 +93,7 @@ class FlaskWeb:
         self.setup_auth()
         self.setup_static()
         self.setup_database()
-        self.update_cache(force=True)
+        self.setup_cache()
         self.setup_redirects()
         self.setup_locale()
         self.setup_error_handling()
@@ -180,7 +180,18 @@ class FlaskWeb:
     # Cache
     #
 
+    def setup_cache(self) -> None:
+        self._cache_active = True
+        self.update_cache(force=True)
+
     def update_cache(self, force: bool = False) -> None:
+        if not force:
+            try:
+                time.sleep(config.CACHE_S)
+            except Exception:
+                return
+        if self._cache_active:
+            self._schedule_cache()
         if force or self._cache_expired:
             self._update_cache(force)
 
@@ -193,22 +204,15 @@ class FlaskWeb:
         if setting is None:
             return False
         elif setting.cached_at is None:
-            return True
+            return False
         elif setting.cached_at > self._cached_at:
             return True
         else:
             return False
 
     def _update_cache(self, force: bool = False) -> None:
-        try:
-            if not force:
-                time.sleep(config.CACHE_S)
-        except Exception:
-            return
-        if self._cache_active:
-            self._schedule_cache()
+        self._cached_at = datetime.utcnow()
         logger.info("Updating cache")
-
         with conn.begin() as s:
             # fmt: off
             cache.countries = s.query(Country).order_by(Country.name).all()
@@ -228,10 +232,9 @@ class FlaskWeb:
             self._cache_hook(self._app)
         cache.delete_routes()
 
-        self._cached_at = datetime.utcnow()
-
     def _schedule_cache(self) -> None:
-        Thread(target=self.update_cache, daemon=True).start()
+        if self._cache_active:
+            Thread(target=self.update_cache, daemon=True).start()
 
     def stop_cache(self) -> None:
         self._cache_active = False
