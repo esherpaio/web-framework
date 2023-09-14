@@ -13,61 +13,25 @@ from web.database.model import User, UserRoleId, UserRoleLevel
 from web.helper.api import ApiText, response
 
 #
-# Classes
-#
-
-
-class FlaskUser(User):
-    def __init__(self, user: User | None = None) -> None:
-        super().__init__()
-        if user is not None:
-            self._load_user(user)
-
-    def _load_user(self, user: User) -> None:
-        for key, value in vars(user).items():
-            if key.startswith("_"):
-                continue
-            setattr(self, key, value)
-
-    @property
-    def is_authenticated(self) -> bool:
-        return not self.is_guest and self.is_active
-
-    @property
-    def is_anonymous(self) -> bool:
-        return self.is_guest
-
-    def get_id(self) -> int:
-        return self.id
-
-
-#
 # Functions
 #
 
 
-def cookie_loader(user_id: int, *args, **kwargs) -> FlaskUser | None:
-    with conn.begin() as s:
-        user = (
-            s.query(User)
-            .options(joinedload(User.role))
-            .filter_by(id=user_id, is_active=True)
-            .first()
-        )
-    if user is not None:
-        return FlaskUser(user)
+def cookie_loader(user_id: int, *args, **kwargs) -> User | None:
+    return _get_user_session(user_id)
 
 
-def session_loader(*args, **kwargs) -> FlaskUser | None:
-    user = _load_request_api()
-    if user is not None:
-        return user
-    user = _load_request_session()
-    if user is not None:
-        return user
+def session_loader(*args, **kwargs) -> User | None:
+    if request.blueprint is not None and "api" in request.blueprint:
+        user = _get_api_session()
+        if user is None:
+            user = _set_guest_session(persistent=True)
+    else:
+        user = _set_guest_session()
+    return user
 
 
-def _load_request_api() -> FlaskUser | None:
+def _get_api_session() -> User | None:
     authorization = request.headers.get("Authorization")
     if authorization is not None:
         encoded = authorization.replace("Basic ", "", 1).encode()
@@ -76,21 +40,35 @@ def _load_request_api() -> FlaskUser | None:
             user = (
                 s.query(User)
                 .options(joinedload(User.role))
-                .filter_by(api_key=api_key)
+                .filter_by(api_key=api_key, is_active=True)
                 .first()
             )
         if user is not None:
-            return FlaskUser(user)
+            return user
         abort(response(401, ApiText.HTTP_401))
 
 
-def _load_request_session() -> FlaskUser | None:
+def _get_user_session(user_id: int) -> User | None:
     with conn.begin() as s:
-        user = User(is_active=True, role_id=UserRoleId.GUEST)
-        s.add(user)
-    flask_user = FlaskUser(user)
-    flask_login.login_user(flask_user)
-    return flask_user
+        user = (
+            s.query(User)
+            .options(joinedload(User.role))
+            .filter_by(id=user_id, is_active=True)
+            .first()
+        )
+    if user is not None:
+        return user
+
+
+def _set_guest_session(persistent: bool = False) -> User:
+    if persistent:
+        with conn.begin() as s:
+            user = User(is_active=True, role_id=UserRoleId.GUEST)
+            s.add(user)
+        flask_login.login_user(user)
+    else:
+        user = User()
+    return user
 
 
 #
