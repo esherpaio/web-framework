@@ -1,5 +1,7 @@
 import os
+import time
 from datetime import datetime
+from threading import Thread
 from typing import Callable
 
 import alembic.config
@@ -40,7 +42,6 @@ from web.helper.localization import (
 )
 from web.helper.logger import logger
 from web.helper.redirects import check_redirects
-from web.helper.timer import RepeatedTimer
 from web.helper.user import cookie_loader, session_loader
 
 #
@@ -83,7 +84,7 @@ class FlaskWeb:
         self._enable_locale = enable_locale
 
         self._cached_at: datetime = datetime.utcnow()
-        self._cache_thread: None | RepeatedTimer = None
+        self._cache_active: bool = True
 
     def setup(self) -> "FlaskWeb":
         self.setup_flask()
@@ -92,7 +93,7 @@ class FlaskWeb:
         self.setup_auth()
         self.setup_static()
         self.setup_database()
-        self.setup_cache()
+        self.update_cache(force=True)
         self.setup_redirects()
         self.setup_locale()
         self.setup_error_handling()
@@ -179,36 +180,35 @@ class FlaskWeb:
     # Cache
     #
 
-    def setup_cache(self) -> None:
-        # Update cache
-        self.update_cache(force=True)
-        # Schedule thread
-        self.stop_cache()
-        thread = RepeatedTimer(config.CACHE_S, self.update_cache)
-        thread.start()
-        self._cache_thread = thread
-
     def update_cache(self, force: bool = False) -> None:
         if force or self._cache_expired:
-            self._update_cache()
+            self._update_cache(force)
 
     @property
     def _cache_expired(self) -> bool:
+        if self._cached_at is None:
+            return True
         with conn.begin() as s:
-            cache.setting = s.query(Setting).first()
-        status = False
-        if cache.setting is None:
-            pass
-        elif cache.setting.cached_at is None:
-            pass
-        elif cache.setting.cached_at > self._cached_at:
-            status = True
-            self._cached_at = cache.setting.cached_at
-        return status
+            setting = s.query(Setting).first()
+        if setting is None:
+            return False
+        elif setting.cached_at is None:
+            return True
+        elif setting.cached_at > self._cached_at:
+            return True
+        else:
+            return False
 
-    def _update_cache(self) -> None:
-        # Update cache objects
-        logger.info("Updating cache objects")
+    def _update_cache(self, force: bool = False) -> None:
+        try:
+            if not force:
+                time.sleep(config.CACHE_S)
+        except Exception:
+            return
+        if self._cache_active:
+            self._schedule_cache()
+        logger.info("Updating cache")
+
         with conn.begin() as s:
             # fmt: off
             cache.countries = s.query(Country).order_by(Country.name).all()
@@ -224,19 +224,17 @@ class FlaskWeb:
             cache.redirects = s.query(Redirect).order_by(Redirect.url_from.desc()).all()
             cache.setting = s.query(Setting).first()
             # fmt: on
-
-        # Run cache hook
         if self._cache_hook is not None:
-            logger.info("Running cache hook")
             self._cache_hook(self._app)
-
-        # Delete cache routes
         cache.delete_routes()
 
+        self._cached_at = datetime.utcnow()
+
+    def _schedule_cache(self) -> None:
+        Thread(target=self.update_cache, daemon=True).start()
+
     def stop_cache(self) -> None:
-        if self._cache_thread is not None:
-            self._cache_thread.stop()
-            self._cache_thread = None
+        self._cache_active = False
 
 
 #
