@@ -44,9 +44,9 @@ def post_skus(product_id: int) -> Response:
             for sku in skus:
                 # Skip if sku already exists
                 if sku.value_ids == sorted(value_ids):
-                    sku.in_header = True
                     sku.is_deleted = False
-                    return response()
+                    s.flush()
+                    continue
 
             # Generate slug
             values = (
