@@ -29,4 +29,4 @@ def send_custom_1(
         ),
     ]
     html = render_email(title, paragraphs)
-    send_email(to, subject, html)
+    send_email(to, subject, html, reply_to=email)
