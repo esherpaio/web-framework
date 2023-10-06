@@ -22,7 +22,7 @@ def send_contact_business(
         _("MAIL_CONTACT_MESSAGE", message=message),
     ]
     html = render_email(title, paragraphs)
-    send_email(to, subject, html)
+    send_email(to, subject, html, email)
 
 
 def send_contact_customer(
