@@ -41,6 +41,7 @@ def send_email(
     to: list[str],
     subject: str,
     html: str,
+    reply_to: str | None = None,
     blob_path: str | None = None,
     blob_name: str | None = None,
 ) -> None:
@@ -48,7 +49,7 @@ def send_email(
     to = list(set(to))
     # Send email
     if config.EMAIL_METHOD == "smtp":
-        _send_smtp(config.EMAIL_FROM, to, subject, html, blob_path, blob_name)
+        _send_smtp(config.EMAIL_FROM, to, subject, html, reply_to, blob_path, blob_name)
     else:
         logger.warning("Email not send because no valid method is configured")
 
@@ -58,24 +59,29 @@ def _send_smtp(
     to: list[str],
     subject: str,
     html: str,
+    reply_to: str | None = None,
     blob_path: str | None = None,
     blob_name: str | None = None,
 ) -> None:
     # Build the message
-    message = MIMEMultipart()
-    message["Subject"] = subject
-    message["From"] = from_
+    msg = MIMEMultipart()
+    msg["to"] = to
+    msg["subject"] = subject
+    msg["from"] = from_
+    if reply_to is None:
+        reply_to = from_
+    msg["reply-to"] = reply_to
     body = MIMEText(html, "html")
-    message.attach(body)
+    msg.attach(body)
     # Add attachment
     if blob_path and blob_name:
         blob_str = file_to_str(blob_path)
         attachment = MIMEApplication(blob_str)
         attachment.add_header("Content-Disposition", "attachment", filename=blob_name)
-        message.attach(attachment)
+        msg.attach(attachment)
     # Send the message
     conn = SMTP(config.SMTP_HOST, port=config.SMTP_PORT, timeout=10)
     conn.set_debuglevel(False)
     conn.login(config.SMTP_USERNAME, config.SMTP_PASSWORD)
-    conn.sendmail(from_, to, message.as_string())
+    conn.sendmail(msg["from"], msg["to"], msg.as_string())
     conn.quit()
