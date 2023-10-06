@@ -65,7 +65,7 @@ def _send_smtp(
 ) -> None:
     # Build the message
     msg = MIMEMultipart()
-    msg["to"] = to
+    msg["to"] = ",".join(to)
     msg["subject"] = subject
     msg["from"] = from_
     if reply_to is None:
