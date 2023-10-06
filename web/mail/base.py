@@ -68,9 +68,7 @@ def _send_smtp(
     msg["to"] = ",".join(to)
     msg["subject"] = subject
     msg["from"] = from_
-    if reply_to is None:
-        reply_to = from_
-    msg["reply-to"] = reply_to
+    msg.add_header("reply-to", reply_to or from_)
     body = MIMEText(html, "html")
     msg.attach(body)
     # Add attachment
