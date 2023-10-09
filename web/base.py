@@ -187,7 +187,7 @@ class FlaskWeb:
     def update_cache(self, force: bool = False) -> None:
         if not force:
             try:
-                time.sleep(config.CACHE_S)
+                time.sleep(60)
             except Exception:
                 return
         if self._cache_active:

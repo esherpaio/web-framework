@@ -52,11 +52,11 @@ BUSINESS_VAT: str = config_var("BUSINESS_VAT")
 BUSINESS_ZIP_CODE: str = config_var("BUSINESS_ZIP_CODE")
 
 CDN_AUTO_NAMING: bool = config_var("CDN_AUTO_NAMING")
-CDN_HOSTNAME: str = env_str("CDN_HOSTNAME")
-CDN_USERNAME: str = env_str("CDN_USERNAME")
+CDN_HOSTNAME: str = config_var("CDN_HOSTNAME")
+CDN_USERNAME: str = config_var("CDN_USERNAME")
 CDN_PASSWORD: str = env_str("CDN_PASSWORD")
-CDN_ZONE: str = env_str("CDN_ZONE")
-CDN_URL: str = env_str("CDN_URL")
+CDN_ZONE: str = config_var("CDN_ZONE")
+CDN_URL: str = config_var("CDN_URL")
 CDN_IMAGE_EXTS: list[str] = ["jpg", "jpeg", "png", "webp"]
 CDN_VIDEO_EXTS: list[str] = ["mp4"]
 
@@ -67,7 +67,6 @@ ENDPOINT_USER: str = config_var("ENDPOINT_USER")
 ENDPOINT_PASSWORD: str = config_var("ENDPOINT_PASSWORD")
 ENDPOINT_ORDER: str = config_var("ENDPOINT_ORDER")
 
-CACHE_S: int = config_var("CACHE_S")
 DATABASE_URL: str = env_str("DATABASE_URL")
 GOOGLE_API_KEY: str = env_str("GOOGLE_API_KEY")
 GOOGLE_PLACE_ID: str = env_str("GOOGLE_PLACE_ID")
@@ -85,7 +84,7 @@ SOCIAL_PINTEREST: str = config_var("SOCIAL_PINTEREST")
 SOCIAL_TWITTER: str = config_var("SOCIAL_TWITTER")
 SOCIAL_YOUTUBE: str = config_var("SOCIAL_YOUTUBE")
 
-EMAIL_METHOD: str = env_str("EMAIL_METHOD")
+EMAIL_METHOD: str = config_var("EMAIL_METHOD")
 EMAIL_FROM: str = env_str("EMAIL_FROM")
 EMAIL_TO: str = env_str("EMAIL_TO")
 SMTP_HOST: str = env_str("SMTP_HOST")
