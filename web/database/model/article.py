@@ -2,6 +2,7 @@ from typing import Any
 
 from sqlalchemy import JSON, Boolean, Column, String
 from sqlalchemy.ext.hybrid import hybrid_property
+from sqlalchemy.ext.mutable import MutableDict
 from sqlalchemy.orm import relationship, validates
 
 from web.helper.builtins import none_aware_attrgetter
@@ -14,7 +15,9 @@ from .article_media import ArticleMedia
 class Article(Base):
     __tablename__ = "article"
 
-    attributes = Column(JSON, nullable=False, server_default="{}")
+    attributes = Column(
+        MutableDict.as_mutable(JSON), nullable=False, server_default="{}"
+    )
     is_deleted = Column(Boolean, nullable=False, default=False)
     is_visible = Column(Boolean, nullable=False, default=False)
     name = Column(String(64), nullable=False)

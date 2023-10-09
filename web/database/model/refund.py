@@ -2,6 +2,7 @@ from typing import Any
 
 from sqlalchemy import JSON, Column, String
 from sqlalchemy.ext.hybrid import hybrid_property
+from sqlalchemy.ext.mutable import MutableDict
 from sqlalchemy.orm import relationship, validates
 
 from . import Base
@@ -12,7 +13,9 @@ from ._validation import val_number
 class Refund(Base):
     __tablename__ = "refund"
 
-    attributes = Column(JSON, nullable=False, server_default="{}")
+    attributes = Column(
+        MutableDict.as_mutable(JSON), nullable=False, server_default="{}"
+    )
     mollie_id = Column(String(64), unique=True)
     number = Column(String(16), nullable=False, unique=True)
     total_price = Column(default_price, nullable=False)

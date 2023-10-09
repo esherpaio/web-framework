@@ -1,4 +1,5 @@
 from sqlalchemy import JSON, Column, DateTime, String
+from sqlalchemy.ext.mutable import MutableDict
 from sqlalchemy.orm import relationship
 
 from . import Base
@@ -8,7 +9,9 @@ from ._utils import FKRestrict
 class Invoice(Base):
     __tablename__ = "invoice"
 
-    attributes = Column(JSON, nullable=False, server_default="{}")
+    attributes = Column(
+        MutableDict.as_mutable(JSON), nullable=False, server_default="{}"
+    )
     expires_at = Column(DateTime)
     number = Column(String(16), nullable=False, unique=True)
     paid_at = Column(DateTime)

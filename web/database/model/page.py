@@ -1,4 +1,5 @@
 from sqlalchemy import JSON, Boolean, Column, String
+from sqlalchemy.ext.mutable import MutableDict
 
 from . import Base
 
@@ -6,7 +7,9 @@ from . import Base
 class Page(Base):
     __tablename__ = "page"
 
-    attributes = Column(JSON, nullable=False, server_default="{}")
+    attributes = Column(
+        MutableDict.as_mutable(JSON), nullable=False, server_default="{}"
+    )
     description = Column(String(256))
     endpoint = Column(String(64), unique=True, nullable=False)
     in_sitemap = Column(Boolean, nullable=False)
