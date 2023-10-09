@@ -19,6 +19,7 @@
     "ENDPOINT_ERROR": null,
     "ENDPOINT_HOME": null,
     "ENDPOINT_LOGIN": null,
+    "ENDPOINT_MOLLIE": "webhook_v1.mollie_payment",
     "ENDPOINT_ORDER": null,
     "ENDPOINT_PASSWORD": null,
     "ENDPOINT_USER": null,

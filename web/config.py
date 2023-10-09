@@ -63,6 +63,7 @@ CDN_VIDEO_EXTS: list[str] = ["mp4"]
 ENDPOINT_ERROR: str = config_var("ENDPOINT_ERROR")
 ENDPOINT_HOME: str = config_var("ENDPOINT_HOME")
 ENDPOINT_LOGIN: str = config_var("ENDPOINT_LOGIN")
+ENDPOINT_MOLLIE: str = config_var("ENDPOINT_MOLLIE")
 ENDPOINT_USER: str = config_var("ENDPOINT_USER")
 ENDPOINT_PASSWORD: str = config_var("ENDPOINT_PASSWORD")
 ENDPOINT_ORDER: str = config_var("ENDPOINT_ORDER")

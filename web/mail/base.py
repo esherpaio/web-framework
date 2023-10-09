@@ -1,3 +1,4 @@
+import base64
 import os
 from email.mime.application import MIMEApplication
 from email.mime.multipart import MIMEMultipart
@@ -8,7 +9,6 @@ import jinja2
 
 from web import config
 from web.helper.logger import logger
-from web.mail.utils import file_to_str
 
 
 def render_email(
@@ -73,7 +73,9 @@ def _send_smtp(
     msg.attach(body)
     # Add attachment
     if blob_path and blob_name:
-        blob_str = file_to_str(blob_path)
+        with open(blob_path, "rb") as file:
+            data = file.read()
+        blob_str = base64.b64encode(data).decode()
         attachment = MIMEApplication(blob_str)
         attachment.add_header("Content-Disposition", "attachment", filename=blob_name)
         msg.attach(attachment)

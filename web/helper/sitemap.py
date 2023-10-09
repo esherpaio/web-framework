@@ -1,10 +1,13 @@
 from datetime import datetime
+from typing import Any
 from xml.dom import minidom
 from xml.dom.minidom import Node
 
 from flask import current_app, request, url_for
+from werkzeug.local import LocalProxy
 
 from web.database.model import Page
+from web.helper.cache import cache
 
 #
 # Classes
@@ -58,7 +61,7 @@ def str_to_xml(string: str) -> bytes:
     node = minidom.parseString(string)
     # Remove empty XML elements
     _remove_blanks(node)
-    # Prettify
+    # Make pretty
     node.normalize()
     xml = node.toprettyxml(indent="  ", encoding="UTF-8")
     return xml
@@ -79,3 +82,17 @@ def get_page(pages: list[Page]) -> Page | None:
     for page in pages:
         if page.endpoint == request.endpoint:
             return page
+
+
+def _get_page() -> Page | None:
+    """Get a page object for the current request."""
+    for page in cache.pages:
+        if page.endpoint == request.endpoint:
+            return page
+
+
+#
+# Variables
+#
+
+current_page: Any = LocalProxy(lambda: _get_page())
