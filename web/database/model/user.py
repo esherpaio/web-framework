@@ -2,6 +2,7 @@ from typing import Any
 
 from sqlalchemy import JSON, Boolean, Column, String
 from sqlalchemy.ext.hybrid import hybrid_property
+from sqlalchemy.ext.mutable import MutableDict
 from sqlalchemy.orm import relationship, validates
 
 from . import Base
@@ -33,7 +34,9 @@ class User(Base, FlaskUserMixin):
     __tablename__ = "user"
 
     api_key = Column(String(64), unique=True)
-    attributes = Column(JSON, nullable=False, server_default="{}")
+    attributes = Column(
+        MutableDict.as_mutable(JSON), nullable=False, server_default="{}"
+    )
     email = Column(String(64), unique=True)
     is_active = Column(Boolean, nullable=False, default=False)
     password_hash = Column(String(256))
