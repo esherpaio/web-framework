@@ -31,7 +31,8 @@ def mollie_amount(number: int | float, currency: str) -> dict:
 def mollie_webhook() -> str | None:
     """Get the webhook URL for Mollie."""
     if not config.LOCALHOST:
-        webhook = url_for("webhook_v1.mollie_payment", _external=True)
+        webhook = url_for(config.ENDPOINT_MOLLIE, _external=True)
     else:
+        # TODO: this should not be hardcoded
         webhook = os.path.join(config.LOCALHOST, "webhook", "v1", "mollie", "payment")
     return webhook

@@ -38,7 +38,7 @@ test:
 ## translations : fix translations
 .PHONY: translations
 translations:
-	python3 -c 'from web.i18n.utils import sort_translations; sort_translations();'
+	python3 -c 'from script.sort_translations import sort_translations; sort_translations();'
 
 ## MIGRATIONS
 ## ----------

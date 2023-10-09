@@ -19,12 +19,11 @@ def save_pdf(pdf: Document, pdf_name: str) -> str:
     pdf_dir = os.path.join(curr_dir, "tmp")
     if not os.path.isdir(pdf_dir):
         os.makedirs(pdf_dir)
-
     # Export PDF
     pdf_path = os.path.join(pdf_dir, pdf_name)
     with open(pdf_path, "wb") as file:
         PDF.dumps(file, pdf)  # noqa
-
+    # Return path
     return pdf_path
 
 

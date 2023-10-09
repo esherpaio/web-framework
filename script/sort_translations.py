@@ -6,10 +6,7 @@ from web.helper.logger import logger
 
 def sort_translations() -> None:
     # Create path to translations directory
-    translations_dir = os.path.join(
-        os.path.dirname(os.path.realpath(__file__)),
-        "translations",
-    )
+    translations_dir = "web/i18n/translations"
     # Get all paths to translation files
     paths = []
     for dir_path, _, filenames in os.walk(translations_dir):
@@ -23,3 +20,7 @@ def sort_translations() -> None:
         with open(path, "w", encoding="utf-8") as file:
             json.dump(data_out, file, ensure_ascii=False, indent=4)
         logger.info(f"Sorted {path}")
+
+
+if __name__ == "__main__":
+    sort_translations()
