@@ -12,6 +12,7 @@ from web.seeder.decorators import external_seed
 class RegionSyncer(Syncer):
     @external_seed
     def sync(self, s: Session) -> None:
+        # Call API
         url = "https://restcountries.com/v3.1/all?fields=region"
         try:
             response = requests.request("GET", url, timeout=2)
@@ -20,7 +21,7 @@ class RegionSyncer(Syncer):
             logger.critical(error)
             return
 
-        # Load iteration objects
+        # Load regions
         regions = s.query(Region).all()
 
         # Get all region names
