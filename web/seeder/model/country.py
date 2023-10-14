@@ -33,14 +33,14 @@ class CountrySyncer(Syncer):
                 country_name = resource["name"]["common"]
                 country_code = resource["cca2"]
                 region_name = resource["region"]
-                country_currency_codes = list(resource["currencies"].keys())
+                currency_codes = list(resource["currencies"].keys())
             except KeyError as error:
                 logger.critical(error)
                 continue
 
             # Get currency, fallback to USD
             for currency in currencies:
-                if currency.code in country_currency_codes:
+                if currency.code in currency_codes:
                     break
             else:
                 currency = currency_usd

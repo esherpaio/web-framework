@@ -29,7 +29,7 @@ class CurrencySyncer(Syncer):
             logger.critical(error)
             return
 
-        # Load iteration objects
+        # Load currencies
         currencies = s.query(Currency).all()
 
         # Get resource details
@@ -37,16 +37,16 @@ class CurrencySyncer(Syncer):
         elements = soup.find_all("Cube", currency=True, rate=True)
         for element in elements:
             try:
-                cube_code = element["currency"]
-                cube_rate = element["rate"]
+                code = element["currency"]
+                rate = element["rate"]
             except KeyError as error:
                 logger.critical(error)
                 return
 
             # Update currency
-            currency = next((x for x in currencies if x.code == cube_code), None)
+            currency = next((x for x in currencies if x.code == code), None)
             if currency:
-                currency.rate = cube_rate
+                currency.rate = rate
                 s.flush()
 
 
