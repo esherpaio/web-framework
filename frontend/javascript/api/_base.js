@@ -22,7 +22,7 @@ const callApi = async (
     const timeoutId = setTimeout(() => controller.abort(), 25000);
     let options = {
         body: data,
-        headers: {"Content-Type": contentType},
+        headers: { "Content-Type": contentType },
         method: method,
         signal: controller.signal,
     }
@@ -42,17 +42,13 @@ const callApi = async (
             return Promise.reject();
         }
     }).catch(() => {
-        let message, error;
-        if (resp && resp.message) {
-            message = resp.message;
-            error = resp.message;
-        } else {
-            message = "Something went wrong on our end.";
-            error = "No response from API.";
-        }
-        resetButtons();
         if (!silent) {
-            showMessage(message);
+            let error;
+            if (resp && resp.message) {
+                error = resp.message;
+            } else {
+                error = "No response from API.";
+            }
             throw new Error(error);
         }
     });
