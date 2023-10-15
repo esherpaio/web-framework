@@ -43,7 +43,7 @@ def get_verifications() -> Response:
     data = api.gen_query_data(api.get_args)
     with conn.begin() as s:
         filters = api.gen_query_filters(data, required=True)
-        models = api.list_(s, *filters, limit=1)
+        models: list[Verification] = api.list_(s, *filters, limit=1)
         for model in models:
             val_verification(s, data, model)
         resources = api.gen_resources(s, models)

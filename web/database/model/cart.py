@@ -1,27 +1,28 @@
 from typing import Any
 
-from sqlalchemy import Boolean, Column
+from sqlalchemy import Boolean, ForeignKey
 from sqlalchemy.ext.hybrid import hybrid_method, hybrid_property
+from sqlalchemy.orm import mapped_column as MC
 from sqlalchemy.orm import relationship, validates
 
 from . import Base
-from ._utils import FKCascade, FKRestrict, FKSetNull, default_price, default_vat
+from ._utils import default_price, default_vat
 from ._validation import val_number
 
 
 class Cart(Base):
     __tablename__ = "cart"
 
-    shipment_price = Column(default_price, nullable=False, default=0)
-    vat_rate = Column(default_vat, nullable=False, default=1)
-    vat_reverse = Column(Boolean, nullable=False, default=False)
+    shipment_price = MC(default_price, nullable=False, default=0)
+    vat_rate = MC(default_vat, nullable=False, default=1)
+    vat_reverse = MC(Boolean, nullable=False, default=False)
 
-    billing_id = Column(FKRestrict("billing.id"))
-    coupon_id = Column(FKRestrict("coupon.id"))
-    currency_id = Column(FKRestrict("currency.id"), nullable=False)
-    shipment_method_id = Column(FKSetNull("shipment_method.id"))
-    shipping_id = Column(FKRestrict("shipping.id"))
-    user_id = Column(FKCascade("user.id"), nullable=False, unique=True)
+    billing_id = MC(ForeignKey("billing.id", ondelete="RESTRICT"))
+    coupon_id = MC(ForeignKey("coupon.id", ondelete="RESTRICT"))
+    currency_id = MC(ForeignKey("currency.id", ondelete="RESTRICT"), nullable=False)
+    shipment_method_id = MC(ForeignKey("shipment_method.id", ondelete="SET NULL"))
+    shipping_id = MC(ForeignKey("shipping.id", ondelete="RESTRICT"))
+    user_id = MC(ForeignKey("user.id", ondelete="CASCADE"), nullable=False, unique=True)
 
     billing = relationship("Billing")
     coupon = relationship("Coupon")
@@ -102,7 +103,7 @@ class Cart(Base):
         with_coupon: bool = False,
         with_shipment: bool = False,
     ) -> float:
-        price_ = 0
+        price_ = 0.0
         # Add order lines
         for item in self.items:
             if include_vat:

@@ -1,6 +1,7 @@
 from typing import Any
 
-from sqlalchemy import Boolean, Column, String
+from sqlalchemy import Boolean, String
+from sqlalchemy.orm import mapped_column as MC
 from sqlalchemy.orm import validates
 
 from . import Base
@@ -10,9 +11,9 @@ from ._validation import get_lower, val_length
 class Language(Base):
     __tablename__ = "language"
 
-    code = Column(String(2), nullable=False, unique=True)
-    in_sitemap = Column(Boolean, nullable=False, default=False)
-    name = Column(String(64), nullable=False, unique=True)
+    code = MC(String(2), nullable=False, unique=True)
+    in_sitemap = MC(Boolean, nullable=False, default=False)
+    name = MC(String(64), nullable=False, unique=True)
 
     # Validation
 

@@ -1,21 +1,21 @@
-from typing import Any, Callable, Type
+from typing import Any, Callable, Generic
 
 from flask import abort, has_request_context, request
-from sqlalchemy import Column, ColumnExpressionArgument
+from sqlalchemy import ColumnExpressionArgument
 from sqlalchemy.orm.attributes import InstrumentedAttribute
 from sqlalchemy.orm.session import Session
 
-from web.database.model import Model
+from web.database.model import B
 from web.helper.api import ApiText, args_get, json_get, response
 from web.helper.logger import logger
 
 
-class API:
-    model: Type[Model] | None = None
-    post_columns: set[Column | str] = set()
-    patch_columns: set[Column | str] = set()
-    get_args: set[Column | str] = set()
-    get_columns: set[Column | str] = set()
+class API(Generic[B]):
+    model: B | None = None
+    post_columns: set[InstrumentedAttribute | str] = set()
+    patch_columns: set[InstrumentedAttribute | str] = set()
+    get_args: set[InstrumentedAttribute | str] = set()
+    get_columns: set[InstrumentedAttribute | str] = set()
 
     #
     # Parsing
@@ -23,7 +23,7 @@ class API:
 
     @staticmethod
     def parse_column(
-        data: dict, column: Column | str, func: Callable
+        data: dict, column: InstrumentedAttribute | str, func: Callable
     ) -> tuple[str | None, Any]:
         key, value = None, None
         if isinstance(column, InstrumentedAttribute):
@@ -44,7 +44,7 @@ class API:
     @classmethod
     def gen_request_data(
         cls,
-        columns: set[Column | str],
+        columns: set[InstrumentedAttribute | str],
         include_view_args: bool = True,
     ) -> dict[str, Any]:
         if not has_request_context():
@@ -80,7 +80,7 @@ class API:
     @classmethod
     def gen_query_data(
         cls,
-        args: set[Column | str],
+        args: set[InstrumentedAttribute | str],
     ) -> dict[str, Any]:
         if not has_request_context():
             raise RuntimeError
@@ -105,7 +105,7 @@ class API:
     def gen_resource(
         cls,
         s: Session,
-        model: Type[Model],
+        model: B,
     ) -> dict[str, Any]:
         data = {}
         for attr in cls.get_columns:
@@ -123,7 +123,7 @@ class API:
     def gen_resources(
         cls,
         s: Session,
-        models: list[Type[Model]],
+        models: list[B],
     ) -> list[dict[str, Any]]:
         data = []
         for model in models:
@@ -158,7 +158,7 @@ class API:
     #
 
     @staticmethod
-    def insert(s: Session, data: dict, model: Type[Model]) -> None:
+    def insert(s: Session, data: dict, model: B) -> None:
         for k, v in data.items():
             if hasattr(model, k):
                 setattr(model, k, v)
@@ -171,7 +171,7 @@ class API:
         s: Session,
         id_: int | None,
         *filters: ColumnExpressionArgument[bool],
-    ) -> Any:
+    ) -> B:
         if cls.model is None:
             raise NotImplementedError
         if id_ is not None:
@@ -189,7 +189,7 @@ class API:
         *filters: ColumnExpressionArgument[bool],
         limit: int | None = None,
         offset: int | None = None,
-    ) -> list[Type[Model]]:
+    ) -> list[B]:
         if cls.model is None:
             raise NotImplementedError
 
@@ -197,13 +197,13 @@ class API:
         return models
 
     @staticmethod
-    def update(s: Session, data: dict, model: Type[Model]) -> None:
+    def update(s: Session, data: dict, model: B) -> None:
         for k, v in data.items():
             if hasattr(model, k):
                 setattr(model, k, v)
         s.flush()
 
     @staticmethod
-    def delete(s: Session, model: Type[Model]) -> None:
+    def delete(s: Session, model: B) -> None:
         s.delete(model)
         s.flush()

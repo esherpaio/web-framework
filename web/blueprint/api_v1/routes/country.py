@@ -52,7 +52,7 @@ def post_countries() -> Response:
 def get_countries() -> Response:
     api = CountryAPI()
     with conn.begin() as s:
-        models = api.list_(s)
+        models: list[Country] = api.list_(s)
         resources = api.gen_resources(s, models)
     return response(data=resources)
 
@@ -61,7 +61,7 @@ def get_countries() -> Response:
 def get_countries_id(country_id: int) -> Response:
     api = CountryAPI()
     with conn.begin() as s:
-        model = api.get(s, country_id)
+        model: Country = api.get(s, country_id)
         resource = api.gen_resource(s, model)
     return response(data=resource)
 
@@ -71,7 +71,7 @@ def get_countries_id(country_id: int) -> Response:
 def delete_countries_id(country_id: int) -> Response:
     api = CountryAPI()
     with conn.begin() as s:
-        model = api.get(s, country_id)
+        model: Country = api.get(s, country_id)
         api.delete(s, model)
     return response()
 

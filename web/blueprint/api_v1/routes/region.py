@@ -44,7 +44,7 @@ def post_regions() -> Response:
 def get_regions() -> Response:
     api = RegionAPI()
     with conn.begin() as s:
-        models = api.list_(s)
+        models: list[Region] = api.list_(s)
         resources = api.gen_resources(s, models)
     return response(data=resources)
 
@@ -53,7 +53,7 @@ def get_regions() -> Response:
 def get_regions_id(region_id: int) -> Response:
     api = RegionAPI()
     with conn.begin() as s:
-        model = api.get(s, region_id)
+        model: Region = api.get(s, region_id)
         resource = api.gen_resource(s, model)
     return response(data=resource)
 
@@ -63,7 +63,7 @@ def get_regions_id(region_id: int) -> Response:
 def delete_regions_id(region_id: int) -> Response:
     api = RegionAPI()
     with conn.begin() as s:
-        model = api.get(s, region_id)
+        model: Region = api.get(s, region_id)
         api.delete(s, model)
     return response()
 

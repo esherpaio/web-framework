@@ -1,7 +1,8 @@
 from typing import Any
 
-from sqlalchemy import Boolean, CheckConstraint, Column, String
+from sqlalchemy import Boolean, CheckConstraint, String
 from sqlalchemy.ext.hybrid import hybrid_property
+from sqlalchemy.orm import mapped_column as MC
 from sqlalchemy.orm import validates
 
 from . import Base
@@ -13,10 +14,10 @@ class Coupon(Base):
     __tablename__ = "coupon"
     __table_args__ = (CheckConstraint("amount IS NOT NULL OR rate IS NOT NULL"),)
 
-    amount = Column(default_price)
-    code = Column(String(16), nullable=False)
-    is_deleted = Column(Boolean, nullable=False, default=False)
-    rate = Column(default_rate)
+    amount = MC(default_price)
+    code = MC(String(16), nullable=False)
+    is_deleted = MC(Boolean, nullable=False, default=False)
+    rate = MC(default_rate)
 
     # Validation
 

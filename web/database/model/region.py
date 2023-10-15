@@ -1,5 +1,6 @@
-from sqlalchemy import Column, String
+from sqlalchemy import String
 from sqlalchemy.ext.hybrid import hybrid_property
+from sqlalchemy.orm import mapped_column as MC
 
 from . import Base
 
@@ -7,7 +8,7 @@ from . import Base
 class Region(Base):
     __tablename__ = "region"
 
-    name = Column(String(64), nullable=False, unique=True)
+    name = MC(String(64), nullable=False, unique=True)
 
     # Properties - regions
 

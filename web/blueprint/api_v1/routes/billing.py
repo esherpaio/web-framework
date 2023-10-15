@@ -79,7 +79,7 @@ def get_billings_id(billing_id: int) -> Response:
     api = BillingAPI()
     with conn.begin() as s:
         filters = {Billing.user_id == current_user.id}
-        model = api.get(s, billing_id, *filters)
+        model: Billing = api.get(s, billing_id, *filters)
         resource = api.gen_resource(s, model)
     return response(data=resource)
 
@@ -90,7 +90,7 @@ def patch_billings_id(billing_id: int) -> Response:
     data = api.gen_request_data(api.patch_columns)
     with conn.begin() as s:
         filters = {Billing.user_id == current_user.id}
-        model = api.get(s, billing_id, *filters)
+        model: Billing = api.get(s, billing_id, *filters)
         val_order(s, data, model)
         api.update(s, data, model)
         set_cart(s, data, model)

@@ -70,7 +70,7 @@ def get_carts() -> Response:
     api = CartAPI()
     with conn.begin() as s:
         filters = {Cart.user_id == current_user.id}
-        models = api.list_(s, *filters, limit=1)
+        models: list[Cart] = api.list_(s, *filters, limit=1)
         resources = api.gen_resources(s, models)
     return response(data=resources)
 
@@ -81,7 +81,7 @@ def patch_carts_id(cart_id: int) -> Response:
     data = api.gen_request_data(api.patch_columns)
     with conn.begin() as s:
         filters = {Cart.user_id == current_user.id}
-        model = api.get(s, cart_id, *filters)
+        model: Cart = api.get(s, cart_id, *filters)
         set_vat(s, data, model)
         set_shipment(s, data, model)
         set_coupon(s, data, model)
@@ -95,7 +95,7 @@ def delete_carts_id(cart_id: int) -> Response:
     api = CartAPI()
     with conn.begin() as s:
         filters = {Cart.user_id == current_user.id}
-        model = api.get(s, cart_id, *filters)
+        model: Cart = api.get(s, cart_id, *filters)
         api.delete(s, model)
     return response()
 

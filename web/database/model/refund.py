@@ -1,26 +1,24 @@
 from typing import Any
 
-from sqlalchemy import JSON, Column, String
+from sqlalchemy import ForeignKey, String
 from sqlalchemy.ext.hybrid import hybrid_property
-from sqlalchemy.ext.mutable import MutableDict
+from sqlalchemy.orm import mapped_column as MC
 from sqlalchemy.orm import relationship, validates
 
 from . import Base
-from ._utils import FKRestrict, default_price
+from ._utils import default_price, type_json
 from ._validation import val_number
 
 
 class Refund(Base):
     __tablename__ = "refund"
 
-    attributes = Column(
-        MutableDict.as_mutable(JSON), nullable=False, server_default="{}"
-    )
-    mollie_id = Column(String(64), unique=True)
-    number = Column(String(16), nullable=False, unique=True)
-    total_price = Column(default_price, nullable=False)
+    attributes = MC(type_json, nullable=False, server_default="{}")
+    mollie_id = MC(String(64), unique=True)
+    number = MC(String(16), nullable=False, unique=True)
+    total_price = MC(default_price, nullable=False)
 
-    order_id = Column(FKRestrict("order.id"), nullable=False)
+    order_id = MC(ForeignKey("order.id", ondelete="RESTRICT"), nullable=False)
 
     order = relationship("Order", back_populates="refunds")
 

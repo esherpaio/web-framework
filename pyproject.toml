@@ -32,13 +32,9 @@ cache_dir=".cache/pytest"
 [tool.mypy]
 no_warn_no_return=true
 ignore_missing_imports=true
-exclude="web/(config|database)/*"
+exclude="web/(config)/*"
 cache_dir=".cache/mypy"
 
 [[tool.mypy.overrides]]
 module = "web.config.*"
-follow_imports="skip"
-
-[[tool.mypy.overrides]]
-module = "web.database.*"
 follow_imports="skip"

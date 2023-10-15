@@ -1,25 +1,23 @@
 from typing import Any
 
-from sqlalchemy import Boolean, Column, Integer, String, UniqueConstraint
+from sqlalchemy import Boolean, ForeignKey, Integer, String, UniqueConstraint
+from sqlalchemy.orm import mapped_column as MC
 from sqlalchemy.orm import relationship, validates
 
 from . import Base
-from ._utils import FKCascade
-from ._validation import (
-    get_slug,
-)
+from ._validation import get_slug
 
 
 class ProductOption(Base):
     __tablename__ = "product_option"
     __table_args__ = (UniqueConstraint("product_id", "slug"),)
 
-    is_deleted = Column(Boolean, nullable=False, default=False)
-    name = Column(String(64), nullable=False)
-    order = Column(Integer)
-    slug = Column(String(64), nullable=False)
+    is_deleted = MC(Boolean, nullable=False, default=False)
+    name = MC(String(64), nullable=False)
+    order = MC(Integer)
+    slug = MC(String(64), nullable=False)
 
-    product_id = Column(FKCascade("product.id"), nullable=False)
+    product_id = MC(ForeignKey("product.id", ondelete="CASCADE"), nullable=False)
 
     product = relationship("Product", back_populates="options")
     values = relationship(

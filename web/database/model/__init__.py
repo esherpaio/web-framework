@@ -1,4 +1,4 @@
-from ._base import Base, Model
+from ._base import B, Base
 from .article import Article
 from .article_media import ArticleMedia
 from .billing import Billing

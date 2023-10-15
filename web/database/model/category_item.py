@@ -1,8 +1,8 @@
-from sqlalchemy import CheckConstraint, Column, Integer, UniqueConstraint
+from sqlalchemy import CheckConstraint, ForeignKey, Integer, UniqueConstraint
+from sqlalchemy.orm import mapped_column as MC
 from sqlalchemy.orm import relationship
 
 from . import Base
-from ._utils import FKCascade
 
 
 class CategoryItem(Base):
@@ -13,11 +13,11 @@ class CategoryItem(Base):
         CheckConstraint("sku_id IS NOT NULL OR article_id IS NOT NULL"),
     )
 
-    order = Column(Integer)
+    order = MC(Integer)
 
-    category_id = Column(FKCascade("category.id"), nullable=False)
-    article_id = Column(FKCascade("article.id"))
-    sku_id = Column(FKCascade("sku.id"))
+    category_id = MC(ForeignKey("category.id", ondelete="CASCADE"), nullable=False)
+    article_id = MC(ForeignKey("article.id", ondelete="CASCADE"))
+    sku_id = MC(ForeignKey("sku.id", ondelete="CASCADE"))
 
     category = relationship("Category", back_populates="items")
     article = relationship("Article", back_populates="category_items")

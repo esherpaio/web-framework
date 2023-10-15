@@ -1,30 +1,26 @@
 from typing import Any
 
-from sqlalchemy import JSON, Boolean, Column, Integer, String
-from sqlalchemy.ext.mutable import MutableDict
+from sqlalchemy import Boolean, ForeignKey, Integer, String
+from sqlalchemy.orm import mapped_column as MC
 from sqlalchemy.orm import relationship, validates
 
 from . import Base
-from ._utils import FKRestrict
-from ._validation import (
-    get_slug,
-)
+from ._utils import type_json
+from ._validation import get_slug
 
 
 class Category(Base):
     __tablename__ = "category"
 
-    attributes = Column(
-        MutableDict.as_mutable(JSON), nullable=False, server_default="{}"
-    )
-    in_header = Column(Boolean, nullable=False, default=False)
-    is_deleted = Column(Boolean, nullable=False, default=False)
-    is_locked = Column(Boolean, nullable=False, default=False)
-    name = Column(String(64), nullable=False, unique=True)
-    order = Column(Integer)
-    slug = Column(String(64), nullable=False, unique=True)
+    attributes = MC(type_json, nullable=False, server_default="{}")
+    in_header = MC(Boolean, nullable=False, default=False)
+    is_deleted = MC(Boolean, nullable=False, default=False)
+    is_locked = MC(Boolean, nullable=False, default=False)
+    name = MC(String(64), nullable=False, unique=True)
+    order = MC(Integer)
+    slug = MC(String(64), nullable=False, unique=True)
 
-    child_id = Column(FKRestrict("category.id"))
+    child_id = MC(ForeignKey("category.id", ondelete="RESTRICT"))
 
     child = relationship("Category", remote_side="Category.id")
     items = relationship(

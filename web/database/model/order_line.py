@@ -1,11 +1,12 @@
 from typing import Any
 
-from sqlalchemy import Column, Integer, UniqueConstraint
+from sqlalchemy import ForeignKey, Integer, UniqueConstraint
 from sqlalchemy.ext.hybrid import hybrid_property
+from sqlalchemy.orm import mapped_column as MC
 from sqlalchemy.orm import relationship, validates
 
 from . import Base
-from ._utils import FKCascade, FKRestrict, default_price
+from ._utils import default_price
 from ._validation import val_number
 
 
@@ -13,11 +14,11 @@ class OrderLine(Base):
     __tablename__ = "order_line"
     __table_args__ = (UniqueConstraint("order_id", "sku_id"),)
 
-    quantity = Column(Integer, nullable=False)
-    total_price = Column(default_price, nullable=False)
+    quantity = MC(Integer, nullable=False)
+    total_price = MC(default_price, nullable=False)
 
-    order_id = Column(FKCascade("order.id"), nullable=False)
-    sku_id = Column(FKRestrict("sku.id"), nullable=False)
+    order_id = MC(ForeignKey("order.id", ondelete="CASCADE"), nullable=False)
+    sku_id = MC(ForeignKey("sku.id", ondelete="RESTRICT"), nullable=False)
 
     order = relationship("Order", back_populates="lines")
     sku = relationship("Sku")

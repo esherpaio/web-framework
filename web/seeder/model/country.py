@@ -18,7 +18,7 @@ class CountrySyncer(Syncer):
             response = requests.request("GET", url, timeout=2)
             resources = response.json()
         except RequestException as error:
-            logger.critical(error)
+            logger.critical(f"Country seeder failed: {error}")
             return
 
         # Load iteration objects
@@ -26,6 +26,11 @@ class CountrySyncer(Syncer):
         currency_usd = s.query(Currency).filter_by(id=CurrencyId.USD).first()
         regions = s.query(Region).all()
         countries = s.query(Country).all()
+
+        # Sanity checks
+        if currency_usd is None:
+            logger.warning("Country seeder failed: USD currency not found")
+            return
 
         # Get resource details
         for resource in resources:

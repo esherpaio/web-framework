@@ -1,18 +1,18 @@
-from sqlalchemy import Column, String
+from sqlalchemy import ForeignKey, String
 from sqlalchemy.ext.hybrid import hybrid_property
+from sqlalchemy.orm import mapped_column as MC
 
 from . import Base
-from ._utils import FKRestrict
 from .file_type import FileTypeId
 
 
 class File(Base):
     __tablename__ = "file"
 
-    description = Column(String(64))
-    path = Column(String(256), nullable=False, unique=True)
+    description = MC(String(64))
+    path = MC(String(256), nullable=False, unique=True)
 
-    type_id = Column(FKRestrict("file_type.id"), nullable=False)
+    type_id = MC(ForeignKey("file_type.id", ondelete="RESTRICT"), nullable=False)
 
     # Properties - types
 
