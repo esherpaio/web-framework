@@ -100,19 +100,19 @@ def patch_shippings_id(shipping_id: int) -> Response:
 #
 
 
-def set_user(s: Session, data: dict, shipping: Shipping) -> None:
-    shipping.user_id = current_user.id
+def set_user(s: Session, data: dict, model: Shipping) -> None:
+    model.user_id = current_user.id
 
 
-def set_cart(s: Session, data: dict, shipping: Shipping) -> None:
-    carts = s.query(Cart).filter_by(shipping_id=shipping.id).all()
+def set_cart(s: Session, data: dict, model: Shipping) -> None:
+    carts = s.query(Cart).filter_by(shipping_id=model.id).all()
     for cart in carts:
         set_vat(s, data, cart)
         set_shipment(s, data, cart)
 
 
-def val_order(s: Session, data: dict, shipping: Shipping) -> None:
-    filters = {Order.shipping_id == shipping.id}
+def val_order(s: Session, data: dict, model: Shipping) -> None:
+    filters = {Order.shipping_id == model.id}
     order = s.query(Order).filter(*filters).first()
     if order is not None:
         abort(response(404, ApiText.HTTP_404))

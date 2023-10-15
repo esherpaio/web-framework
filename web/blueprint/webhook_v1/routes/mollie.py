@@ -37,22 +37,25 @@ def mollie_payment() -> Response:
         if not order:
             return response(404, ApiText.HTTP_404)
 
-        if mollie_payment_.is_paid() and not order.invoice:
-            invoice = Invoice(
-                expires_at=mollie_payment_.expires_at,
-                paid_at=mollie_payment_.paid_at,
-                order_id=order.id,
-            )
-            s.add(invoice)
+        if mollie_payment_.is_paid():
             order.status_id = OrderStatusId.PAID
             s.flush()
-            _, pdf_path = gen_invoice(s, order, invoice)
-            send_order_paid(
-                order_id=order.id,
-                billing_email=order.billing.email,
-                invoice_number=invoice.number,
-                pdf_path=pdf_path,
-            )
-            remove_file(pdf_path)
+            # TODO(Stan): add invoice.is_sent attribute
+            if not order.invoice:
+                invoice = Invoice(
+                    expires_at=mollie_payment_.expires_at,
+                    paid_at=mollie_payment_.paid_at,
+                    order_id=order.id,
+                )
+                s.add(invoice)
+                s.flush()
+                _, pdf_path = gen_invoice(s, order, invoice)
+                send_order_paid(
+                    order_id=order.id,
+                    billing_email=order.billing.email,
+                    invoice_number=invoice.number,
+                    pdf_path=pdf_path,
+                )
+                remove_file(pdf_path)
 
     return response()
