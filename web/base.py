@@ -261,6 +261,7 @@ def _get_cdn_url(path_: str) -> str:
     return cdn.url(path_)
 
 
+# TODO(Stan): Move to website repos, unrelated to this framework
 def _get_svg(name: str, classes: str = "") -> str:
     if current_app.static_folder is None:
         return ""
