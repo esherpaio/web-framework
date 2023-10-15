@@ -1,4 +1,4 @@
-import os
+import urllib.parse
 
 from flask import url_for
 from mollie.api.client import Client
@@ -30,9 +30,9 @@ def mollie_amount(number: int | float, currency: str) -> dict:
 
 def mollie_webhook() -> str | None:
     """Get the webhook URL for Mollie."""
-    if not config.LOCALHOST:
-        webhook = url_for(config.ENDPOINT_MOLLIE, _external=True)
-    else:
-        # TODO: this should not be hardcoded
-        webhook = os.path.join(config.LOCALHOST, "webhook", "v1", "mollie", "payment")
-    return webhook
+    url = url_for(config.ENDPOINT_MOLLIE, _external=True, _scheme="https")
+    if config.LOCALHOST:
+        parsed = urllib.parse.urlparse(url)
+        replaced = parsed._replace(netloc=config.LOCALHOST)
+        url = urllib.parse.urlunparse(replaced)
+    return url
