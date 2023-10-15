@@ -1,6 +1,7 @@
 from enum import IntEnum
 
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Integer, String
+from sqlalchemy.orm import mapped_column as MC
 
 from . import Base
 
@@ -8,8 +9,8 @@ from . import Base
 class OrderStatus(Base):
     __tablename__ = "order_status"
 
-    name = Column(String(16), nullable=False)
-    order = Column(Integer)
+    name = MC(String(16), nullable=False)
+    order = MC(Integer)
 
 
 class OrderStatusId(IntEnum):

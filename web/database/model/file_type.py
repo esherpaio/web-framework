@@ -1,6 +1,7 @@
 from enum import IntEnum
 
-from sqlalchemy import Column, String
+from sqlalchemy import String
+from sqlalchemy.orm import mapped_column as MC
 
 from . import Base
 
@@ -8,7 +9,7 @@ from . import Base
 class FileType(Base):
     __tablename__ = "file_type"
 
-    name = Column(String(16), nullable=False, unique=True)
+    name = MC(String(16), nullable=False, unique=True)
 
 
 class FileTypeId(IntEnum):

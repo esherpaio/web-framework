@@ -1,6 +1,7 @@
 from enum import IntEnum
 
-from sqlalchemy import Column, String
+from sqlalchemy import String
+from sqlalchemy.orm import mapped_column as MC
 
 from . import Base
 
@@ -8,7 +9,7 @@ from . import Base
 class ProductType(Base):
     __tablename__ = "product_type"
 
-    name = Column(String(16), nullable=False, unique=True)
+    name = MC(String(16), nullable=False, unique=True)
 
 
 class ProductTypeId(IntEnum):

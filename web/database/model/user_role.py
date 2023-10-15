@@ -1,6 +1,7 @@
 from enum import IntEnum
 
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Integer, String
+from sqlalchemy.orm import mapped_column as MC
 
 from . import Base
 
@@ -8,8 +9,8 @@ from . import Base
 class UserRole(Base):
     __tablename__ = "user_role"
 
-    level = Column(Integer, nullable=False)
-    name = Column(String(64), nullable=False, unique=True)
+    level = MC(Integer, nullable=False)
+    name = MC(String(64), nullable=False, unique=True)
 
 
 class UserRoleId(IntEnum):

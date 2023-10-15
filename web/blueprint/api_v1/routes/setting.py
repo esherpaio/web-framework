@@ -35,7 +35,7 @@ class SettingAPI(API):
 def get_setting() -> Response:
     api = SettingAPI()
     with conn.begin() as s:
-        model = api.get(s, None)
+        model: Setting = api.get(s, None)
         resource = api.gen_resource(s, model)
     return response(data=resource)
 
@@ -45,7 +45,7 @@ def patch_setting() -> Response:
     api = SettingAPI()
     data = api.gen_request_data(api.patch_columns)
     with conn.begin() as s:
-        model = api.get(s, None)
+        model: Setting = api.get(s, None)
         set_cache(s, data, model)
         api.update(s, data, model)
         resource = api.gen_resource(s, model)

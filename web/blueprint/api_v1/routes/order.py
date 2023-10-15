@@ -67,7 +67,7 @@ def delete_orders_id(order_id: int) -> Response:
     api = OrderAPI()
     data = api.gen_view_args_data()
     with conn.begin() as s:
-        model = api.get(s, order_id)
+        model: Order = api.get(s, order_id)
         cancel_mollie(s, data, model)
     return response()
 

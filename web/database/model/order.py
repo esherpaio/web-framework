@@ -1,11 +1,12 @@
 from typing import Any
 
-from sqlalchemy import Boolean, CheckConstraint, Column, String
+from sqlalchemy import Boolean, CheckConstraint, ForeignKey, String
 from sqlalchemy.ext.hybrid import hybrid_method, hybrid_property
+from sqlalchemy.orm import mapped_column as MC
 from sqlalchemy.orm import relationship, validates
 
 from . import Base
-from ._utils import FKRestrict, default_price, default_rate, default_vat
+from ._utils import default_price, default_rate, default_vat
 from ._validation import get_upper, val_length, val_number
 from .order_status import OrderStatusId
 
@@ -14,21 +15,21 @@ class Order(Base):
     __tablename__ = "order"
     __table_args__ = (CheckConstraint("coupon_amount IS NULL OR coupon_rate IS NULL"),)
 
-    coupon_code = Column(String(16))
-    coupon_amount = Column(default_price)
-    coupon_rate = Column(default_rate)
-    mollie_id = Column(String(64), unique=True)
-    shipment_name = Column(String(64))
-    shipment_price = Column(default_price, nullable=False)
-    total_price = Column(default_price, nullable=False)
-    vat_rate = Column(default_vat, nullable=False)
-    vat_reverse = Column(Boolean, nullable=False)
+    coupon_code = MC(String(16))
+    coupon_amount = MC(default_price)
+    coupon_rate = MC(default_rate)
+    mollie_id = MC(String(64), unique=True)
+    shipment_name = MC(String(64))
+    shipment_price = MC(default_price, nullable=False)
+    total_price = MC(default_price, nullable=False)
+    vat_rate = MC(default_vat, nullable=False)
+    vat_reverse = MC(Boolean, nullable=False)
 
-    billing_id = Column(FKRestrict("billing.id"), nullable=False)
-    currency_id = Column(FKRestrict("currency.id"), nullable=False)
-    shipping_id = Column(FKRestrict("shipping.id"), nullable=False)
-    status_id = Column(FKRestrict("order_status.id"), nullable=False)
-    user_id = Column(FKRestrict("user.id"), nullable=False)
+    billing_id = MC(ForeignKey("billing.id", ondelete="RESTRICT"), nullable=False)
+    currency_id = MC(ForeignKey("currency.id", ondelete="RESTRICT"), nullable=False)
+    shipping_id = MC(ForeignKey("shipping.id", ondelete="RESTRICT"), nullable=False)
+    status_id = MC(ForeignKey("order_status.id", ondelete="RESTRICT"), nullable=False)
+    user_id = MC(ForeignKey("user.id", ondelete="RESTRICT"), nullable=False)
 
     billing = relationship("Billing")
     currency = relationship("Currency")
@@ -158,7 +159,7 @@ class Order(Base):
         with_coupon: bool = False,
         with_shipment: bool = False,
     ) -> float:
-        price_ = 0
+        price_ = 0.0
         # Add order lines
         for line in self.lines:
             if include_vat:

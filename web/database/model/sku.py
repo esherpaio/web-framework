@@ -1,27 +1,25 @@
 from typing import Any
 
-from sqlalchemy import JSON, Boolean, Column, String
+from sqlalchemy import Boolean, ForeignKey, String
 from sqlalchemy.ext.hybrid import hybrid_property
-from sqlalchemy.ext.mutable import MutableDict
+from sqlalchemy.orm import mapped_column as MC
 from sqlalchemy.orm import relationship, validates
 
 from . import Base
-from ._utils import FKRestrict, default_price
+from ._utils import default_price, type_json
 from ._validation import val_number
 
 
 class Sku(Base):
     __tablename__ = "sku"
 
-    attributes = Column(
-        MutableDict.as_mutable(JSON), nullable=False, server_default="{}"
-    )
-    is_deleted = Column(Boolean, nullable=False, default=False)
-    is_visible = Column(Boolean, nullable=False, default=False)
-    slug = Column(String(128), unique=True, nullable=False)
-    unit_price = Column(default_price, nullable=False)
+    attributes = MC(type_json, nullable=False, server_default="{}")
+    is_deleted = MC(Boolean, nullable=False, default=False)
+    is_visible = MC(Boolean, nullable=False, default=False)
+    slug = MC(String(128), unique=True, nullable=False)
+    unit_price = MC(default_price, nullable=False)
 
-    product_id = Column(FKRestrict("product.id"), nullable=False)
+    product_id = MC(ForeignKey("product.id", ondelete="RESTRICT"), nullable=False)
 
     category_items = relationship("CategoryItem", back_populates="sku")
     details = relationship("SkuDetail", back_populates="sku")

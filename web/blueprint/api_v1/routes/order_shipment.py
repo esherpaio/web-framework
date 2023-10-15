@@ -3,7 +3,7 @@ from werkzeug import Response
 from web.blueprint.api_v1 import api_v1_bp
 from web.database.client import conn
 from web.database.model import Order, OrderStatusId, Shipment, UserRoleLevel
-from web.helper.api import json_get, response
+from web.helper.api import ApiText, json_get, response
 from web.helper.user import access_control
 from web.mail.routes.order import send_order_shipped
 
@@ -25,6 +25,8 @@ def post_orders_id_shipments(order_id: int) -> Response:
     with conn.begin() as s:
         # Get order
         order = s.query(Order).filter_by(id=order_id).first()
+        if order is None:
+            return response(404, ApiText.HTTP_404)
 
         # Insert shipment
         shipment = Shipment(order_id=order_id, url=url)

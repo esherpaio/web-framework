@@ -1,13 +1,13 @@
 from typing import Any
 
-from sqlalchemy import Column, Integer, UniqueConstraint
+from sqlalchemy import ForeignKey, Integer, UniqueConstraint
 from sqlalchemy.ext.hybrid import hybrid_property
+from sqlalchemy.orm import mapped_column as MC
 from sqlalchemy.orm import relationship, validates
 
 from web import config
 
 from . import Base
-from ._utils import FKCascade, FKRestrict
 from ._validation import val_number
 
 
@@ -15,10 +15,10 @@ class CartItem(Base):
     __tablename__ = "cart_item"
     __table_args__ = (UniqueConstraint("cart_id", "sku_id"),)
 
-    quantity = Column(Integer, nullable=False)
+    quantity = MC(Integer, nullable=False)
 
-    cart_id = Column(FKCascade("cart.id"), nullable=False)
-    sku_id = Column(FKRestrict("sku.id"), nullable=False)
+    cart_id = MC(ForeignKey("cart.id", ondelete="CASCADE"), nullable=False)
+    sku_id = MC(ForeignKey("sku.id", ondelete="RESTRICT"), nullable=False)
 
     cart = relationship("Cart", back_populates="items", lazy="joined")
     sku = relationship("Sku", lazy="joined")

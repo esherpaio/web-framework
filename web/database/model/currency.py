@@ -1,7 +1,8 @@
 from enum import IntEnum
 from typing import Any
 
-from sqlalchemy import Column, String
+from sqlalchemy import String
+from sqlalchemy.orm import mapped_column as MC
 from sqlalchemy.orm import validates
 
 from . import Base
@@ -12,9 +13,9 @@ from ._validation import get_upper, val_length, val_number
 class Currency(Base):
     __tablename__ = "currency"
 
-    code = Column(String(3), nullable=False, unique=True)
-    rate = Column(default_rate, nullable=False, default=1)
-    symbol = Column(String(3), nullable=False)
+    code = MC(String(3), nullable=False, unique=True)
+    rate = MC(default_rate, nullable=False, default=1)
+    symbol = MC(String(3), nullable=False)
 
     # Validation
 

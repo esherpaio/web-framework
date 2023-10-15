@@ -1,14 +1,14 @@
-from sqlalchemy import Column, DateTime, Integer, func
-from sqlalchemy.orm import declarative_base
+from typing import TypeVar
 
-# todo: add support for mypy
-# info: https://docs.sqlalchemy.org/en/20/changelog/whatsnew_20.html#whatsnew-20-orm-declarative-typing
-
-
-class Model:
-    id = Column(Integer, primary_key=True)
-    created_at = Column(DateTime, server_default=func.now())
-    updated_at = Column(DateTime, onupdate=func.now())
+from sqlalchemy import DateTime, Integer, func
+from sqlalchemy.orm import DeclarativeBase
+from sqlalchemy.orm import mapped_column as MC
 
 
-Base = declarative_base(cls=Model)
+class Base(DeclarativeBase):
+    id = MC(Integer, primary_key=True)
+    created_at = MC(DateTime, server_default=func.now())
+    updated_at = MC(DateTime, onupdate=func.now())
+
+
+B = TypeVar("B", bound=Base)

@@ -76,7 +76,7 @@ def get_shippings_id(shipping_id: int) -> Response:
     api = ShippingAPI()
     with conn.begin() as s:
         filters = {Shipping.user_id == current_user.id}
-        model = api.get(s, shipping_id, *filters)
+        model: Shipping = api.get(s, shipping_id, *filters)
         resource = api.gen_resource(s, model)
     return response(data=resource)
 
@@ -87,7 +87,7 @@ def patch_shippings_id(shipping_id: int) -> Response:
     data = api.gen_request_data(api.patch_columns)
     with conn.begin() as s:
         filters = {Shipping.user_id == current_user.id}
-        model = api.get(s, shipping_id, *filters)
+        model: Shipping = api.get(s, shipping_id, *filters)
         val_order(s, data, model)
         api.update(s, data, model)
         set_cart(s, data, model)

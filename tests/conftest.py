@@ -59,7 +59,7 @@ def create_app() -> Flask:
     )
     web.setup()
     web.stop_cache()
-    app.web = web  # type: ignore
+    app.config["web"] = web
     return app
 
 
@@ -75,7 +75,8 @@ def seed_hook(*args) -> None:
 
 @pytest.fixture(scope="module", autouse=True)
 def update_cache(app) -> None:
-    app.web.update_cache(force=True)
+    web = app.config["web"]
+    web.update_cache(force=True)
 
 
 @pytest.fixture(scope="session")

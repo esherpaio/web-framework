@@ -1,4 +1,5 @@
-from sqlalchemy import Column, DateTime, String
+from sqlalchemy import DateTime, String
+from sqlalchemy.orm import mapped_column as MC
 
 from . import Base
 
@@ -6,5 +7,5 @@ from . import Base
 class Setting(Base):
     __tablename__ = "setting"
 
-    banner = Column(String(256))
-    cached_at = Column(DateTime)
+    banner = MC(String(256))
+    cached_at = MC(DateTime)

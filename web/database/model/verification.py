@@ -1,19 +1,19 @@
 from datetime import datetime, timedelta
 
-from sqlalchemy import Column, String
+from sqlalchemy import ForeignKey, String
 from sqlalchemy.ext.hybrid import hybrid_property
+from sqlalchemy.orm import mapped_column as MC
 from sqlalchemy.orm import relationship
 
 from . import Base
-from ._utils import FKCascade
 
 
 class Verification(Base):
     __tablename__ = "verification"
 
-    key = Column(String(256), nullable=False)
+    key = MC(String(256), nullable=False)
 
-    user_id = Column(FKCascade("user.id"), nullable=False)
+    user_id = MC(ForeignKey("user.id", ondelete="CASCADE"), nullable=False)
 
     user = relationship("User", back_populates="verifications")
 

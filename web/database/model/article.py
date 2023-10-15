@@ -1,13 +1,14 @@
 from typing import Any
 
-from sqlalchemy import JSON, Boolean, Column, String
+from sqlalchemy import Boolean, String
 from sqlalchemy.ext.hybrid import hybrid_property
-from sqlalchemy.ext.mutable import MutableDict
+from sqlalchemy.orm import mapped_column as MC
 from sqlalchemy.orm import relationship, validates
 
 from web.helper.builtins import none_aware_attrgetter
 
 from . import Base
+from ._utils import type_json
 from ._validation import get_slug
 from .article_media import ArticleMedia
 
@@ -15,14 +16,12 @@ from .article_media import ArticleMedia
 class Article(Base):
     __tablename__ = "article"
 
-    attributes = Column(
-        MutableDict.as_mutable(JSON), nullable=False, server_default="{}"
-    )
-    is_deleted = Column(Boolean, nullable=False, default=False)
-    is_visible = Column(Boolean, nullable=False, default=False)
-    name = Column(String(64), nullable=False)
-    slug = Column(String(64), unique=True, nullable=False)
-    summary = Column(String(64))
+    attributes = MC(type_json, nullable=False, server_default="{}")
+    is_deleted = MC(Boolean, nullable=False, default=False)
+    is_visible = MC(Boolean, nullable=False, default=False)
+    name = MC(String(64), nullable=False)
+    slug = MC(String(64), unique=True, nullable=False)
+    summary = MC(String(64))
 
     category_items = relationship("CategoryItem", back_populates="article")
     medias = relationship(

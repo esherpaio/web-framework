@@ -50,7 +50,7 @@ def post_carts_id_items(cart_id: int) -> Response:
     data = api.gen_request_data(api.post_columns)
     with conn.begin() as s:
         model = upsert_cart_item(s, data, None)
-        set_cart(s, data, model)
+        set_cart(s, data, None)
         resource = api.gen_resource(s, model)
     return response(message=Text.CART_ITEM_ADDED, data=resource)
 
@@ -61,9 +61,9 @@ def patch_cart_id_items_id(cart_id: int, cart_item_id: int) -> Response:
     data = api.gen_request_data(api.patch_columns)
     with conn.begin() as s:
         authorize_cart(s, data)
-        model = api.get(s, cart_item_id)
+        model: CartItem = api.get(s, cart_item_id)
         api.update(s, data, model)
-        set_cart(s, data, model)
+        set_cart(s, data, None)
         resource = api.gen_resource(s, model)
     return response(data=resource)
 
@@ -73,9 +73,9 @@ def delete_cart_id_items_id(cart_id: int, cart_item_id: int) -> Response:
     api = CartItemAPI()
     data = api.gen_view_args_data()
     with conn.begin() as s:
-        model = api.get(s, cart_item_id)
+        model: CartItem = api.get(s, cart_item_id)
         api.delete(s, model)
-        set_cart(s, data, model)
+        set_cart(s, data, None)
     return response()
 
 
@@ -106,7 +106,7 @@ def upsert_cart_item(s: Session, data: dict, model: None) -> CartItem:
     return cart_item
 
 
-def set_cart(s: Session, data: dict, model: Cart) -> None:
+def set_cart(s: Session, data: dict, model: None) -> None:
     cart_id = data["cart_id"]
     cart = s.query(Cart).filter(Cart.id == cart_id).first()
     if cart is not None:

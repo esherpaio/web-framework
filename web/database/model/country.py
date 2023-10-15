@@ -1,22 +1,22 @@
 from typing import Any
 
-from sqlalchemy import Boolean, Column, String
+from sqlalchemy import Boolean, ForeignKey, String
+from sqlalchemy.orm import mapped_column as MC
 from sqlalchemy.orm import relationship, validates
 
 from . import Base
-from ._utils import FKRestrict
 from ._validation import get_upper, val_length
 
 
 class Country(Base):
     __tablename__ = "country"
 
-    code = Column(String(2), nullable=False, unique=True)
-    in_sitemap = Column(Boolean, nullable=False, default=False)
-    name = Column(String(64), nullable=False, unique=True)
+    code = MC(String(2), nullable=False, unique=True)
+    in_sitemap = MC(Boolean, nullable=False, default=False)
+    name = MC(String(64), nullable=False, unique=True)
 
-    currency_id = Column(FKRestrict("currency.id"), nullable=False)
-    region_id = Column(FKRestrict("region.id"), nullable=False)
+    currency_id = MC(ForeignKey("currency.id", ondelete="RESTRICT"), nullable=False)
+    region_id = MC(ForeignKey("region.id", ondelete="RESTRICT"), nullable=False)
 
     currency = relationship("Currency")
     region = relationship("Region")

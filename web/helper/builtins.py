@@ -6,7 +6,7 @@ from typing import Any, Callable
 #
 
 
-def none_aware_attrgetter(attr: str) -> Callable[[list], tuple[bool, Any]]:
+def none_aware_attrgetter(attr: str) -> Callable[[Any], tuple[bool, Any]]:
     """Attribute getter that accepts None values."""
 
     def wrap(item: list) -> tuple[bool, Any]:

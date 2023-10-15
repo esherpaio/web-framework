@@ -1,28 +1,30 @@
 from typing import Any
 
-from sqlalchemy import Column, String
+from sqlalchemy import ForeignKey, String
 from sqlalchemy.ext.hybrid import hybrid_property
+from sqlalchemy.orm import mapped_column as MC
 from sqlalchemy.orm import relationship, validates
 
 from . import Base
-from ._utils import FKCascade, FKRestrict
 from ._validation import del_emoji, get_lower, val_email, val_length, val_phone
 
 
 class Shipping(Base):
     __tablename__ = "shipping"
 
-    address = Column(String(64), nullable=False)
-    city = Column(String(64), nullable=False)
-    company = Column(String(64))
-    email = Column(String(64), nullable=False)
-    first_name = Column(String(64), nullable=False)
-    last_name = Column(String(64), nullable=False)
-    phone = Column(String(64))
-    zip_code = Column(String(64), nullable=False)
+    address = MC(String(64), nullable=False)
+    city = MC(String(64), nullable=False)
+    company = MC(String(64))
+    email = MC(String(64), nullable=False)
+    first_name = MC(String(64), nullable=False)
+    last_name = MC(String(64), nullable=False)
+    phone = MC(String(64))
+    zip_code = MC(String(64), nullable=False)
 
-    country_id = Column(FKRestrict("country.id"), nullable=False)
-    user_id = Column(FKCascade("user.id", use_alter=True), nullable=False)
+    country_id = MC(ForeignKey("country.id", ondelete="RESTRICT"), nullable=False)
+    user_id = MC(
+        ForeignKey("user.id", ondelete="CASCADE", use_alter=True), nullable=False
+    )
 
     country = relationship("Country", lazy="joined")
 
