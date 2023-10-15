@@ -55,6 +55,6 @@ def get_verifications() -> Response:
 #
 
 
-def val_verification(s: Session, data: dict, verification: Verification) -> None:
-    if not verification.is_valid:
+def val_verification(s: Session, data: dict, model: Verification) -> None:
+    if not model.is_valid:
         abort(response(400, Text.VERIFICATION_INVALID))

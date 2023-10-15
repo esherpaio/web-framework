@@ -103,19 +103,19 @@ def patch_billings_id(billing_id: int) -> Response:
 #
 
 
-def set_user(s: Session, data: dict, billing: Billing) -> None:
-    billing.user_id = current_user.id
+def set_user(s: Session, data: dict, model: Billing) -> None:
+    model.user_id = current_user.id
 
 
-def set_cart(s: Session, data: dict, billing: Billing) -> None:
-    carts = s.query(Cart).filter_by(billing_id=billing.id).all()
+def set_cart(s: Session, data: dict, model: Billing) -> None:
+    carts = s.query(Cart).filter_by(billing_id=model.id).all()
     for cart in carts:
         set_vat(s, data, cart)
         set_shipment(s, data, cart)
 
 
-def val_order(s: Session, data: dict, billing: Billing) -> None:
-    filters = {Order.billing_id == billing.id}
+def val_order(s: Session, data: dict, model: Billing) -> None:
+    filters = {Order.billing_id == model.id}
     order = s.query(Order).filter(*filters).first()
     if order is not None:
         abort(response(404, ApiText.HTTP_404))

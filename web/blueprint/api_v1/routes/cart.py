@@ -105,24 +105,24 @@ def delete_carts_id(cart_id: int) -> Response:
 #
 
 
-def set_user(s: Session, data: dict, cart: Cart) -> None:
-    cart.user_id = current_user.id
+def set_user(s: Session, data: dict, model: Cart) -> None:
+    model.user_id = current_user.id
 
 
-def set_vat(s: Session, data: dict, cart: Cart) -> None:
+def set_vat(s: Session, data: dict, model: Cart) -> None:
     if "billing_id" in data:
         billing_id = data["billing_id"]
         billing = s.query(Billing).filter_by(id=billing_id).first()
-    elif cart.billing is not None:
-        billing = cart.billing
+    elif model.billing is not None:
+        billing = model.billing
     else:
         billing = None
 
     if "shipping_id" in data:
         shipping_id = data["shipping_id"]
         shipping = s.query(Shipping).filter_by(id=shipping_id).first()
-    elif cart.shipping is not None:
-        shipping = cart.shipping
+    elif model.shipping is not None:
+        shipping = model.shipping
     else:
         shipping = None
 
@@ -140,23 +140,23 @@ def set_vat(s: Session, data: dict, cart: Cart) -> None:
         currency_id = current_locale.currency.id
 
     vat_rate, vat_reverse = get_vat(country_code, is_business)
-    cart.currency_id = currency_id
-    cart.vat_rate = vat_rate
-    cart.vat_reverse = vat_reverse
+    model.currency_id = currency_id
+    model.vat_rate = vat_rate
+    model.vat_reverse = vat_reverse
     s.flush()
-    if has_identity(cart):
-        s.expire(cart)
+    if has_identity(model):
+        s.expire(model)
 
 
-def set_shipment(s: Session, data: dict, cart: Cart) -> None:
+def set_shipment(s: Session, data: dict, model: Cart) -> None:
     if "shipment_method_id" in data:
         shipment_method_id = data["shipment_method_id"]
-    elif cart.shipment_method is not None:
-        shipment_method_id = cart.shipment_method_id
+    elif model.shipment_method is not None:
+        shipment_method_id = model.shipment_method_id
     else:
         shipment_method_id = None
 
-    shipment_methods = get_shipment_methods(s, cart)
+    shipment_methods = get_shipment_methods(s, model)
     if shipment_method_id is not None:
         shipment_method = next(
             (
@@ -176,18 +176,18 @@ def set_shipment(s: Session, data: dict, cart: Cart) -> None:
         )
 
     if shipment_method is not None:
-        cart.shipment_method_id = shipment_method.id
-        cart.shipment_price = shipment_method.unit_price * cart.currency.rate
+        model.shipment_method_id = shipment_method.id
+        model.shipment_price = shipment_method.unit_price * model.currency.rate
     else:
-        cart.shipment_method_id = None
-        cart.shipment_price = 0
+        model.shipment_method_id = None
+        model.shipment_price = 0
 
     s.flush()
-    if has_identity(cart):
-        s.expire(cart)
+    if has_identity(model):
+        s.expire(model)
 
 
-def set_coupon(s: Session, data: dict, cart: Cart) -> None:
+def set_coupon(s: Session, data: dict, model: Cart) -> None:
     if "coupon_code" in data:
         coupon_code = data["coupon_code"]
         if coupon_code is None:
@@ -199,4 +199,4 @@ def set_coupon(s: Session, data: dict, cart: Cart) -> None:
             if coupon is None:
                 abort(response(400, ApiText.HTTP_400))
             coupon_id = coupon.id
-        cart.coupon_id = coupon_id
+        model.coupon_id = coupon_id

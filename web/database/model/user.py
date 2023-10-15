@@ -24,6 +24,8 @@ class FlaskUserMixin:
         return self.id
 
     def __eq__(self, other: "FlaskUserMixin") -> bool:
+        if self.is_guest:
+            return False
         return self.get_id() == other.get_id()
 
     def __ne__(self, other: "FlaskUserMixin") -> bool:
