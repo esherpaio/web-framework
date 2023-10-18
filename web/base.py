@@ -157,8 +157,8 @@ class FlaskWeb:
         if self._seed_hook is not None:
             self._seed_hook(self._app)
         # Run startup scripts
-        clean_carts()
-        clean_users()
+        # clean_carts()
+        # clean_users()
 
     def setup_redirects(self) -> None:
         # Register Flask hooks
