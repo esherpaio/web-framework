@@ -1,16 +1,13 @@
-import os
 import time
 from datetime import datetime
 from threading import Thread
 from typing import Callable
 
 import alembic.config
-from bs4 import BeautifulSoup
-from flask import Blueprint, Flask, current_app, redirect, request, url_for
+from flask import Blueprint, Flask, redirect, request, url_for
 from flask_login import LoginManager
 from flask_packer import FlaskPacker
 from flask_talisman import Talisman
-from markupsafe import Markup
 from werkzeug import Response
 
 from web import config
@@ -116,7 +113,6 @@ class FlaskWeb:
             self._app.add_template_filter(value, name=key)
         # Register globals
         self._app.add_template_global(_get_cdn_url, name="cdn_url")
-        self._app.add_template_global(_get_svg, name="svg")
         for key, value in self._jinja_global_hooks.items():
             self._app.add_template_global(value, name=key)
 
@@ -157,8 +153,11 @@ class FlaskWeb:
         if self._seed_hook is not None:
             self._seed_hook(self._app)
         # Run startup scripts
-        # clean_carts()
-        # clean_users()
+        for func in [clean_carts, clean_users]:
+            try:
+                func()
+            except Exception:
+                logger.error(f"Failed to run startup script: {func.__name__}")
 
     def setup_redirects(self) -> None:
         # Register Flask hooks
@@ -259,19 +258,6 @@ def _get_datetime(datetime_: datetime, format_: str) -> str:
 
 def _get_cdn_url(path_: str) -> str:
     return cdn.url(path_)
-
-
-# TODO(Stan): Move to website repos, unrelated to this framework
-def _get_svg(name: str, classes: str = "") -> str:
-    if current_app.static_folder is None:
-        return ""
-    path = os.path.join(current_app.static_folder, "svg", f"{name}.svg")
-    with open(path, "r") as svg:
-        soup = BeautifulSoup(svg.read(), features="html.parser")
-    if classes:
-        tag = soup.find("svg")
-        tag["class"].extend(classes.split(" "))  # type: ignore
-    return Markup(soup)
 
 
 #

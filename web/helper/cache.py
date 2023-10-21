@@ -25,8 +25,12 @@ class Cache(dict):
 
             response = f(*args, **kwargs)
             if not config.APP_DEBUG:
-                compressed = zlib.compress(response.encode())
-                self[request.url] = compressed
+                try:
+                    compressed = zlib.compress(response.encode())
+                except AttributeError:
+                    pass
+                else:
+                    self[request.url] = compressed
             return response
 
         wrap.__name__ = f.__name__

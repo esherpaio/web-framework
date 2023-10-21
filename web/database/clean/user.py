@@ -10,13 +10,15 @@ def clean_users() -> None:
     """Script to clean up old users."""
 
     with conn.begin() as s:
-        # Delete guests older than 7 days
-        days_7 = datetime.utcnow() - timedelta(days=7)
+        # Delete guests older than 14 days
+        days = datetime.utcnow() - timedelta(days=14)
         s.query(User).filter(
-            User.created_at <= days_7,
+            User.created_at <= days,
             User.is_guest == true(),
             not_(User.carts.any()),
             not_(User.orders.any()),
+            not_(User.billing),
+            not_(User.shipping),
         ).delete()
 
 
