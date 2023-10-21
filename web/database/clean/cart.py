@@ -11,11 +11,11 @@ def clean_carts() -> None:
 
     with conn.begin() as s:
         # Delete carts older than 30 days
-        days_30 = datetime.utcnow() - timedelta(days=30)
+        days = datetime.utcnow() - timedelta(days=30)
         s.query(Cart).filter(
             or_(
-                Cart.updated_at <= days_30,
-                and_(Cart.created_at <= days_30, Cart.updated_at.is_(None)),
+                Cart.updated_at <= days,
+                and_(Cart.created_at <= days, Cart.updated_at.is_(None)),
             )
         ).delete()
 
