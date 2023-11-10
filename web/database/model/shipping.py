@@ -1,6 +1,6 @@
 from typing import Any
 
-from sqlalchemy import ForeignKey, String
+from sqlalchemy import ForeignKey, String, func
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import mapped_column as MC
 from sqlalchemy.orm import relationship, validates
@@ -52,6 +52,10 @@ class Shipping(Base):
     @hybrid_property
     def full_name(self) -> str:
         return f"{self.first_name} {self.last_name}"
+
+    @full_name.expression  # type: ignore
+    def full_name(cls):
+        return func.concat(cls.first_name, " ", cls.last_name)
 
     @hybrid_property
     def full_address(self) -> str:
