@@ -198,5 +198,6 @@ def set_coupon(s: Session, data: dict, model: Cart) -> None:
             )
             if coupon is None:
                 abort(response(400, ApiText.HTTP_400))
-            coupon_id = coupon.id
+            else:
+                coupon_id = coupon.id
         model.coupon_id = coupon_id
