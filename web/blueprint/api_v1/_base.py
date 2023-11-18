@@ -180,7 +180,8 @@ class API(Generic[B]):
         model = s.query(cls.model).filter(*filters).first()
         if model is None:
             abort(response(404, ApiText.HTTP_404))
-        return model
+        else:
+            return model
 
     @classmethod
     def list_(

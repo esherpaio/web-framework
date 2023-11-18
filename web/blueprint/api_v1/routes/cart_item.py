@@ -93,14 +93,14 @@ def upsert_cart_item(s: Session, data: dict, model: None) -> CartItem:
     cart = s.query(Cart).filter(*filters).first()
     if cart is None:
         abort(response(404, ApiText.HTTP_404))
-
-    for cart_item in cart.items:
-        if cart_item.sku_id == sku_id:
-            cart_item.quantity += quantity
-            break
     else:
-        cart_item = CartItem(cart_id=cart.id, sku_id=sku_id, quantity=quantity)
-        cart.items.append(cart_item)
+        for cart_item in cart.items:
+            if cart_item.sku_id == sku_id:
+                cart_item.quantity += quantity
+                break
+        else:
+            cart_item = CartItem(cart_id=cart.id, sku_id=sku_id, quantity=quantity)
+            cart.items.append(cart_item)
 
     s.flush()
     return cart_item
