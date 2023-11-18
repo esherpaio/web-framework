@@ -25,6 +25,6 @@ jobs:
       - name: Check with Black
         run: black . --check --quiet --diff --color
       - name: Check with Mypy
-        run: mypy --install-types --non-interactive .
+        run: mypy --install-types --non-interactive --config-file pyproject.toml .
       - name: Check with djLint
         run: djlint . --check
