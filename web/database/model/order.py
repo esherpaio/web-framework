@@ -15,7 +15,7 @@ class Order(Base):
     __tablename__ = "order"
     __table_args__ = (CheckConstraint("coupon_amount IS NULL OR coupon_rate IS NULL"),)
 
-    coupon_code = MC(String(16))
+    coupon_code = MC(String(32))
     coupon_amount = MC(default_price)
     coupon_rate = MC(default_rate)
     mollie_id = MC(String(64), unique=True)

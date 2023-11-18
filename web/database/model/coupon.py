@@ -15,7 +15,7 @@ class Coupon(Base):
     __table_args__ = (CheckConstraint("amount IS NOT NULL OR rate IS NOT NULL"),)
 
     amount = MC(default_price)
-    code = MC(String(16), nullable=False)
+    code = MC(String(32), nullable=False)
     is_deleted = MC(Boolean, nullable=False, default=False)
     rate = MC(default_rate)
 
