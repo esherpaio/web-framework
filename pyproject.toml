@@ -30,8 +30,9 @@ filterwarnings="ignore::DeprecationWarning:pycountry"
 cache_dir=".cache/pytest"
 
 [tool.mypy]
-no_warn_no_return=true
 ignore_missing_imports=true
+no_implicit_optional=true
+no_warn_no_return=true
 exclude="web/(config)/*"
 cache_dir=".cache/mypy"
 

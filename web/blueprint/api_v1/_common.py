@@ -14,7 +14,11 @@ from web.mail.routes.order import send_order_refunded
 
 
 def create_refund(
-    s: Session, mollie_payment: Payment, order: Order, price: float, price_vat: float
+    s: Session,
+    mollie_payment: Payment,
+    order: Order,
+    price: float,
+    price_vat: float,
 ) -> None:
     # Insert refund
     refund_price = abs(price) * -1
@@ -49,7 +53,8 @@ def authorize_cart(s: Session, data: dict) -> Cart:
     cart = s.query(Cart).filter(*filters).first()
     if cart is None:
         abort(response(404, ApiText.HTTP_404))
-    return cart
+    else:
+        return cart
 
 
 def update_cart_shipment_methods(s: Session, cart: Cart) -> None:
