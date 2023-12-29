@@ -1,0 +1,22 @@
+{% macro gen_order_shipping(order) %}
+    <div class="bg-light rounded-2 p-4 text-break h-100">
+        <h4>
+            Shipping
+        </h4>
+        <div class="row g-3">
+            <div class="col-12">
+                <span class="d-block">{{ order.shipping.first_name }} {{ order.shipping.last_name }}</span>
+                <span class="d-block">{{ order.shipping.address }}</span>
+                <span class="d-block">{{ order.shipping.zip_code }} {{ order.shipping.city }}</span>
+                <span class="d-block mb-2">{{ order.shipping.country.name }}</span>
+                <span class="d-block">{{ order.shipping.email }}</span>
+                {% if order.shipping.phone is not none %}
+                    <span class="d-block">{{ order.shipping.phone }}</span>
+                {% endif %}
+                {% if order.shipping.company %}
+                    <span class="d-block">{{ order.shipping.company }}</span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endmacro %}

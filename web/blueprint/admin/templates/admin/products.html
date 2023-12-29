@@ -1,0 +1,71 @@
+{% extends "admin.html" %}
+
+{% block admin %}
+    <div class="row g-3">
+        <div class="col-12">
+            <div class="d-flex justify-content-between">
+                <h2 class="mb-0">
+                    Products
+                </h2>
+                <form onsubmit="createProduct();">
+                    <div class="input-group">
+                        <input required
+                               id="product-name"
+                               class="form-control maw-180-px"
+                               placeholder="Name"
+                               type="text">
+                        <button id="create-product"
+                                class="btn btn-info btn-load"
+                                type="submit">
+                            Create
+                        </button>
+                    </div>
+                </form>
+            </div>
+            {% include "includes/alert_cache.html" %}
+        </div>
+        <div class="col-12">
+            <div class="table-responsive bg-light rounded-2 px-3 py-2">
+                <table class="table table-light table-no-wrap align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th>
+                                Name
+                            </th>
+                            <th>
+                                Shipment Class
+                            </th>
+                            <th>
+                                Unit price
+                            </th>
+                            <th class="text-end">
+                                Actions
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="table-border-bottom-0">
+                        {% for x in products %}
+                            <tr>
+                                <td>
+                                    {{ x.name }}
+                                </td>
+                                <td>
+                                    {{ x.shipment_class.name if x.shipment_class }}
+                                </td>
+                                <td>
+                                    {{ x.unit_price|price }}
+                                </td>
+                                <td class="text-end">
+                                    <a class="btn btn-sm btn-info"
+                                       href="{{ url_for('admin.product', product_id=x.id) }}">
+                                        View
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}

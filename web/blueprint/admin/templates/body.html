@@ -1,0 +1,12 @@
+{% extends "main.html" %}
+
+{% block main %}
+    <body class="h-100 w-100 d-flex flex-column header-padding">
+        <div class="flex-grow-1">
+
+            {% block body %}
+            {% endblock %}
+        </div>
+        {% include "message.html" %}
+    </body>
+{% endblock %}

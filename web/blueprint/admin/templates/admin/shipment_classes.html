@@ -1,0 +1,78 @@
+{% extends "admin.html" %}
+
+{% block admin %}
+    <div class="row g-3">
+        <div class="col-12">
+            <div class="d-flex justify-content-between">
+                <h2 class="mb-0">
+                    Shipment Classes
+                </h2>
+                <form onsubmit="createShipmentClass();">
+                    <div class="input-group">
+                        <input required
+                               id="shipment-class-name"
+                               class="form-control maw-120-px"
+                               placeholder="Name"
+                               type="text">
+                        <input required
+                               id="shipment-class-order"
+                               class="form-control maw-120-px"
+                               placeholder="Order"
+                               type="number">
+                        <button id="create-shipment-class"
+                                class="btn btn-info btn-load"
+                                type="submit">
+                            Create
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="table-responsive bg-light rounded-2 px-3 py-2">
+                <table class="table table-light table-no-wrap align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th>
+                                Name
+                            </th>
+                            <th>
+                                Order
+                            </th>
+                            <th class="text-end">
+                                Actions
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="table-border-bottom-0">
+                        {% for x in shipment_classes %}
+                            <tr>
+                                <td>
+                                    {{ x.name }}
+                                </td>
+                                <td>
+                                    <input id="shipment-class-order-{{ x.id }}"
+                                           class="form-control form-control-sm maw-120-px"
+                                           type="number"
+                                           value="{{ x.order if x.order }}">
+                                </td>
+                                <td class="text-end">
+                                    <button id="update-shipment-class-{{ x.id }}"
+                                            class="btn btn-load btn-sm btn-info"
+                                            onclick="updateShipmentClass({{ x.id }});">
+                                        Update
+                                    </button>
+                                    <button id="delete-shipment-class-{{ x.id }}"
+                                            class="btn btn-load btn-sm btn-danger"
+                                            onclick="deleteshipmentClass({{ x.id }});">
+                                        Delete
+                                    </button>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}

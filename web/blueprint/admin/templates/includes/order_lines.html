@@ -1,0 +1,63 @@
+{% macro gen_order_lines(order, lines, include_vat) %}
+    <div class="table-responsive bg-light rounded-2 px-3 py-2">
+        <h4 class="ms-2 mt-3">
+            Items
+        </h4>
+        <table class="table table-light table-no-wrap mb-0">
+            <thead>
+                <tr>
+                    <th>
+                        Name
+                    </th>
+                    <th>
+                        Options
+                    </th>
+                    <th>
+                        Quantity
+                    </th>
+                    <th>
+                        Total price
+                    </th>
+                    <th class="text-end">
+                        Actions
+                    </th>
+                </tr>
+            </thead>
+            <tbody class="table-border-bottom-0">
+                {% for line in lines %}
+                    <tr>
+                        <td>
+                            {{ line.sku.product.name }}
+                        </td>
+                        <td class="small">
+                            {% for detail in line.sku.details %}
+                                {{ detail.option.name }}: {{ detail.value.name }}
+                                <br>
+                            {% endfor %}
+                        </td>
+                        <td>
+                            {{ line.quantity }}x
+                        </td>
+                        <td>
+                            {% if include_vat %}
+                                {{ (line.total_price * order.vat_rate)|price }} {{ order.currency.code }}
+                            {% else %}
+                                {{ line.total_price|price }} {{ order.currency.code }}
+                            {% endif %}
+                        </td>
+                        <td class="text-end">
+                            {% if line.sku.product.file_url and order.invoice %}
+                                <a class="btn btn-sm btn-info"
+                                   href="{{ line.sku.product.file_url }}"
+                                   target="_blank"
+                                   rel="noopener">
+                                    Download
+                                </a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endmacro %}

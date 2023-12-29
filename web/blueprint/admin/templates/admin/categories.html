@@ -1,0 +1,102 @@
+{% extends "admin.html" %}
+
+{% block admin %}
+    <div class="row g-3">
+        <div class="col-12">
+            <div class="d-flex justify-content-between">
+                <h2 class="mb-0">
+                    Categories
+                </h2>
+                <form onsubmit="createCategory();">
+                    <div class="input-group">
+                        <input required
+                               id="category-name"
+                               class="form-control maw-120-px"
+                               placeholder="Name"
+                               type="text">
+                        <button id="create-category"
+                                class="btn btn-info btn-load"
+                                type="submit">
+                            Create
+                        </button>
+                    </div>
+                </form>
+            </div>
+            {% include "includes/alert_cache.html" %}
+        </div>
+        <div class="col-12">
+            <div class="table-responsive bg-light rounded-2 px-3 py-2">
+                <table class="table table-light table-no-wrap align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th>
+                                Name
+                            </th>
+                            <th>
+                                Reference
+                            </th>
+                            <th>
+                                Order
+                            </th>
+                            <th>
+                                Header
+                            </th>
+                            <th class="text-end">
+                                Actions
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="table-border-bottom-0">
+                        {% for x in categories %}
+                            <tr>
+                                <td>
+                                    {{ x.name }}
+                                </td>
+                                <td>
+                                    <select id="category-child-id-{{ x.id }}"
+                                            class="form-select form-select-sm maw-120-px">
+                                        <option>
+                                            None
+                                        </option>
+                                        {% for category in categories %}
+                                            <option {{ 'selected' if category.id == x.child_id }} value="{{ category.id }}">
+                                                {{ category.name }}
+                                            </option>
+                                        {% endfor %}
+                                    </select>
+                                </td>
+                                <td>
+                                    <input id="category-order-{{ x.id }}"
+                                           class="form-control form-control-sm maw-120-px"
+                                           type="number"
+                                           value="{{ x.order }}">
+                                </td>
+                                <td>
+                                    <input {{ 'checked' if x.in_header }} id="category-in-header-{{ x.id }}" class="form-check-input" type="checkbox">
+                                </td>
+                                <td class="text-end">
+                                    <a class="btn btn-sm btn-info"
+                                       href="{{ url_for('admin.category', category_id=x.id) }}">
+                                        View
+                                    </a>
+                                    <button id="update-category-{{ x.id }}"
+                                            class="btn btn-load btn-sm btn-info"
+                                            onclick="updateCategory({{ x.id }});">
+                                        Update
+                                    </button>
+                                    {% if not x.is_locked or current_user.is_super %}
+                                        <button id="delete-category-{{ x.id }}"
+                                                class="btn btn-load btn-sm btn-danger"
+                                                onclick="removeCategory({{ x.id }});">
+                                            Delete
+                                        </button>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}
