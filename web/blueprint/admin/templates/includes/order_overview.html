@@ -1,0 +1,69 @@
+{% macro gen_order_overview(orders, blueprint, include_vat) %}
+    <div class="table-responsive bg-light rounded-2 px-3 py-2">
+        <table class="table table-light table-no-wrap align-middle mb-0">
+            <thead>
+                <tr>
+                    <th>
+                        Order ID
+                    </th>
+                    <th>
+                        Created at
+                    </th>
+                    {% if blueprint == 'admin' %}
+                        <th>
+                            Name
+                        </th>
+                    {% endif %}
+                    <th>
+                        Status
+                    </th>
+                    <th>
+                        Total price
+                    </th>
+                    <th>
+                        Refunded
+                    </th>
+                    <th class="text-end">
+                        Actions
+                    </th>
+                </tr>
+            </thead>
+            <tbody class="table-border-bottom-0">
+                {% for order in orders %}
+                    <tr>
+                        <td>
+                            {{ order.id }}
+                        </td>
+                        <td>
+                            {{ order.created_at|datetime("%x") }}
+                        </td>
+                        {% if blueprint == 'admin' %}
+                            <td>
+                                {{ order.billing.first_name }} {{ order.billing.last_name }}
+                            </td>
+                        {% endif %}
+                        <td>
+                            {{ order.status.name }}
+                        </td>
+                        <td>
+                            {% if include_vat %}
+                                {{ (order.total_price * order.vat_rate)|price }} {{ order.currency.code }}
+                            {% else %}
+                                {{ order.total_price|price }} {{ order.currency.code }}
+                            {% endif %}
+                        </td>
+                        <td>
+                            {{ order.refunds|length > 0 }}
+                        </td>
+                        <td class="text-end">
+                            <a class="btn btn-sm btn-info"
+                               href="{{ url_for(blueprint ~ '.order', order_id=order.id) }}">
+                                View
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endmacro %}

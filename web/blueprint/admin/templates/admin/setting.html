@@ -1,0 +1,36 @@
+{% extends "admin.html" %}
+
+{% block admin %}
+    <div class="row g-3">
+        <div class="col-12">
+            <div class="d-flex justify-content-between">
+                <h2 class="mb-0">
+                    Setting
+                </h2>
+                <div class="d-grid d-sm-block gap-2">
+                    <button id="update-setting"
+                            class="btn btn-info btn-load"
+                            onclick="updateSetting();">
+                        Update
+                    </button>
+                </div>
+            </div>
+            {% include "includes/alert_cache.html" %}
+        </div>
+        <div class="col-12">
+            <div class="row g-3">
+                <div class="col-12">
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            Banner
+                        </span>
+                        <input id="setting-banner"
+                               class="form-control mt-0"
+                               type="text"
+                               value="{{ setting.banner if setting.banner }}">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock admin %}

@@ -1,0 +1,90 @@
+{% extends "admin.html" %}
+
+{% block admin %}
+    <div class="row g-3">
+        <div class="col-12">
+            <div class="d-flex justify-content-between">
+                <h2 class="mb-0">
+                    Users
+                </h2>
+                <form action="{{ url_for("admin.users") }}"
+                      method="GET">
+                    <div class="input-group">
+                        <input class="form-control maw-120-px"
+                               name="s"
+                               placeholder="Search"
+                               type="text"
+                               value="{{ search if search }}">
+                        <button class="btn btn-info"
+                                id="button-search-user"
+                                type="submit">
+                            Search
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="table-responsive bg-light rounded-2 px-3 py-2">
+                <table class="table table-light table-no-wrap align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th>
+                                User ID
+                            </th>
+                            <th>
+                                Created at
+                            </th>
+                            <th>
+                                Email
+                            </th>
+                            <th>
+                                Activated
+                            </th>
+                            <th>
+                                Role
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="table-border-bottom-0">
+                        {% for user in users %}
+                            <tr>
+                                <td>
+                                    {{ user.id }}
+                                </td>
+                                <td>
+                                    {{ user.created_at|datetime("%x") }}
+                                </td>
+                                <td>
+                                    {{ user.email }}
+                                </td>
+                                <td>
+                                    {{ user.is_active }}
+                                </td>
+                                <td>
+                                    {{ user.role.name }}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% if pages|length > 1 %}
+            <div class="col-12">
+                <nav aria-label="Page numbers">
+                    <ul class="pagination">
+                        {% for page in pages %}
+                            <li class="page-item {{ page["classes"] }}">
+                                <a class="page-link"
+                                   href="{{ url_for("admin.users", p=page["number"], s=search) }}">
+                                    {{ page["name"] }}
+                                </a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </nav>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

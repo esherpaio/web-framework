@@ -1,0 +1,86 @@
+{% extends "admin.html" %}
+
+{% block admin %}
+    <div class="row g-3">
+        <div class="col-12">
+            <div class="d-flex justify-content-between">
+                <h2 class="mb-0">
+                    Category - {{ category.name }}
+                </h2>
+                <form onsubmit="createCategoryItem({{ category.id }});">
+                    <div class="input-group">
+                        <select required
+                                id="category-item-sku-id"
+                                class="form-select maw-120-px">
+                            <option disabled
+                                    selected>
+                                SKU
+                            </option>
+                            {% for x in available_skus %}
+                                <option value="{{ x.id }}">
+                                    {{ x.name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                        <input id="category-item-order"
+                               class="form-control maw-120-px"
+                               placeholder="Order"
+                               type="number">
+                        <button id="create-category-item"
+                                class="btn btn-info btn-load"
+                                type="submit">
+                            Add
+                        </button>
+                    </div>
+                </form>
+            </div>
+            {% include "includes/alert_cache.html" %}
+        </div>
+        <div class="col-12">
+            <div class="table-responsive bg-light rounded-2 px-3 py-2">
+                <table class="table table-light table-no-wrap align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th>
+                                Name
+                            </th>
+                            <th>
+                                Order
+                            </th>
+                            <th class="text-end">
+                                Actions
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="table-border-bottom-0">
+                        {% for x in category_items %}
+                            <tr>
+                                <td>
+                                    {{ x.sku.name }}
+                                </td>
+                                <td>
+                                    <input id="category-item-order-{{ x.id }}"
+                                           class="form-control form-control-sm maw-120-px"
+                                           type="number"
+                                           value="{{ x.order if x.order }}">
+                                </td>
+                                <td class="text-end">
+                                    <button id="update-category-item-{{ x.id }}"
+                                            class="btn btn-load btn-sm btn-info"
+                                            onclick="updateCategoryItem({{ category.id }}, {{ x.id }});">
+                                        Update
+                                    </button>
+                                    <button id="delete-category-item-{{ x.id }}"
+                                            class="btn btn-load btn-sm btn-danger"
+                                            onclick="deleteCategoryItem({{ category.id }}, {{ x.id }});">
+                                        Delete
+                                    </button>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}

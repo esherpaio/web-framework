@@ -1,0 +1,158 @@
+{% extends "admin.html" %}
+
+{% block admin %}
+    <h2>
+        Product - {{ product.name }}
+    </h2>
+    <div class="mb-3">
+        {% include "includes/alert_cache.html" %}
+    </div>
+    <!-- tab buttons -->
+    <ul class="nav nav-tabs mb-3"
+        role="tablist">
+        <li class="nav-item"
+            role="presentation">
+            <a href="{{ url_for("admin.product", product_id=product.id, tab="general") }}"
+               class="nav-link link-info fw-semibold py-2"
+               type="button"
+               role="tab">
+                General
+            </a>
+        </li>
+        <li class="nav-item"
+            role="presentation">
+            <a href="{{ url_for("admin.product", product_id=product.id, tab="options") }}"
+               class="nav-link link-info fw-semibold py-2"
+               type="button"
+               role="tab">
+                Options
+            </a>
+        </li>
+        <li class="nav-item"
+            role="presentation">
+            <a href="{{ url_for("admin.product", product_id=product.id, tab="media") }}"
+               class="nav-link link-info fw-semibold py-2"
+               type="button"
+               role="tab">
+                Media
+            </a>
+        </li>
+        <li class="nav-item"
+            role="presentation">
+            <a href="{{ url_for("admin.product", product_id=product.id, tab="links") }}"
+               class="nav-link link-info fw-semibold py-2"
+               type="button"
+               role="tab">
+                Links
+            </a>
+        </li>
+        <li class="nav-item"
+            role="presentation">
+            <a href="{{ url_for("admin.product", product_id=product.id, tab="skus") }}"
+               class="nav-link link-info fw-semibold py-2"
+               type="button"
+               role="tab">
+                SKUs
+            </a>
+        </li>
+    </ul>
+    <div class="row g-3">
+        <div class="col-12">
+            <div class="d-flex justify-content-end">
+                <form onsubmit="createValue({{ option.id }}, {{ option.product_id }});">
+                    <div class="input-group">
+                        <input required
+                               id="value-name"
+                               class="form-control maw-120-px"
+                               placeholder="Name"
+                               type="text">
+                        <input id="value-unit-price"
+                               class="form-control maw-120-px"
+                               placeholder="Price"
+                               type="number"
+                               step="0.01">
+                        <button id="create-value"
+                                class="btn btn-info btn-load"
+                                type="submit">
+                            Create
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="table-responsive bg-light rounded-2 px-3 py-2">
+                <table class="table table-light table-no-wrap align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th>
+                                Name
+                            </th>
+                            <th>
+                                Unit price
+                            </th>
+                            <th>
+                                Media
+                            </th>
+                            <th>
+                                Order
+                            </th>
+                            <th class="text-end">
+                                Actions
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="table-border-bottom-0">
+                        {% for value in option_values %}
+                            <tr>
+                                <td>
+                                    {{ value.name }}
+                                </td>
+                                <td>
+                                    <input id="value-unit-price-{{ value.id }}"
+                                           class="form-control form-control-sm maw-120-px"
+                                           type="number"
+                                           step="0.01"
+                                           value="{{ value.unit_price|price }}">
+                                </td>
+                                <td>
+                                    <select id="value-media-id-{{ value.id }}"
+                                            class="form-select form-select-sm">
+                                        <option>
+                                            None
+                                        </option>
+                                        {% for media in product_medias %}
+                                            {% if media.file.description %}
+                                                <option {{ 'selected' if value.media_id == media.id }} value="{{ media.id }}">
+                                                    {{ media.file.description }}
+                                                </option>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </select>
+                                </td>
+                                <td>
+                                    <input id="value-order-{{ value.id }}"
+                                           class="form-control form-control-sm maw-120-px"
+                                           type="number"
+                                           value="{{ value.order }}">
+                                </td>
+                                <td class="text-end">
+                                    <button id="update-value-{{ value.id }}"
+                                            class="btn btn-load btn-sm btn-info"
+                                            onclick="updateValue({{ value.id }}, {{ option.product_id }});">
+                                        Update
+                                    </button>
+                                    <button id="delete-value-{{ value.id }}"
+                                            class="btn btn-load btn-sm btn-danger"
+                                            onclick="deleteValue({{ value.id }}, {{ option.product_id }});">
+                                        Delete
+                                    </button>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}

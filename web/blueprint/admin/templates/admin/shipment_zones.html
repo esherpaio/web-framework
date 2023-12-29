@@ -1,0 +1,97 @@
+{% extends "admin.html" %}
+
+{% block admin %}
+    <div class="row g-3">
+        <div class="col-12">
+            <div class="d-flex justify-content-between">
+                <h2 class="mb-0">
+                    Shipment Zones
+                </h2>
+                <form onsubmit="createShipmentZone();">
+                    <div class="input-group">
+                        <select required
+                                id="shipment-zone-country-id"
+                                class="form-select maw-120-px">
+                            <option selected>
+                                Country
+                            </option>
+                            {% for x in cache.countries %}
+                                <option value="{{ x.id }}">
+                                    {{ x.name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                        <select required
+                                id="shipment-zone-region-id"
+                                class="form-select maw-120-px">
+                            <option selected>
+                                Region
+                            </option>
+                            {% for x in cache.regions %}
+                                <option value="{{ x.id }}">
+                                    {{ x.name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                        <input id="shipment-zone-order"
+                               class="form-control maw-120-px"
+                               placeholder="Order"
+                               type="number">
+                        <button id="create-shipment-zone"
+                                class="btn btn-load btn-info"
+                                type="submit">
+                            Create
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="table-responsive bg-light rounded-2 px-3 py-2">
+                <table class="table table-light table-no-wrap align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th>
+                                Region
+                            </th>
+                            <th>
+                                Order
+                            </th>
+                            <th class="text-end">
+                                Actions
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="table-border-bottom-0">
+                        {% for zone in shipment_zones %}
+                            <tr>
+                                <td>
+                                    {{ zone.country.name if zone.country }}
+                                    {{ zone.region.name if zone.region }}
+                                </td>
+                                <td>
+                                    <input id="shipment-zone-order-{{ zone.id }}"
+                                           class="form-control form-control-sm maw-120-px"
+                                           type="number"
+                                           value="{{ zone.order }}">
+                                </td>
+                                <td class="text-end">
+                                    <button id="update-shipment-zone-{{ zone.id }}"
+                                            class="btn btn-load btn-sm btn-info"
+                                            onclick="updateShipmentZone({{ zone.id }});">
+                                        Update
+                                    </button>
+                                    <button id="delete-shipment-zone-{{ zone.id }}"
+                                            class="btn btn-load btn-sm btn-danger"
+                                            onclick="deleteshipmentZone({{ zone.id }});">
+                                        Delete
+                                    </button>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}

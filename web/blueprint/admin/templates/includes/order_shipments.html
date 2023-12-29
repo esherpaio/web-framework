@@ -1,0 +1,36 @@
+{% macro gen_order_shipments(order, shipments) %}
+    <div class="table-responsive bg-light rounded-2 px-3 py-2">
+        <h4 class="ms-2 mt-3">
+            Shipments
+        </h4>
+        <table class="table table-light table-no-wrap mb-0">
+            <thead>
+                <tr>
+                    <th>
+                        URL
+                    </th>
+                    <th class="text-end">
+                        Actions
+                    </th>
+                </tr>
+            </thead>
+            <tbody class="table-border-bottom-0">
+                {% for shipment in shipments %}
+                    <tr>
+                        <td>
+                            {{ shipment.url }}
+                        </td>
+                        <td class="text-end">
+                            <a class="btn btn-sm btn-info"
+                               href="{{ shipment.url }}"
+                               target="_blank"
+                               rel="noopener">
+                                Open
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endmacro %}

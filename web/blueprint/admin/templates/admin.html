@@ -1,0 +1,100 @@
+{% extends "body.html" %}
+
+{% block body %}
+    <div class="bg-info">
+        <div class="container-xxl px-4 px-lg-5">
+            <nav class="navbar navbar-dark navbar-expand-md px-0 py-2">
+                <h5 class="mb-0 fw-semibold text-white">
+                    Admin Panel
+                </h5>
+                <a class="d-block d-md-none text-white"
+                   href="#"
+                   data-bs-target="#navbar-user"
+                   data-bs-toggle="collapse">
+                    More
+                </a>
+                <div id="navbar-user"
+                     class="collapse navbar-collapse justify-content-end mt-1 mt-md-0">
+                    <ul class="navbar-nav text-end">
+                        <li class="nav-item">
+                            <a class="nav-link {{ 'active' if 'admin.orders' in request.endpoint }}"
+                               href="{{ url_for("admin.orders") }}">
+                                Orders
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {{ 'active' if 'admin.categories' in request.endpoint }}"
+                               href="{{ url_for("admin.categories") }}">
+                                Categories
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {{ 'active' if 'admin.product' in request.endpoint }}"
+                               href="{{ url_for("admin.products") }}">
+                                Products
+                            </a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle {{ 'active' if 'admin.shipment' in request.endpoint }}"
+                               href="#"
+                               role="button"
+                               data-bs-toggle="dropdown">
+                                Shipments
+                            </a>
+                            <ul class="dropdown-menu w-fit ms-auto">
+                                <li>
+                                    <a class="dropdown-item"
+                                       href="{{ url_for("admin.shipment_classes") }}">
+                                        Classes
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item"
+                                       href="{{ url_for("admin.shipment_zones") }}">
+                                        Zones
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item"
+                                       href="{{ url_for("admin.shipment_methods") }}">
+                                        Methods
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {{ 'active' if 'admin.coupons' in request.endpoint }}"
+                               href="{{ url_for("admin.coupons") }}">
+                                Coupons
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {{ 'active' if 'admin.users' in request.endpoint }}"
+                               href="{{ url_for("admin.users") }}">
+                                Users
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {{ 'active' if 'admin.setting' in request.endpoint }}"
+                               href="{{ url_for("admin.setting") }}">
+                                Setting
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link"
+                               href="#"
+                               onclick="logoutUser();">
+                                Logout
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </div>
+    </div>
+    <div class="container-xxl p-4 px-lg-5">
+
+        {% block admin %}
+        {% endblock %}
+    </div>
+{% endblock %}
