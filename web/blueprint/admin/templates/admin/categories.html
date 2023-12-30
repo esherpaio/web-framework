@@ -79,13 +79,13 @@
                                         View
                                     </a>
                                     <button id="update-category-{{ x.id }}"
-                                            class="btn btn-load btn-sm btn-outline-primary"
+                                            class="btn btn-load btn-sm btn-outline-warning"
                                             onclick="updateCategory({{ x.id }});">
                                         Update
                                     </button>
                                     {% if not x.is_locked or current_user.is_super %}
                                         <button id="delete-category-{{ x.id }}"
-                                                class="btn btn-load btn-sm btn-danger"
+                                                class="btn btn-load btn-sm btn-outline-danger"
                                                 onclick="removeCategory({{ x.id }});">
                                             Delete
                                         </button>

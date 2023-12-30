@@ -27,7 +27,7 @@
                                placeholder="Order"
                                type="number">
                         <button id="create-category-item"
-                                class="btn btn-outline-primary btn-load"
+                                class="btn btn-success btn-load"
                                 type="submit">
                             Add
                         </button>
@@ -65,12 +65,12 @@
                                 </td>
                                 <td class="text-end">
                                     <button id="update-category-item-{{ x.id }}"
-                                            class="btn btn-load btn-sm btn-outline-primary"
+                                            class="btn btn-load btn-sm btn-outline-warning"
                                             onclick="updateCategoryItem({{ category.id }}, {{ x.id }});">
                                         Update
                                     </button>
                                     <button id="delete-category-item-{{ x.id }}"
-                                            class="btn btn-load btn-sm btn-danger"
+                                            class="btn btn-load btn-sm btn-outline-danger"
                                             onclick="deleteCategoryItem({{ category.id }}, {{ x.id }});">
                                         Delete
                                     </button>

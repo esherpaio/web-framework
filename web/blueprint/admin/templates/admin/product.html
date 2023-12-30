@@ -74,7 +74,7 @@
                     <div class="d-flex justify-content-end">
                         <div class="d-grid d-sm-block gap-2">
                             <button id="update-product"
-                                    class="btn btn-outline-primary btn-load"
+                                    class="btn btn-warning btn-load"
                                     onclick="updateProduct({{ product.id }});">
                                 Update
                             </button>
@@ -257,12 +257,12 @@
                                                 View
                                             </a>
                                             <button id="update-option-{{ option.id }}"
-                                                    class="btn btn-load btn-sm btn-outline-primary"
+                                                    class="btn btn-load btn-sm btn-outline-warning"
                                                     onclick="updateOption({{ option.id }}, {{ product.id }});">
                                                 Update
                                             </button>
                                             <button id="delete-option-{{ option.id }}"
-                                                    class="btn btn-load btn-sm btn-danger"
+                                                    class="btn btn-load btn-sm btn-outline-danger"
                                                     onclick="deleteOption({{ option.id }}, {{ product.id }});">
                                                 Delete
                                             </button>
@@ -337,12 +337,12 @@
                                             </div>
                                         </div>
                                         <button id="update-media-{{ x.id }}"
-                                                class="btn btn-load btn-sm btn-outline-primary"
+                                                class="btn btn-load btn-sm btn-outline-warning"
                                                 onclick="updateMedia({{ x.id }}, {{ product.id }})">
                                             Update
                                         </button>
                                         <button id="delete-media-{{ x.id }}"
-                                                class="btn btn-load btn-sm btn-danger"
+                                                class="btn btn-load btn-sm btn-outline-danger"
                                                 onclick="deleteMedia({{ x.id }}, {{ product.id }})">
                                             Delete
                                         </button>
@@ -426,7 +426,7 @@
                                         </td>
                                         <td class="text-end">
                                             <button id="delete-link-{{ link.id }}"
-                                                    class="btn btn-load btn-sm btn-danger"
+                                                    class="btn btn-load btn-sm btn-outline-danger"
                                                     onclick="deleteLink({{ link.id }}, {{ product.id }});">
                                                 Delete
                                             </button>
@@ -498,12 +498,12 @@
                                         </td>
                                         <td class="text-end">
                                             <button id="update-sku-{{ sku.id }}"
-                                                    class="btn btn-load btn-sm btn-outline-primary"
+                                                    class="btn btn-load btn-sm btn-outline-warning"
                                                     onclick="updateSku({{ sku.id }});">
                                                 Update
                                             </button>
                                             <button id="delete-sku-{{ sku.id }}"
-                                                    class="btn btn-load btn-sm btn-danger"
+                                                    class="btn btn-load btn-sm btn-outline-danger"
                                                     onclick="deleteSku({{ sku.id }});">
                                                 Delete
                                             </button>
