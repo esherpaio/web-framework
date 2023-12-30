@@ -26,7 +26,7 @@
                                 </option>
                             {% endfor %}
                         </select>
-                        <button class="btn btn-success"
+                        <button class="btn btn-primary"
                                 type="submit">
                             Search
                         </button>
@@ -98,7 +98,7 @@
         {% if pages|length > 1 %}
             <div class="col-12">
                 <nav aria-label="Page numbers">
-                    <ul class="pagination">
+                    <ul class="pagination mb-0">
                         {% for page in pages %}
                             <li class="page-item {{ page["classes"] }}">
                                 <a class="page-link"
