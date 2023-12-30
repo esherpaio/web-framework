@@ -1,12 +1,9 @@
-{% extends "admin.html" %}
+{% extends "admin_body.html" %}
 
-{% block admin %}
+{% block admin_content %}
     <h2>
         Product - {{ product.name }}
     </h2>
-    <div class="mb-3">
-        {% include "includes/alert_cache.html" %}
-    </div>
     <!-- tab buttons -->
     <ul class="nav nav-tabs mb-3"
         role="tablist">

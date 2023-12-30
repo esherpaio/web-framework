@@ -1,6 +1,6 @@
-{% extends "body.html" %}
+{% extends "admin_main.html" %}
 
-{% block body %}
+{% block admin_body %}
     <div class="bg-info">
         <div class="container-xxl px-4 px-lg-5">
             <nav class="navbar navbar-dark navbar-expand-md px-0 py-2">
@@ -94,7 +94,7 @@
     </div>
     <div class="container-xxl p-4 px-lg-5">
 
-        {% block admin %}
+        {% block admin_content %}
         {% endblock %}
     </div>
 {% endblock %}

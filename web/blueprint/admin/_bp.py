@@ -5,7 +5,6 @@ from flask import Blueprint
 from web import config
 from web.database.model.user_role import UserRoleLevel
 from web.helper.cache import cache
-from web.helper.meta import Meta
 from web.helper.user import access_control
 
 _dir = os.path.dirname(os.path.abspath(__file__))
@@ -27,5 +26,4 @@ def authorize() -> None:
 
 @admin_bp.context_processor
 def context() -> dict:
-    meta = Meta(title="Admin", robots="noindex,nofollow")
-    return dict(cache=cache, config=config, meta=meta)
+    return dict(cache=cache, config=config)
