@@ -39,8 +39,65 @@
             </div>
         </div>
         <div class="col-12">
-            {% from "section/order_overview.html" import gen_order_overview %}
-            {{ gen_order_overview(orders, 'admin', false) }}
+            <div class="table-responsive bg-light rounded-2 px-3 py-2">
+                <table class="table table-light align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th>
+                                Order ID
+                            </th>
+                            <th>
+                                Created at
+                            </th>
+                            <th>
+                                Name
+                            </th>
+                            <th>
+                                Status
+                            </th>
+                            <th>
+                                Total price
+                            </th>
+                            <th>
+                                Refunded
+                            </th>
+                            <th class="text-end">
+                                Actions
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for order in orders %}
+                            <tr>
+                                <td>
+                                    {{ order.id }}
+                                </td>
+                                <td>
+                                    {{ order.created_at|datetime("%x") }}
+                                </td>
+                                <td>
+                                    {{ order.billing.first_name }} {{ order.billing.last_name }}
+                                </td>
+                                <td>
+                                    {{ order.status.name }}
+                                </td>
+                                <td>
+                                    {{ order.total_price|price }} {{ order.currency.code }}
+                                </td>
+                                <td>
+                                    {{ order.refunds|length > 0 }}
+                                </td>
+                                <td class="text-end">
+                                    <a class="btn btn-sm btn-info"
+                                       href="{{ url_for('admin.order', order_id=order.id) }}">
+                                        View
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
         {% if pages|length > 1 %}
             <div class="col-12">
