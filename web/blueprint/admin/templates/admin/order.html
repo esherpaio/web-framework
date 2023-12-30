@@ -123,12 +123,12 @@
             </div>
         </div>
         <div class="col-12">
-            <div class="table-responsive bg-light rounded-2 px-3 py-2">
+            <div class="table-responsive">
                 <h4 class="ms-2 mt-3">
                     Items
                 </h4>
-                <table class="table table-light mb-0">
-                    <thead>
+                <table class="table rounded-2 overflow-hidden align-middle mb-0">
+                    <thead class="table-primary">
                         <tr>
                             <th>
                                 Name
@@ -147,7 +147,7 @@
                             </th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody class="table-light">
                         {% for line in order_lines %}
                             <tr>
                                 <td>
@@ -183,12 +183,12 @@
         </div>
         {% if order.shipments %}
             <div class="col-12">
-                <div class="table-responsive bg-light rounded-2 px-3 py-2">
+                <div class="table-responsive">
                     <h4 class="ms-2 mt-3">
                         Shipments
                     </h4>
-                    <table class="table table-light mb-0">
-                        <thead>
+                    <table class="table rounded-2 overflow-hidden align-middle mb-0">
+                        <thead class="table-primary">
                             <tr>
                                 <th>
                                     URL
@@ -198,7 +198,7 @@
                                 </th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody class="table-light">
                             {% for shipment in order.shipments %}
                                 <tr>
                                     <td>
@@ -221,12 +221,12 @@
         {% endif %}
         {% if refunds %}
             <div class="col-12">
-                <div class="table-responsive bg-light rounded-2 px-3 py-2">
+                <div class="table-responsive">
                     <h4 class="ms-2 mt-3">
                         Refunds
                     </h4>
-                    <table class="table table-light mb-0">
-                        <thead>
+                    <table class="table rounded-2 overflow-hidden align-middle mb-0">
+                        <thead class="table-primary">
                             <tr>
                                 <th>
                                     Number
@@ -239,7 +239,7 @@
                                 </th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody class="table-light">
                             {% for refund in refunds %}
                                 <tr>
                                     <td>
