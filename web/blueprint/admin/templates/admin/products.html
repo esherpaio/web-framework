@@ -15,7 +15,7 @@
                                placeholder="Name"
                                type="text">
                         <button id="create-product"
-                                class="btn btn-secondary btn-load"
+                                class="btn btn-success btn-load"
                                 type="submit">
                             Create
                         </button>
@@ -26,7 +26,7 @@
         <div class="col-12">
             <div class="table-responsive">
                 <table class="table rounded-2 overflow-hidden align-middle mb-0">
-                    <thead class="table-primary">
+                    <thead class="table-secondary">
                         <tr>
                             <th>
                                 Name
@@ -55,7 +55,7 @@
                                     {{ x.unit_price|price }}
                                 </td>
                                 <td class="text-end">
-                                    <a class="btn btn-sm btn-secondary"
+                                    <a class="btn btn-sm btn-outline-primary"
                                        href="{{ url_for('admin.product', product_id=x.id) }}">
                                         View
                                     </a>

@@ -47,7 +47,7 @@
                             {% endfor %}
                         </select>
                         <button id="create-shipment-method"
-                                class="btn btn-secondary btn-load"
+                                class="btn btn-success btn-load"
                                 type="submit">
                             Create
                         </button>
@@ -58,7 +58,7 @@
         <div class="col-12">
             <div class="table-responsive">
                 <table class="table rounded-2 overflow-hidden align-middle mb-0">
-                    <thead class="table-primary">
+                    <thead class="table-secondary">
                         <tr>
                             <th>
                                 Name
@@ -105,7 +105,7 @@
                                 </td>
                                 <td class="text-end">
                                     <button id="update-shipment-method-{{ method.id }}"
-                                            class="btn btn-load btn-sm btn-secondary"
+                                            class="btn btn-load btn-sm btn-outline-primary"
                                             onclick="updateShipmentMethod({{ method.id }});">
                                         Update
                                     </button>

@@ -26,11 +26,7 @@
                                 </option>
                             {% endfor %}
                         </select>
-                        <a class="btn btn-warning"
-                           href="{{ url_for("admin.orders") }}">
-                            Reset
-                        </a>
-                        <button class="btn btn-secondary"
+                        <button class="btn btn-success"
                                 type="submit">
                             Search
                         </button>
@@ -41,7 +37,7 @@
         <div class="col-12">
             <div class="table-responsive">
                 <table class="table rounded-2 overflow-hidden align-middle mb-0">
-                    <thead class="table-primary">
+                    <thead class="table-secondary">
                         <tr>
                             <th>
                                 Order ID
@@ -88,7 +84,7 @@
                                     {{ order.refunds|length > 0 }}
                                 </td>
                                 <td class="text-end">
-                                    <a class="btn btn-sm btn-secondary"
+                                    <a class="btn btn-sm btn-outline-primary"
                                        href="{{ url_for('admin.order', order_id=order.id) }}">
                                         View
                                     </a>
