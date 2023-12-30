@@ -74,7 +74,12 @@
             <script src="{{ url_for('admin.static', filename='js/route/shipment_zone.js') }}"></script>
         {% endpack %}
     </head>
+    <body class="h-100 w-100 d-flex flex-column">
+        <div class="flex-grow-1">
 
-    {% block main %}
-    {% endblock %}
+            {% block admin_body %}
+            {% endblock %}
+        </div>
+        {% include "admin_message.html" %}
+    </body>
 </html>

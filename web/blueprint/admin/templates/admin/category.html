@@ -1,6 +1,6 @@
-{% extends "admin.html" %}
+{% extends "admin_body.html" %}
 
-{% block admin %}
+{% block admin_content %}
     <div class="row g-3">
         <div class="col-12">
             <div class="d-flex justify-content-between">
@@ -34,7 +34,6 @@
                     </div>
                 </form>
             </div>
-            {% include "includes/alert_cache.html" %}
         </div>
         <div class="col-12">
             <div class="table-responsive bg-light rounded-2 px-3 py-2">
