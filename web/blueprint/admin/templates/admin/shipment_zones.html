@@ -11,7 +11,7 @@
                     <div class="input-group">
                         <select required
                                 id="shipment-zone-country-id"
-                                class="form-select maw-120-px">
+                                class="form-select">
                             <option selected>
                                 Country
                             </option>
@@ -23,7 +23,7 @@
                         </select>
                         <select required
                                 id="shipment-zone-region-id"
-                                class="form-select maw-120-px">
+                                class="form-select">
                             <option selected>
                                 Region
                             </option>
@@ -34,11 +34,11 @@
                             {% endfor %}
                         </select>
                         <input id="shipment-zone-order"
-                               class="form-control maw-120-px"
+                               class="form-control"
                                placeholder="Order"
                                type="number">
                         <button id="create-shipment-zone"
-                                class="btn btn-load btn-info"
+                                class="btn btn-load btn-secondary"
                                 type="submit">
                             Create
                         </button>
@@ -48,7 +48,7 @@
         </div>
         <div class="col-12">
             <div class="table-responsive bg-light rounded-2 px-3 py-2">
-                <table class="table table-light table-no-wrap align-middle mb-0">
+                <table class="table table-light align-middle mb-0">
                     <thead>
                         <tr>
                             <th>
@@ -71,13 +71,13 @@
                                 </td>
                                 <td>
                                     <input id="shipment-zone-order-{{ zone.id }}"
-                                           class="form-control form-control-sm maw-120-px"
+                                           class="form-control form-control-sm"
                                            type="number"
                                            value="{{ zone.order }}">
                                 </td>
                                 <td class="text-end">
                                     <button id="update-shipment-zone-{{ zone.id }}"
-                                            class="btn btn-load btn-sm btn-info"
+                                            class="btn btn-load btn-sm btn-secondary"
                                             onclick="updateShipmentZone({{ zone.id }});">
                                         Update
                                     </button>

@@ -1,10 +1,10 @@
 {% extends "admin_main.html" %}
 
 {% block admin_body %}
-    <div class="bg-info">
+    <div class="bg-primary">
         <div class="container-xxl px-4 px-lg-5">
             <nav class="navbar navbar-dark navbar-expand-md px-0 py-2">
-                <h5 class="mb-0 fw-semibold text-white">
+                <h5 class="mb-0 text-white">
                     Admin Panel
                 </h5>
                 <a class="d-block d-md-none text-white"
@@ -41,7 +41,7 @@
                                data-bs-toggle="dropdown">
                                 Shipments
                             </a>
-                            <ul class="dropdown-menu w-fit ms-auto">
+                            <ul class="dropdown-menu ms-auto">
                                 <li>
                                     <a class="dropdown-item"
                                        href="{{ url_for("admin.shipment_classes") }}">

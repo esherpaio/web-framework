@@ -10,12 +10,12 @@
                 <form action="{{ url_for("admin.users") }}"
                       method="GET">
                     <div class="input-group">
-                        <input class="form-control maw-120-px"
+                        <input class="form-control"
                                name="s"
                                placeholder="Search"
                                type="text"
                                value="{{ search if search }}">
-                        <button class="btn btn-info"
+                        <button class="btn btn-secondary"
                                 id="button-search-user"
                                 type="submit">
                             Search
@@ -26,7 +26,7 @@
         </div>
         <div class="col-12">
             <div class="table-responsive bg-light rounded-2 px-3 py-2">
-                <table class="table table-light table-no-wrap align-middle mb-0">
+                <table class="table table-light align-middle mb-0">
                     <thead>
                         <tr>
                             <th>

@@ -9,13 +9,13 @@
                 </h2>
                 <div class="d-grid d-sm-block gap-2">
                     {% if order.invoice %}
-                        <a class="btn btn-info"
+                        <a class="btn btn-secondary"
                            href="{{ url_for('admin.download_invoice', order_id=order.id, invoice_id=order.invoice.id) }}">
                             Download invoice
                         </a>
                     {% endif %}
                     {% if order.invoice %}
-                        <a class="btn btn-info"
+                        <a class="btn btn-secondary"
                            href="{{ url_for('admin.download_csv', order_id=order.id) }}">
                             Download CSV
                         </a>
@@ -49,7 +49,7 @@
                 <h4>
                     Details
                 </h4>
-                <div class="row g-3 row-cols-2">
+                <div class="row g-3">
                     <div class="col">
                         <span class="d-block">Order ID</span>
                         <span class="d-block">Created at</span>
@@ -127,7 +127,7 @@
                 <h4 class="ms-2 mt-3">
                     Items
                 </h4>
-                <table class="table table-light table-no-wrap mb-0">
+                <table class="table table-light mb-0">
                     <thead>
                         <tr>
                             <th>
@@ -167,7 +167,7 @@
                                 </td>
                                 <td class="text-end">
                                     {% if line.sku.product.file_url and order.invoice %}
-                                        <a class="btn btn-sm btn-info"
+                                        <a class="btn btn-sm btn-secondary"
                                            href="{{ line.sku.product.file_url }}"
                                            target="_blank"
                                            rel="noopener">
@@ -187,7 +187,7 @@
                     <h4 class="ms-2 mt-3">
                         Shipments
                     </h4>
-                    <table class="table table-light table-no-wrap mb-0">
+                    <table class="table table-light mb-0">
                         <thead>
                             <tr>
                                 <th>
@@ -205,7 +205,7 @@
                                         {{ shipment.url }}
                                     </td>
                                     <td class="text-end">
-                                        <a class="btn btn-sm btn-info"
+                                        <a class="btn btn-sm btn-secondary"
                                            href="{{ shipment.url }}"
                                            target="_blank"
                                            rel="noopener">
@@ -225,7 +225,7 @@
                     <h4 class="ms-2 mt-3">
                         Refunds
                     </h4>
-                    <table class="table table-light table-no-wrap mb-0">
+                    <table class="table table-light mb-0">
                         <thead>
                             <tr>
                                 <th>
@@ -249,7 +249,7 @@
                                         {{ refund.total_price|price }} {{ order.currency.code }}
                                     </td>
                                     <td class="text-end">
-                                        <a class="btn btn-sm btn-info"
+                                        <a class="btn btn-sm btn-secondary"
                                            href="{{ url_for('admin.download_refund', order_id=order.id, refund_id=refund.id) }}">
                                             Download
                                         </a>
@@ -269,7 +269,7 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title fw-semibold">
+                    <h5 class="modal-title">
                         Cancel order
                     </h5>
                     <button type="button"
@@ -286,7 +286,7 @@
                 </div>
                 <div class="modal-footer">
                     <button id="cancel-order"
-                            class="btn btn-load btn-info"
+                            class="btn btn-load btn-secondary"
                             onclick="cancelOrder({{ order.id }})">
                         Proceed
                     </button>
@@ -306,7 +306,7 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title fw-semibold">
+                    <h5 class="modal-title">
                         Create refund
                     </h5>
                     <button type="button"
@@ -334,7 +334,7 @@
                 </div>
                 <div class="modal-footer">
                     <button id="create-refund"
-                            class="btn btn-load btn-info"
+                            class="btn btn-load btn-secondary"
                             onclick="refundOrder({{ order.id }})">
                         Proceed
                     </button>
@@ -354,7 +354,7 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title fw-semibold">
+                    <h5 class="modal-title">
                         Create shipment
                     </h5>
                     <button type="button"
@@ -379,7 +379,7 @@
                 </div>
                 <div class="modal-footer">
                     <button id="create-shipment"
-                            class="btn btn-load btn-info"
+                            class="btn btn-load btn-secondary"
                             onclick="createShipment({{ order.id }})">
                         Proceed
                     </button>

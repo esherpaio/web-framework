@@ -11,16 +11,16 @@
                     <div class="input-group">
                         <input required
                                id="shipment-class-name"
-                               class="form-control maw-120-px"
+                               class="form-control"
                                placeholder="Name"
                                type="text">
                         <input required
                                id="shipment-class-order"
-                               class="form-control maw-120-px"
+                               class="form-control"
                                placeholder="Order"
                                type="number">
                         <button id="create-shipment-class"
-                                class="btn btn-info btn-load"
+                                class="btn btn-secondary btn-load"
                                 type="submit">
                             Create
                         </button>
@@ -30,7 +30,7 @@
         </div>
         <div class="col-12">
             <div class="table-responsive bg-light rounded-2 px-3 py-2">
-                <table class="table table-light table-no-wrap align-middle mb-0">
+                <table class="table table-light align-middle mb-0">
                     <thead>
                         <tr>
                             <th>
@@ -52,13 +52,13 @@
                                 </td>
                                 <td>
                                     <input id="shipment-class-order-{{ x.id }}"
-                                           class="form-control form-control-sm maw-120-px"
+                                           class="form-control form-control-sm"
                                            type="number"
                                            value="{{ x.order if x.order }}">
                                 </td>
                                 <td class="text-end">
                                     <button id="update-shipment-class-{{ x.id }}"
-                                            class="btn btn-load btn-sm btn-info"
+                                            class="btn btn-load btn-sm btn-secondary"
                                             onclick="updateShipmentClass({{ x.id }});">
                                         Update
                                     </button>

@@ -9,7 +9,7 @@
         role="tablist">
         <li class="nav-item"
             role="presentation">
-            <button class="nav-link link-info fw-semibold py-2 {{ 'active' if tab == 'general' }}"
+            <button class="nav-link py-2 {{ 'active' if tab == 'general' }}"
                     data-bs-toggle="pill"
                     data-bs-target="#pills-1"
                     type="button"
@@ -20,7 +20,7 @@
         </li>
         <li class="nav-item"
             role="presentation">
-            <button class="nav-link link-info fw-semibold py-2 {{ 'active' if tab == 'options' }}"
+            <button class="nav-link py-2 {{ 'active' if tab == 'options' }}"
                     data-bs-toggle="pill"
                     data-bs-target="#pills-2"
                     type="button"
@@ -31,7 +31,7 @@
         </li>
         <li class="nav-item"
             role="presentation">
-            <button class="nav-link link-info fw-semibold py-2 {{ 'active' if tab == 'media' }}"
+            <button class="nav-link py-2 {{ 'active' if tab == 'media' }}"
                     data-bs-toggle="pill"
                     data-bs-target="#pills-3"
                     type="button"
@@ -42,7 +42,7 @@
         </li>
         <li class="nav-item"
             role="presentation">
-            <button class="nav-link link-info fw-semibold py-2 {{ 'active' if tab == 'links' }}"
+            <button class="nav-link py-2 {{ 'active' if tab == 'links' }}"
                     data-bs-toggle="pill"
                     data-bs-target="#pills-4"
                     type="button"
@@ -53,7 +53,7 @@
         </li>
         <li class="nav-item"
             role="presentation">
-            <button class="nav-link link-info fw-semibold py-2 {{ 'active' if tab == 'skus' }}"
+            <button class="nav-link py-2 {{ 'active' if tab == 'skus' }}"
                     data-bs-toggle="pill"
                     data-bs-target="#pills-5"
                     type="button"
@@ -74,7 +74,7 @@
                     <div class="d-flex justify-content-end">
                         <div class="d-grid d-sm-block gap-2">
                             <button id="update-product"
-                                    class="btn btn-info btn-load"
+                                    class="btn btn-secondary btn-load"
                                     onclick="updateProduct({{ product.id }});">
                                 Update
                             </button>
@@ -203,11 +203,11 @@
                             <div class="input-group">
                                 <input required
                                        id="option-name"
-                                       class="form-control maw-120-px"
+                                       class="form-control"
                                        placeholder="Name"
                                        type="text">
                                 <button id="create-option"
-                                        class="btn btn-info btn-load"
+                                        class="btn btn-secondary btn-load"
                                         type="submit">
                                     Create
                                 </button>
@@ -217,7 +217,7 @@
                 </div>
                 <div class="col-12">
                     <div class="table-responsive bg-light rounded-2 px-3 py-2">
-                        <table class="table table-light table-no-wrap align-middle mb-0">
+                        <table class="table table-light align-middle mb-0">
                             <thead>
                                 <tr>
                                     <th>
@@ -247,17 +247,17 @@
                                         </td>
                                         <td>
                                             <input id="option-order-{{ option.id }}"
-                                                   class="form-control form-control-sm maw-120-px"
+                                                   class="form-control form-control-sm"
                                                    type="number"
                                                    value="{{ option.order }}">
                                         </td>
                                         <td class="text-end">
                                             <a href="{{ url_for('admin.product_option', product_id=product.id, option_id=option.id) }}"
-                                               class="btn btn-sm btn-info">
+                                               class="btn btn-sm btn-secondary">
                                                 View
                                             </a>
                                             <button id="update-option-{{ option.id }}"
-                                                    class="btn btn-load btn-sm btn-info"
+                                                    class="btn btn-load btn-sm btn-secondary"
                                                     onclick="updateOption({{ option.id }}, {{ product.id }});">
                                                 Update
                                             </button>
@@ -288,12 +288,12 @@
                                 <input required
                                        multiple
                                        id="media-files"
-                                       class="form-control maw-200-px"
+                                       class="form-control"
                                        placeholder="Files"
                                        type="file"
                                        name="file">
                                 <button id="create-media"
-                                        class="btn btn-info btn-load"
+                                        class="btn btn-secondary btn-load"
                                         type="submit">
                                     Create
                                 </button>
@@ -307,14 +307,14 @@
                             <div class="col-12 col-sm-6 col-md-4 col-xl-3">
                                 <div class="card">
                                     {% if x.file.is_image %}
-                                        <img class="card-img-top h-180-px img-contain bg-light border-bottom"
+                                        <img class="card-img-top bg-light border-bottom"
                                              src="{{ cdn_url(x.file.path) }}?class=medium"
                                              alt="{{ x.file.description if x.file.description }}"
                                              loading="lazy">
                                     {% elif x.file.is_video %}
                                         <video controls
                                                muted
-                                               class="card-img-top h-180-px img-cover bg-light border-bottom">
+                                               class="card-img-top bg-light border-bottom">
                                             <source src="{{ cdn_url(x.file.path) }}">
                                         </video>
                                     {% endif %}
@@ -337,7 +337,7 @@
                                             </div>
                                         </div>
                                         <button id="update-media-{{ x.id }}"
-                                                class="btn btn-load btn-sm btn-info"
+                                                class="btn btn-load btn-sm btn-secondary"
                                                 onclick="updateMedia({{ x.id }}, {{ product.id }})">
                                             Update
                                         </button>
@@ -366,7 +366,7 @@
                             <div class="input-group">
                                 <select required
                                         id="link-sku-id"
-                                        class="form-select maw-120-px">
+                                        class="form-select">
                                     <option disabled
                                             selected>
                                         SKU
@@ -379,7 +379,7 @@
                                 </select>
                                 <select required
                                         id="link-type-id"
-                                        class="form-select maw-120-px">
+                                        class="form-select">
                                     <option disabled
                                             selected>
                                         Type
@@ -391,7 +391,7 @@
                                     {% endfor %}
                                 </select>
                                 <button id="create-link"
-                                        class="btn btn-load btn-info"
+                                        class="btn btn-load btn-secondary"
                                         type="submit">
                                     Create
                                 </button>
@@ -401,7 +401,7 @@
                 </div>
                 <div class="col-12">
                     <div class="table-responsive bg-light rounded-2 px-3 py-2">
-                        <table class="table table-light table-no-wrap align-middle mb-0">
+                        <table class="table table-light align-middle mb-0">
                             <thead>
                                 <tr>
                                     <th>
@@ -450,7 +450,7 @@
                         <form onsubmit="createSkus({{ product.id }});">
                             <div class="input-group">
                                 <button id="create-skus"
-                                        class="btn btn-load btn-info"
+                                        class="btn btn-load btn-secondary"
                                         type="submit">
                                     Generate
                                 </button>
@@ -460,7 +460,7 @@
                 </div>
                 <div class="col-12">
                     <div class="table-responsive bg-light rounded-2 px-3 py-2">
-                        <table class="table table-light table-no-wrap align-middle mb-0">
+                        <table class="table table-light align-middle mb-0">
                             <thead>
                                 <tr>
                                     <th>
@@ -498,7 +498,7 @@
                                         </td>
                                         <td class="text-end">
                                             <button id="update-sku-{{ sku.id }}"
-                                                    class="btn btn-load btn-sm btn-info"
+                                                    class="btn btn-load btn-sm btn-secondary"
                                                     onclick="updateSku({{ sku.id }});">
                                                 Update
                                             </button>
@@ -524,7 +524,7 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title fw-semibold">
+                    <h5 class="modal-title">
                         Delete product
                     </h5>
                     <button type="button"

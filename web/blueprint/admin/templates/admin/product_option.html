@@ -10,7 +10,7 @@
         <li class="nav-item"
             role="presentation">
             <a href="{{ url_for("admin.product", product_id=product.id, tab="general") }}"
-               class="nav-link link-info fw-semibold py-2"
+               class="nav-link py-2"
                type="button"
                role="tab">
                 General
@@ -19,7 +19,7 @@
         <li class="nav-item"
             role="presentation">
             <a href="{{ url_for("admin.product", product_id=product.id, tab="options") }}"
-               class="nav-link link-info fw-semibold py-2"
+               class="nav-link py-2"
                type="button"
                role="tab">
                 Options
@@ -28,7 +28,7 @@
         <li class="nav-item"
             role="presentation">
             <a href="{{ url_for("admin.product", product_id=product.id, tab="media") }}"
-               class="nav-link link-info fw-semibold py-2"
+               class="nav-link py-2"
                type="button"
                role="tab">
                 Media
@@ -37,7 +37,7 @@
         <li class="nav-item"
             role="presentation">
             <a href="{{ url_for("admin.product", product_id=product.id, tab="links") }}"
-               class="nav-link link-info fw-semibold py-2"
+               class="nav-link py-2"
                type="button"
                role="tab">
                 Links
@@ -46,7 +46,7 @@
         <li class="nav-item"
             role="presentation">
             <a href="{{ url_for("admin.product", product_id=product.id, tab="skus") }}"
-               class="nav-link link-info fw-semibold py-2"
+               class="nav-link py-2"
                type="button"
                role="tab">
                 SKUs
@@ -60,16 +60,16 @@
                     <div class="input-group">
                         <input required
                                id="value-name"
-                               class="form-control maw-120-px"
+                               class="form-control"
                                placeholder="Name"
                                type="text">
                         <input id="value-unit-price"
-                               class="form-control maw-120-px"
+                               class="form-control"
                                placeholder="Price"
                                type="number"
                                step="0.01">
                         <button id="create-value"
-                                class="btn btn-info btn-load"
+                                class="btn btn-secondary btn-load"
                                 type="submit">
                             Create
                         </button>
@@ -79,7 +79,7 @@
         </div>
         <div class="col-12">
             <div class="table-responsive bg-light rounded-2 px-3 py-2">
-                <table class="table table-light table-no-wrap align-middle mb-0">
+                <table class="table table-light align-middle mb-0">
                     <thead>
                         <tr>
                             <th>
@@ -107,7 +107,7 @@
                                 </td>
                                 <td>
                                     <input id="value-unit-price-{{ value.id }}"
-                                           class="form-control form-control-sm maw-120-px"
+                                           class="form-control form-control-sm"
                                            type="number"
                                            step="0.01"
                                            value="{{ value.unit_price|price }}">
@@ -129,13 +129,13 @@
                                 </td>
                                 <td>
                                     <input id="value-order-{{ value.id }}"
-                                           class="form-control form-control-sm maw-120-px"
+                                           class="form-control form-control-sm"
                                            type="number"
                                            value="{{ value.order }}">
                                 </td>
                                 <td class="text-end">
                                     <button id="update-value-{{ value.id }}"
-                                            class="btn btn-load btn-sm btn-info"
+                                            class="btn btn-load btn-sm btn-secondary"
                                             onclick="updateValue({{ value.id }}, {{ option.product_id }});">
                                         Update
                                     </button>

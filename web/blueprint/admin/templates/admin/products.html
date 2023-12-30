@@ -11,11 +11,11 @@
                     <div class="input-group">
                         <input required
                                id="product-name"
-                               class="form-control maw-180-px"
+                               class="form-control"
                                placeholder="Name"
                                type="text">
                         <button id="create-product"
-                                class="btn btn-info btn-load"
+                                class="btn btn-secondary btn-load"
                                 type="submit">
                             Create
                         </button>
@@ -25,7 +25,7 @@
         </div>
         <div class="col-12">
             <div class="table-responsive bg-light rounded-2 px-3 py-2">
-                <table class="table table-light table-no-wrap align-middle mb-0">
+                <table class="table table-light align-middle mb-0">
                     <thead>
                         <tr>
                             <th>
@@ -55,7 +55,7 @@
                                     {{ x.unit_price|price }}
                                 </td>
                                 <td class="text-end">
-                                    <a class="btn btn-sm btn-info"
+                                    <a class="btn btn-sm btn-secondary"
                                        href="{{ url_for('admin.product', product_id=x.id) }}">
                                         View
                                     </a>

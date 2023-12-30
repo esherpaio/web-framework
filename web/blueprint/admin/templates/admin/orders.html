@@ -10,13 +10,13 @@
                 <form action="{{ url_for("admin.orders") }}"
                       method="GET">
                     <div class="input-group">
-                        <input class="form-control maw-137-px"
+                        <input class="form-control"
                                name="s"
                                placeholder="Search"
                                type="text"
                                value="{{ search if search }}">
                         <select name="status"
-                                class="form-select maw-137-px">
+                                class="form-select">
                             <option value>
                                 All statuses
                             </option>
@@ -30,7 +30,7 @@
                            href="{{ url_for("admin.orders") }}">
                             Reset
                         </a>
-                        <button class="btn btn-info"
+                        <button class="btn btn-secondary"
                                 type="submit">
                             Search
                         </button>
