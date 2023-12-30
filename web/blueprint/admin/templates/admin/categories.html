@@ -15,7 +15,7 @@
                                placeholder="Name"
                                type="text">
                         <button id="create-category"
-                                class="btn btn-secondary btn-load"
+                                class="btn btn-success btn-load"
                                 type="submit">
                             Create
                         </button>
@@ -26,7 +26,7 @@
         <div class="col-12">
             <div class="table-responsive">
                 <table class="table rounded-2 overflow-hidden align-middle mb-0">
-                    <thead class="table-primary">
+                    <thead class="table-secondary">
                         <tr>
                             <th>
                                 Name
@@ -74,12 +74,12 @@
                                     <input {{ 'checked' if x.in_header }} id="category-in-header-{{ x.id }}" class="form-check-input" type="checkbox">
                                 </td>
                                 <td class="text-end">
-                                    <a class="btn btn-sm btn-secondary"
+                                    <a class="btn btn-sm btn-outline-primary"
                                        href="{{ url_for('admin.category', category_id=x.id) }}">
                                         View
                                     </a>
                                     <button id="update-category-{{ x.id }}"
-                                            class="btn btn-load btn-sm btn-secondary"
+                                            class="btn btn-load btn-sm btn-outline-primary"
                                             onclick="updateCategory({{ x.id }});">
                                         Update
                                     </button>

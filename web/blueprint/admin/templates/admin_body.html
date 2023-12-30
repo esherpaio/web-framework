@@ -4,9 +4,10 @@
     <div class="bg-primary">
         <div class="container-xxl px-4 px-lg-5">
             <nav class="navbar navbar-dark navbar-expand-md px-0 py-2">
-                <h5 class="mb-0 text-white">
-                    Admin Panel
-                </h5>
+                <a class="h5 text-decoration-none mb-0 text-white"
+                   href="{{ url_for("admin.orders") }}">
+                    {{ config.WEBSITE_NAME }}
+                </a>
                 <a class="d-block d-md-none text-white"
                    href="#"
                    data-bs-target="#navbar-user"
@@ -77,7 +78,7 @@
                         <li class="nav-item">
                             <a class="nav-link {{ 'active' if 'admin.setting' in request.endpoint }}"
                                href="{{ url_for("admin.setting") }}">
-                                Setting
+                                Settings
                             </a>
                         </li>
                         <li class="nav-item">

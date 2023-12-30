@@ -74,7 +74,7 @@
                     <div class="d-flex justify-content-end">
                         <div class="d-grid d-sm-block gap-2">
                             <button id="update-product"
-                                    class="btn btn-secondary btn-load"
+                                    class="btn btn-outline-primary btn-load"
                                     onclick="updateProduct({{ product.id }});">
                                 Update
                             </button>
@@ -207,7 +207,7 @@
                                        placeholder="Name"
                                        type="text">
                                 <button id="create-option"
-                                        class="btn btn-secondary btn-load"
+                                        class="btn btn-success btn-load"
                                         type="submit">
                                     Create
                                 </button>
@@ -218,7 +218,7 @@
                 <div class="col-12">
                     <div class="table-responsive">
                         <table class="table rounded-2 overflow-hidden align-middle mb-0">
-                            <thead class="table-primary">
+                            <thead class="table-secondary">
                                 <tr>
                                     <th>
                                         Name
@@ -253,11 +253,11 @@
                                         </td>
                                         <td class="text-end">
                                             <a href="{{ url_for('admin.product_option', product_id=product.id, option_id=option.id) }}"
-                                               class="btn btn-sm btn-secondary">
+                                               class="btn btn-sm btn-outline-primary">
                                                 View
                                             </a>
                                             <button id="update-option-{{ option.id }}"
-                                                    class="btn btn-load btn-sm btn-secondary"
+                                                    class="btn btn-load btn-sm btn-outline-primary"
                                                     onclick="updateOption({{ option.id }}, {{ product.id }});">
                                                 Update
                                             </button>
@@ -293,7 +293,7 @@
                                        type="file"
                                        name="file">
                                 <button id="create-media"
-                                        class="btn btn-secondary btn-load"
+                                        class="btn btn-success btn-load"
                                         type="submit">
                                     Create
                                 </button>
@@ -337,7 +337,7 @@
                                             </div>
                                         </div>
                                         <button id="update-media-{{ x.id }}"
-                                                class="btn btn-load btn-sm btn-secondary"
+                                                class="btn btn-load btn-sm btn-outline-primary"
                                                 onclick="updateMedia({{ x.id }}, {{ product.id }})">
                                             Update
                                         </button>
@@ -391,7 +391,7 @@
                                     {% endfor %}
                                 </select>
                                 <button id="create-link"
-                                        class="btn btn-load btn-secondary"
+                                        class="btn btn-load btn-success"
                                         type="submit">
                                     Create
                                 </button>
@@ -402,7 +402,7 @@
                 <div class="col-12">
                     <div class="table-responsive">
                         <table class="table rounded-2 overflow-hidden align-middle mb-0">
-                            <thead class="table-primary">
+                            <thead class="table-secondary">
                                 <tr>
                                     <th>
                                         Type
@@ -450,7 +450,7 @@
                         <form onsubmit="createSkus({{ product.id }});">
                             <div class="input-group">
                                 <button id="create-skus"
-                                        class="btn btn-load btn-secondary"
+                                        class="btn btn-load btn-success"
                                         type="submit">
                                     Generate
                                 </button>
@@ -461,7 +461,7 @@
                 <div class="col-12">
                     <div class="table-responsive">
                         <table class="table rounded-2 overflow-hidden align-middle mb-0">
-                            <thead class="table-primary">
+                            <thead class="table-secondary">
                                 <tr>
                                     <th>
                                         ID
@@ -498,7 +498,7 @@
                                         </td>
                                         <td class="text-end">
                                             <button id="update-sku-{{ sku.id }}"
-                                                    class="btn btn-load btn-sm btn-secondary"
+                                                    class="btn btn-load btn-sm btn-outline-primary"
                                                     onclick="updateSku({{ sku.id }});">
                                                 Update
                                             </button>
@@ -544,7 +544,7 @@
                         Proceed
                     </button>
                     <button type="button"
-                            class="btn btn-secondary"
+                            class="btn btn-outline-primary"
                             data-bs-dismiss="modal">
                         Close
                     </button>

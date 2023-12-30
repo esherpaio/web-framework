@@ -9,13 +9,13 @@
                 </h2>
                 <div class="d-grid d-sm-block gap-2">
                     {% if order.invoice %}
-                        <a class="btn btn-secondary"
+                        <a class="btn btn-outline-primary"
                            href="{{ url_for('admin.download_invoice', order_id=order.id, invoice_id=order.invoice.id) }}">
                             Download invoice
                         </a>
                     {% endif %}
                     {% if order.invoice %}
-                        <a class="btn btn-secondary"
+                        <a class="btn btn-outline-primary"
                            href="{{ url_for('admin.download_csv', order_id=order.id) }}">
                             Download CSV
                         </a>
@@ -128,7 +128,7 @@
                     Items
                 </h4>
                 <table class="table rounded-2 overflow-hidden align-middle mb-0">
-                    <thead class="table-primary">
+                    <thead class="table-secondary">
                         <tr>
                             <th>
                                 Name
@@ -167,7 +167,7 @@
                                 </td>
                                 <td class="text-end">
                                     {% if line.sku.product.file_url and order.invoice %}
-                                        <a class="btn btn-sm btn-secondary"
+                                        <a class="btn btn-sm btn-outline-primary"
                                            href="{{ line.sku.product.file_url }}"
                                            target="_blank"
                                            rel="noopener">
@@ -188,7 +188,7 @@
                         Shipments
                     </h4>
                     <table class="table rounded-2 overflow-hidden align-middle mb-0">
-                        <thead class="table-primary">
+                        <thead class="table-secondary">
                             <tr>
                                 <th>
                                     URL
@@ -205,7 +205,7 @@
                                         {{ shipment.url }}
                                     </td>
                                     <td class="text-end">
-                                        <a class="btn btn-sm btn-secondary"
+                                        <a class="btn btn-sm btn-outline-primary"
                                            href="{{ shipment.url }}"
                                            target="_blank"
                                            rel="noopener">
@@ -226,7 +226,7 @@
                         Refunds
                     </h4>
                     <table class="table rounded-2 overflow-hidden align-middle mb-0">
-                        <thead class="table-primary">
+                        <thead class="table-secondary">
                             <tr>
                                 <th>
                                     Number
@@ -249,7 +249,7 @@
                                         {{ refund.total_price|price }} {{ order.currency.code }}
                                     </td>
                                     <td class="text-end">
-                                        <a class="btn btn-sm btn-secondary"
+                                        <a class="btn btn-sm btn-outline-primary"
                                            href="{{ url_for('admin.download_refund', order_id=order.id, refund_id=refund.id) }}">
                                             Download
                                         </a>
@@ -286,12 +286,12 @@
                 </div>
                 <div class="modal-footer">
                     <button id="cancel-order"
-                            class="btn btn-load btn-secondary"
+                            class="btn btn-load btn-danger"
                             onclick="cancelOrder({{ order.id }})">
                         Proceed
                     </button>
                     <button type="button"
-                            class="btn btn-secondary"
+                            class="btn btn-primary"
                             data-bs-dismiss="modal">
                         Close
                     </button>
@@ -334,12 +334,12 @@
                 </div>
                 <div class="modal-footer">
                     <button id="create-refund"
-                            class="btn btn-load btn-secondary"
+                            class="btn btn-load btn-danger"
                             onclick="refundOrder({{ order.id }})">
                         Proceed
                     </button>
                     <button type="button"
-                            class="btn btn-secondary"
+                            class="btn btn-primary"
                             data-bs-dismiss="modal">
                         Close
                     </button>
@@ -379,12 +379,12 @@
                 </div>
                 <div class="modal-footer">
                     <button id="create-shipment"
-                            class="btn btn-load btn-secondary"
+                            class="btn btn-load btn-warning"
                             onclick="createShipment({{ order.id }})">
                         Proceed
                     </button>
                     <button type="button"
-                            class="btn btn-secondary"
+                            class="btn btn-primary"
                             data-bs-dismiss="modal">
                         Close
                     </button>
