@@ -80,15 +80,95 @@
     </head>
     <body class="h-100 w-100 d-flex flex-row">
         <div id="sidebar"
-             class="offcanvas offcanvas-start h-100 text-bg-dark" 
+             class="offcanvas offcanvas-start h-100 text-bg-dark"
              tabindex="-1">
-            <div class="offcanvas-header">
+            <div class="offcanvas-header justify-content-center">
+                <img src="{{ config.WEBSITE_LOGO_URL }}"
+                     class="img-thumbnail me-2"
+                     width="30"
+                     height="30">
                 <h5 class="offcanvas-title">
                     {{ config.WEBSITE_NAME }}
                 </h5>
             </div>
             <div class="offcanvas-body">
-                Content
+                <div class="h-100 d-flex flex-column">
+                    <ul class="nav nav-pills flex-column flex-grow-1">
+                        <li class="nav-item">
+                            <a class="nav-link {{ 'active' if 'admin.orders' in request.endpoint }}"
+                               href="{{ url_for("admin.orders") }}">
+                                Orders
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {{ 'active' if 'admin.categories' in request.endpoint }}"
+                               href="{{ url_for("admin.categories") }}">
+                                Categories
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {{ 'active' if 'admin.product' in request.endpoint }}"
+                               href="{{ url_for("admin.products") }}">
+                                Products
+                            </a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle {{ 'active' if 'admin.shipment' in request.endpoint }}"
+                               href="#"
+                               role="button"
+                               data-bs-toggle="dropdown">
+                                Shipments
+                            </a>
+                            <ul class="dropdown-menu ms-auto">
+                                <li>
+                                    <a class="dropdown-item"
+                                       href="{{ url_for("admin.shipment_classes") }}">
+                                        Classes
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item"
+                                       href="{{ url_for("admin.shipment_zones") }}">
+                                        Zones
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item"
+                                       href="{{ url_for("admin.shipment_methods") }}">
+                                        Methods
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {{ 'active' if 'admin.coupons' in request.endpoint }}"
+                               href="{{ url_for("admin.coupons") }}">
+                                Coupons
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {{ 'active' if 'admin.users' in request.endpoint }}"
+                               href="{{ url_for("admin.users") }}">
+                                Users
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {{ 'active' if 'admin.setting' in request.endpoint }}"
+                               href="{{ url_for("admin.setting") }}">
+                                Settings
+                            </a>
+                        </li>
+                    </ul>
+                    <ul class="nav nav-pills flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link"
+                               href="#"
+                               onclick="logoutUser();">
+                                Logout
+                            </a>
+                        </li>
+                    </ul>
+                </div>
             </div>
         </div>
         <div class="overflow-scroll flex-grow-1">
@@ -106,10 +186,9 @@
                     </button>
                 </div>
             </nav>
-            <div class="container-xxl p-4 px-lg-5">
-                {% block admin_content %}
-                {% endblock %}
-            </div>
+
+            {% block admin_body %}
+            {% endblock %}
         </div>
         {% include "admin_message.html" %}
     </body>
