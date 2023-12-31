@@ -183,9 +183,10 @@
                     </button>
                 </div>
             </nav>
-
-            {% block admin_body %}
-            {% endblock %}
+            <div class="p-4 px-lg-5">
+                {% block admin_body %}
+                {% endblock %}
+            </div>
             {% include "admin_message.html" %}
         </div>
     </body>
