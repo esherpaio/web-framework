@@ -2,6 +2,9 @@
 <html lang="{{ current_locale.language.code }}"
       class="h-100">
     <head>
+        {% for tag in meta.tags %}
+            {{ tag }}
+        {% endfor %}
         <link rel="preload"
               href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,500,600,700&display=swap"
               as="style"
@@ -54,6 +57,7 @@
         {% pack 'js' %}
             <script src="{{ url_for('admin.static', filename='js/utils/buttons.js') }}"></script>
             <script src="{{ url_for('admin.static', filename='js/utils/messages.js') }}"></script>
+            <script src="{{ url_for('admin.static', filename='js/utils/nav.js') }}"></script>
             <script src="{{ url_for('admin.static', filename='js/utils/parameters.js') }}"></script>
         {% endpack %}
         {% pack 'js' %}
@@ -74,11 +78,38 @@
             <script src="{{ url_for('admin.static', filename='js/route/shipment_zone.js') }}"></script>
         {% endpack %}
     </head>
-    <body class="h-100 w-100 d-flex flex-column">
-        <div class="flex-grow-1">
-
-            {% block admin_body %}
-            {% endblock %}
+    <body class="h-100 w-100 d-flex flex-row">
+        <div id="sidebar"
+             class="offcanvas offcanvas-start h-100 text-bg-dark" 
+             tabindex="-1">
+            <div class="offcanvas-header">
+                <h5 class="offcanvas-title">
+                    {{ config.WEBSITE_NAME }}
+                </h5>
+            </div>
+            <div class="offcanvas-body">
+                Content
+            </div>
+        </div>
+        <div class="overflow-scroll flex-grow-1">
+            <nav id="topbar"
+                 class="navbar navbar-dark bg-primary">
+                <div class="container-xxl px-4 px-lg-5">
+                    <a class="navbar-brand"
+                       href="{{ url_for("admin.orders") }}">
+                        {{ config.WEBSITE_NAME }}
+                    </a>
+                    <button class="navbar-toggler"
+                            type="button"
+                            onclick="toggleNav();">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                </div>
+            </nav>
+            <div class="container-xxl p-4 px-lg-5">
+                {% block admin_content %}
+                {% endblock %}
+            </div>
         </div>
         {% include "admin_message.html" %}
     </body>
