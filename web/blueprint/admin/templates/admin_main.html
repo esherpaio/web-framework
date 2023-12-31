@@ -80,13 +80,10 @@
     </head>
     <body class="h-100 w-100 d-flex flex-row">
         <div id="sidebar"
-             class="offcanvas offcanvas-start h-100 text-bg-dark"
+             class="offcanvas offcanvas-start h-100 text-dark bg-secondary bg-opacity-25"
+             style="width: 220px"
              tabindex="-1">
-            <div class="offcanvas-header justify-content-center">
-                <img src="{{ config.WEBSITE_LOGO_URL }}"
-                     class="img-thumbnail me-2"
-                     width="30"
-                     height="30">
+            <div class="offcanvas-header justify-content-center pb-0">
                 <h5 class="offcanvas-title">
                     {{ config.WEBSITE_NAME }}
                 </h5>
@@ -189,7 +186,7 @@
 
             {% block admin_body %}
             {% endblock %}
+            {% include "admin_message.html" %}
         </div>
-        {% include "admin_message.html" %}
     </body>
 </html>

@@ -1,6 +1,5 @@
 function initNav() {
     const sidebar = document.getElementById("sidebar");
-    sidebar.style.width = "280px";
     sidebar.style.flexGrow = "0";
     sidebar.style.flexShrink = "0";
     displayNav();
@@ -9,7 +8,7 @@ function initNav() {
 function displayNav() {
     const topbar = document.getElementById("topbar");
     const sidebar = document.getElementById("sidebar");
-    if (window.innerWidth >= 1400) {
+    if (window.innerWidth >= 1200) {
         sidebar.classList.add("show");
         sidebar.style.position = "relative";
         topbar.style.display = "none";
@@ -32,5 +31,5 @@ function toggleNav() {
     }
 }
 
-window.addEventListener("load", initNav, true);
+window.addEventListener("load", initNav, false);
 window.addEventListener("resize", displayNav, true);
