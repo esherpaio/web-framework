@@ -1,0 +1,24 @@
+.offcanvas {
+    --bs-offcanvas-width: 220px;
+}
+
+.offcanvas-header {
+    height: 56px;
+}
+
+@media (min-width: 1200px) {
+    .offcanvas {
+        flex-grow: 0;
+        flex-shrink: 0;
+        position: relative;
+        transform: none;
+        transition: none;
+        visibility: visible;
+    }
+    .offcanvas.offcanvas-start {
+        transform: none;
+    }
+    .offcanvas-backdrop {
+        display: none;
+    }
+}
