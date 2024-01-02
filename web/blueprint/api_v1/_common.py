@@ -1,5 +1,3 @@
-import typing
-
 from flask import abort
 from flask_login import current_user
 from mollie.api.objects.payment import Payment
@@ -49,7 +47,7 @@ def create_refund(
     remove_file(pdf_path)
 
 
-def authorize_cart(s: Session, data: dict) -> Cart | typing.NoReturn:
+def authorize_cart(s: Session, data: dict) -> Cart:  # type: ignore
     cart_id = data["cart_id"]
     filters = {Cart.id == cart_id, Cart.user_id == current_user.id}
     cart = s.query(Cart).filter(*filters).first()

@@ -171,7 +171,7 @@ class API(Generic[B]):
         s: Session,
         id_: int | None,
         *filters: ColumnExpressionArgument[bool],
-    ) -> B:
+    ) -> B:  # type: ignore
         if cls.model is None:
             raise NotImplementedError
         if id_ is not None:
