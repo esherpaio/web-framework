@@ -1,4 +1,4 @@
-function initButtons() {
+async function initButtons() {
     const buttons = document.getElementsByClassName("btn-load");
     for (const button of buttons) {
         button.dataset.loading = "0";
@@ -44,4 +44,4 @@ function updateButton(
     }
 }
 
-window.addEventListener("load", initButtons);
+window.addEventListener("load", () => initButtons());
