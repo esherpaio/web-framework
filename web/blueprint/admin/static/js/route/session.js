@@ -1,5 +1,7 @@
-async function logoutUser() {
-    let resp = await deleteSessions();
+async function logoutUser(redirect) {
+    await deleteSessions();
     await updateCartCount();
-    window.location.href = resp.links.home;
+    if (redirect) {
+        window.location.href = redirect;
+    }
 }
