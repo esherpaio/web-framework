@@ -166,12 +166,12 @@ class API(Generic[B]):
         s.flush()
 
     @classmethod
-    def get(
+    def get(    # type: ignore
         cls,
         s: Session,
         id_: int | None,
         *filters: ColumnExpressionArgument[bool],
-    ) -> B:  # type: ignore
+    ) -> B:
         if cls.model is None:
             raise NotImplementedError
         if id_ is not None:
