@@ -1,6 +1,7 @@
-from flask import render_template
+from flask import redirect, render_template, url_for
 from sqlalchemy import false
 from sqlalchemy.orm import joinedload
+from werkzeug import Response
 
 from web.blueprint.admin import admin_bp
 from web.database.client import conn
@@ -25,9 +26,12 @@ def categories() -> str:
 
 
 @admin_bp.get("/admin/categories/<int:category_id>")
-def category(category_id: int) -> str:
+def category(category_id: int) -> str | Response:
     with conn.begin() as s:
         category_ = s.query(Category).filter_by(id=category_id).first()
+        if not category_:
+            return redirect(url_for("admin.error"))
+
         category_items = (
             s.query(CategoryItem)
             .options(

@@ -1,5 +1,6 @@
-from flask import render_template, request
+from flask import redirect, render_template, request, url_for
 from sqlalchemy.orm import joinedload
+from werkzeug import Response
 
 from web.blueprint.admin import admin_bp
 from web.database.client import conn
@@ -34,7 +35,7 @@ def products() -> str:
 
 
 @admin_bp.get("/admin/products/<int:product_id>")
-def product(product_id: int) -> str:
+def product(product_id: int) -> str | Response:
     tab = request.args.get("tab", "general", type=str)
 
     with conn.begin() as s:
@@ -47,6 +48,9 @@ def product(product_id: int) -> str:
             .filter_by(id=product_id, is_deleted=False)
             .first()
         )
+        if not product_:
+            return redirect(url_for("admin.error"))
+
         categories = s.query(Category).order_by(Category.name).all()
         shipment_classes = (
             s.query(ShipmentClass)
