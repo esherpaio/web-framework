@@ -78,7 +78,7 @@ def _set_guest_session(persistent: bool = False) -> User:
 
 def access_control(
     level: UserRoleLevel,
-) -> Callable[[Callable[..., Response]], Callable[..., Response]]:
+) -> Callable[[Callable[..., Response | None]], Callable[..., Response | None]]:
     """Authorize a user based on their role level."""
 
     def decorate(f: Callable) -> Callable[..., Response]:

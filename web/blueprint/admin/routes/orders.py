@@ -1,9 +1,10 @@
 import csv
 import os
 
-from flask import Response, current_app, render_template, request, send_file
+from flask import current_app, render_template, request, send_file
 from sqlalchemy import or_
 from sqlalchemy.orm import contains_eager, joinedload
+from werkzeug import Response
 
 from web.blueprint.admin import admin_bp
 from web.database.client import conn
@@ -19,6 +20,7 @@ from web.database.model import (
 )
 from web.document.objects.invoice import gen_invoice
 from web.document.objects.refund import gen_refund
+from web.helper.api import ApiText, response
 from web.helper.fso import remove_file
 from web.helper.pages import render_pages
 
@@ -39,7 +41,7 @@ def orders() -> str:
         filters.append(
             or_(
                 Shipment.url.ilike(f"%{search}%"),
-                Billing.full_name.ilike(f"%{search}%"),
+                Billing.full_name.ilike(f"%{search}%"),  # type: ignore
             )
         )
 
@@ -133,8 +135,9 @@ def order(order_id: int) -> str:
 def download_invoice(order_id: int, invoice_id: int) -> Response:
     with conn.begin() as s:
         order_ = s.query(Order).filter_by(id=order_id).first()
-        invoice = order_.invoice
-        pdf_name, pdf_path = gen_invoice(s, order_, invoice)
+        if not order_ or not order_.invoice:
+            return response(404, ApiText.HTTP_404)
+        pdf_name, pdf_path = gen_invoice(s, order_, order_.invoice)
     remove_file(pdf_path, delay_s=20)
     return send_file(
         pdf_path,
@@ -147,9 +150,10 @@ def download_invoice(order_id: int, invoice_id: int) -> Response:
 def download_refund(order_id: int, refund_id: int) -> Response:
     with conn.begin() as s:
         order_ = s.query(Order).filter_by(id=order_id).first()
-        invoice = order_.invoice
         refund = s.query(Refund).filter_by(id=refund_id).first()
-        pdf_name, pdf_path = gen_refund(s, order_, invoice, refund)
+        if not order_ or not order_.invoice or not refund:
+            return response(404, ApiText.HTTP_404)
+        pdf_name, pdf_path = gen_refund(s, order_, order_.invoice, refund)
     remove_file(pdf_path, delay_s=20)
     return send_file(
         pdf_path,
@@ -176,6 +180,9 @@ def download_csv(order_id: int) -> Response:
             .first()
         )
 
+    if not order_:
+        return response(404, ApiText.HTTP_404)
+
     headers = [
         "Name",
         "Address",
@@ -187,16 +194,19 @@ def download_csv(order_id: int) -> Response:
         "SKU",
     ]
 
+    if not current_app.static_folder:
+        return response(404, ApiText.HTTP_404)
     temp_dir = os.path.join(current_app.static_folder, "tmp")
     csv_name = f"Order ID {order_id}.csv"
     csv_path = os.path.join(temp_dir, csv_name)
 
-    with open(csv_path, "w") as file:
-        writer = csv.writer(file)
+    with open(csv_path, "w") as file_:
+        writer = csv.writer(file_)
         writer.writerow(headers)
         order_name = f"{order_.shipping.first_name} {order_.shipping.last_name}"
-        order_products = [f"{x.sku.product.name} ({x.sku.id})" for x in order_.lines]
-        order_products = ", ".join(order_products)
+        order_products = ", ".join(
+            [f"{x.sku.product.name} ({x.sku.id})" for x in order_.lines]
+        )
         writer.writerow(
             [
                 order_name,

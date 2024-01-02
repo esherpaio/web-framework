@@ -1,6 +1,7 @@
 import os
 
-from flask import Blueprint
+from flask import Blueprint, redirect, url_for
+from werkzeug import Response
 
 from web import config
 from web.database.model.user_role import UserRoleLevel
@@ -29,3 +30,8 @@ def authorize() -> None:
 def context() -> dict:
     meta = Meta(title="Admin", robots="noindex,nofollow")
     return dict(cache=cache, config=config, meta=meta)
+
+
+@admin_bp.errorhandler(Exception)
+def error_handler(error: Exception) -> Response:
+    return redirect(url_for("admin.error"))

@@ -37,8 +37,8 @@ def post_skus(product_id: int) -> Response:
         value_id_sets = []
         options = [x for x in product.options if not x.is_deleted]
         for option in options:
-            value_ids = [x.id for x in option.values if not x.is_deleted]
-            value_id_sets.append(value_ids)
+            option_value_ids = [x.id for x in option.values if not x.is_deleted]
+            value_id_sets.append(option_value_ids)
         value_id_groups = list(itertools.product(*value_id_sets))
 
         for value_ids in value_id_groups:
