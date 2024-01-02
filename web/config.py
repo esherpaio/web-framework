@@ -93,6 +93,7 @@ SMTP_PORT: int = env_int("SMTP_PORT")
 SMTP_USERNAME: str = env_str("SMTP_USERNAME")
 SMTP_PASSWORD: str = env_str("SMTP_PASSWORD")
 
+WEBSITE_URL: str = env_str("WEBSITE_URL")
 WEBSITE_NAME: str = config_var("WEBSITE_NAME")
 WEBSITE_LOCALE: str = config_var("WEBSITE_LOCALE")
 WEBSITE_LANGUAGE_CODE: str = config_var("WEBSITE_LANGUAGE_CODE")
