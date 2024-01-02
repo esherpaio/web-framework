@@ -185,7 +185,10 @@
                                 </a>
                             </li>
                             <li>
-                                <a class="dropdown-item" href="#" onclick="logoutUser("{{ config.WEBSITE_URL }}");">
+                                <a class="dropdown-item"
+                                   href="#"
+                                   onclick="logoutUser();"
+                                   data-redirect="{{ config.WEBSITE_URL }}">
                                     <i class="bi bi-box-arrow-right me-1"></i>
                                     Logout
                                 </a>
