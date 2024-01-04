@@ -7,20 +7,15 @@
                 <h2 class="mb-0">
                     Categories
                 </h2>
-                <form onsubmit="createCategory();">
-                    <div class="input-group">
-                        <input required
-                               id="category-name"
-                               class="form-control"
-                               placeholder="Name"
-                               type="text">
-                        <button id="create-category"
-                                class="btn btn-success btn-load"
-                                type="submit">
-                            Create
-                        </button>
-                    </div>
-                </form>
+                <div>
+                    <button id="create-category"
+                            class="btn btn-success"
+                            type="submit"
+                            data-bs-toggle="modal"
+                            data-bs-target="#modal-create-category">
+                        Create
+                    </button>
+                </div>
             </div>
         </div>
         <div class="col-12">
@@ -74,6 +69,7 @@
                                     <input {{ 'checked' if x.in_header }} id="category-in-header-{{ x.id }}" class="form-check-input" type="checkbox">
                                 </td>
                                 <td class="text-end">
+                                <div class="btn-group">
                                     <a class="btn btn-sm btn-outline-primary"
                                        href="{{ url_for('admin.category', category_id=x.id) }}">
                                         View
@@ -90,11 +86,68 @@
                                             Delete
                                         </button>
                                     {% endif %}
+                                    </div>
                                 </td>
                             </tr>
                         {% endfor %}
                     </tbody>
                 </table>
+            </div>
+        </div>
+    </div>
+    <!-- modal create category -->
+    <div id="modal-create-category"
+         class="modal modal-lg fade"
+         tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <form class="modal-content"
+                onsubmit="createCategory();">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        Create category
+                    </h5>
+                    <button type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal">
+                    </button>
+                </div>
+                <div class="modal-body">
+
+                    <div class="row g-2">
+                        <div class="col-12 col-lg-6">
+                             <div class="input-group">
+                        <span class="input-group-text">Name</span>
+                        <input required
+                               id="category-name"
+                               class="form-control"
+                               placeholder="Name"
+                               type="text">
+                    </div>
+                        </div>
+                        <div class="col-12 col-lg-6">
+                             <div class="input-group">
+                        <span class="input-group-text">Order</span>
+                        <input required
+                               id="category-order"
+                               class="form-control"
+                               placeholder="Order"
+                               type="number">
+                    </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="create-category"
+                            class="btn btn-load btn-success"
+                            type="submit">
+                        Create
+                    </button>
+                    <button type="button"
+                            class="btn btn-secondary"
+                            data-bs-dismiss="modal">
+                        Cancel
+                    </button>
+                </div>
             </div>
         </div>
     </div>

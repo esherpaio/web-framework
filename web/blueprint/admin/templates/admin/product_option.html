@@ -134,6 +134,7 @@
                                            value="{{ value.order }}">
                                 </td>
                                 <td class="text-end">
+                                <div class="btn-group">
                                     <button id="update-value-{{ value.id }}"
                                             class="btn btn-load btn-sm btn-outline-primary"
                                             onclick="updateValue({{ value.id }}, {{ option.product_id }});">
@@ -144,6 +145,7 @@
                                             onclick="deleteValue({{ value.id }}, {{ option.product_id }});">
                                         Delete
                                     </button>
+                                    </div>
                                 </td>
                             </tr>
                         {% endfor %}
