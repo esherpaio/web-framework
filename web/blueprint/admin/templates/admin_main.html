@@ -22,43 +22,15 @@
                   href="{{ url_for('admin.static', filename='css/custom.css') }}">
         {% endpack %}
         {% pack 'js' %}
-            <script src="{{ url_for('admin.static', filename='js/bootstrap.js') }}"></script>
-            <script src="{{ url_for('admin.static', filename='js/quill.js') }}"></script>
+            <script src="{{ url_for('admin.static', filename='js/ext/bootstrap.js') }}"></script>
+            <script src="{{ url_for('admin.static', filename='js/ext/quill.js') }}"></script>
         {% endpack %}
         {% pack 'js' %}
-            <script src="{{ url_for('admin.static', filename='js/api/_api.js') }}"></script>
-            <script src="{{ url_for('admin.static', filename='js/api/billing.js') }}"></script>
-            <script src="{{ url_for('admin.static', filename='js/api/cart_item.js') }}"></script>
-            <script src="{{ url_for('admin.static', filename='js/api/cart.js') }}"></script>
-            <script src="{{ url_for('admin.static', filename='js/api/category_item.js') }}"></script>
-            <script src="{{ url_for('admin.static', filename='js/api/category.js') }}"></script>
-            <script src="{{ url_for('admin.static', filename='js/api/country.js') }}"></script>
-            <script src="{{ url_for('admin.static', filename='js/api/coupon.js') }}"></script>
-            <script src="{{ url_for('admin.static', filename='js/api/currency.js') }}"></script>
-            <script src="{{ url_for('admin.static', filename='js/api/email.js') }}"></script>
-            <script src="{{ url_for('admin.static', filename='js/api/language.js') }}"></script>
-            <script src="{{ url_for('admin.static', filename='js/api/order_payment.js') }}"></script>
-            <script src="{{ url_for('admin.static', filename='js/api/order_refund.js') }}"></script>
-            <script src="{{ url_for('admin.static', filename='js/api/order.js') }}"></script>
-            <script src="{{ url_for('admin.static', filename='js/api/product_link.js') }}"></script>
-            <script src="{{ url_for('admin.static', filename='js/api/product_media.js') }}"></script>
-            <script src="{{ url_for('admin.static', filename='js/api/product_option.js') }}"></script>
-            <script src="{{ url_for('admin.static', filename='js/api/product_sku.js') }}"></script>
-            <script src="{{ url_for('admin.static', filename='js/api/product_value.js') }}"></script>
-            <script src="{{ url_for('admin.static', filename='js/api/product.js') }}"></script>
-            <script src="{{ url_for('admin.static', filename='js/api/region.js') }}"></script>
-            <script src="{{ url_for('admin.static', filename='js/api/session.js') }}"></script>
-            <script src="{{ url_for('admin.static', filename='js/api/setting.js') }}"></script>
-            <script src="{{ url_for('admin.static', filename='js/api/shipment_class.js') }}"></script>
-            <script src="{{ url_for('admin.static', filename='js/api/shipment_method.js') }}"></script>
-            <script src="{{ url_for('admin.static', filename='js/api/shipment_zone.js') }}"></script>
-            <script src="{{ url_for('admin.static', filename='js/api/shipment.js') }}"></script>
-            <script src="{{ url_for('admin.static', filename='js/api/shipping.js') }}"></script>
-            <script src="{{ url_for('admin.static', filename='js/api/sku.js') }}"></script>
-            <script src="{{ url_for('admin.static', filename='js/api/user_activation.js') }}"></script>
-            <script src="{{ url_for('admin.static', filename='js/api/user_password.js') }}"></script>
-            <script src="{{ url_for('admin.static', filename='js/api/user.js') }}"></script>
-            <script src="{{ url_for('admin.static', filename='js/api/verification.js') }}"></script>
+            <script src="{{ url_for('admin.static', filename='js/api.js') }}"></script>
+            <script src="{{ url_for('admin.static', filename='js/buttons.js') }}"></script>
+            <script src="{{ url_for('admin.static', filename='js/endpoints.js') }}"></script>
+            <script src="{{ url_for('admin.static', filename='js/messages.js') }}"></script>
+            <script src="{{ url_for('admin.static', filename='js/parameters.js') }}"></script>
             <script src="{{ url_for('admin.static', filename='js/route/category_item.js') }}"></script>
             <script src="{{ url_for('admin.static', filename='js/route/category.js') }}"></script>
             <script src="{{ url_for('admin.static', filename='js/route/coupon.js') }}"></script>
@@ -74,9 +46,6 @@
             <script src="{{ url_for('admin.static', filename='js/route/shipment_class.js') }}"></script>
             <script src="{{ url_for('admin.static', filename='js/route/shipment_method.js') }}"></script>
             <script src="{{ url_for('admin.static', filename='js/route/shipment_zone.js') }}"></script>
-            <script src="{{ url_for('admin.static', filename='js/utils/buttons.js') }}"></script>
-            <script src="{{ url_for('admin.static', filename='js/utils/messages.js') }}"></script>
-            <script src="{{ url_for('admin.static', filename='js/utils/parameters.js') }}"></script>
         {% endpack %}
     </head>
     <body class="h-100 w-100 d-flex flex-row">

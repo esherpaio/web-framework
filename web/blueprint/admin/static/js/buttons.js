@@ -18,11 +18,7 @@ function resetButtons() {
     }
 }
 
-function updateButton(
-    buttonId,
-    value,
-    override
-) {
+function updateButton(buttonId, value, override) {
     let button = document.getElementById(buttonId);
     if (!button.classList.contains('btn-load')) return;
     let spinner = button.getElementsByClassName('spinner-grow')[0];
