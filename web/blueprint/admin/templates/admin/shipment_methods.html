@@ -104,17 +104,17 @@
                                     <input {{ 'checked' if method.phone_required }} id="shipment-method-phone-required-{{ method.id }}" class="form-check-input" type="checkbox">
                                 </td>
                                 <td class="text-end">
-                                <div class="btn-group">
-                                    <button id="update-shipment-method-{{ method.id }}"
-                                            class="btn btn-load btn-sm btn-outline-primary"
-                                            onclick="updateShipmentMethod({{ method.id }});">
-                                        Update
-                                    </button>
-                                    <button id="delete-shipment-method-{{ method.id }}"
-                                            class="btn btn-load btn-sm btn-outline-danger"
-                                            onclick="deleteshipmentMethod({{ method.id }});">
-                                        Delete
-                                    </button>
+                                    <div class="btn-group">
+                                        <button id="update-shipment-method-{{ method.id }}"
+                                                class="btn btn-load btn-sm btn-outline-primary"
+                                                onclick="updateShipmentMethod({{ method.id }});">
+                                            Update
+                                        </button>
+                                        <button id="delete-shipment-method-{{ method.id }}"
+                                                class="btn btn-load btn-sm btn-outline-danger"
+                                                onclick="deleteshipmentMethod({{ method.id }});">
+                                            Delete
+                                        </button>
                                     </div>
                                 </td>
                             </tr>

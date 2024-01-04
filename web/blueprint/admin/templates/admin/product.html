@@ -252,21 +252,21 @@
                                                    value="{{ option.order }}">
                                         </td>
                                         <td class="text-end">
-                                        <div class="btn-group">
-                                            <a href="{{ url_for('admin.product_option', product_id=product.id, option_id=option.id) }}"
-                                               class="btn btn-sm btn-outline-primary">
-                                                View
-                                            </a>
-                                            <button id="update-option-{{ option.id }}"
-                                                    class="btn btn-load btn-sm btn-outline-primary"
-                                                    onclick="updateOption({{ option.id }}, {{ product.id }});">
-                                                Update
-                                            </button>
-                                            <button id="delete-option-{{ option.id }}"
-                                                    class="btn btn-load btn-sm btn-outline-danger"
-                                                    onclick="deleteOption({{ option.id }}, {{ product.id }});">
-                                                Delete
-                                            </button>
+                                            <div class="btn-group">
+                                                <a href="{{ url_for('admin.product_option', product_id=product.id, option_id=option.id) }}"
+                                                   class="btn btn-sm btn-outline-primary">
+                                                    View
+                                                </a>
+                                                <button id="update-option-{{ option.id }}"
+                                                        class="btn btn-load btn-sm btn-outline-primary"
+                                                        onclick="updateOption({{ option.id }}, {{ product.id }});">
+                                                    Update
+                                                </button>
+                                                <button id="delete-option-{{ option.id }}"
+                                                        class="btn btn-load btn-sm btn-outline-danger"
+                                                        onclick="deleteOption({{ option.id }}, {{ product.id }});">
+                                                    Delete
+                                                </button>
                                             </div>
                                         </td>
                                     </tr>
@@ -427,12 +427,12 @@
                                             {{ link.sku.name }}
                                         </td>
                                         <td class="text-end">
-                                         <div class="btn-group">
-                                            <button id="delete-link-{{ link.id }}"
-                                                    class="btn btn-load btn-sm btn-outline-danger"
-                                                    onclick="deleteLink({{ link.id }}, {{ product.id }});">
-                                                Delete
-                                            </button>
+                                            <div class="btn-group">
+                                                <button id="delete-link-{{ link.id }}"
+                                                        class="btn btn-load btn-sm btn-outline-danger"
+                                                        onclick="deleteLink({{ link.id }}, {{ product.id }});">
+                                                    Delete
+                                                </button>
                                             </div>
                                         </td>
                                     </tr>
@@ -501,17 +501,17 @@
                                             <input {{ 'checked' if sku.is_visible }} id="sku-is-visible-{{ sku.id }}" class="form-check-input" type="checkbox">
                                         </td>
                                         <td class="text-end">
-                                        <div class="btn-group">
-                                            <button id="update-sku-{{ sku.id }}"
-                                                    class="btn btn-load btn-sm btn-outline-primary"
-                                                    onclick="updateSku({{ sku.id }});">
-                                                Update
-                                            </button>
-                                            <button id="delete-sku-{{ sku.id }}"
-                                                    class="btn btn-load btn-sm btn-outline-danger"
-                                                    onclick="deleteSku({{ sku.id }});">
-                                                Delete
-                                            </button>
+                                            <div class="btn-group">
+                                                <button id="update-sku-{{ sku.id }}"
+                                                        class="btn btn-load btn-sm btn-outline-primary"
+                                                        onclick="updateSku({{ sku.id }});">
+                                                    Update
+                                                </button>
+                                                <button id="delete-sku-{{ sku.id }}"
+                                                        class="btn btn-load btn-sm btn-outline-danger"
+                                                        onclick="deleteSku({{ sku.id }});">
+                                                    Delete
+                                                </button>
                                             </div>
                                         </td>
                                     </tr>
