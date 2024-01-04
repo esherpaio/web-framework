@@ -7,6 +7,15 @@ requirements:
 	pip install -r requirements.txt
 	pip install -r requirements-dev.txt
 
+## FORMATTING
+## ----------
+## format : run formatters
+.PHONY: format
+format:
+	ruff check . --fix
+	black .
+	djlint . --reformat
+
 ## LINTING
 ## ----------
 ## lint : run linters
@@ -17,21 +26,22 @@ lint:
 	mypy --install-types --non-interactive .
 	djlint . --check
 
-## FORMATTING
+## SANDBOX
 ## ----------
-## format : run formatters
-.PHONY: format
-format:
-	ruff check . --fix
-	black .
-	djlint . --reformat
+## sandbox : run sandbox
+.PHONY: sandbox
+sandbox:
+	cd sandbox && flask run --debug --port=5000 --no-reload
+sandbox_migrate:
+	cd sandbox && rm -f -r migrate/version/*
+	cd sandbox && set -a; source .env; set +a && alembic revision --autogenerate -m "" && alembic upgrade head
 
 ## TESTING
 ## ----------
 ## test : run testers
 .PHONY: test
 test:
-	pytest .
+	cd tests && set -a; source .env; set +a && pytest .
 
 ## TRANSLATIONS
 ## ----------
@@ -39,17 +49,3 @@ test:
 .PHONY: translations
 translations:
 	python3 -c 'from script.sort_translations import sort_translations; sort_translations();'
-
-## MIGRATIONS
-## ----------
-## migrations : create migrations
-.PHONY: migrations
-migrations:
-	alembic revision --autogenerate -m ""
-
-## MIGRATE
-## ----------
-## migrate : run migrations
-.PHONY: migrate
-migrate:
-	alembic upgrade head

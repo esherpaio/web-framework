@@ -1,7 +1,7 @@
 import sqlalchemy as sa
 from alembic import op
 
-revision = "b84fc3d732c7"
+revision = "7afc0b78b834"
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -50,7 +50,7 @@ def upgrade() -> None:
         sa.Column(
             "amount", sa.Numeric(precision=10, scale=4, asdecimal=False), nullable=True
         ),
-        sa.Column("code", sa.String(length=16), nullable=False),
+        sa.Column("code", sa.String(length=32), nullable=False),
         sa.Column("is_deleted", sa.Boolean(), nullable=False),
         sa.Column(
             "rate", sa.Numeric(precision=10, scale=4, asdecimal=False), nullable=True
@@ -560,7 +560,7 @@ def upgrade() -> None:
     )
     op.create_table(
         "order",
-        sa.Column("coupon_code", sa.String(length=16), nullable=True),
+        sa.Column("coupon_code", sa.String(length=32), nullable=True),
         sa.Column(
             "coupon_amount",
             sa.Numeric(precision=10, scale=4, asdecimal=False),
