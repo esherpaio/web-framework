@@ -7,7 +7,6 @@ class Syncer(metaclass=ABCMeta):
     @abstractmethod
     def sync(self, s: Session) -> None:
         """Run a synchronizing function"""
-
         pass
 
 
@@ -15,5 +14,4 @@ class Seeder(metaclass=ABCMeta):
     @abstractmethod
     def seed(self, s: Session, count: int = 1) -> None:
         """Run a seeding function"""
-
         pass
