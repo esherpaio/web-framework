@@ -51,21 +51,17 @@ class API(Generic[B]):
             raise RuntimeError
         if not request.is_json:
             return {}
-
         request_json = request.json
         if not isinstance(request_json, dict):
             abort(response(400, ApiText.HTTP_400))
-
         data = {}
         for column in columns:
             key, value = cls.parse_column(request_json, column, json_get)
             if key is not None:
                 data[key] = value
-
         if include_view_args:
             view_args = cls.gen_view_args_data()
             data.update(view_args)
-
         return data
 
     @staticmethod
@@ -74,7 +70,6 @@ class API(Generic[B]):
             raise RuntimeError
         if request.view_args is None:
             return {}
-
         return request.view_args
 
     @classmethod
@@ -86,15 +81,12 @@ class API(Generic[B]):
             raise RuntimeError
         if request.args is None:
             return {}
-
         request_args = request.args.to_dict()
-
         data = {}
         for arg in args:
             key, value = cls.parse_column(request_args, arg, args_get)
             if key is not None:
                 data[key] = value
-
         return data
 
     #
@@ -147,10 +139,8 @@ class API(Generic[B]):
                 continue
             filter_ = getattr(cls.model, key) == value
             filters.add(filter_)
-
         if required and not filters:
             abort(response(400, ApiText.HTTP_400))
-
         return filters
 
     #
@@ -176,7 +166,6 @@ class API(Generic[B]):
             raise NotImplementedError
         if id_ is not None:
             filters += (cls.model.id == id_,)
-
         model = s.query(cls.model).filter(*filters).first()
         if model is None:
             abort(response(404, ApiText.HTTP_404))
@@ -193,7 +182,6 @@ class API(Generic[B]):
     ) -> list[B]:
         if cls.model is None:
             raise NotImplementedError
-
         models = s.query(cls.model).filter(*filters).limit(limit).offset(offset).all()
         return models
 
