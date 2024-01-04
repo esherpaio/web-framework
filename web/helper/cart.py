@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import UTC, datetime
 from typing import Callable
 
 import pyvat
@@ -129,7 +129,7 @@ def get_vat(
 ) -> tuple[float, bool]:
     """Calculate a VAT rate and determine whether it's reversed."""
 
-    date = datetime.utcnow().date()
+    date = datetime.now(UTC).date()
     type_ = ItemType.generic_electronic_service
     buyer = Party(country_code, is_business)
     seller = Party(config.BUSINESS_COUNTRY_CODE, True)

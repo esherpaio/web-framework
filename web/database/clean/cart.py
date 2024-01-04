@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import UTC, datetime, timedelta
 
 from sqlalchemy.sql import and_, or_
 
@@ -11,7 +11,7 @@ def clean_carts() -> None:
 
     with conn.begin() as s:
         # Delete carts older than 30 days
-        days = datetime.utcnow() - timedelta(days=30)
+        days = datetime.now(UTC) - timedelta(days=30)
         s.query(Cart).filter(
             or_(
                 Cart.updated_at <= days,

@@ -1,5 +1,5 @@
 import time
-from datetime import datetime
+from datetime import UTC, datetime
 from threading import Thread
 from typing import Callable
 
@@ -80,7 +80,7 @@ class FlaskWeb:
         self._enable_packer = enable_packer
         self._enable_locale = enable_locale
 
-        self._cached_at: datetime = datetime.utcnow()
+        self._cached_at: datetime = datetime.now(UTC)
         self._cache_active: bool = True
 
     def setup(self) -> "FlaskWeb":
@@ -210,7 +210,7 @@ class FlaskWeb:
             return False
 
     def _update_cache(self, force: bool = False) -> None:
-        self._cached_at = datetime.utcnow()
+        self._cached_at = datetime.now(UTC)
         logger.info("Updating cache")
         with conn.begin() as s:
             # fmt: off
