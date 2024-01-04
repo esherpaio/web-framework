@@ -8,27 +8,22 @@ from dotenv import load_dotenv
 load_dotenv(override=True)
 
 
-def env_str(key: str) -> str | None:
-    return os.getenv(key)
-
-
-def env_int(key: str) -> int | None:
+@lru_cache
+def env_var(key: str, type_: str | int | bool) -> str | int | bool:
     value = os.getenv(key)
-    if value is not None:
+    if isinstance(type_, int):
         try:
-            return int(value)
+            value = int(value)
         except (ValueError, TypeError):
             pass
-
-
-def env_bool(key: str) -> bool:
-    value = os.getenv(key)
-    return value in ["true", "1"]
+    elif isinstance(type_, bool):
+        value = value in ["true", "1"]
+    return value
 
 
 @lru_cache
 def config_var(key: str) -> Any:
-    path = env_str("CONFIG_PATH")
+    path = env_var("CONFIG_PATH", str)
     if path is None or not os.path.isfile(path):
         raise EnvironmentError
     with open(path, "r") as file:
@@ -36,8 +31,8 @@ def config_var(key: str) -> Any:
     return data.get(key)
 
 
-APP_DEBUG: bool = env_bool("APP_DEBUG")
-APP_SECRET: str = env_str("APP_SECRET")
+APP_DEBUG: bool = env_var("APP_DEBUG", bool)
+APP_SECRET: str = env_var("APP_SECRET", str)
 
 BUSINESS_CC: str = config_var("BUSINESS_CC")
 BUSINESS_CITY: str = config_var("BUSINESS_CITY")
@@ -54,7 +49,7 @@ BUSINESS_ZIP_CODE: str = config_var("BUSINESS_ZIP_CODE")
 CDN_AUTO_NAMING: bool = config_var("CDN_AUTO_NAMING")
 CDN_HOSTNAME: str = config_var("CDN_HOSTNAME")
 CDN_USERNAME: str = config_var("CDN_USERNAME")
-CDN_PASSWORD: str = env_str("CDN_PASSWORD")
+CDN_PASSWORD: str = env_var("CDN_PASSWORD", str)
 CDN_ZONE: str = config_var("CDN_ZONE")
 CDN_URL: str = config_var("CDN_URL")
 CDN_IMAGE_EXTS: list[str] = ["jpg", "jpeg", "png", "webp"]
@@ -68,12 +63,12 @@ ENDPOINT_USER: str = config_var("ENDPOINT_USER")
 ENDPOINT_PASSWORD: str = config_var("ENDPOINT_PASSWORD")
 ENDPOINT_ORDER: str = config_var("ENDPOINT_ORDER")
 
-DATABASE_URL: str = env_str("DATABASE_URL")
-GOOGLE_API_KEY: str = env_str("GOOGLE_API_KEY")
-GOOGLE_PLACE_ID: str = env_str("GOOGLE_PLACE_ID")
-LOCALHOST: str = env_str("LOCALHOST")
-MOLLIE_KEY: str = env_str("MOLLIE_KEY")
-SEED_EXTERNAL: bool = env_bool("SEED_EXTERNAL")
+DATABASE_URL: str = env_var("DATABASE_URL", str)
+GOOGLE_API_KEY: str = env_var("GOOGLE_API_KEY", str)
+GOOGLE_PLACE_ID: str = env_var("GOOGLE_PLACE_ID", str)
+LOCALHOST: str = env_var("LOCALHOST", str)
+MOLLIE_KEY: str = env_var("MOLLIE_KEY", str)
+SEED_EXTERNAL: bool = env_var("SEED_EXTERNAL", bool)
 
 ROBOT_DEFAULT_TAGS: str = config_var("ROBOT_DEFAULT_TAGS")
 ROBOT_DISALLOW_URLS: list[str] = config_var("ROBOT_DISALLOW_URLS")
@@ -86,14 +81,14 @@ SOCIAL_TWITTER: str = config_var("SOCIAL_TWITTER")
 SOCIAL_YOUTUBE: str = config_var("SOCIAL_YOUTUBE")
 
 EMAIL_METHOD: str = config_var("EMAIL_METHOD")
-EMAIL_FROM: str = env_str("EMAIL_FROM")
-EMAIL_TO: str = env_str("EMAIL_TO")
-SMTP_HOST: str = env_str("SMTP_HOST")
-SMTP_PORT: int = env_int("SMTP_PORT")
-SMTP_USERNAME: str = env_str("SMTP_USERNAME")
-SMTP_PASSWORD: str = env_str("SMTP_PASSWORD")
+EMAIL_FROM: str = env_var("EMAIL_FROM", str)
+EMAIL_TO: str = env_var("EMAIL_TO", str)
+SMTP_HOST: str = env_var("SMTP_HOST", str)
+SMTP_PORT: int = env_var("SMTP_PORT", int)
+SMTP_USERNAME: str = env_var("SMTP_USERNAME", str)
+SMTP_PASSWORD: str = env_var("SMTP_PASSWORD", str)
 
-WEBSITE_URL: str = env_str("WEBSITE_URL")
+WEBSITE_URL: str = env_var("WEBSITE_URL", str)
 WEBSITE_NAME: str = config_var("WEBSITE_NAME")
 WEBSITE_LOCALE: str = config_var("WEBSITE_LOCALE")
 WEBSITE_LANGUAGE_CODE: str = config_var("WEBSITE_LANGUAGE_CODE")
