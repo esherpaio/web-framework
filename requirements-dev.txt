@@ -1,8 +1,8 @@
-git+https://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@github.com/enlarge-online/python-pdf.git@v1.0.3
-alembic~=1.12.1
-black~=23.11.0
-djlint~=1.34.0
-mypy==1.7.0
-pytest~=7.4.3
-ruff~=0.1.6
-setuptools~=68.2.2
+git+https://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@github.com/enlarge-online/python-pdf.git@v1.0.4
+alembic~=1.13.1
+black~=23.12.1
+djlint~=1.34.1
+mypy==1.8.0
+pytest~=7.4.4
+ruff~=0.1.11
+setuptools~=69.0.3
