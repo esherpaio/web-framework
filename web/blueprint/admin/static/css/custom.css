@@ -1,3 +1,22 @@
+/* components */
+
+body {
+    min-width: 320px;
+}
+
+.table th,
+.table td {
+    text-wrap: nowrap;
+}
+
+/* style */
+
+.w-fit {
+    width: fit-content;
+}
+
+/* offcanvas */
+
 .offcanvas {
     --bs-offcanvas-width: 220px;
 }

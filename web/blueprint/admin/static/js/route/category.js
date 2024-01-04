@@ -2,7 +2,8 @@ async function createCategory() {
     event.preventDefault();
     updateButton('create-category', 1);
     await postCategories({
-        name: document.getElementById('category-name').value
+        name: document.getElementById('category-name').value,
+        order: parseInt(document.getElementById('category-order').value)
     });
     await patchSetting({ cached_at: null });
     window.location.reload();
