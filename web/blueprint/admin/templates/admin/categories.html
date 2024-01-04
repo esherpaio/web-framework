@@ -69,23 +69,23 @@
                                     <input {{ 'checked' if x.in_header }} id="category-in-header-{{ x.id }}" class="form-check-input" type="checkbox">
                                 </td>
                                 <td class="text-end">
-                                <div class="btn-group">
-                                    <a class="btn btn-sm btn-outline-primary"
-                                       href="{{ url_for('admin.category', category_id=x.id) }}">
-                                        View
-                                    </a>
-                                    <button id="update-category-{{ x.id }}"
-                                            class="btn btn-load btn-sm btn-outline-primary"
-                                            onclick="updateCategory({{ x.id }});">
-                                        Update
-                                    </button>
-                                    {% if not x.is_locked or current_user.is_super %}
-                                        <button id="delete-category-{{ x.id }}"
-                                                class="btn btn-load btn-sm btn-outline-danger"
-                                                onclick="removeCategory({{ x.id }});">
-                                            Delete
+                                    <div class="btn-group">
+                                        <a class="btn btn-sm btn-outline-primary"
+                                           href="{{ url_for('admin.category', category_id=x.id) }}">
+                                            View
+                                        </a>
+                                        <button id="update-category-{{ x.id }}"
+                                                class="btn btn-load btn-sm btn-outline-primary"
+                                                onclick="updateCategory({{ x.id }});">
+                                            Update
                                         </button>
-                                    {% endif %}
+                                        {% if not x.is_locked or current_user.is_super %}
+                                            <button id="delete-category-{{ x.id }}"
+                                                    class="btn btn-load btn-sm btn-outline-danger"
+                                                    onclick="removeCategory({{ x.id }});">
+                                                Delete
+                                            </button>
+                                        {% endif %}
                                     </div>
                                 </td>
                             </tr>
@@ -101,7 +101,7 @@
          tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
             <form class="modal-content"
-                onsubmit="createCategory();">
+                  onsubmit="createCategory();">
                 <div class="modal-header">
                     <h5 class="modal-title">
                         Create category
@@ -112,27 +112,26 @@
                     </button>
                 </div>
                 <div class="modal-body">
-
                     <div class="row g-2">
                         <div class="col-12 col-lg-6">
-                             <div class="input-group">
-                        <span class="input-group-text">Name</span>
-                        <input required
-                               id="category-name"
-                               class="form-control"
-                               placeholder="Name"
-                               type="text">
-                    </div>
+                            <div class="input-group">
+                                <span class="input-group-text">Name</span>
+                                <input required
+                                       id="category-name"
+                                       class="form-control"
+                                       placeholder="Name"
+                                       type="text">
+                            </div>
                         </div>
                         <div class="col-12 col-lg-6">
-                             <div class="input-group">
-                        <span class="input-group-text">Order</span>
-                        <input required
-                               id="category-order"
-                               class="form-control"
-                               placeholder="Order"
-                               type="number">
-                    </div>
+                            <div class="input-group">
+                                <span class="input-group-text">Order</span>
+                                <input required
+                                       id="category-order"
+                                       class="form-control"
+                                       placeholder="Order"
+                                       type="number">
+                            </div>
                         </div>
                     </div>
                 </div>

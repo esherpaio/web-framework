@@ -166,15 +166,15 @@
                                     {{ line.total_price|price }} {{ order.currency.code }}
                                 </td>
                                 <td class="text-end">
-                                <div class="btn-group">
-                                    {% if line.sku.product.file_url and order.invoice %}
-                                        <a class="btn btn-sm btn-outline-primary"
-                                           href="{{ line.sku.product.file_url }}"
-                                           target="_blank"
-                                           rel="noopener">
-                                            Download
-                                        </a>
-                                    {% endif %}
+                                    <div class="btn-group">
+                                        {% if line.sku.product.file_url and order.invoice %}
+                                            <a class="btn btn-sm btn-outline-primary"
+                                               href="{{ line.sku.product.file_url }}"
+                                               target="_blank"
+                                               rel="noopener">
+                                                Download
+                                            </a>
+                                        {% endif %}
                                     </div>
                                 </td>
                             </tr>
@@ -207,13 +207,13 @@
                                         {{ shipment.url }}
                                     </td>
                                     <td class="text-end">
-                                    <div class="btn-group">
-                                        <a class="btn btn-sm btn-outline-primary"
-                                           href="{{ shipment.url }}"
-                                           target="_blank"
-                                           rel="noopener">
-                                            Open
-                                        </a>
+                                        <div class="btn-group">
+                                            <a class="btn btn-sm btn-outline-primary"
+                                               href="{{ shipment.url }}"
+                                               target="_blank"
+                                               rel="noopener">
+                                                Open
+                                            </a>
                                         </div>
                                     </td>
                                 </tr>
@@ -253,11 +253,11 @@
                                         {{ refund.total_price|price }} {{ order.currency.code }}
                                     </td>
                                     <td class="text-end">
-                                    <div class="btn-group">
-                                        <a class="btn btn-sm btn-outline-primary"
-                                           href="{{ url_for('admin.download_refund', order_id=order.id, refund_id=refund.id) }}">
-                                            Download
-                                        </a>
+                                        <div class="btn-group">
+                                            <a class="btn btn-sm btn-outline-primary"
+                                               href="{{ url_for('admin.download_refund', order_id=order.id, refund_id=refund.id) }}">
+                                                Download
+                                            </a>
                                         </div>
                                     </td>
                                 </tr>

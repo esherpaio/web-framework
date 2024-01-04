@@ -67,12 +67,12 @@
                                     {{ x.amount|price if x.amount }}
                                 </td>
                                 <td class="text-end">
-                                <div class="btn-group">
-                                    <button id="delete-coupon-{{ x.id }}"
-                                            class="btn btn-load btn-sm btn-outline-danger"
-                                            onclick="deleteCoupon({{ x.id }});">
-                                        Delete
-                                    </button>
+                                    <div class="btn-group">
+                                        <button id="delete-coupon-{{ x.id }}"
+                                                class="btn btn-load btn-sm btn-outline-danger"
+                                                onclick="deleteCoupon({{ x.id }});">
+                                            Delete
+                                        </button>
                                     </div>
                                 </td>
                             </tr>

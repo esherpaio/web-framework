@@ -16,7 +16,6 @@
                         Create
                     </button>
                 </div>
-
             </div>
         </div>
         <div class="col-12">
@@ -51,11 +50,11 @@
                                     {{ x.unit_price|price }}
                                 </td>
                                 <td class="text-end">
-                                <div class="btn-group">
-                                    <a class="btn btn-sm btn-outline-primary"
-                                       href="{{ url_for('admin.product', product_id=x.id) }}">
-                                        View
-                                    </a>
+                                    <div class="btn-group">
+                                        <a class="btn btn-sm btn-outline-primary"
+                                           href="{{ url_for('admin.product', product_id=x.id) }}">
+                                            View
+                                        </a>
                                     </div>
                                 </td>
                             </tr>
@@ -71,7 +70,7 @@
          tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
             <form class="modal-content"
-                onsubmit="createProduct();">
+                  onsubmit="createProduct();">
                 <div class="modal-header">
                     <h5 class="modal-title">
                         Create product
@@ -82,17 +81,16 @@
                     </button>
                 </div>
                 <div class="modal-body">
-
                     <div class="row g-2">
                         <div class="col-12">
-                             <div class="input-group">
-                        <span class="input-group-text">Name</span>
-                        <input required
-                               id="product-name"
-                               class="form-control"
-                               placeholder="Name"
-                               type="text">
-                    </div>
+                            <div class="input-group">
+                                <span class="input-group-text">Name</span>
+                                <input required
+                                       id="product-name"
+                                       class="form-control"
+                                       placeholder="Name"
+                                       type="text">
+                            </div>
                         </div>
                     </div>
                 </div>
