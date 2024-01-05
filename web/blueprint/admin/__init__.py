@@ -9,6 +9,5 @@ from .routes import (
     shipment_classes,
     shipment_methods,
     shipment_zones,
-    test,
     users,
 )
