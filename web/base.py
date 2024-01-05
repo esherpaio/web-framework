@@ -83,6 +83,10 @@ class FlaskWeb:
         self._cached_at: datetime = datetime.now(UTC)
         self._cache_active: bool = True
 
+    #
+    # Setup
+    #
+
     def setup(self) -> "FlaskWeb":
         self.setup_flask()
         self.setup_jinja()
@@ -147,6 +151,10 @@ class FlaskWeb:
     def setup_database(self) -> None:
         # Perform migrations
         alembic.config.main(argv=["upgrade", "head"])
+        # Create settings
+        with conn.begin() as s:
+            if s.query(Setting).count() == 0:
+                s.add(Setting())
         # Run hooks
         if self._event_hook is not None:
             self._event_hook(self._app)
@@ -175,13 +183,13 @@ class FlaskWeb:
         # Register Flask hooks
         self._app.register_error_handler(Exception, _handle_frontend_error)
 
-    #
-    # Cache
-    #
-
     def setup_cache(self) -> None:
         self._cache_active = True
         self.update_cache(force=True)
+
+    #
+    # Cache
+    #
 
     def update_cache(self, force: bool = False) -> None:
         if not force:
@@ -190,9 +198,9 @@ class FlaskWeb:
             except Exception:
                 return
         if self._cache_active:
-            self._schedule_cache()
+            Thread(target=self.update_cache, daemon=True).start()
         if force or self._cache_expired:
-            self._update_cache(force)
+            self._update_cache()
 
     @property
     def _cache_expired(self) -> bool:
@@ -200,18 +208,13 @@ class FlaskWeb:
             return True
         with conn.begin() as s:
             setting = s.query(Setting).first()
-        if setting is None:
+        if not setting or setting.cached_at is None:
             return False
-        elif setting.cached_at is None:
-            return False
-        elif setting.cached_at > self._cached_at:
-            return True
-        else:
-            return False
+        return setting.cached_at > self._cached_at
 
-    def _update_cache(self, force: bool = False) -> None:
-        self._cached_at = datetime.now(UTC)
+    def _update_cache(self) -> None:
         logger.info("Updating cache")
+        self._cached_at = datetime.now(UTC)
         with conn.begin() as s:
             # fmt: off
             cache.countries = s.query(Country).order_by(Country.name).all()
@@ -230,10 +233,6 @@ class FlaskWeb:
         if self._cache_hook is not None:
             self._cache_hook(self._app)
         cache.delete_routes()
-
-    def _schedule_cache(self) -> None:
-        if self._cache_active:
-            Thread(target=self.update_cache, daemon=True).start()
 
     def stop_cache(self) -> None:
         self._cache_active = False
