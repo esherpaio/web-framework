@@ -1,7 +1,7 @@
 import sqlalchemy as sa
 from alembic import op
 
-revision = "7afc0b78b834"
+revision = "5fadc9d4da38"
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -179,7 +179,7 @@ def upgrade() -> None:
     op.create_table(
         "setting",
         sa.Column("banner", sa.String(length=256), nullable=True),
-        sa.Column("cached_at", sa.DateTime(), nullable=True),
+        sa.Column("cached_at", sa.DateTime(timezone=True), nullable=True),
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column(
             "created_at", sa.DateTime(), server_default=sa.text("now()"), nullable=True
