@@ -9,7 +9,7 @@ from web.database.model import B, Base
 
 
 class Column:
-    query: Query
+    query: Query | None = None
     attr_name: str
     user_name: str
     html_id: str
@@ -22,7 +22,7 @@ class Column:
         self.objects: list[Base] = []
 
     def query_all(self, s: Session) -> None:
-        if self.query:
+        if self.query is not None:
             self.objects = self.query.with_session(s).all()
 
     @property
@@ -33,7 +33,7 @@ class Column:
 class Table:
     name: str
     plural_name: str
-    query: Query
+    query: Query | None = None
     columns: list[tuple[IA | QA, Column]]
     create: bool = False
     create_func: str
@@ -54,7 +54,8 @@ class Table:
         self.objects: list[Base] = []
 
     def query_all(self, s: Session) -> None:
-        self.objects = self.query.with_session(s).all()
+        if self.query is not None:
+            self.objects = self.query.with_session(s).all()
         for _, info in self.columns:
             info.query_all(s)
 
