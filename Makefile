@@ -42,6 +42,9 @@ sandbox_migrate:
 .PHONY: test
 test:
 	cd tests && set -a; source .env; set +a && pytest .
+test_migrate:
+	cd tests && rm -f -r migrate/version/*
+	cd tests && set -a; source .env; set +a && alembic revision --autogenerate -m "" && alembic upgrade head
 
 ## TRANSLATIONS
 ## ----------
