@@ -8,4 +8,4 @@ class Setting(Base):
     __tablename__ = "setting"
 
     banner = MC(String(256))
-    cached_at = MC(DateTime)
+    cached_at = MC(DateTime(timezone=True))
