@@ -31,7 +31,7 @@ lint:
 ## sandbox : run sandbox
 .PHONY: sandbox
 sandbox:
-	cd sandbox && flask run --debug --port=5000 --no-reload
+	cd sandbox && flask run --debug --port=5000
 sandbox_migrate:
 	cd sandbox && rm -f -r migrate/version/*
 	cd sandbox && set -a; source .env; set +a && alembic revision --autogenerate -m "" && alembic upgrade head
