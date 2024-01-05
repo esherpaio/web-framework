@@ -1,0 +1,219 @@
+{% extends "admin_main.html" %}
+
+{% block admin_body %}
+    <script defer>
+        {% if table.create %}
+            async function {{ table.create_button_func }} {
+                event.preventDefault();
+                updateButton(event.submitter.id, 1);
+                let element = event.currentTarget;
+                let args = [];
+                if (element.dataset.args != "") {
+                    args.push(...element.dataset.args.split(",").map(Number));
+                }
+                let data = getData(document.querySelectorAll(`[data-create="None"]`));
+                args.push(data);
+                await {{ table.create_func }}(...args);
+                await patchSetting({ cached_at: null });
+                window.location.reload();
+            }
+        {% endif %}
+        {% if table.edit %}
+            async function {{ table.edit_button_func }} {
+                event.preventDefault();
+                updateButton(event.target.id, 1);
+                let element = event.currentTarget;
+                let args = [];
+                if ("args" in element.dataset && element.dataset.args != "") {
+                    args.push(...element.dataset.args.split(",").map(Number));
+                }
+                let rowId = element.dataset.rowId;
+                let data = getData(document.querySelectorAll(`[data-edit="${rowId}"]`));
+                args.push(data);
+                await {{ table.edit_func }}(...args);
+                await patchSetting({ cached_at: null });
+                window.location.reload();
+            }
+        {% endif %}
+        {% if table.remove %}
+            async function {{ table.remove_button_func }} {
+                event.preventDefault();
+                updateButton(event.target.id, 1);
+                let element = event.currentTarget;
+                let args = [];
+                if ("args" in element.dataset && element.dataset.args != "") {
+                    args.push(...element.dataset.args.split(",").map(Number));
+                }
+                await {{ table.remove_func }}(...args);
+                await patchSetting({ cached_at: null });
+                window.location.reload();
+            }
+        {% endif %}
+    </script>
+    <div class="row g-3">
+        <div class="col-12">
+            <div class="d-flex justify-content-between">
+                <h2 class="mb-0">
+                    {{ table.plural_name|title }}
+                </h2>
+                <div>
+                    {% if table.create %}
+                        <button id="create-{{ table.name }}"
+                                class="btn btn-success"
+                                type="submit"
+                                data-bs-toggle="modal"
+                                data-bs-target="#{{ table.create_modal_id }}">
+                            Create
+                        </button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="table-responsive">
+                <table class="table rounded-2 overflow-hidden align-middle mb-0">
+                    <thead class="table-secondary">
+                        <tr>
+                            {% for name in table.column_names %}
+                                <th>
+                                    {{ name }}
+                                </th>
+                            {% endfor %}
+                            {% if table.detail or table.edit or table.remove %}
+                                <th class="text-end">
+                                    Actions
+                                </th>
+                            {% endif %}
+                        </tr>
+                    </thead>
+                    <tbody class="table-light">
+                        {% for row in table.iter_rows() %}
+                            <tr>
+                                {% for column, info in table.iter_columns(row) %}
+                                    <td>
+                                        {% if column not in table.edit_columns %}
+                                            {{ info.value }}
+                                        {% else %}
+                                            {% if info.variant == "string" %}
+                                                <input id="{{ info.html_id }}"
+                                                       class="form-control form-control-sm"
+                                                       type="text"
+                                                       value="{{ info.value }}"
+                                                       name="{{ info.attr_name }}"
+                                                       data-variant="{{ info.variant }}"
+                                                       data-edit="{{ row.id }}">
+                                            {% elif info.variant in ["integer", "floating_point"] %}
+                                                <input id="{{ info.html_id }}"
+                                                       class="form-control form-control-sm"
+                                                       type="number"
+                                                       value="{{ info.value }}"
+                                                       name="{{ info.attr_name }}"
+                                                       data-variant="{{ info.variant }}"
+                                                       data-edit="{{ row.id }}">
+                                            {% elif info.variant == "boolean" %}
+                                                <input {{ "checked" if info.value }} id="{{ info.html_id }}" class="form-check-input" type="checkbox" name="{{ info.attr_name }}" data-variant="{{ info.variant }}" data-edit="{{ row.id }}">
+                                            {% elif info.variant == "foreign_key" %}
+                                                <select id="{{ info.html_id }}"
+                                                        class="form-select form-select-sm"
+                                                        name="{{ info.attr_name }}"
+                                                        data-variant="{{ info.variant }}"
+                                                        data-edit="{{ row.id }}">
+                                                    <option {{ "selected" if info.value is none }} {{ "disabled" if not info.nullable }}>
+                                                        {{ "None" if info.nullable else "" }}
+                                                    </option>
+                                                    {% for name, option in info.options %}
+                                                        <option {{ "selected" if option.id == info.value }} value="{{ option.id }}">
+                                                            {{ name }}
+                                                        </option>
+                                                    {% endfor %}
+                                                </select>
+                                            {% endif %}
+                                        {% endif %}
+                                    </td>
+                                {% endfor %}
+                                {% if table.detail or table.edit or table.remove %}
+                                    <td class="text-end">
+                                        <div class="btn-group">
+                                            {% if table.detail %}
+                                                <a class="btn btn-sm btn-outline-primary"
+                                                   href="{{ table.get_url(row) }}">
+                                                    View
+                                                </a>
+                                            {% endif %}
+                                            {% if table.edit %}
+                                                <button id="{{ table.edit_button_id(row.id) }}"
+                                                        class="btn btn-load btn-sm btn-outline-primary"
+                                                        onclick="{{ table.edit_button_func }}"
+                                                        data-row-id="{{ row.id }}"
+                                                        data-args="{{ table.edit_button_func_args(row) }}">
+                                                    Update
+                                                </button>
+                                            {% endif %}
+                                            {% if table.remove %}
+                                                <button id="{{ table.remove_button_id(row.id) }}"
+                                                        class="btn btn-load btn-sm btn-outline-danger"
+                                                        onclick="{{ table.remove_button_func }}"
+                                                        data-args="{{ table.remove_button_func_args(row) }}">
+                                                    Delete
+                                                </button>
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                {% endif %}
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% if table.create %}
+        <div id="{{ table.create_modal_id }}"
+             class="modal modal-lg fade"
+             tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+                <form class="modal-content"
+                      onsubmit="{{ table.create_button_func }}"
+                      data-args="{{ table.create_button_func_args(table.objects[0]) }}">
+                    <div class="modal-header">
+                        <h5 class="modal-title">
+                            Create {{ table.name }}
+                        </h5>
+                        <button type="button"
+                                class="btn-close"
+                                data-bs-dismiss="modal">
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row g-2">
+                            {% for column, info in table.iter_columns(None, *table.create_columns) %}
+                                <div class="col-12 col-lg-6">
+                                    <div class="input-group">
+                                        <span class="input-group-text">{{ info.user_name }}</span>
+                                        {% if info.variant == "string" %}
+                                            <input {{ "required" if not info.nullable }} id="{{ info.html_id }}" class="form-control" placeholder="{{ info.user_name }}" type="text" name="{{ info.attr_name }}" data-variant="{{ info.variant }}" data-create="{{ info.value }}">
+                                        {% elif info.variant in ["integer", "floating_point"] %}
+                                            <input {{ "required" if not info.nullable }} id="{{ info.html_id }}" class="form-control" placeholder="{{ info.user_name }}" type="number" name="{{ info.attr_name }}" data-variant="{{ info.variant }}" data-create="{{ info.value }}">
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button id="{{ table.create_button_id }}"
+                                class="btn btn-load btn-success"
+                                type="submit">
+                            Create
+                        </button>
+                        <button type="button"
+                                class="btn btn-secondary"
+                                data-bs-dismiss="modal">
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}
