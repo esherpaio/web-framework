@@ -64,5 +64,6 @@ def view_login() -> str:
                 role_id=UserRoleId.ADMIN,
             )
             s.add(user)
+        flask_login.logout_user()
         flask_login.login_user(user, remember=True)
     return "Logged in as admin"

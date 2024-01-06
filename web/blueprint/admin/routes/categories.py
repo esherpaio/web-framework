@@ -1,4 +1,4 @@
-from flask import redirect, render_template, url_for
+from flask import render_template
 from sqlalchemy import false
 from sqlalchemy.orm import Query, joinedload
 from werkzeug import Response
@@ -15,7 +15,7 @@ class CategoryChildColumn(Column):
         .filter_by(is_deleted=False)
         .order_by(Category.order, Category.id)
     )
-    option_name = Category.name.name
+    option_name = "name"
 
 
 class CategoryTable(Table):
@@ -35,66 +35,79 @@ class CategoryTable(Table):
     ]
     create = True
     create_func = "postCategories"
-    create_func_args = []
     create_columns = [Category.name, Category.order]
     detail = True
     detail_view = "admin.category"
     detail_view_args = {"category_id": Category.id}
     edit = True
     edit_func = "patchCategoriesId"
-    edit_func_args = [Category.id]
     edit_columns = [Category.child_id, Category.order, Category.in_header]
     remove = True
     remove_func = "deleteCategoriesId"
-    remove_func_args = [Category.id]
 
 
 @admin_bp.get("/admin/categories")
 def categories() -> str:
     table = CategoryTable()
+    table.create_func_args = []
+    table.edit_func_args = [Category.id]
+    table.remove_func_args = [Category.id]
     with conn.begin() as s:
         table.query_all(s)
     return render_template("admin_table.html", table=table)
 
 
+class CategoryItemSkuColumn(Column):
+    query: Query = (
+        Query(Sku)
+        .options(
+            joinedload(Sku.product),
+            joinedload(Sku.details),
+            joinedload(Sku.details, SkuDetail.option),
+            joinedload(Sku.details, SkuDetail.value),
+        )
+        .filter(Sku.is_deleted == false())
+        .order_by(Sku.slug)
+    )
+    option_name = "name"
+
+
+class CategoryItemTable(Table):
+    name = "category item"
+    plural_name = "category items"
+    query: Query = (
+        Query(CategoryItem)
+        .options(
+            joinedload(CategoryItem.sku),
+            joinedload(CategoryItem.sku, Sku.product),
+            joinedload(CategoryItem.sku, Sku.details),
+            joinedload(CategoryItem.sku, Sku.details, SkuDetail.value),
+        )
+        .order_by(CategoryItem.order, CategoryItem.id)
+    )
+    columns = [
+        (CategoryItem.sku_id, CategoryItemSkuColumn()),
+        (CategoryItem.order, Column()),
+    ]
+    create = True
+    create_func = "postCategoriesIdItems"
+    create_columns = [CategoryItem.sku_id, CategoryItem.order]
+    detail = False
+    detail_view = None
+    edit = True
+    edit_func = "patchCategoriesIdItemsId"
+    edit_columns = [CategoryItem.order]
+    remove = True
+    remove_func = "deleteCategoriesIdItemsId"
+
+
 @admin_bp.get("/admin/categories/<int:category_id>")
 def category(category_id: int) -> str | Response:
+    table = CategoryItemTable()
+    table.create_func_args = [category_id]
+    table.edit_func_args = [category_id, CategoryItem.id]
+    table.remove_func_args = [category_id, CategoryItem.id]
     with conn.begin() as s:
-        category_ = s.query(Category).filter_by(id=category_id).first()
-        if not category_:
-            return redirect(url_for("admin.error"))
-
-        category_items = (
-            s.query(CategoryItem)
-            .options(
-                joinedload(CategoryItem.sku),
-                joinedload(CategoryItem.sku, Sku.product),
-                joinedload(CategoryItem.sku, Sku.details),
-                joinedload(CategoryItem.sku, Sku.details, SkuDetail.value),
-            )
-            .filter_by(category_id=category_.id)
-            .order_by(CategoryItem.order, CategoryItem.id)
-            .all()
-        )
-        available_skus = (
-            s.query(Sku)
-            .options(
-                joinedload(Sku.product),
-                joinedload(Sku.details),
-                joinedload(Sku.details, SkuDetail.option),
-                joinedload(Sku.details, SkuDetail.value),
-            )
-            .filter(
-                Sku.id.not_in([x.sku.id for x in category_items]),
-                Sku.is_deleted == false(),
-            )
-            .order_by(Sku.slug)
-            .all()
-        )
-
-    return render_template(
-        "admin/category.html",
-        category=category_,
-        category_items=category_items,
-        available_skus=available_skus,
-    )
+        filters = {CategoryItem.category_id == category_id}
+        table.query_all(s, *filters)
+    return render_template("admin_table.html", table=table)
