@@ -37,27 +37,32 @@ class Table:
     columns: list[tuple[IA | QA, Column]]
     create: bool = False
     create_func: str
-    create_func_args: list[IA] = []
+    create_func_args: list[IA | int | str] = []
     create_columns: list[IA] = []
     detail: bool = False
-    detail_view: str
+    detail_view: str | None
     detail_view_args: dict[str, IA] = {}
     edit: bool = False
     edit_func: str
-    edit_func_args: list[IA] = []
+    edit_func_args: list[IA | str | int] = []
     edit_columns: list[IA] = []
     remove: bool = False
     remove_func: str
-    remove_func_args: list[IA] = []
+    remove_func_args: list[IA | str | int] = []
 
     def __init__(self) -> None:
+        self.func_name = self.get_func_name(self.name)
+        self.func_plural_name = self.get_func_name(self.plural_name)
         self.objects: list[Base] = []
 
-    def query_all(self, s: Session) -> None:
+    def query_all(self, s: Session, *filters) -> None:
         if self.query is not None:
-            self.objects = self.query.with_session(s).all()
+            self.objects = self.query.filter(*filters).with_session(s).all()
         for _, info in self.columns:
             info.query_all(s)
+
+    def get_func_name(self, name: str) -> str:
+        return name.replace(" ", "_")
 
     @property
     def column_names(self) -> list[str]:
@@ -76,9 +81,13 @@ class Table:
         return self.objects
 
     def get_url(self, row: B) -> str:
+        if self.detail_view is None:
+            raise NotImplementedError
         kwargs = {}
         for k, v in self.detail_view_args.items():
-            kwargs[k] = getattr(row, v.name)
+            if isinstance(v, IA):
+                v = getattr(row, v.name)
+            kwargs[k] = v
         return url_for(self.detail_view, **kwargs)
 
     def iter_columns(
@@ -127,48 +136,66 @@ class Table:
     #
 
     def element_id(self, row_id: int | None, attr_name: str) -> str:
-        parts = [self.name, attr_name]
+        parts = [self.func_name, attr_name]
         if row_id is not None:
             parts.append(str(row_id))
         return "-".join(parts)
 
     @property
     def create_modal_id(self) -> str:
-        return f"modal-create-{self.name}"
+        return f"modal-create-{self.func_name}"
 
     @property
     def create_button_id(self) -> str:
-        return f"button-create-{self.name}"
+        return f"button-create-{self.func_name}"
 
     @property
     def create_button_func(self) -> str:
-        return f"{self.name}Create()"
+        return f"{self.func_name}Create()"
 
     def create_button_func_args(self, row: B) -> str:
-        return ",".join([str(getattr(row, x.name)) for x in self.create_func_args])
+        args = []
+        for arg in self.create_func_args:
+            if isinstance(arg, IA):
+                args.append(str(getattr(row, arg.name)))
+            else:
+                args.append(str(arg))
+        return ",".join(args)
 
     def edit_button_id(self, row_id: int | None) -> str:
-        parts = ["button-edit", self.name]
+        parts = ["button-edit", self.func_name]
         if row_id is not None:
             parts.append(str(row_id))
         return "-".join(parts)
 
     @property
     def edit_button_func(self) -> str:
-        return f"{self.name}Edit()"
+        return f"{self.func_name}Edit()"
 
     def edit_button_func_args(self, row: B) -> str:
-        return ",".join([str(getattr(row, x.name)) for x in self.edit_func_args])
+        args = []
+        for arg in self.edit_func_args:
+            if isinstance(arg, IA):
+                args.append(str(getattr(row, arg.name)))
+            else:
+                args.append(str(arg))
+        return ",".join(args)
 
     def remove_button_id(self, row_id: int) -> str:
-        parts = ["button-remove", self.name]
+        parts = ["button-remove", self.func_name]
         if row_id is not None:
             parts.append(str(row_id))
         return "-".join(parts)
 
     @property
     def remove_button_func(self) -> str:
-        return f"{self.name}Remove()"
+        return f"{self.func_name}Remove()"
 
     def remove_button_func_args(self, row: B) -> str:
-        return ",".join([str(getattr(row, x.name)) for x in self.remove_func_args])
+        args = []
+        for arg in self.remove_func_args:
+            if isinstance(arg, IA):
+                args.append(str(getattr(row, arg.name)))
+            else:
+                args.append(str(arg))
+        return ",".join(args)
