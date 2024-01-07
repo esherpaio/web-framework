@@ -27,7 +27,3 @@ function getData(elements) {
     }
     return data;
 }
-
-function isFloat(n) {
-    return n.indexOf('.') == -1 ? false : true;
-}
