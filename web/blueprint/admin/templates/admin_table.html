@@ -1,5 +1,4 @@
 {% extends "admin_main.html" %}
-
 {% block admin_body %}
     <script defer>
         {% if table.create %}
@@ -135,9 +134,7 @@
                                         <div class="btn-group">
                                             {% if table.detail %}
                                                 <a class="btn btn-sm btn-outline-primary"
-                                                   href="{{ table.get_url(row) }}">
-                                                    View
-                                                </a>
+                                                   href="{{ table.get_url(row) }}">View</a>
                                             {% endif %}
                                             {% if table.edit %}
                                                 <button id="{{ table.edit_button_id(row.id) }}"

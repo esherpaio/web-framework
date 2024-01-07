@@ -1,5 +1,4 @@
 {% extends "admin_main.html" %}
-
 {% block admin_body %}
     <h2>
         Product - {{ product.name }}
@@ -254,9 +253,7 @@
                                         <td class="text-end">
                                             <div class="btn-group">
                                                 <a href="{{ url_for('admin.product_option', product_id=product.id, option_id=option.id) }}"
-                                                   class="btn btn-sm btn-outline-primary">
-                                                    View
-                                                </a>
+                                                   class="btn btn-sm btn-outline-primary">View</a>
                                                 <button id="update-option-{{ option.id }}"
                                                         class="btn btn-load btn-sm btn-outline-primary"
                                                         onclick="updateOption({{ option.id }}, {{ product.id }});">

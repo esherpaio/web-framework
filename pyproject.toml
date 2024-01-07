@@ -12,26 +12,8 @@ cache-dir = ".cache/ruff"
 line-length = 88
 target-version = ['py311']
 
-[tool.djlint]
-profile="jinja"
-quiet=true
-use_gitignore=true
-max_attribute_length=10
-max_line_length=100
-custom_blocks="pack"
-blank_line_before_tag="extends,block"
-line_break_after_multiline_tag=true
-
-[tool.pytest.ini_options]
-python_files="test_*.py"
-addopts="--maxfail=1"
-faulthandler_timeout=5
-filterwarnings="ignore::DeprecationWarning:pycountry"
-cache_dir=".cache/pytest"
-
 [tool.mypy]
 ignore_missing_imports=true
-no_implicit_optional=true
 no_warn_no_return=true
 exclude="web/(config)/*"
 cache_dir=".cache/mypy"
@@ -39,3 +21,18 @@ cache_dir=".cache/mypy"
 [[tool.mypy.overrides]]
 module = "web.config.*"
 follow_imports="skip"
+
+[tool.djlint]
+profile="jinja"
+quiet=true
+use_gitignore=true
+custom_blocks="pack"
+max_attribute_length=1
+max_line_length=100
+line_break_after_multiline_tag=true
+
+[tool.pytest.ini_options]
+python_files="test_*.py"
+addopts="--maxfail=1"
+faulthandler_timeout=5
+cache_dir=".cache/pytest"

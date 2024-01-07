@@ -86,8 +86,10 @@ class Table:
         kwargs = {}
         for k, v in self.detail_view_args.items():
             if isinstance(v, IA):
-                v = getattr(row, v.name)
-            kwargs[k] = v
+                new = getattr(row, v.name)
+            else:
+                new = v
+            kwargs[k] = new
         return url_for(self.detail_view, **kwargs)
 
     def iter_columns(
