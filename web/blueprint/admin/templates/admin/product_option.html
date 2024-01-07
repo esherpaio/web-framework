@@ -1,5 +1,4 @@
 {% extends "admin_main.html" %}
-
 {% block admin_body %}
     <h2>
         Product - {{ product.name }}
@@ -12,45 +11,35 @@
             <a href="{{ url_for("admin.product", product_id=product.id, tab="general") }}"
                class="nav-link py-2"
                type="button"
-               role="tab">
-                General
-            </a>
+               role="tab">General</a>
         </li>
         <li class="nav-item"
             role="presentation">
             <a href="{{ url_for("admin.product", product_id=product.id, tab="options") }}"
                class="nav-link py-2"
                type="button"
-               role="tab">
-                Options
-            </a>
+               role="tab">Options</a>
         </li>
         <li class="nav-item"
             role="presentation">
             <a href="{{ url_for("admin.product", product_id=product.id, tab="media") }}"
                class="nav-link py-2"
                type="button"
-               role="tab">
-                Media
-            </a>
+               role="tab">Media</a>
         </li>
         <li class="nav-item"
             role="presentation">
             <a href="{{ url_for("admin.product", product_id=product.id, tab="links") }}"
                class="nav-link py-2"
                type="button"
-               role="tab">
-                Links
-            </a>
+               role="tab">Links</a>
         </li>
         <li class="nav-item"
             role="presentation">
             <a href="{{ url_for("admin.product", product_id=product.id, tab="skus") }}"
                class="nav-link py-2"
                type="button"
-               role="tab">
-                SKUs
-            </a>
+               role="tab">SKUs</a>
         </li>
     </ul>
     <div class="row g-3">
