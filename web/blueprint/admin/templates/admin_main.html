@@ -27,11 +27,13 @@
         {% endpack %}
         {% pack 'js' %}
             <script src="{{ url_for('admin.static', filename='js/api.js') }}"></script>
-            <script src="{{ url_for('admin.static', filename='js/data.js') }}"></script>
             <script src="{{ url_for('admin.static', filename='js/buttons.js') }}"></script>
+            <script src="{{ url_for('admin.static', filename='js/data.js') }}"></script>
             <script src="{{ url_for('admin.static', filename='js/endpoints.js') }}"></script>
             <script src="{{ url_for('admin.static', filename='js/messages.js') }}"></script>
             <script src="{{ url_for('admin.static', filename='js/parameters.js') }}"></script>
+            <script src="{{ url_for('admin.static', filename='js/route/category_item.js') }}"></script>
+            <script src="{{ url_for('admin.static', filename='js/route/category.js') }}"></script>
             <script src="{{ url_for('admin.static', filename='js/route/coupon.js') }}"></script>
             <script src="{{ url_for('admin.static', filename='js/route/order.js') }}"></script>
             <script src="{{ url_for('admin.static', filename='js/route/product_link.js') }}"></script>
@@ -59,19 +61,19 @@
             <div class="offcanvas-body text-bg-light">
                 <ul class="nav nav-pills flex-column">
                     <li class="nav-item">
-                        <a class="nav-link {{ 'active' if 'admin.orders' in request.endpoint }}"
+                        <a class="nav-link {{ 'active' if request.endpoint in ['admin.orders', 'admin.order'] }}"
                            href="{{ url_for("admin.orders") }}">Orders</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {{ 'active' if 'admin.categories' in request.endpoint }}"
+                        <a class="nav-link {{ 'active' if request.endpoint in ['admin.categories', 'admin.category'] }}"
                            href="{{ url_for("admin.categories") }}">Categories</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {{ 'active' if 'admin.product' in request.endpoint }}"
+                        <a class="nav-link {{ 'active' if request.endpoint in ['admin.products', 'admin.product', 'admin.product_option'] }}"
                            href="{{ url_for("admin.products") }}">Products</a>
                     </li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle {{ 'active' if 'admin.shipment' in request.endpoint }}"
+                        <a class="nav-link dropdown-toggle {{ 'active' if request.endpoint in ['admin.shipment_classes', 'admin.shipment_zones', 'admin.shipment_methods'] }}"
                            href="#"
                            role="button"
                            data-bs-toggle="dropdown">Shipments</a>
@@ -91,15 +93,15 @@
                         </ul>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {{ 'active' if 'admin.coupons' in request.endpoint }}"
+                        <a class="nav-link {{ 'active' if request.endpoint in ['admin.coupons'] }}"
                            href="{{ url_for("admin.coupons") }}">Coupons</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {{ 'active' if 'admin.users' in request.endpoint }}"
+                        <a class="nav-link {{ 'active' if request.endpoint in ['admin.users'] }}"
                            href="{{ url_for("admin.users") }}">Users</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {{ 'active' if 'admin.setting' in request.endpoint }}"
+                        <a class="nav-link {{ 'active' if request.endpoint in ['admin.setting'] }}"
                            href="{{ url_for("admin.setting") }}">Settings</a>
                     </li>
                 </ul>
@@ -139,7 +141,7 @@
                     </div>
                 </div>
             </nav>
-            <div class="container-xxl p-4 px-lg-5 px-xl-4">
+            <div class="container-xxl p-3 p-sm-4 px-lg-5 px-xl-4">
                 {% block admin_body %}
                 {% endblock %}
             </div>
