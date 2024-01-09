@@ -6,19 +6,40 @@
                 <h2 class="mb-0">
                     Users
                 </h2>
-                <form action="{{ url_for("admin.users") }}"
+                <div>
+                    <button class="btn btn-success"
+                            type="submit"
+                            data-bs-toggle="collapse"
+                            data-bs-target="#more-users">
+                        More
+                        <i class="bi bi-chevron-expand ms-1"></i>
+                    </button>
+                </div>
+            </div>
+            <div id="more-users"
+                 class="collapse {{ 'show' if search or status_id }}">
+                <form class="mt-3"
+                      action="{{ url_for("admin.users") }}"
                       method="GET">
-                    <div class="input-group">
-                        <input class="form-control"
-                               name="s"
-                               placeholder="Search"
-                               type="text"
-                               value="{{ search if search }}">
-                        <button class="btn btn-primary"
-                                id="button-search-user"
-                                type="submit">
-                            Search
-                        </button>
+                    <div class="row g-2">
+                        <div class="col-12">
+                            <div class="input-group input-group-sm">
+                                <span class="input-group-text">
+                                    Search
+                                </span>
+                                <input class="form-control"
+                                       name="s"
+                                       placeholder="Search"
+                                       type="text"
+                                       value="{{ search if search }}">
+                            </div>
+                        </div>
+                        <div class="col-auto ms-sm-auto">
+                            <button class="btn btn-primary btn-sm"
+                                    type="submit">
+                                Search
+                            </button>
+                        </div>
                     </div>
                 </form>
             </div>
@@ -29,16 +50,16 @@
                     <thead class="table-secondary">
                         <tr>
                             <th>
-                                User ID
+                                ID
                             </th>
                             <th>
-                                Created at
+                                Created
                             </th>
                             <th>
                                 Email
                             </th>
                             <th>
-                                Activated
+                                Active
                             </th>
                             <th>
                                 Role

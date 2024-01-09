@@ -1,5 +1,34 @@
 {% extends "admin_main.html" %}
 {% block admin_body %}
+    <script>
+        async function createShipmentMethod() {
+            event.preventDefault();
+            updateButton('create-shipment-method', 1);
+            await postShipmentMethods({
+                name: document.getElementById('shipment-method-name').value,
+                class_id: parseInt(document.getElementById(`shipment-method-class-id`).value),
+                zone_id: parseInt(document.getElementById(`shipment-method-zone-id`).value),
+                unit_price: parseFloat(document.getElementById(`shipment-method-unit-price`).value),
+            });
+            window.location.reload();
+        }
+        async function updateShipmentMethod(methodId) {
+            event.preventDefault();
+            updateButton(`update-shipment-method-${methodId}`, 1);
+            await patchShipmentMethodsId(methodId, {
+                unit_price: parseFloat(document.getElementById(`shipment-method-unit-price-${methodId}`).value),
+                phone_required: document.getElementById(`shipment-method-phone-required-${methodId}`).checked,
+            });
+            window.location.reload();
+        }
+        async function deleteshipmentMethod(methodId) {
+            event.preventDefault();
+            updateButton(`delete-shipment-method-${methodId}`, 1);
+            await deleteShipmentMethodsId(methodId);
+            window.location.reload();
+        }
+    </script>
+
     <div class="row g-3">
         <div class="col-12">
             <div class="d-flex justify-content-between">

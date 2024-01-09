@@ -1,5 +1,36 @@
 {% extends "admin_main.html" %}
 {% block admin_body %}
+    <script>
+        async function addCategory() {
+            event.preventDefault();
+            updateButton('add-category', 1);
+            await postCategories({
+                name: document.getElementById('category-name').value,
+                order: parseInt(document.getElementById('category-order').value)
+            });
+            await patchSetting({ cached_at: null });
+            window.location.reload();
+        }
+        async function updateCategory(categoryId) {
+            event.preventDefault();
+            updateButton(`update-category-${categoryId}`, 1);
+            await patchCategoriesId(categoryId, {
+                child_id: parseInt(document.getElementById(`category-child-id-${categoryId}`).value),
+                order: parseInt(document.getElementById(`category-order-${categoryId}`).value),
+                in_header: document.getElementById(`category-in-header-${categoryId}`).checked,
+            });
+            await patchSetting({ cached_at: null });
+            window.location.reload();
+        }
+        async function removeCategory(categoryId) {
+            event.preventDefault();
+            updateButton(`delete-category-${categoryId}`, 1);
+            await deleteCategoriesId(categoryId);
+            await patchSetting({ cached_at: null });
+            window.location.reload();
+        }
+    </script>
+
     <div class="row g-3">
         <div class="col-12">
             <div class="d-flex justify-content-between">
@@ -7,12 +38,12 @@
                     Categories
                 </h2>
                 <div>
-                    <button id="create-category"
-                            class="btn btn-success"
+                    <button class="btn btn-success"
                             type="submit"
                             data-bs-toggle="modal"
-                            data-bs-target="#modal-create-category">
-                        Create
+                            data-bs-target="#modal-add-category">
+                        Add
+                        <i class="bi bi-plus-circle ms-1"></i>
                     </button>
                 </div>
             </div>
@@ -26,7 +57,7 @@
                                 Name
                             </th>
                             <th>
-                                Reference
+                                Child
                             </th>
                             <th>
                                 Order
@@ -94,16 +125,16 @@
             </div>
         </div>
     </div>
-    <!-- modal create category -->
-    <div id="modal-create-category"
+
+    <div id="modal-add-category"
          class="modal modal-lg fade"
          tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
             <form class="modal-content"
-                  onsubmit="createCategory();">
+                  onsubmit="addCategory();">
                 <div class="modal-header">
                     <h5 class="modal-title">
-                        Create category
+                        Add category
                     </h5>
                     <button type="button"
                             class="btn-close"
@@ -135,10 +166,10 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button id="create-category"
+                    <button id="add-category"
                             class="btn btn-load btn-success"
                             type="submit">
-                        Create
+                        Add
                     </button>
                     <button type="button"
                             class="btn btn-secondary"

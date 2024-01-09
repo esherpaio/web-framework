@@ -1,9 +1,134 @@
 {% extends "admin_main.html" %}
 {% block admin_body %}
+    <script>
+        // product
+        async function updateProduct(id) {
+            event.preventDefault();
+            updateButton(`update-product`, 1);
+            await patchProductsId(id, {
+                attributes: {
+                    html: htmlEditor.root.innerHTML,
+                },
+                type_id: parseInt(document.getElementById(`product-type-id`).value),
+                shipment_class_id: parseInt(document.getElementById(`product-shipment-class-id`).value),
+                unit_price: parseFloat(document.getElementById(`product-unit-price`).value),
+                summary: document.getElementById(`product-summary`).value,
+                consent_required: document.getElementById("product-consent-required").checked,
+                file_url: document.getElementById("product-file-url").value,
+            });
+            await patchSetting({ cached_at: null });
+            window.location.reload();
+        }
+        async function deleteProduct(productId) {
+            event.preventDefault();
+            updateButton(`delete-product`, 1);
+            let resp = await deleteProductsId(productId);
+            await patchSetting({ cached_at: null });
+            window.location = resp.links.products;
+        }
+        // options
+        async function createOption(productId) {
+            event.preventDefault();
+            updateButton(`create-option`, 1);
+            await postProductsIdOptions(productId, {
+                name: document.getElementById(`option-name`).value
+            });
+            await patchSetting({ cached_at: null });
+            window.location.reload();
+        }
+        async function updateOption(optionId, productId) {
+            event.preventDefault();
+            updateButton(`update-option-${optionId}`, 1);
+            await patchProductsIdOptionsId(productId, optionId, {
+                order: parseInt(document.getElementById(`option-order-${optionId}`).value),
+            });
+            await patchSetting({ cached_at: null });
+            window.location.reload();
+        }
+        async function deleteOption(optionId, productId) {
+            event.preventDefault();
+            updateButton(`delete-option-${optionId}`, 1);
+            await deleteProductsIdOptionsId(productId, optionId);
+            await patchSetting({ cached_at: null });
+            window.location.reload();
+        }
+        // media
+        async function createMedia(productId) {
+            event.preventDefault();
+            updateButton(`create-media`, 1);
+            let form = new FormData();
+            const files = document.getElementById('media-files').files;
+            for (let i = 0; i < files.length; i++) {
+                form.append('file', files[i]);
+            }
+            await postProductsIdMedia(productId, form);
+            await patchSetting({ cached_at: null });
+            window.location.reload();
+        }
+        async function updateMedia(mediaId, productId) {
+            event.preventDefault();
+            updateButton(`update-media-${mediaId}`, 1);
+            await patchProductsIdMediaId(productId, mediaId, {
+                order: parseInt(document.getElementById(`media-order-${mediaId}`).value),
+                description: document.getElementById(`media-description-${mediaId}`).value,
+            });
+            await patchSetting({ cached_at: null });
+            window.location.reload();
+        }
+        async function deleteMedia(mediaId, productId) {
+            event.preventDefault();
+            updateButton(`delete-media-${mediaId}`, 1);
+            await deleteProductsIdMediaId(productId, mediaId);
+            await patchSetting({ cached_at: null });
+            window.location.reload();
+        }
+        // links
+        async function createLink(productId) {
+            event.preventDefault();
+            updateButton(`create-link`, 1);
+            await postProductsIdLinks(productId, {
+                type_id: parseInt(document.getElementById(`link-type-id`).value),
+                sku_id: parseInt(document.getElementById(`link-sku-id`).value),
+            });
+            await patchSetting({ cached_at: null });
+            window.location.reload();
+        }
+        async function deleteLink(linkId, productId) {
+            event.preventDefault();
+            updateButton(`delete-link-${linkId}`, 1);
+            await deleteProductsIdLinksId(productId, linkId);
+            await patchSetting({ cached_at: null });
+            window.location.reload();
+        }
+        // skus
+        async function createSkus(productId) {
+            event.preventDefault();
+            updateButton(`create-skus`, 1);
+            await postProductsIdSkus(productId);
+            await patchSetting({ cached_at: null });
+            window.location.reload();
+        }
+        async function updateSku(skuId) {
+            event.preventDefault();
+            updateButton(`update-sku-${skuId}`, 1);
+            await patchSkusId(skuId, {
+                is_visible: document.getElementById(`sku-is-visible-${skuId}`).checked
+            });
+            await patchSetting({ cached_at: null });
+            window.location.reload();
+        }
+        async function deleteSku(skuId) {
+            event.preventDefault();
+            updateButton(`delete-sku-${skuId}`, 1);
+            await deleteSkusId(skuId);
+            await patchSetting({ cached_at: null });
+            window.location.reload();
+        }
+    </script>
+
     <h2>
         Product - {{ product.name }}
     </h2>
-    <!-- tab buttons -->
     <ul class="nav nav-tabs mb-3"
         role="tablist">
         <li class="nav-item"
@@ -62,6 +187,7 @@
             </button>
         </li>
     </ul>
+
     <div class="tab-content">
         <!-- product -->
         <div id="pills-1"
@@ -274,7 +400,7 @@
                 </div>
             </div>
         </div>
-        <!-- medias -->
+        <!-- media -->
         <div id="pills-3"
              class="tab-pane fade {{ 'show active' if tab == 'media' }}"
              role="tabpanel"
@@ -520,7 +646,7 @@
             </div>
         </div>
     </div>
-    <!-- modal delete product -->
+
     <div id="modal-delete-product"
          class="modal fade"
          tabindex="-1">

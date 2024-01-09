@@ -1,5 +1,31 @@
 {% extends "admin_main.html" %}
 {% block admin_body %}
+    <script>
+        async function createShipmentClass() {
+            event.preventDefault();
+            updateButton('create-shipment-class', 1);
+            await postShipmentClasses({
+                order: parseInt(document.getElementById('shipment-class-order').value),
+                name: document.getElementById('shipment-class-name').value,
+            });
+            window.location.reload();
+        }
+        async function updateShipmentClass(classId) {
+            event.preventDefault();
+            updateButton(`update-shipment-class-${classId}`, 1);
+            await patchShipmentClassesId(classId, {
+                order: parseInt(document.getElementById(`shipment-class-order-${classId}`).value)
+            });
+            window.location.reload();
+        }
+        async function deleteshipmentClass(classId) {
+            event.preventDefault();
+            updateButton(`delete-shipment-class-${classId}`, 1);
+            await deleteShipmentClassesId(classId);
+            window.location.reload();
+        }
+    </script>
+
     <div class="row g-3">
         <div class="col-12">
             <div class="d-flex justify-content-between">
