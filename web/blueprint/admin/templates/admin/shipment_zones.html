@@ -1,5 +1,32 @@
 {% extends "admin_main.html" %}
 {% block admin_body %}
+    <script>
+        async function createShipmentZone() {
+            event.preventDefault();
+            updateButton('create-shipment-zone', 1);
+            await postShipmentZones({
+                order: parseInt(document.getElementById('shipment-zone-order').value),
+                country_id: parseInt(document.getElementById(`shipment-zone-country-id`).value),
+                region_id: parseInt(document.getElementById(`shipment-zone-region-id`).value)
+            });
+            window.location.reload();
+        }
+        async function updateShipmentZone(zoneId) {
+            event.preventDefault();
+            updateButton(`update-shipment-zone-${zoneId}`, 1);
+            await patchShipmentZonesId(zoneId, {
+                order: parseInt(document.getElementById(`shipment-zone-order-${zoneId}`).value)
+            });
+            window.location.reload();
+        }
+        async function deleteshipmentZone(zoneId) {
+            event.preventDefault();
+            updateButton(`delete-shipment-zone-${zoneId}`, 1);
+            await deleteShipmentZonesId(zoneId);
+            window.location.reload();
+        }
+    </script>
+
     <div class="row g-3">
         <div class="col-12">
             <div class="d-flex justify-content-between">

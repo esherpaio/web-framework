@@ -1,5 +1,30 @@
 {% extends "admin_main.html" %}
 {% block admin_body %}
+    <script>
+        async function cancelOrder(orderId) {
+            event.preventDefault();
+            updateButton('cancel-order', 1);
+            await deleteOrdersId(orderId);
+            window.location.reload();
+        }
+        async function refundOrder(orderId) {
+            event.preventDefault();
+            updateButton('create-refund', 1);
+            await postOrdersIdRefunds(orderId, {
+                total_price: parseFloat(document.getElementById('refund-total-price').value),
+            });
+            window.location.reload();
+        }
+        async function addShipment(orderId) {
+            event.preventDefault();
+            updateButton('add-shipment', 1);
+            await postOrdersIdShipments(orderId, {
+                url: document.getElementById('shipment-url').value,
+            });
+            window.location.reload();
+        }
+    </script>
+
     <div class="row g-3">
         <div class="col-12">
             <div class="d-flex justify-content-between">
@@ -22,8 +47,8 @@
                     {% if not order.is_pending %}
                         <button class="btn btn-warning"
                                 data-bs-toggle="modal"
-                                data-bs-target="#modal-create-shipment">
-                            Create shipment
+                                data-bs-target="#modal-add-shipment">
+                            Add shipment
                         </button>
                     {% endif %}
                     {% if order.is_pending %}
@@ -263,7 +288,7 @@
             </div>
         {% endif %}
     </div>
-    <!-- modal cancel order -->
+
     <div id="modal-cancel-order"
          class="modal fade"
          tabindex="-1">
@@ -300,7 +325,7 @@
             </div>
         </div>
     </div>
-    <!-- modal refund order -->
+
     <div id="modal-refund-order"
          class="modal fade"
          tabindex="-1">
@@ -348,15 +373,15 @@
             </div>
         </div>
     </div>
-    <!-- modal create shipment -->
-    <div id="modal-create-shipment"
+
+    <div id="modal-add-shipment"
          class="modal fade"
          tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">
-                        Create shipment
+                        Add shipment
                     </h5>
                     <button type="button"
                             class="btn-close"
@@ -366,7 +391,7 @@
                 <div class="modal-body">
                     <p>
                         <b>This action is irreversible.</b>
-                        A shipment will be created and emailed to the customer.
+                        A shipment will be added and emailed to the customer.
                     </p>
                     <div class="input-group">
                         <span class="input-group-text">URL</span>
@@ -379,9 +404,9 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button id="create-shipment"
+                    <button id="add-shipment"
                             class="btn btn-load btn-warning"
-                            onclick="createShipment({{ order.id }})">
+                            onclick="addShipment({{ order.id }})">
                         Proceed
                     </button>
                     <button type="button"

@@ -1,5 +1,17 @@
 {% extends "admin_main.html" %}
 {% block admin_body %}
+    <script>
+        async function updateSetting() {
+            event.preventDefault();
+            updateButton(`update-setting`, 1);
+            await patchSetting({
+                banner: document.getElementById('setting-banner').value,
+                cached_at: null,
+            });
+            window.location.reload();
+        }
+    </script>
+
     <div class="row g-3">
         <div class="col-12">
             <div class="d-flex justify-content-between">

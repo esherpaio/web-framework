@@ -1,5 +1,17 @@
 {% extends "admin_main.html" %}
 {% block admin_body %}
+    <script>
+        async function addProduct() {
+            event.preventDefault();
+            updateButton(`add-product`, 1);
+            await postProducts({
+                name: document.getElementById('product-name').value
+            });
+            await patchSetting({ cached_at: null });
+            window.location.reload();
+        }
+    </script>
+
     <div class="row g-3">
         <div class="col-12">
             <div class="d-flex justify-content-between">
@@ -7,12 +19,12 @@
                     Products
                 </h2>
                 <div>
-                    <button id="create-product"
-                            class="btn btn-success"
+                    <button class="btn btn-success"
                             type="submit"
                             data-bs-toggle="modal"
-                            data-bs-target="#modal-create-product">
-                        Create
+                            data-bs-target="#modal-add-product">
+                        Add
+                        <i class="bi bi-plus-circle ms-1"></i>
                     </button>
                 </div>
             </div>
@@ -63,16 +75,16 @@
             </div>
         </div>
     </div>
-    <!-- modal create product -->
-    <div id="modal-create-product"
+
+    <div id="modal-add-product"
          class="modal fade"
          tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
             <form class="modal-content"
-                  onsubmit="createProduct();">
+                  onsubmit="addProduct();">
                 <div class="modal-header">
                     <h5 class="modal-title">
-                        Create product
+                        Add product
                     </h5>
                     <button type="button"
                             class="btn-close"
@@ -94,10 +106,10 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button id="create-product"
+                    <button id="add-product"
                             class="btn btn-load btn-success"
                             type="submit">
-                        Create
+                        Add
                     </button>
                     <button type="button"
                             class="btn btn-secondary"

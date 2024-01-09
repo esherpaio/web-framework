@@ -1,37 +1,49 @@
 {% extends "admin_main.html" %}
 {% block admin_body %}
+    <script>
+        async function addCategoryItem(categoryId) {
+            event.preventDefault();
+            updateButton(`add-category-item`, 1);
+            await postCategoriesIdItems(categoryId, {
+                sku_id: parseInt(document.getElementById(`category-item-sku-id`).value),
+                order: parseInt(document.getElementById(`category-item-order`).value),
+            });
+            await patchSetting({ cached_at: null });
+            window.location.reload();
+        }
+        async function updateCategoryItem(categoryId, itemId) {
+            event.preventDefault();
+            updateButton(`update-category-item-${itemId}`, 1);
+            await patchCategoriesIdItemsId(categoryId, itemId, {
+                order: parseInt(document.getElementById(`category-item-order-${itemId}`).value)
+            });
+            await patchSetting({ cached_at: null });
+            window.location.reload();
+        }
+        async function deleteCategoryItem(categoryId, itemId) {
+            event.preventDefault();
+            updateButton(`delete-category-item-${itemId}`, 1);
+            await deleteCategoriesIdItemsId(categoryId, itemId);
+            await patchSetting({ cached_at: null });
+            window.location.reload();
+        }
+    </script>
+
     <div class="row g-3">
         <div class="col-12">
             <div class="d-flex justify-content-between">
                 <h2 class="mb-0">
                     Category - {{ category.name }}
                 </h2>
-                <form onsubmit="createCategoryItem({{ category.id }});">
-                    <div class="input-group">
-                        <select required
-                                id="category-item-sku-id"
-                                class="form-select">
-                            <option disabled
-                                    selected>
-                                SKU
-                            </option>
-                            {% for x in available_skus %}
-                                <option value="{{ x.id }}">
-                                    {{ x.name }}
-                                </option>
-                            {% endfor %}
-                        </select>
-                        <input id="category-item-order"
-                               class="form-control"
-                               placeholder="Order"
-                               type="number">
-                        <button id="create-category-item"
-                                class="btn btn-success btn-load"
-                                type="submit">
-                            Add
-                        </button>
-                    </div>
-                </form>
+                <div>
+                    <button class="btn btn-success"
+                            type="submit"
+                            data-bs-toggle="modal"
+                            data-bs-target="#modal-add-category-item">
+                        Add
+                        <i class="bi bi-plus-circle ms-1"></i>
+                    </button>
+                </div>
             </div>
         </div>
         <div class="col-12">
@@ -40,7 +52,7 @@
                     <thead class="table-secondary">
                         <tr>
                             <th>
-                                Name
+                                SKU
                             </th>
                             <th>
                                 Order
@@ -80,6 +92,68 @@
                         {% endfor %}
                     </tbody>
                 </table>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-add-category-item"
+         class="modal modal-lg fade"
+         tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <form class="modal-content"
+                  onsubmit="addCategoryItem({{ category.id }});">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        Add category item
+                    </h5>
+                    <button type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal">
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-2">
+                        <div class="col-12 col-lg-6">
+                            <div class="input-group">
+                                <span class="input-group-text">SKU</span>
+                                <select required
+                                        id="category-item-sku-id"
+                                        class="form-select">
+                                    <option disabled
+                                            selected>
+                                        None
+                                    </option>
+                                    {% for x in available_skus %}
+                                        <option value="{{ x.id }}">
+                                            {{ x.name }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-12 col-lg-6">
+                            <div class="input-group">
+                                <span class="input-group-text">Order</span>
+                                <input id="category-item-order"
+                                       class="form-control"
+                                       placeholder="Order"
+                                       type="number">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="add-category-item"
+                            class="btn btn-load btn-success"
+                            type="submit">
+                        Add
+                    </button>
+                    <button type="button"
+                            class="btn btn-secondary"
+                            data-bs-dismiss="modal">
+                        Cancel
+                    </button>
+                </div>
             </div>
         </div>
     </div>

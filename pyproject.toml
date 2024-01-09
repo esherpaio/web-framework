@@ -30,6 +30,7 @@ custom_blocks="pack"
 max_attribute_length=1
 max_line_length=100
 line_break_after_multiline_tag=true
+preserve_blank_lines=true
 
 [tool.pytest.ini_options]
 python_files="test_*.py"
