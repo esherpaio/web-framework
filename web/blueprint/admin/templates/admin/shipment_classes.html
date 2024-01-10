@@ -1,9 +1,9 @@
 {% extends "admin_main.html" %}
 {% block admin_body %}
     <script>
-        async function createShipmentClass() {
+        async function addShipmentClass() {
             event.preventDefault();
-            updateButton('create-shipment-class', 1);
+            updateButton('add-shipment-class', 1);
             await postShipmentClasses({
                 order: parseInt(document.getElementById('shipment-class-order').value),
                 name: document.getElementById('shipment-class-name').value,
@@ -32,25 +32,13 @@
                 <h2 class="mb-0">
                     Shipment Classes
                 </h2>
-                <form onsubmit="createShipmentClass();">
-                    <div class="input-group">
-                        <input required
-                               id="shipment-class-name"
-                               class="form-control"
-                               placeholder="Name"
-                               type="text">
-                        <input required
-                               id="shipment-class-order"
-                               class="form-control"
-                               placeholder="Order"
-                               type="number">
-                        <button id="create-shipment-class"
-                                class="btn btn-success btn-load"
-                                type="submit">
-                            Create
-                        </button>
-                    </div>
-                </form>
+                <button class="btn btn-success"
+                        type="submit"
+                        data-bs-toggle="modal"
+                        data-bs-target="#modal-add-shipment-class">
+                    Add
+                    <i class="bi bi-plus-square ms-1"></i>
+                </button>
             </div>
         </div>
         <div class="col-12">
@@ -99,6 +87,61 @@
                         {% endfor %}
                     </tbody>
                 </table>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-add-shipment-class"
+         class="modal modal-lg fade"
+         tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <form class="modal-content"
+                  onsubmit="addShipmentClass();">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        Add shipment class
+                    </h5>
+                    <button type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal">
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-2">
+                        <div class="col-12 col-lg-6">
+                            <div class="input-group">
+                                <span class="input-group-text">Name</span>
+                                <input required
+                                       id="shipment-class-name"
+                                       class="form-control"
+                                       placeholder="Name"
+                                       type="text">
+                            </div>
+                        </div>
+                        <div class="col-12 col-lg-6">
+                            <div class="input-group">
+                                <span class="input-group-text">Order</span>
+                                <input required
+                                       id="shipment-class-order"
+                                       class="form-control"
+                                       placeholder="Order"
+                                       type="number">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="add-shipment-class"
+                            class="btn btn-load btn-success"
+                            type="submit">
+                        Add
+                    </button>
+                    <button type="button"
+                            class="btn btn-secondary"
+                            data-bs-dismiss="modal">
+                        Cancel
+                    </button>
+                </div>
             </div>
         </div>
     </div>

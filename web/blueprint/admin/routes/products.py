@@ -1,11 +1,10 @@
-from flask import redirect, render_template, request, url_for
+from flask import redirect, render_template, url_for
 from sqlalchemy.orm import joinedload
 from werkzeug import Response
 
 from web.blueprint.admin import admin_bp
 from web.database.client import conn
 from web.database.model import (
-    Category,
     Product,
     ProductLink,
     ProductMedia,
@@ -27,7 +26,6 @@ def products() -> str:
             .order_by(Product.name)
             .all()
         )
-
     return render_template(
         "admin/products.html",
         products=products_,
@@ -36,8 +34,6 @@ def products() -> str:
 
 @admin_bp.get("/admin/products/<int:product_id>")
 def product(product_id: int) -> str | Response:
-    tab = request.args.get("tab", "general", type=str)
-
     with conn.begin() as s:
         product_ = (
             s.query(Product)
@@ -50,14 +46,33 @@ def product(product_id: int) -> str | Response:
         )
         if not product_:
             return redirect(url_for("admin.error"))
-
-        categories = s.query(Category).order_by(Category.name).all()
         shipment_classes = (
             s.query(ShipmentClass)
             .filter_by(is_deleted=False)
             .order_by(ShipmentClass.name, ShipmentClass.id)
             .all()
         )
+    return render_template(
+        "admin/product.html",
+        product=product_,
+        shipment_classes=shipment_classes,
+    )
+
+
+@admin_bp.get("/admin/products/<int:product_id>/options")
+def product_options(product_id: int) -> str | Response:
+    with conn.begin() as s:
+        product_ = (
+            s.query(Product)
+            .options(
+                joinedload(Product.type),
+                joinedload(Product.shipment_class),
+            )
+            .filter_by(id=product_id, is_deleted=False)
+            .first()
+        )
+        if not product_:
+            return redirect(url_for("admin.error"))
         product_options = (
             s.query(ProductOption)
             .options(joinedload(ProductOption.values))
@@ -65,6 +80,17 @@ def product(product_id: int) -> str | Response:
             .order_by(ProductOption.order, ProductOption.id)
             .all()
         )
+    return render_template(
+        "admin/product_options.html",
+        product=product_,
+        product_options=product_options,
+    )
+
+
+@admin_bp.get("/admin/products/<int:product_id>/options/<int:option_id>")
+def product_option(product_id: int, option_id: int) -> str:
+    with conn.begin() as s:
+        product_ = s.query(Product).filter_by(id=product_id, is_deleted=False).first()
         product_medias = (
             s.query(ProductMedia)
             .options(joinedload(ProductMedia.file))
@@ -72,6 +98,69 @@ def product(product_id: int) -> str | Response:
             .order_by(ProductMedia.order, ProductMedia.id)
             .all()
         )
+        option = (
+            s.query(ProductOption)
+            .filter_by(id=option_id, product_id=product_id, is_deleted=False)
+            .first()
+        )
+        option_values = (
+            s.query(ProductValue)
+            .options(joinedload(ProductValue.media))
+            .filter_by(option_id=option_id, is_deleted=False)
+            .order_by(ProductValue.order, ProductValue.id)
+            .all()
+        )
+    return render_template(
+        "admin/product_option.html",
+        product=product_,
+        product_medias=product_medias,
+        option=option,
+        option_values=option_values,
+    )
+
+
+@admin_bp.get("/admin/products/<int:product_id>/media")
+def product_media(product_id: int) -> str | Response:
+    with conn.begin() as s:
+        product_ = (
+            s.query(Product)
+            .options(
+                joinedload(Product.type),
+                joinedload(Product.shipment_class),
+            )
+            .filter_by(id=product_id, is_deleted=False)
+            .first()
+        )
+        if not product_:
+            return redirect(url_for("admin.error"))
+        product_medias = (
+            s.query(ProductMedia)
+            .options(joinedload(ProductMedia.file))
+            .filter_by(product_id=product_id)
+            .order_by(ProductMedia.order, ProductMedia.id)
+            .all()
+        )
+    return render_template(
+        "admin/product_media.html",
+        product=product_,
+        product_medias=product_medias,
+    )
+
+
+@admin_bp.get("/admin/products/<int:product_id>/links")
+def product_links(product_id: int) -> str | Response:
+    with conn.begin() as s:
+        product_ = (
+            s.query(Product)
+            .options(
+                joinedload(Product.type),
+                joinedload(Product.shipment_class),
+            )
+            .filter_by(id=product_id, is_deleted=False)
+            .first()
+        )
+        if not product_:
+            return redirect(url_for("admin.error"))
         product_links = (
             s.query(ProductLink)
             .options(
@@ -98,6 +187,28 @@ def product(product_id: int) -> str | Response:
             .order_by(Sku.slug)
             .all()
         )
+    return render_template(
+        "admin/product_links.html",
+        product=product_,
+        product_links=product_links,
+        available_skus=available_skus,
+    )
+
+
+@admin_bp.get("/admin/products/<int:product_id>/skus")
+def product_skus(product_id: int) -> str | Response:
+    with conn.begin() as s:
+        product_ = (
+            s.query(Product)
+            .options(
+                joinedload(Product.type),
+                joinedload(Product.shipment_class),
+            )
+            .filter_by(id=product_id, is_deleted=False)
+            .first()
+        )
+        if not product_:
+            return redirect(url_for("admin.error"))
         skus = (
             s.query(Sku)
             .options(
@@ -109,49 +220,8 @@ def product(product_id: int) -> str | Response:
             .order_by(Sku.id)
             .all()
         )
-
     return render_template(
-        "admin/product.html",
-        tab=tab,
+        "admin/product_skus.html",
         product=product_,
-        categories=categories,
-        shipment_classes=shipment_classes,
-        product_options=product_options,
-        product_medias=product_medias,
-        available_skus=available_skus,
-        product_links=product_links,
         skus=skus,
-    )
-
-
-@admin_bp.get("/admin/products/<int:product_id>/options/<int:option_id>")
-def product_option(product_id: int, option_id: int) -> str:
-    with conn.begin() as s:
-        product_ = s.query(Product).filter_by(id=product_id, is_deleted=False).first()
-        option = (
-            s.query(ProductOption)
-            .filter_by(id=option_id, product_id=product_id, is_deleted=False)
-            .first()
-        )
-        product_medias = (
-            s.query(ProductMedia)
-            .options(joinedload(ProductMedia.file))
-            .filter_by(product_id=product_id)
-            .order_by(ProductMedia.order, ProductMedia.id)
-            .all()
-        )
-        option_values = (
-            s.query(ProductValue)
-            .options(joinedload(ProductValue.media))
-            .filter_by(option_id=option_id, is_deleted=False)
-            .order_by(ProductValue.order, ProductValue.id)
-            .all()
-        )
-
-    return render_template(
-        "admin/product_option.html",
-        product=product_,
-        option=option,
-        product_medias=product_medias,
-        option_values=option_values,
     )

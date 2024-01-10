@@ -6,6 +6,7 @@ from werkzeug import Response
 from web import config
 from web.database.model.user_role import UserRoleLevel
 from web.helper.cache import cache
+from web.helper.logger import logger
 from web.helper.meta import Meta
 from web.helper.user import access_control
 
@@ -34,4 +35,5 @@ def context() -> dict:
 
 @admin_bp.errorhandler(Exception)
 def error_handler(error: Exception) -> Response:
+    logger.error(f"Admin error: {error}")
     return redirect(url_for("admin.error"))
