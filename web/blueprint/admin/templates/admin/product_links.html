@@ -1,49 +1,37 @@
 {% extends "admin_main.html" %}
 {% block admin_body %}
     <script>
-        async function addCategoryItem(categoryId) {
+        async function addLink(productId) {
             event.preventDefault();
-            updateButton(`add-category-item`, 1);
-            await postCategoriesIdItems(categoryId, {
-                sku_id: parseInt(document.getElementById(`category-item-sku-id`).value),
-                order: parseInt(document.getElementById(`category-item-order`).value),
+            updateButton(`add-link`, 1);
+            await postProductsIdLinks(productId, {
+                type_id: parseInt(document.getElementById(`link-type-id`).value),
+                sku_id: parseInt(document.getElementById(`link-sku-id`).value),
             });
             await patchSetting({ cached_at: null });
             window.location.reload();
         }
-        async function updateCategoryItem(categoryId, itemId) {
+        async function deleteLink(linkId, productId) {
             event.preventDefault();
-            updateButton(`update-category-item-${itemId}`, 1);
-            await patchCategoriesIdItemsId(categoryId, itemId, {
-                order: parseInt(document.getElementById(`category-item-order-${itemId}`).value)
-            });
-            await patchSetting({ cached_at: null });
-            window.location.reload();
-        }
-        async function deleteCategoryItem(categoryId, itemId) {
-            event.preventDefault();
-            updateButton(`delete-category-item-${itemId}`, 1);
-            await deleteCategoriesIdItemsId(categoryId, itemId);
+            updateButton(`delete-link-${linkId}`, 1);
+            await deleteProductsIdLinksId(productId, linkId);
             await patchSetting({ cached_at: null });
             window.location.reload();
         }
     </script>
 
+    {% include "admin/section/product_nav.html" %}
+
     <div class="row g-3">
         <div class="col-12">
-            <div class="d-flex justify-content-between">
-                <h2 class="mb-0">
-                    Category - {{ category.name }}
-                </h2>
-                <div>
-                    <button class="btn btn-success"
-                            type="submit"
-                            data-bs-toggle="modal"
-                            data-bs-target="#modal-add-category-item">
-                        Add
-                        <i class="bi bi-plus-square ms-1"></i>
-                    </button>
-                </div>
+            <div class="d-flex justify-content-end">
+                <button class="btn btn-success"
+                        type="submit"
+                        data-bs-toggle="modal"
+                        data-bs-target="#modal-add-link">
+                    Add
+                    <i class="bi bi-plus-square ms-1"></i>
+                </button>
             </div>
         </div>
         <div class="col-12">
@@ -52,10 +40,10 @@
                     <thead class="table-secondary">
                         <tr>
                             <th>
-                                SKU
+                                Type
                             </th>
                             <th>
-                                Order
+                                SKU
                             </th>
                             <th class="text-end">
                                 Actions
@@ -63,27 +51,19 @@
                         </tr>
                     </thead>
                     <tbody class="table-light">
-                        {% for x in category_items %}
+                        {% for link in product_links %}
                             <tr>
                                 <td>
-                                    {{ x.sku.name }}
+                                    {{ link.type.name }}
                                 </td>
                                 <td>
-                                    <input id="category-item-order-{{ x.id }}"
-                                           class="form-control form-control-sm"
-                                           type="number"
-                                           value="{{ x.order if x.order }}">
+                                    {{ link.sku.name }}
                                 </td>
                                 <td class="text-end">
                                     <div class="btn-group">
-                                        <button id="update-category-item-{{ x.id }}"
-                                                class="btn btn-load btn-sm btn-outline-primary"
-                                                onclick="updateCategoryItem({{ category.id }}, {{ x.id }});">
-                                            Update
-                                        </button>
-                                        <button id="delete-category-item-{{ x.id }}"
+                                        <button id="delete-link-{{ link.id }}"
                                                 class="btn btn-load btn-sm btn-outline-danger"
-                                                onclick="deleteCategoryItem({{ category.id }}, {{ x.id }});">
+                                                onclick="deleteLink({{ link.id }}, {{ product.id }});">
                                             Delete
                                         </button>
                                     </div>
@@ -96,15 +76,15 @@
         </div>
     </div>
 
-    <div id="modal-add-category-item"
+    <div id="modal-add-link"
          class="modal modal-lg fade"
          tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
             <form class="modal-content"
-                  onsubmit="addCategoryItem({{ category.id }});">
+                  onsubmit="addLink({{ product.id }});">
                 <div class="modal-header">
                     <h5 class="modal-title">
-                        Add category item
+                        Add link
                     </h5>
                     <button type="button"
                             class="btn-close"
@@ -115,9 +95,27 @@
                     <div class="row g-2">
                         <div class="col-12 col-lg-6">
                             <div class="input-group">
+                                <span class="input-group-text">Type</span>
+                                <select required
+                                        id="link-type-id"
+                                        class="form-select">
+                                    <option disabled
+                                            selected>
+                                        None
+                                    </option>
+                                    {% for x in cache.product_link_types %}
+                                        <option value="{{ x.id }}">
+                                            {{ x.name }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-12 col-lg-6">
+                            <div class="input-group">
                                 <span class="input-group-text">SKU</span>
                                 <select required
-                                        id="category-item-sku-id"
+                                        id="link-sku-id"
                                         class="form-select">
                                     <option disabled
                                             selected>
@@ -131,19 +129,10 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col-12 col-lg-6">
-                            <div class="input-group">
-                                <span class="input-group-text">Order</span>
-                                <input id="category-item-order"
-                                       class="form-control"
-                                       placeholder="Order"
-                                       type="number">
-                            </div>
-                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button id="add-category-item"
+                    <button id="add-link"
                             class="btn btn-load btn-success"
                             type="submit">
                         Add

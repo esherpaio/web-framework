@@ -1,39 +1,45 @@
 {% extends "admin_main.html" %}
 {% block admin_body %}
     <script>
-        async function addCoupon() {
+        async function createOption(productId) {
             event.preventDefault();
-            updateButton('add-coupon', 1);
-            await postCoupons({
-                code: document.getElementById('coupon-code').value,
-                percentage: parseInt(document.getElementById('coupon-percentage').value),
-                amount: parseFloat(document.getElementById('coupon-amount').value)
+            updateButton(`create-option`, 1);
+            await postProductsIdOptions(productId, {
+                name: document.getElementById(`option-name`).value
             });
+            await patchSetting({ cached_at: null });
             window.location.reload();
         }
-        async function deleteCoupon(couponId) {
+        async function updateOption(optionId, productId) {
             event.preventDefault();
-            updateButton(`delete-coupon-${couponId}`, 1);
-            await deleteCouponsId(couponId);
+            updateButton(`update-option-${optionId}`, 1);
+            await patchProductsIdOptionsId(productId, optionId, {
+                order: parseInt(document.getElementById(`option-order-${optionId}`).value),
+            });
+            await patchSetting({ cached_at: null });
+            window.location.reload();
+        }
+        async function deleteOption(optionId, productId) {
+            event.preventDefault();
+            updateButton(`delete-option-${optionId}`, 1);
+            await deleteProductsIdOptionsId(productId, optionId);
+            await patchSetting({ cached_at: null });
             window.location.reload();
         }
     </script>
 
+    {% include "admin/section/product_nav.html" %}
+
     <div class="row g-3">
         <div class="col-12">
-            <div class="d-flex justify-content-between">
-                <h2 class="mb-0">
-                    Coupons
-                </h2>
-                <div>
-                    <button class="btn btn-success"
-                            type="submit"
-                            data-bs-toggle="modal"
-                            data-bs-target="#modal-add-coupon">
-                        Add
-                        <i class="bi bi-plus-square ms-1"></i>
-                    </button>
-                </div>
+            <div class="d-flex justify-content-end">
+                <button class="btn btn-success"
+                        type="submit"
+                        data-bs-toggle="modal"
+                        data-bs-target="#modal-add-option">
+                    Add
+                    <i class="bi bi-plus-square ms-1"></i>
+                </button>
             </div>
         </div>
         <div class="col-12">
@@ -42,13 +48,13 @@
                     <thead class="table-secondary">
                         <tr>
                             <th>
-                                Code
+                                Name
                             </th>
                             <th>
-                                Percentage
+                                Values
                             </th>
                             <th>
-                                Amount
+                                Order
                             </th>
                             <th class="text-end">
                                 Actions
@@ -56,24 +62,34 @@
                         </tr>
                     </thead>
                     <tbody class="table-light">
-                        {% for x in coupons %}
+                        {% for option in product_options %}
                             <tr>
                                 <td>
-                                    {{ x.code }}
+                                    {{ option.name }}
                                 </td>
                                 <td>
-                                    {% if x.rate %}
-                                        {{ x.percentage }}%
-                                    {% endif %}
+                                    {% for value in option.values %}
+                                        {{ value.name }}
+                                    {% endfor %}
                                 </td>
                                 <td>
-                                    {{ x.amount|price if x.amount }}
+                                    <input id="option-order-{{ option.id }}"
+                                           class="form-control form-control-sm"
+                                           type="number"
+                                           value="{{ option.order if option.order }}">
                                 </td>
                                 <td class="text-end">
                                     <div class="btn-group">
-                                        <button id="delete-coupon-{{ x.id }}"
+                                        <a href="{{ url_for('admin.product_option', product_id=product.id, option_id=option.id) }}"
+                                           class="btn btn-sm btn-outline-primary">View</a>
+                                        <button id="update-option-{{ option.id }}"
+                                                class="btn btn-load btn-sm btn-outline-primary"
+                                                onclick="updateOption({{ option.id }}, {{ product.id }});">
+                                            Update
+                                        </button>
+                                        <button id="delete-option-{{ option.id }}"
                                                 class="btn btn-load btn-sm btn-outline-danger"
-                                                onclick="deleteCoupon({{ x.id }});">
+                                                onclick="deleteOption({{ option.id }}, {{ product.id }});">
                                             Delete
                                         </button>
                                     </div>
@@ -86,15 +102,15 @@
         </div>
     </div>
 
-    <div id="modal-add-coupon"
+    <div id="modal-add-option"
          class="modal modal-lg fade"
          tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
             <form class="modal-content"
-                  onsubmit="addCoupon();">
+                  onsubmit="addOption({{ product.id }});">
                 <div class="modal-header">
                     <h5 class="modal-title">
-                        Add coupon
+                        Add option
                     </h5>
                     <button type="button"
                             class="btn-close"
@@ -105,38 +121,18 @@
                     <div class="row g-2">
                         <div class="col-12 col-lg-6">
                             <div class="input-group">
-                                <span class="input-group-text">Code</span>
+                                <span class="input-group-text">Name</span>
                                 <input required
-                                       id="coupon-code"
+                                       id="option-name"
                                        class="form-control"
-                                       placeholder="Code"
+                                       placeholder="Name"
                                        type="text">
-                            </div>
-                        </div>
-                        <div class="col-12 col-lg-6">
-                            <div class="input-group">
-                                <span class="input-group-text">Percentage</span>
-                                <input id="coupon-percentage"
-                                       class="form-control"
-                                       placeholder="Percentage"
-                                       type="number"
-                                       step="1">
-                            </div>
-                        </div>
-                        <div class="col-12 col-lg-6">
-                            <div class="input-group">
-                                <span class="input-group-text">Amount</span>
-                                <input id="coupon-amount"
-                                       class="form-control"
-                                       placeholder="Amount"
-                                       type="number"
-                                       step="0.01">
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button id="add-coupon"
+                    <button id="add-option"
                             class="btn btn-load btn-success"
                             type="submit">
                         Add

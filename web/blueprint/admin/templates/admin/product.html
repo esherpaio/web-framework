@@ -1,7 +1,6 @@
 {% extends "admin_main.html" %}
 {% block admin_body %}
     <script>
-        // product
         async function updateProduct(id) {
             event.preventDefault();
             updateButton(`update-product`, 1);
@@ -26,622 +25,127 @@
             await patchSetting({ cached_at: null });
             window.location = resp.links.products;
         }
-        // options
-        async function createOption(productId) {
-            event.preventDefault();
-            updateButton(`create-option`, 1);
-            await postProductsIdOptions(productId, {
-                name: document.getElementById(`option-name`).value
-            });
-            await patchSetting({ cached_at: null });
-            window.location.reload();
-        }
-        async function updateOption(optionId, productId) {
-            event.preventDefault();
-            updateButton(`update-option-${optionId}`, 1);
-            await patchProductsIdOptionsId(productId, optionId, {
-                order: parseInt(document.getElementById(`option-order-${optionId}`).value),
-            });
-            await patchSetting({ cached_at: null });
-            window.location.reload();
-        }
-        async function deleteOption(optionId, productId) {
-            event.preventDefault();
-            updateButton(`delete-option-${optionId}`, 1);
-            await deleteProductsIdOptionsId(productId, optionId);
-            await patchSetting({ cached_at: null });
-            window.location.reload();
-        }
-        // media
-        async function createMedia(productId) {
-            event.preventDefault();
-            updateButton(`create-media`, 1);
-            let form = new FormData();
-            const files = document.getElementById('media-files').files;
-            for (let i = 0; i < files.length; i++) {
-                form.append('file', files[i]);
-            }
-            await postProductsIdMedia(productId, form);
-            await patchSetting({ cached_at: null });
-            window.location.reload();
-        }
-        async function updateMedia(mediaId, productId) {
-            event.preventDefault();
-            updateButton(`update-media-${mediaId}`, 1);
-            await patchProductsIdMediaId(productId, mediaId, {
-                order: parseInt(document.getElementById(`media-order-${mediaId}`).value),
-                description: document.getElementById(`media-description-${mediaId}`).value,
-            });
-            await patchSetting({ cached_at: null });
-            window.location.reload();
-        }
-        async function deleteMedia(mediaId, productId) {
-            event.preventDefault();
-            updateButton(`delete-media-${mediaId}`, 1);
-            await deleteProductsIdMediaId(productId, mediaId);
-            await patchSetting({ cached_at: null });
-            window.location.reload();
-        }
-        // links
-        async function createLink(productId) {
-            event.preventDefault();
-            updateButton(`create-link`, 1);
-            await postProductsIdLinks(productId, {
-                type_id: parseInt(document.getElementById(`link-type-id`).value),
-                sku_id: parseInt(document.getElementById(`link-sku-id`).value),
-            });
-            await patchSetting({ cached_at: null });
-            window.location.reload();
-        }
-        async function deleteLink(linkId, productId) {
-            event.preventDefault();
-            updateButton(`delete-link-${linkId}`, 1);
-            await deleteProductsIdLinksId(productId, linkId);
-            await patchSetting({ cached_at: null });
-            window.location.reload();
-        }
-        // skus
-        async function createSkus(productId) {
-            event.preventDefault();
-            updateButton(`create-skus`, 1);
-            await postProductsIdSkus(productId);
-            await patchSetting({ cached_at: null });
-            window.location.reload();
-        }
-        async function updateSku(skuId) {
-            event.preventDefault();
-            updateButton(`update-sku-${skuId}`, 1);
-            await patchSkusId(skuId, {
-                is_visible: document.getElementById(`sku-is-visible-${skuId}`).checked
-            });
-            await patchSetting({ cached_at: null });
-            window.location.reload();
-        }
-        async function deleteSku(skuId) {
-            event.preventDefault();
-            updateButton(`delete-sku-${skuId}`, 1);
-            await deleteSkusId(skuId);
-            await patchSetting({ cached_at: null });
-            window.location.reload();
-        }
     </script>
 
-    <h2>
-        Product - {{ product.name }}
-    </h2>
-    <ul class="nav nav-tabs mb-3"
-        role="tablist">
-        <li class="nav-item"
-            role="presentation">
-            <button class="nav-link py-2 {{ 'active' if tab == 'general' }}"
-                    data-bs-toggle="pill"
-                    data-bs-target="#pills-1"
-                    type="button"
-                    role="tab"
-                    onclick="setParameter('tab', 'general')">
-                General
-            </button>
-        </li>
-        <li class="nav-item"
-            role="presentation">
-            <button class="nav-link py-2 {{ 'active' if tab == 'options' }}"
-                    data-bs-toggle="pill"
-                    data-bs-target="#pills-2"
-                    type="button"
-                    role="tab"
-                    onclick="setParameter('tab', 'options')">
-                Options
-            </button>
-        </li>
-        <li class="nav-item"
-            role="presentation">
-            <button class="nav-link py-2 {{ 'active' if tab == 'media' }}"
-                    data-bs-toggle="pill"
-                    data-bs-target="#pills-3"
-                    type="button"
-                    role="tab"
-                    onclick="setParameter('tab', 'media')">
-                Media
-            </button>
-        </li>
-        <li class="nav-item"
-            role="presentation">
-            <button class="nav-link py-2 {{ 'active' if tab == 'links' }}"
-                    data-bs-toggle="pill"
-                    data-bs-target="#pills-4"
-                    type="button"
-                    role="tab"
-                    onclick="setParameter('tab', 'links')">
-                Links
-            </button>
-        </li>
-        <li class="nav-item"
-            role="presentation">
-            <button class="nav-link py-2 {{ 'active' if tab == 'skus' }}"
-                    data-bs-toggle="pill"
-                    data-bs-target="#pills-5"
-                    type="button"
-                    role="tab"
-                    onclick="setParameter('tab', 'skus')">
-                SKUs
-            </button>
-        </li>
-    </ul>
+    {% include "admin/section/product_nav.html" %}
 
-    <div class="tab-content">
-        <!-- product -->
-        <div id="pills-1"
-             class="tab-pane fade {{ 'show active' if tab == 'general' }}"
-             role="tabpanel"
-             tabindex="0">
-            <div class="row g-3">
-                <div class="col-12">
-                    <div class="d-flex justify-content-end">
-                        <div class="d-grid d-sm-block gap-2">
-                            <button id="update-product"
-                                    class="btn btn-primary btn-load"
-                                    onclick="updateProduct({{ product.id }});">
-                                Update
-                            </button>
-                            <button class="btn btn-danger"
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#modal-delete-product">
-                                Delete
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-12">
-                    <div class="row g-3">
-                        <div class="col-12 col-lg-4">
-                            <div class="input-group">
-                                <span class="input-group-text">Name</span>
-                                <input disabled
-                                       id="product-name"
-                                       class="form-control"
-                                       placeholder="Name"
-                                       type="text"
-                                       value="{{ product.name }}">
-                            </div>
-                        </div>
-                        <div class="col-12 col-lg-4">
-                            <div class="input-group">
-                                <span class="input-group-text">Type</span>
-                                <select id="product-type-id"
-                                        class="form-select">
-                                    <option {{ 'selected' if not product.type_id }} disabled>
-                                        Choose
-                                    </option>
-                                    {% for x in cache.product_types %}
-                                        <option {{ 'selected' if x.id == product.type_id }} value="{{ x.id }}">
-                                            {{ x.name }}
-                                        </option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-12 col-lg-4">
-                            <div class="input-group">
-                                <span class="input-group-text">Shipment class</span>
-                                <select id="product-shipment-class-id"
-                                        class="form-select">
-                                    <option {{ 'selected' if not product.shipment_class_id }}>
-                                        None
-                                    </option>
-                                    {% for x in shipment_classes %}
-                                        <option {{ 'selected' if x.id == product.shipment_class_id }} value="{{ x.id }}">
-                                            {{ x.name }}
-                                        </option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-12 col-lg-4">
-                            <div class="input-group">
-                                <span class="input-group-text">Unit price</span>
-                                <input id="product-unit-price"
-                                       class="form-control"
-                                       placeholder="Unit price"
-                                       type="number"
-                                       step="0.01"
-                                       value="{{ product.unit_price|price }}">
-                            </div>
-                        </div>
-                        <div class="col-12 col-lg-4">
-                            <div class="input-group">
-                                <span class="input-group-text">Consent required</span>
-                                <div class="input-group-text">
-                                    <input {{ "checked" if product.consent_required }} id="product-consent-required" class="form-check-input mt-0" type="checkbox">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-12">
-                            <div class="input-group">
-                                <span class="input-group-text">Download link</span>
-                                <input id="product-file-url"
-                                       class="form-control mt-0"
-                                       type="text"
-                                       value="{{ product.file_url if product.file_url }}">
-                            </div>
-                        </div>
-                        <div class="col-12">
-                            <div class="input-group">
-                                <span class="input-group-text">Summary</span>
-                                <textarea id="product-summary"
-                                          class="form-control"
-                                          rows="2">{{ product.summary if product.summary }}</textarea>
-                            </div>
-                        </div>
-                        <div class="col-12">
-                            <div class="d-block">
-                                <div id="html-editor">
-                                </div>
-                            </div>
-                            <script defer>
-                                let htmlEl = document.getElementById('html-editor');
-                                let htmlOptions = [
-                                    [{'header': [3, 4, 5, 6, false]}],
-                                    ['bold', 'italic', 'underline', 'strike'],
-                                    ['link'],
-                                    [{'list': 'ordered'}, {'list': 'bullet'}],
-                                    [{'script': 'sub'}, {'script': 'super'}],
-                                    ['clean'],
-                                ];
-                                const htmlValue = '{{ product.attributes["html"]|safe if product.attributes["html"] else '' }}';
-                                htmlEditor = new Quill(htmlEl, {theme: 'snow', modules: {toolbar: htmlOptions}});
-                                htmlEditor.clipboard.dangerouslyPasteHTML(htmlValue);
-                            </script>
-                        </div>
-                    </div>
+    <div class="row g-3">
+        <div class="col-12">
+            <div class="d-flex justify-content-end">
+                <div class="d-grid d-sm-block gap-2">
+                    <button id="update-product"
+                            class="btn btn-primary btn-load"
+                            onclick="updateProduct({{ product.id }});">
+                        Update
+                    </button>
+                    <button class="btn btn-danger"
+                            data-bs-toggle="modal"
+                            data-bs-target="#modal-delete-product">
+                        Delete
+                    </button>
                 </div>
             </div>
         </div>
-        <!-- options -->
-        <div id="pills-2"
-             class="tab-pane fade {{ 'show active' if tab == 'options' }}"
-             role="tabpanel"
-             tabindex="0">
+        <div class="col-12">
             <div class="row g-3">
-                <div class="col-12">
-                    <div class="d-flex justify-content-end">
-                        <form onsubmit="createOption({{ product.id }});">
-                            <div class="input-group">
-                                <input required
-                                       id="option-name"
-                                       class="form-control"
-                                       placeholder="Name"
-                                       type="text">
-                                <button id="create-option"
-                                        class="btn btn-success btn-load"
-                                        type="submit">
-                                    Create
-                                </button>
-                            </div>
-                        </form>
+                <div class="col-12 col-lg-4">
+                    <div class="input-group">
+                        <span class="input-group-text">Name</span>
+                        <input disabled
+                               id="product-name"
+                               class="form-control"
+                               placeholder="Name"
+                               type="text"
+                               value="{{ product.name }}">
+                    </div>
+                </div>
+                <div class="col-12 col-lg-4">
+                    <div class="input-group">
+                        <span class="input-group-text">Type</span>
+                        <select id="product-type-id"
+                                class="form-select">
+                            <option {{ 'selected' if not product.type_id }} disabled>
+                                None
+                            </option>
+                            {% for x in cache.product_types %}
+                                <option {{ 'selected' if x.id == product.type_id }} value="{{ x.id }}">
+                                    {{ x.name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="col-12 col-lg-4">
+                    <div class="input-group">
+                        <span class="input-group-text">Shipment class</span>
+                        <select id="product-shipment-class-id"
+                                class="form-select">
+                            <option {{ 'selected' if not product.shipment_class_id }}>
+                                None
+                            </option>
+                            {% for x in shipment_classes %}
+                                <option {{ 'selected' if x.id == product.shipment_class_id }} value="{{ x.id }}">
+                                    {{ x.name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="col-12 col-lg-4">
+                    <div class="input-group">
+                        <span class="input-group-text">Unit price</span>
+                        <input id="product-unit-price"
+                               class="form-control"
+                               placeholder="Unit price"
+                               type="number"
+                               step="0.01"
+                               value="{{ product.unit_price|price }}">
+                    </div>
+                </div>
+                <div class="col-12 col-lg-4">
+                    <div class="input-group">
+                        <span class="input-group-text">Consent required</span>
+                        <div class="input-group-text">
+                            <input {{ "checked" if product.consent_required }} id="product-consent-required" class="form-check-input mt-0" type="checkbox">
+                        </div>
                     </div>
                 </div>
                 <div class="col-12">
-                    <div class="table-responsive">
-                        <table class="table rounded-2 overflow-hidden align-middle mb-0">
-                            <thead class="table-secondary">
-                                <tr>
-                                    <th>
-                                        Name
-                                    </th>
-                                    <th>
-                                        Values
-                                    </th>
-                                    <th>
-                                        Order
-                                    </th>
-                                    <th class="text-end">
-                                        Actions
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody class="table-light">
-                                {% for option in product_options %}
-                                    <tr>
-                                        <td>
-                                            {{ option.name }}
-                                        </td>
-                                        <td>
-                                            {% for value in option.values %}
-                                                {{ value.name }}
-                                            {% endfor %}
-                                        </td>
-                                        <td>
-                                            <input id="option-order-{{ option.id }}"
-                                                   class="form-control form-control-sm"
-                                                   type="number"
-                                                   value="{{ option.order }}">
-                                        </td>
-                                        <td class="text-end">
-                                            <div class="btn-group">
-                                                <a href="{{ url_for('admin.product_option', product_id=product.id, option_id=option.id) }}"
-                                                   class="btn btn-sm btn-outline-primary">View</a>
-                                                <button id="update-option-{{ option.id }}"
-                                                        class="btn btn-load btn-sm btn-outline-primary"
-                                                        onclick="updateOption({{ option.id }}, {{ product.id }});">
-                                                    Update
-                                                </button>
-                                                <button id="delete-option-{{ option.id }}"
-                                                        class="btn btn-load btn-sm btn-outline-danger"
-                                                        onclick="deleteOption({{ option.id }}, {{ product.id }});">
-                                                    Delete
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- media -->
-        <div id="pills-3"
-             class="tab-pane fade {{ 'show active' if tab == 'media' }}"
-             role="tabpanel"
-             tabindex="0">
-            <div class="row g-3">
-                <div class="col-12">
-                    <div class="d-flex justify-content-end">
-                        <form onsubmit="createMedia({{ product.id }});">
-                            <div class="input-group">
-                                <input required
-                                       multiple
-                                       id="media-files"
-                                       class="form-control"
-                                       placeholder="Files"
-                                       type="file"
-                                       name="file">
-                                <button id="create-media"
-                                        class="btn btn-success btn-load"
-                                        type="submit">
-                                    Create
-                                </button>
-                            </div>
-                        </form>
+                    <div class="input-group">
+                        <span class="input-group-text">Download link</span>
+                        <input id="product-file-url"
+                               class="form-control mt-0"
+                               type="text"
+                               value="{{ product.file_url if product.file_url }}">
                     </div>
                 </div>
                 <div class="col-12">
-                    <div class="row g-3">
-                        {% for x in product_medias %}
-                            <div class="col-12 col-sm-6 col-md-4 col-xl-3">
-                                <div class="card">
-                                    {% if x.file.is_image %}
-                                        <img class="card-img-top bg-light border-bottom"
-                                             src="{{ cdn_url(x.file.path) }}?class=medium"
-                                             alt="{{ x.file.description if x.file.description }}"
-                                             loading="lazy">
-                                    {% elif x.file.is_video %}
-                                        <video controls
-                                               muted
-                                               class="card-img-top bg-light border-bottom">
-                                            <source src="{{ cdn_url(x.file.path) }}">
-                                        </video>
-                                    {% endif %}
-                                    <div class="card-body">
-                                        <div class="row g-2 mb-2">
-                                            <div class="col-12">
-                                                <input id="media-description-{{ x.id }}"
-                                                       class="form-control form-control-sm"
-                                                       type="text"
-                                                       placeholder="Description"
-                                                       value="{{ x.file.description if x.file.description }}">
-                                            </div>
-                                            <div class="col-12">
-                                                <input id="media-order-{{ x.id }}"
-                                                       class="form-control form-control-sm"
-                                                       type="number"
-                                                       step="1"
-                                                       placeholder="Order"
-                                                       value="{{ x.order if x.order }}">
-                                            </div>
-                                        </div>
-                                        <button id="update-media-{{ x.id }}"
-                                                class="btn btn-load btn-sm btn-outline-primary"
-                                                onclick="updateMedia({{ x.id }}, {{ product.id }})">
-                                            Update
-                                        </button>
-                                        <button id="delete-media-{{ x.id }}"
-                                                class="btn btn-load btn-sm btn-outline-danger"
-                                                onclick="deleteMedia({{ x.id }}, {{ product.id }})">
-                                            Delete
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        {% endfor %}
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- links -->
-        <div id="pills-4"
-             class="tab-pane fade {{ 'show active' if tab == 'links' }}"
-             role="tabpanel"
-             tabindex="0">
-            <div class="row g-3">
-                <div class="col-12">
-                    <div class="d-flex justify-content-end">
-                        <form onsubmit="createLink({{ product.id }});">
-                            <div class="input-group">
-                                <select required
-                                        id="link-sku-id"
-                                        class="form-select">
-                                    <option disabled
-                                            selected>
-                                        SKU
-                                    </option>
-                                    {% for x in available_skus %}
-                                        <option value="{{ x.id }}">
-                                            {{ x.name }}
-                                        </option>
-                                    {% endfor %}
-                                </select>
-                                <select required
-                                        id="link-type-id"
-                                        class="form-select">
-                                    <option disabled
-                                            selected>
-                                        Type
-                                    </option>
-                                    {% for x in cache.product_link_types %}
-                                        <option value="{{ x.id }}">
-                                            {{ x.name }}
-                                        </option>
-                                    {% endfor %}
-                                </select>
-                                <button id="create-link"
-                                        class="btn btn-load btn-success"
-                                        type="submit">
-                                    Create
-                                </button>
-                            </div>
-                        </form>
+                    <div class="input-group">
+                        <span class="input-group-text">Summary</span>
+                        <textarea id="product-summary"
+                                  class="form-control"
+                                  rows="2">{{ product.summary if product.summary }}</textarea>
                     </div>
                 </div>
                 <div class="col-12">
-                    <div class="table-responsive">
-                        <table class="table rounded-2 overflow-hidden align-middle mb-0">
-                            <thead class="table-secondary">
-                                <tr>
-                                    <th>
-                                        Type
-                                    </th>
-                                    <th>
-                                        SKU
-                                    </th>
-                                    <th class="text-end">
-                                        Actions
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody class="table-light">
-                                {% for link in product_links %}
-                                    <tr>
-                                        <td>
-                                            {{ link.type.name }}
-                                        </td>
-                                        <td>
-                                            {{ link.sku.name }}
-                                        </td>
-                                        <td class="text-end">
-                                            <div class="btn-group">
-                                                <button id="delete-link-{{ link.id }}"
-                                                        class="btn btn-load btn-sm btn-outline-danger"
-                                                        onclick="deleteLink({{ link.id }}, {{ product.id }});">
-                                                    Delete
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
+                    <div class="d-block">
+                        <div id="html-editor">
+                        </div>
                     </div>
-                </div>
-            </div>
-        </div>
-        <!-- skus -->
-        <div id="pills-5"
-             class="tab-pane fade {{ 'show active' if tab == 'skus' }}"
-             role="tabpanel"
-             tabindex="0">
-            <div class="row g-3">
-                <div class="col-12">
-                    <div class="d-flex justify-content-end">
-                        <form onsubmit="createSkus({{ product.id }});">
-                            <div class="input-group">
-                                <button id="create-skus"
-                                        class="btn btn-load btn-success"
-                                        type="submit">
-                                    Generate
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-                <div class="col-12">
-                    <div class="table-responsive">
-                        <table class="table rounded-2 overflow-hidden align-middle mb-0">
-                            <thead class="table-secondary">
-                                <tr>
-                                    <th>
-                                        ID
-                                    </th>
-                                    <th>
-                                        Options
-                                    </th>
-                                    <th>
-                                        In Stock
-                                    </th>
-                                    <th class="text-end">
-                                        Actions
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody class="table-light">
-                                {% for sku in skus %}
-                                    <tr>
-                                        <td>
-                                            {{ sku.id }}
-                                        </td>
-                                        <td class="small ps-2">
-                                            {% if sku.details %}
-                                                {% for detail in sku.details %}
-                                                    {{ detail.option.name }}: {{ detail.value.name }}
-                                                    <br>
-                                                {% endfor %}
-                                            {% else %}
-                                                None
-                                            {% endif %}
-                                        </td>
-                                        <td>
-                                            <input {{ 'checked' if sku.is_visible }} id="sku-is-visible-{{ sku.id }}" class="form-check-input" type="checkbox">
-                                        </td>
-                                        <td class="text-end">
-                                            <div class="btn-group">
-                                                <button id="update-sku-{{ sku.id }}"
-                                                        class="btn btn-load btn-sm btn-outline-primary"
-                                                        onclick="updateSku({{ sku.id }});">
-                                                    Update
-                                                </button>
-                                                <button id="delete-sku-{{ sku.id }}"
-                                                        class="btn btn-load btn-sm btn-outline-danger"
-                                                        onclick="deleteSku({{ sku.id }});">
-                                                    Delete
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
+                    <script defer>
+                        let htmlEl = document.getElementById('html-editor');
+                        let htmlOptions = [
+                            [{'header': [3, 4, 5, 6, false]}],
+                            ['bold', 'italic', 'underline', 'strike'],
+                            ['link'],
+                            [{'list': 'ordered'}, {'list': 'bullet'}],
+                            [{'script': 'sub'}, {'script': 'super'}],
+                            ['clean'],
+                        ];
+                        const htmlValue = '{{ product.attributes["html"]|safe if product.attributes["html"] else '' }}';
+                        htmlEditor = new Quill(htmlEl, {theme: 'snow', modules: {toolbar: htmlOptions}});
+                        htmlEditor.clipboard.dangerouslyPasteHTML(htmlValue);
+                    </script>
                 </div>
             </div>
         </div>

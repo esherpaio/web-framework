@@ -1,0 +1,145 @@
+{% extends "admin_main.html" %}
+{% block admin_body %}
+    <script>
+        async function addMedia(productId) {
+            event.preventDefault();
+            updateButton(`add-media`, 1);
+            let form = new FormData();
+            const files = document.getElementById('media-files').files;
+            for (let i = 0; i < files.length; i++) form.append('file', files[i]);
+            await postProductsIdMedia(productId, form);
+            await patchSetting({ cached_at: null });
+            window.location.reload();
+        }
+        async function updateMedia(mediaId, productId) {
+            event.preventDefault();
+            updateButton(`update-media-${mediaId}`, 1);
+            await patchProductsIdMediaId(productId, mediaId, {
+                order: parseInt(document.getElementById(`media-order-${mediaId}`).value),
+                description: document.getElementById(`media-description-${mediaId}`).value,
+            });
+            await patchSetting({ cached_at: null });
+            window.location.reload();
+        }
+        async function deleteMedia(mediaId, productId) {
+            event.preventDefault();
+            updateButton(`delete-media-${mediaId}`, 1);
+            await deleteProductsIdMediaId(productId, mediaId);
+            await patchSetting({ cached_at: null });
+            window.location.reload();
+        }
+    </script>
+
+    {% include "admin/section/product_nav.html" %}
+
+    <div class="row g-3">
+        <div class="col-12">
+            <div class="d-flex justify-content-end">
+                <button class="btn btn-success"
+                        type="submit"
+                        data-bs-toggle="modal"
+                        data-bs-target="#modal-add-media">
+                    Add
+                    <i class="bi bi-plus-square ms-1"></i>
+                </button>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="row g-3">
+                {% for x in product_medias %}
+                    <div class="col-12 col-sm-6 col-md-4 col-xl-3">
+                        <div class="card">
+                            {% if x.file.is_image %}
+                                <img class="card-img-top bg-light border-bottom"
+                                     src="{{ cdn_url(x.file.path) }}?class=medium"
+                                     alt="{{ x.file.description if x.file.description }}"
+                                     loading="lazy">
+                            {% elif x.file.is_video %}
+                                <video controls
+                                       muted
+                                       class="card-img-top bg-light border-bottom">
+                                    <source src="{{ cdn_url(x.file.path) }}">
+                                </video>
+                            {% endif %}
+                            <div class="card-body">
+                                <div class="row g-2 mb-2">
+                                    <div class="col-12">
+                                        <input id="media-description-{{ x.id }}"
+                                               class="form-control form-control-sm"
+                                               type="text"
+                                               placeholder="Description"
+                                               value="{{ x.file.description if x.file.description }}">
+                                    </div>
+                                    <div class="col-12">
+                                        <input id="media-order-{{ x.id }}"
+                                               class="form-control form-control-sm"
+                                               type="number"
+                                               step="1"
+                                               placeholder="Order"
+                                               value="{{ x.order if x.order }}">
+                                    </div>
+                                </div>
+                                <div class="btn-group">
+                                    <button id="update-media-{{ x.id }}"
+                                            class="btn btn-load btn-sm btn-outline-primary"
+                                            onclick="updateMedia({{ x.id }}, {{ product.id }})">
+                                        Update
+                                    </button>
+                                    <button id="delete-media-{{ x.id }}"
+                                            class="btn btn-load btn-sm btn-outline-danger"
+                                            onclick="deleteMedia({{ x.id }}, {{ product.id }})">
+                                        Delete
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-add-media"
+         class="modal modal-lg fade"
+         tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <form class="modal-content"
+                  onsubmit="addMedia({{ product.id }});">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        Add media
+                    </h5>
+                    <button type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal">
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-2">
+                        <div class="col-12 col-lg-6">
+                            <input required
+                                   multiple
+                                   id="media-files"
+                                   class="form-control"
+                                   placeholder="Files"
+                                   type="file"
+                                   name="file">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="add-media"
+                            class="btn btn-load btn-success"
+                            type="submit">
+                        Add
+                    </button>
+                    <button type="button"
+                            class="btn btn-secondary"
+                            data-bs-dismiss="modal">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

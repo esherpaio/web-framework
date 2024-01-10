@@ -1,0 +1,101 @@
+{% extends "admin_main.html" %}
+{% block admin_body %}
+    <script>
+        async function createSkus(productId) {
+            event.preventDefault();
+            updateButton(`create-skus`, 1);
+            await postProductsIdSkus(productId);
+            await patchSetting({ cached_at: null });
+            window.location.reload();
+        }
+        async function updateSku(skuId) {
+            event.preventDefault();
+            updateButton(`update-sku-${skuId}`, 1);
+            await patchSkusId(skuId, {
+                is_visible: document.getElementById(`sku-is-visible-${skuId}`).checked
+            });
+            await patchSetting({ cached_at: null });
+            window.location.reload();
+        }
+        async function deleteSku(skuId) {
+            event.preventDefault();
+            updateButton(`delete-sku-${skuId}`, 1);
+            await deleteSkusId(skuId);
+            await patchSetting({ cached_at: null });
+            window.location.reload();
+        }
+    </script>
+
+    {% include "admin/section/product_nav.html" %}
+
+    <div class="row g-3">
+        <div class="col-12">
+            <div class="d-flex justify-content-end">
+                <button id="create-skus"
+                        class="btn btn-load btn-primary"
+                        type="submit"
+                        onclick="createSkus({{ product.id }});">
+                    Generate
+                </button>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="table-responsive">
+                <table class="table rounded-2 overflow-hidden align-middle mb-0">
+                    <thead class="table-secondary">
+                        <tr>
+                            <th>
+                                ID
+                            </th>
+                            <th>
+                                Options
+                            </th>
+                            <th>
+                                Stock
+                            </th>
+                            <th class="text-end">
+                                Actions
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="table-light">
+                        {% for sku in skus %}
+                            <tr>
+                                <td>
+                                    {{ sku.id }}
+                                </td>
+                                <td class="small ps-2">
+                                    {% if sku.details %}
+                                        {% for detail in sku.details %}
+                                            {{ detail.option.name }}: {{ detail.value.name }}
+                                            <br>
+                                        {% endfor %}
+                                    {% else %}
+                                        None
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <input {{ 'checked' if sku.is_visible }} id="sku-is-visible-{{ sku.id }}" class="form-check-input" type="checkbox">
+                                </td>
+                                <td class="text-end">
+                                    <div class="btn-group">
+                                        <button id="update-sku-{{ sku.id }}"
+                                                class="btn btn-load btn-sm btn-outline-primary"
+                                                onclick="updateSku({{ sku.id }});">
+                                            Update
+                                        </button>
+                                        <button id="delete-sku-{{ sku.id }}"
+                                                class="btn btn-load btn-sm btn-outline-danger"
+                                                onclick="deleteSku({{ sku.id }});">
+                                            Delete
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}
