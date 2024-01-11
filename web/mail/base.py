@@ -73,8 +73,8 @@ def _send_smtp(
     msg.attach(body)
     # Add attachment
     if blob_path and blob_name:
-        with open(blob_path, "rb") as file:
-            data = file.read()
+        with open(blob_path, "rb") as file_:
+            data = file_.read()
         blob_str = base64.b64encode(data).decode()
         attachment = MIMEApplication(blob_str)
         attachment.add_header("Content-Disposition", "attachment", filename=blob_name)
