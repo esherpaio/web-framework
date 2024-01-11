@@ -21,8 +21,8 @@ def save_pdf(pdf: Document, pdf_name: str) -> str:
         os.makedirs(pdf_dir)
     # Export PDF
     pdf_path = os.path.join(pdf_dir, pdf_name)
-    with open(pdf_path, "wb") as file:
-        PDF.dumps(file, pdf)  # noqa
+    with open(pdf_path, "wb") as file_:
+        PDF.dumps(file_, pdf)  # noqa
     # Return path
     return pdf_path
 

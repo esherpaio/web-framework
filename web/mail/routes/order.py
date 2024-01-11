@@ -35,7 +35,7 @@ def send_order_paid(
     paragraphs = [_("MAIL_ORDER_PAID_P1"), _("MAIL_ORDER_PAID_P2")]
     pdf_name = _("MAIL_ORDER_PAID_FILENAME", invoice_number=invoice_number)
     html = render_email(title, paragraphs)
-    send_email(to, subject, html, pdf_path, pdf_name)
+    send_email(to, subject, html, blob_path=pdf_path, blob_name=pdf_name)
 
 
 def send_order_shipped(
@@ -73,4 +73,4 @@ def send_order_refunded(
     paragraphs = [_("MAIL_ORDER_REFUNDED_P1"), _("MAIL_ORDER_REFUNDED_P2")]
     pdf_name = _("MAIL_ORDER_REFUNDED_FILENAME", refund_number=refund_number)
     html = render_email(title, paragraphs)
-    send_email(to, subject, html, pdf_path, pdf_name)
+    send_email(to, subject, html, blob_path=pdf_path, blob_name=pdf_name)
