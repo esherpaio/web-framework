@@ -1,4 +1,4 @@
-from datetime import UTC, datetime, timedelta
+from datetime import datetime, timedelta
 
 from flask import url_for
 from flask_login import current_user
@@ -35,7 +35,7 @@ def post_orders_id_payments(order_id: int) -> Response:
         description = f"Order {order.id}"
         redirect = url_for(config.ENDPOINT_ORDER, order_id=order.id, _external=True)
         is_test = config.MOLLIE_KEY.startswith("test")
-        due_date = (datetime.now(UTC) + timedelta(days=100)).strftime("%Y-%m-%d")
+        due_date = (datetime.utcnow() + timedelta(days=100)).strftime("%Y-%m-%d")
         mollie_payment = Mollie().payments.create(
             {
                 "amount": amount,

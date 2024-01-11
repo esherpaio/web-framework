@@ -1,4 +1,4 @@
-from datetime import UTC, datetime
+from datetime import datetime
 
 from sqlalchemy.orm import Session
 from werkzeug import Response
@@ -59,4 +59,4 @@ def patch_setting() -> Response:
 
 def set_cache(s: Session, data: dict, model: Setting) -> None:
     if "cached_at" in data:
-        data["cached_at"] = datetime.now(UTC).isoformat()
+        data["cached_at"] = datetime.utcnow().isoformat()
