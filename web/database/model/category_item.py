@@ -10,7 +10,7 @@ class CategoryItem(Base):
     __table_args__ = (
         UniqueConstraint("category_id", "article_id"),
         UniqueConstraint("category_id", "sku_id"),
-        CheckConstraint("sku_id IS NOT NULL OR article_id IS NOT NULL"),
+        CheckConstraint("sku_id IS NULL OR article_id IS NULL"),
     )
 
     order = MC(Integer)

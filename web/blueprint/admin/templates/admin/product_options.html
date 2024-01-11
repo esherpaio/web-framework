@@ -1,9 +1,9 @@
 {% extends "admin_main.html" %}
 {% block admin_body %}
     <script>
-        async function createOption(productId) {
+        async function addOption(productId) {
             event.preventDefault();
-            updateButton(`create-option`, 1);
+            updateButton(`add-option`, 1);
             await postProductsIdOptions(productId, {
                 name: document.getElementById(`option-name`).value
             });

@@ -12,7 +12,7 @@ from ._validation import get_upper, val_length, val_number
 
 class Coupon(Base):
     __tablename__ = "coupon"
-    __table_args__ = (CheckConstraint("amount IS NOT NULL OR rate IS NOT NULL"),)
+    __table_args__ = (CheckConstraint("amount IS NULL OR rate IS NULL"),)
 
     amount = MC(default_price)
     code = MC(String(32), nullable=False)
