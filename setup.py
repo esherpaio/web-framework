@@ -5,7 +5,10 @@ from version import __version__
 DATA = [
     "blueprint/admin/static/css/*",
     "blueprint/admin/static/js/*",
+    "blueprint/admin/static/js/ext/*",
     "blueprint/admin/templates/*",
+    "blueprint/admin/templates/admin/*",
+    "blueprint/admin/templates/admin/section/*",
     "i18n/translations/*",
     "mail/template/*",
 ]
