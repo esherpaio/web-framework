@@ -3,12 +3,9 @@ from setuptools import find_packages, setup
 from version import __version__
 
 DATA = [
-    "blueprint/admin/static/js/api/*",
-    "blueprint/admin/static/js/route/*",
-    "blueprint/admin/static/js/utils/*",
+    "blueprint/admin/static/css/*",
+    "blueprint/admin/static/js/*",
     "blueprint/admin/templates/*",
-    "blueprint/admin/templates/admin/*",
-    "blueprint/admin/templates/includes/*",
     "i18n/translations/*",
     "mail/template/*",
 ]
