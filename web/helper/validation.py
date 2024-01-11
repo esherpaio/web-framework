@@ -1,4 +1,5 @@
 import re
+import urllib.parse
 
 #
 # Functions
@@ -15,3 +16,9 @@ def is_phone(text: str) -> bool:
 
 def gen_slug(name: str) -> str:
     return re.sub(r"[ _]+", "-", re.sub(r"[^\w -]+", "", name)).lower()
+
+
+def strip_scheme(url: str) -> str:
+    parsed = urllib.parse.urlparse(url)
+    scheme = f"{parsed.scheme}://"
+    return parsed.geturl().replace(scheme, "", 1)
