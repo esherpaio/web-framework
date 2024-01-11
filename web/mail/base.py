@@ -1,4 +1,3 @@
-import base64
 import os
 from email.mime.application import MIMEApplication
 from email.mime.multipart import MIMEMultipart
@@ -75,8 +74,7 @@ def _send_smtp(
     if blob_path and blob_name:
         with open(blob_path, "rb") as file_:
             data = file_.read()
-        blob_str = base64.b64encode(data).decode()
-        attachment = MIMEApplication(blob_str)
+        attachment = MIMEApplication(data)
         attachment.add_header("Content-Disposition", "attachment", filename=blob_name)
         msg.attach(attachment)
     # Send the message
