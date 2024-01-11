@@ -33,8 +33,9 @@ lint:
 sandbox:
 	cd sandbox && flask run --debug --port=5000
 sandbox_migrate:
-	cd sandbox && rm -f -r migrate/version/*
 	cd sandbox && set -a; source .env; set +a && alembic revision --autogenerate -m "" && alembic upgrade head
+sandbox_rm_migrate:
+	cd sandbox && rm -f -r migrate/version/*
 
 ## TESTING
 ## ----------
@@ -43,8 +44,9 @@ sandbox_migrate:
 test:
 	cd tests && set -a; source .env; set +a && pytest .
 test_migrate:
-	cd tests && rm -f -r migrate/version/*
 	cd tests && set -a; source .env; set +a && alembic revision --autogenerate -m "" && alembic upgrade head
+test_rm_migrate:
+	cd tests && rm -f -r migrate/version/*
 
 ## TRANSLATIONS
 ## ----------

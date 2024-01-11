@@ -1,7 +1,7 @@
 import sqlalchemy as sa
 from alembic import op
 
-revision = "23207b800124"
+revision = "4b0bae474e50"
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -421,7 +421,7 @@ def upgrade() -> None:
             nullable=True,
         ),
         sa.Column("updated_at", sa.DateTime(timezone=True), nullable=True),
-        sa.CheckConstraint("country_id IS NOT NULL OR region_id IS NOT NULL"),
+        sa.CheckConstraint("country_id IS NULL OR region_id IS NULL"),
         sa.ForeignKeyConstraint(["country_id"], ["country.id"], ondelete="RESTRICT"),
         sa.ForeignKeyConstraint(["region_id"], ["region.id"], ondelete="RESTRICT"),
         sa.PrimaryKeyConstraint("id"),
