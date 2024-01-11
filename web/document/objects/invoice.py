@@ -30,7 +30,10 @@ def gen_invoice(
     margin = Decimal(30)
     layout = SingleColumnLayout(page, margin, margin)
 
-    layout.add(Image(config.WEBSITE_LOGO_URL, width=Decimal(300), height=Decimal(35)))
+    image = Image(config.WEBSITE_LOGO_URL, height=Decimal(35))
+    image.force_load_image()
+    image.set_width()
+    layout.add(image)
     layout.add(Paragraph(_("PDF_INVOICE"), font=FONT_BOLD, font_size=FONT_SIZE_TITLE))
     layout.add(_build_order_info(order, invoice))
 
