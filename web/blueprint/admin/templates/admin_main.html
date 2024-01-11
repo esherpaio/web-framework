@@ -123,7 +123,7 @@
                         <i class="bi bi-layout-sidebar-inset"></i>
                     </a>
                     <a class="navbar-brand fw-semibold"
-                       href="url_for({{ config.ENDPOINT_HOME }})"
+                       href="{{ url_for(config.ENDPOINT_HOME) }}"
                        target="_blank">{{ config.WEBSITE_NAME }}</a>
                     <div class="position-relative">
                         <a class="d-block d-md-none text-white fs-2"
