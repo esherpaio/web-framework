@@ -33,7 +33,7 @@ class Translator:
 
     @property
     def language_code(self) -> str:
-        if current_locale:
+        if current_locale and current_locale.language:
             return current_locale.language.code
         elif config.WEBSITE_LANGUAGE_CODE:
             return config.WEBSITE_LANGUAGE_CODE
