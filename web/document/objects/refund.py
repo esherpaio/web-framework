@@ -33,7 +33,7 @@ def gen_refund(
 
     image = Image(config.WEBSITE_LOGO_URL, height=Decimal(35))
     image.force_load_image()
-    image.set_width()
+    image.set_width_from_height()
     layout.add(image)
     layout.add(Paragraph(_("PDF_REFUND"), font=FONT_BOLD, font_size=FONT_SIZE_TITLE))
     layout.add(_build_refund_info(order, invoice, refund))
