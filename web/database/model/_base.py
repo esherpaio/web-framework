@@ -7,8 +7,8 @@ from sqlalchemy.orm import mapped_column as MC
 
 class Base(DeclarativeBase):
     id = MC(Integer, primary_key=True)
-    created_at = MC(DateTime(timezone=True), server_default=func.now())
-    updated_at = MC(DateTime(timezone=True), onupdate=func.now())
+    created_at = MC(DateTime(), server_default=func.now())
+    updated_at = MC(DateTime(), onupdate=func.now())
 
 
 B = TypeVar("B", bound=Base)

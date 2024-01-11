@@ -1,4 +1,4 @@
-from datetime import UTC, datetime, timedelta
+from datetime import datetime, timedelta
 
 from sqlalchemy import ForeignKey, String
 from sqlalchemy.ext.hybrid import hybrid_property
@@ -19,4 +19,4 @@ class Verification(Base):
 
     @hybrid_property
     def is_valid(self) -> bool:
-        return self.created_at + timedelta(days=1) > datetime.now(UTC)
+        return self.created_at + timedelta(days=1) > datetime.utcnow()

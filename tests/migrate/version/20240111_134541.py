@@ -1,7 +1,7 @@
 import sqlalchemy as sa
 from alembic import op
 
-revision = "4b0bae474e50"
+revision = "32955bb7515a"
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -19,12 +19,9 @@ def upgrade() -> None:
         sa.Column("summary", sa.String(length=64), nullable=True),
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column(
-            "created_at",
-            sa.DateTime(timezone=True),
-            server_default=sa.text("now()"),
-            nullable=True,
+            "created_at", sa.DateTime(), server_default=sa.text("now()"), nullable=True
         ),
-        sa.Column("updated_at", sa.DateTime(timezone=True), nullable=True),
+        sa.Column("updated_at", sa.DateTime(), nullable=True),
         sa.PrimaryKeyConstraint("id"),
         sa.UniqueConstraint("slug"),
     )
@@ -40,12 +37,9 @@ def upgrade() -> None:
         sa.Column("child_id", sa.Integer(), nullable=True),
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column(
-            "created_at",
-            sa.DateTime(timezone=True),
-            server_default=sa.text("now()"),
-            nullable=True,
+            "created_at", sa.DateTime(), server_default=sa.text("now()"), nullable=True
         ),
-        sa.Column("updated_at", sa.DateTime(timezone=True), nullable=True),
+        sa.Column("updated_at", sa.DateTime(), nullable=True),
         sa.ForeignKeyConstraint(["child_id"], ["category.id"], ondelete="RESTRICT"),
         sa.PrimaryKeyConstraint("id"),
         sa.UniqueConstraint("name"),
@@ -63,13 +57,10 @@ def upgrade() -> None:
         ),
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column(
-            "created_at",
-            sa.DateTime(timezone=True),
-            server_default=sa.text("now()"),
-            nullable=True,
+            "created_at", sa.DateTime(), server_default=sa.text("now()"), nullable=True
         ),
-        sa.Column("updated_at", sa.DateTime(timezone=True), nullable=True),
-        sa.CheckConstraint("amount IS NOT NULL OR rate IS NOT NULL"),
+        sa.Column("updated_at", sa.DateTime(), nullable=True),
+        sa.CheckConstraint("amount IS NULL OR rate IS NULL"),
         sa.PrimaryKeyConstraint("id"),
     )
     op.create_table(
@@ -81,12 +72,9 @@ def upgrade() -> None:
         sa.Column("symbol", sa.String(length=3), nullable=False),
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column(
-            "created_at",
-            sa.DateTime(timezone=True),
-            server_default=sa.text("now()"),
-            nullable=True,
+            "created_at", sa.DateTime(), server_default=sa.text("now()"), nullable=True
         ),
-        sa.Column("updated_at", sa.DateTime(timezone=True), nullable=True),
+        sa.Column("updated_at", sa.DateTime(), nullable=True),
         sa.PrimaryKeyConstraint("id"),
         sa.UniqueConstraint("code"),
     )
@@ -95,12 +83,9 @@ def upgrade() -> None:
         sa.Column("name", sa.String(length=16), nullable=False),
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column(
-            "created_at",
-            sa.DateTime(timezone=True),
-            server_default=sa.text("now()"),
-            nullable=True,
+            "created_at", sa.DateTime(), server_default=sa.text("now()"), nullable=True
         ),
-        sa.Column("updated_at", sa.DateTime(timezone=True), nullable=True),
+        sa.Column("updated_at", sa.DateTime(), nullable=True),
         sa.PrimaryKeyConstraint("id"),
         sa.UniqueConstraint("name"),
     )
@@ -111,12 +96,9 @@ def upgrade() -> None:
         sa.Column("name", sa.String(length=64), nullable=False),
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column(
-            "created_at",
-            sa.DateTime(timezone=True),
-            server_default=sa.text("now()"),
-            nullable=True,
+            "created_at", sa.DateTime(), server_default=sa.text("now()"), nullable=True
         ),
-        sa.Column("updated_at", sa.DateTime(timezone=True), nullable=True),
+        sa.Column("updated_at", sa.DateTime(), nullable=True),
         sa.PrimaryKeyConstraint("id"),
         sa.UniqueConstraint("code"),
         sa.UniqueConstraint("name"),
@@ -127,12 +109,9 @@ def upgrade() -> None:
         sa.Column("order", sa.Integer(), nullable=True),
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column(
-            "created_at",
-            sa.DateTime(timezone=True),
-            server_default=sa.text("now()"),
-            nullable=True,
+            "created_at", sa.DateTime(), server_default=sa.text("now()"), nullable=True
         ),
-        sa.Column("updated_at", sa.DateTime(timezone=True), nullable=True),
+        sa.Column("updated_at", sa.DateTime(), nullable=True),
         sa.PrimaryKeyConstraint("id"),
     )
     op.create_table(
@@ -146,12 +125,9 @@ def upgrade() -> None:
         sa.Column("image_url", sa.String(length=256), nullable=True),
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column(
-            "created_at",
-            sa.DateTime(timezone=True),
-            server_default=sa.text("now()"),
-            nullable=True,
+            "created_at", sa.DateTime(), server_default=sa.text("now()"), nullable=True
         ),
-        sa.Column("updated_at", sa.DateTime(timezone=True), nullable=True),
+        sa.Column("updated_at", sa.DateTime(), nullable=True),
         sa.PrimaryKeyConstraint("id"),
         sa.UniqueConstraint("endpoint"),
     )
@@ -160,12 +136,9 @@ def upgrade() -> None:
         sa.Column("name", sa.String(length=16), nullable=False),
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column(
-            "created_at",
-            sa.DateTime(timezone=True),
-            server_default=sa.text("now()"),
-            nullable=True,
+            "created_at", sa.DateTime(), server_default=sa.text("now()"), nullable=True
         ),
-        sa.Column("updated_at", sa.DateTime(timezone=True), nullable=True),
+        sa.Column("updated_at", sa.DateTime(), nullable=True),
         sa.PrimaryKeyConstraint("id"),
         sa.UniqueConstraint("name"),
     )
@@ -174,12 +147,9 @@ def upgrade() -> None:
         sa.Column("name", sa.String(length=16), nullable=False),
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column(
-            "created_at",
-            sa.DateTime(timezone=True),
-            server_default=sa.text("now()"),
-            nullable=True,
+            "created_at", sa.DateTime(), server_default=sa.text("now()"), nullable=True
         ),
-        sa.Column("updated_at", sa.DateTime(timezone=True), nullable=True),
+        sa.Column("updated_at", sa.DateTime(), nullable=True),
         sa.PrimaryKeyConstraint("id"),
         sa.UniqueConstraint("name"),
     )
@@ -189,12 +159,9 @@ def upgrade() -> None:
         sa.Column("url_to", sa.String(length=256), nullable=False),
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column(
-            "created_at",
-            sa.DateTime(timezone=True),
-            server_default=sa.text("now()"),
-            nullable=True,
+            "created_at", sa.DateTime(), server_default=sa.text("now()"), nullable=True
         ),
-        sa.Column("updated_at", sa.DateTime(timezone=True), nullable=True),
+        sa.Column("updated_at", sa.DateTime(), nullable=True),
         sa.PrimaryKeyConstraint("id"),
         sa.UniqueConstraint("url_from"),
     )
@@ -203,27 +170,21 @@ def upgrade() -> None:
         sa.Column("name", sa.String(length=64), nullable=False),
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column(
-            "created_at",
-            sa.DateTime(timezone=True),
-            server_default=sa.text("now()"),
-            nullable=True,
+            "created_at", sa.DateTime(), server_default=sa.text("now()"), nullable=True
         ),
-        sa.Column("updated_at", sa.DateTime(timezone=True), nullable=True),
+        sa.Column("updated_at", sa.DateTime(), nullable=True),
         sa.PrimaryKeyConstraint("id"),
         sa.UniqueConstraint("name"),
     )
     op.create_table(
         "setting",
         sa.Column("banner", sa.String(length=256), nullable=True),
-        sa.Column("cached_at", sa.DateTime(timezone=True), nullable=True),
+        sa.Column("cached_at", sa.DateTime(), nullable=True),
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column(
-            "created_at",
-            sa.DateTime(timezone=True),
-            server_default=sa.text("now()"),
-            nullable=True,
+            "created_at", sa.DateTime(), server_default=sa.text("now()"), nullable=True
         ),
-        sa.Column("updated_at", sa.DateTime(timezone=True), nullable=True),
+        sa.Column("updated_at", sa.DateTime(), nullable=True),
         sa.PrimaryKeyConstraint("id"),
     )
     op.create_table(
@@ -233,12 +194,9 @@ def upgrade() -> None:
         sa.Column("order", sa.Integer(), nullable=True),
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column(
-            "created_at",
-            sa.DateTime(timezone=True),
-            server_default=sa.text("now()"),
-            nullable=True,
+            "created_at", sa.DateTime(), server_default=sa.text("now()"), nullable=True
         ),
-        sa.Column("updated_at", sa.DateTime(timezone=True), nullable=True),
+        sa.Column("updated_at", sa.DateTime(), nullable=True),
         sa.PrimaryKeyConstraint("id"),
     )
     op.create_table(
@@ -247,12 +205,9 @@ def upgrade() -> None:
         sa.Column("name", sa.String(length=64), nullable=False),
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column(
-            "created_at",
-            sa.DateTime(timezone=True),
-            server_default=sa.text("now()"),
-            nullable=True,
+            "created_at", sa.DateTime(), server_default=sa.text("now()"), nullable=True
         ),
-        sa.Column("updated_at", sa.DateTime(timezone=True), nullable=True),
+        sa.Column("updated_at", sa.DateTime(), nullable=True),
         sa.PrimaryKeyConstraint("id"),
         sa.UniqueConstraint("name"),
     )
@@ -265,12 +220,9 @@ def upgrade() -> None:
         sa.Column("region_id", sa.Integer(), nullable=False),
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column(
-            "created_at",
-            sa.DateTime(timezone=True),
-            server_default=sa.text("now()"),
-            nullable=True,
+            "created_at", sa.DateTime(), server_default=sa.text("now()"), nullable=True
         ),
-        sa.Column("updated_at", sa.DateTime(timezone=True), nullable=True),
+        sa.Column("updated_at", sa.DateTime(), nullable=True),
         sa.ForeignKeyConstraint(["currency_id"], ["currency.id"], ondelete="RESTRICT"),
         sa.ForeignKeyConstraint(["region_id"], ["region.id"], ondelete="RESTRICT"),
         sa.PrimaryKeyConstraint("id"),
@@ -284,12 +236,9 @@ def upgrade() -> None:
         sa.Column("type_id", sa.Integer(), nullable=False),
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column(
-            "created_at",
-            sa.DateTime(timezone=True),
-            server_default=sa.text("now()"),
-            nullable=True,
+            "created_at", sa.DateTime(), server_default=sa.text("now()"), nullable=True
         ),
-        sa.Column("updated_at", sa.DateTime(timezone=True), nullable=True),
+        sa.Column("updated_at", sa.DateTime(), nullable=True),
         sa.ForeignKeyConstraint(["type_id"], ["file_type.id"], ondelete="RESTRICT"),
         sa.PrimaryKeyConstraint("id"),
         sa.UniqueConstraint("path"),
@@ -312,12 +261,9 @@ def upgrade() -> None:
         sa.Column("type_id", sa.Integer(), nullable=False),
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column(
-            "created_at",
-            sa.DateTime(timezone=True),
-            server_default=sa.text("now()"),
-            nullable=True,
+            "created_at", sa.DateTime(), server_default=sa.text("now()"), nullable=True
         ),
-        sa.Column("updated_at", sa.DateTime(timezone=True), nullable=True),
+        sa.Column("updated_at", sa.DateTime(), nullable=True),
         sa.ForeignKeyConstraint(
             ["shipment_class_id"], ["shipment_class.id"], ondelete="RESTRICT"
         ),
@@ -332,12 +278,9 @@ def upgrade() -> None:
         sa.Column("file_id", sa.Integer(), nullable=False),
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column(
-            "created_at",
-            sa.DateTime(timezone=True),
-            server_default=sa.text("now()"),
-            nullable=True,
+            "created_at", sa.DateTime(), server_default=sa.text("now()"), nullable=True
         ),
-        sa.Column("updated_at", sa.DateTime(timezone=True), nullable=True),
+        sa.Column("updated_at", sa.DateTime(), nullable=True),
         sa.ForeignKeyConstraint(["article_id"], ["article.id"], ondelete="CASCADE"),
         sa.ForeignKeyConstraint(["file_id"], ["file.id"], ondelete="CASCADE"),
         sa.PrimaryKeyConstraint("id"),
@@ -358,12 +301,9 @@ def upgrade() -> None:
         sa.Column("user_id", sa.Integer(), nullable=False),
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column(
-            "created_at",
-            sa.DateTime(timezone=True),
-            server_default=sa.text("now()"),
-            nullable=True,
+            "created_at", sa.DateTime(), server_default=sa.text("now()"), nullable=True
         ),
-        sa.Column("updated_at", sa.DateTime(timezone=True), nullable=True),
+        sa.Column("updated_at", sa.DateTime(), nullable=True),
         sa.ForeignKeyConstraint(["country_id"], ["country.id"], ondelete="RESTRICT"),
         sa.ForeignKeyConstraint(
             ["user_id"], ["user.id"], ondelete="CASCADE", use_alter=True
@@ -377,12 +317,9 @@ def upgrade() -> None:
         sa.Column("file_id", sa.Integer(), nullable=False),
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column(
-            "created_at",
-            sa.DateTime(timezone=True),
-            server_default=sa.text("now()"),
-            nullable=True,
+            "created_at", sa.DateTime(), server_default=sa.text("now()"), nullable=True
         ),
-        sa.Column("updated_at", sa.DateTime(timezone=True), nullable=True),
+        sa.Column("updated_at", sa.DateTime(), nullable=True),
         sa.ForeignKeyConstraint(["file_id"], ["file.id"], ondelete="CASCADE"),
         sa.ForeignKeyConstraint(["product_id"], ["product.id"], ondelete="CASCADE"),
         sa.PrimaryKeyConstraint("id"),
@@ -397,12 +334,9 @@ def upgrade() -> None:
         sa.Column("product_id", sa.Integer(), nullable=False),
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column(
-            "created_at",
-            sa.DateTime(timezone=True),
-            server_default=sa.text("now()"),
-            nullable=True,
+            "created_at", sa.DateTime(), server_default=sa.text("now()"), nullable=True
         ),
-        sa.Column("updated_at", sa.DateTime(timezone=True), nullable=True),
+        sa.Column("updated_at", sa.DateTime(), nullable=True),
         sa.ForeignKeyConstraint(["product_id"], ["product.id"], ondelete="CASCADE"),
         sa.PrimaryKeyConstraint("id"),
         sa.UniqueConstraint("product_id", "slug"),
@@ -415,12 +349,9 @@ def upgrade() -> None:
         sa.Column("region_id", sa.Integer(), nullable=True),
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column(
-            "created_at",
-            sa.DateTime(timezone=True),
-            server_default=sa.text("now()"),
-            nullable=True,
+            "created_at", sa.DateTime(), server_default=sa.text("now()"), nullable=True
         ),
-        sa.Column("updated_at", sa.DateTime(timezone=True), nullable=True),
+        sa.Column("updated_at", sa.DateTime(), nullable=True),
         sa.CheckConstraint("country_id IS NULL OR region_id IS NULL"),
         sa.ForeignKeyConstraint(["country_id"], ["country.id"], ondelete="RESTRICT"),
         sa.ForeignKeyConstraint(["region_id"], ["region.id"], ondelete="RESTRICT"),
@@ -440,12 +371,9 @@ def upgrade() -> None:
         sa.Column("user_id", sa.Integer(), nullable=False),
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column(
-            "created_at",
-            sa.DateTime(timezone=True),
-            server_default=sa.text("now()"),
-            nullable=True,
+            "created_at", sa.DateTime(), server_default=sa.text("now()"), nullable=True
         ),
-        sa.Column("updated_at", sa.DateTime(timezone=True), nullable=True),
+        sa.Column("updated_at", sa.DateTime(), nullable=True),
         sa.ForeignKeyConstraint(["country_id"], ["country.id"], ondelete="RESTRICT"),
         sa.ForeignKeyConstraint(
             ["user_id"], ["user.id"], ondelete="CASCADE", use_alter=True
@@ -466,12 +394,9 @@ def upgrade() -> None:
         sa.Column("product_id", sa.Integer(), nullable=False),
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column(
-            "created_at",
-            sa.DateTime(timezone=True),
-            server_default=sa.text("now()"),
-            nullable=True,
+            "created_at", sa.DateTime(), server_default=sa.text("now()"), nullable=True
         ),
-        sa.Column("updated_at", sa.DateTime(timezone=True), nullable=True),
+        sa.Column("updated_at", sa.DateTime(), nullable=True),
         sa.ForeignKeyConstraint(["product_id"], ["product.id"], ondelete="RESTRICT"),
         sa.PrimaryKeyConstraint("id"),
         sa.UniqueConstraint("slug"),
@@ -484,13 +409,10 @@ def upgrade() -> None:
         sa.Column("sku_id", sa.Integer(), nullable=True),
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column(
-            "created_at",
-            sa.DateTime(timezone=True),
-            server_default=sa.text("now()"),
-            nullable=True,
+            "created_at", sa.DateTime(), server_default=sa.text("now()"), nullable=True
         ),
-        sa.Column("updated_at", sa.DateTime(timezone=True), nullable=True),
-        sa.CheckConstraint("sku_id IS NOT NULL OR article_id IS NOT NULL"),
+        sa.Column("updated_at", sa.DateTime(), nullable=True),
+        sa.CheckConstraint("sku_id IS NULL OR article_id IS NULL"),
         sa.ForeignKeyConstraint(["article_id"], ["article.id"], ondelete="CASCADE"),
         sa.ForeignKeyConstraint(["category_id"], ["category.id"], ondelete="CASCADE"),
         sa.ForeignKeyConstraint(["sku_id"], ["sku.id"], ondelete="CASCADE"),
@@ -505,12 +427,9 @@ def upgrade() -> None:
         sa.Column("type_id", sa.Integer(), nullable=False),
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column(
-            "created_at",
-            sa.DateTime(timezone=True),
-            server_default=sa.text("now()"),
-            nullable=True,
+            "created_at", sa.DateTime(), server_default=sa.text("now()"), nullable=True
         ),
-        sa.Column("updated_at", sa.DateTime(timezone=True), nullable=True),
+        sa.Column("updated_at", sa.DateTime(), nullable=True),
         sa.ForeignKeyConstraint(["product_id"], ["product.id"], ondelete="CASCADE"),
         sa.ForeignKeyConstraint(["sku_id"], ["sku.id"], ondelete="CASCADE"),
         sa.ForeignKeyConstraint(
@@ -534,12 +453,9 @@ def upgrade() -> None:
         sa.Column("option_id", sa.Integer(), nullable=False),
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column(
-            "created_at",
-            sa.DateTime(timezone=True),
-            server_default=sa.text("now()"),
-            nullable=True,
+            "created_at", sa.DateTime(), server_default=sa.text("now()"), nullable=True
         ),
-        sa.Column("updated_at", sa.DateTime(timezone=True), nullable=True),
+        sa.Column("updated_at", sa.DateTime(), nullable=True),
         sa.ForeignKeyConstraint(
             ["media_id"], ["product_media.id"], ondelete="SET NULL"
         ),
@@ -563,12 +479,9 @@ def upgrade() -> None:
         sa.Column("zone_id", sa.Integer(), nullable=False),
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column(
-            "created_at",
-            sa.DateTime(timezone=True),
-            server_default=sa.text("now()"),
-            nullable=True,
+            "created_at", sa.DateTime(), server_default=sa.text("now()"), nullable=True
         ),
-        sa.Column("updated_at", sa.DateTime(timezone=True), nullable=True),
+        sa.Column("updated_at", sa.DateTime(), nullable=True),
         sa.ForeignKeyConstraint(
             ["class_id"], ["shipment_class.id"], ondelete="RESTRICT"
         ),
@@ -587,12 +500,9 @@ def upgrade() -> None:
         sa.Column("shipping_id", sa.Integer(), nullable=True),
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column(
-            "created_at",
-            sa.DateTime(timezone=True),
-            server_default=sa.text("now()"),
-            nullable=True,
+            "created_at", sa.DateTime(), server_default=sa.text("now()"), nullable=True
         ),
-        sa.Column("updated_at", sa.DateTime(timezone=True), nullable=True),
+        sa.Column("updated_at", sa.DateTime(), nullable=True),
         sa.ForeignKeyConstraint(["billing_id"], ["billing.id"], ondelete="CASCADE"),
         sa.ForeignKeyConstraint(["role_id"], ["user_role.id"], ondelete="RESTRICT"),
         sa.ForeignKeyConstraint(["shipping_id"], ["shipping.id"], ondelete="CASCADE"),
@@ -621,12 +531,9 @@ def upgrade() -> None:
         sa.Column("user_id", sa.Integer(), nullable=False),
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column(
-            "created_at",
-            sa.DateTime(timezone=True),
-            server_default=sa.text("now()"),
-            nullable=True,
+            "created_at", sa.DateTime(), server_default=sa.text("now()"), nullable=True
         ),
-        sa.Column("updated_at", sa.DateTime(timezone=True), nullable=True),
+        sa.Column("updated_at", sa.DateTime(), nullable=True),
         sa.ForeignKeyConstraint(["billing_id"], ["billing.id"], ondelete="RESTRICT"),
         sa.ForeignKeyConstraint(["coupon_id"], ["coupon.id"], ondelete="RESTRICT"),
         sa.ForeignKeyConstraint(["currency_id"], ["currency.id"], ondelete="RESTRICT"),
@@ -645,12 +552,9 @@ def upgrade() -> None:
         sa.Column("user_id", sa.Integer(), nullable=True),
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column(
-            "created_at",
-            sa.DateTime(timezone=True),
-            server_default=sa.text("now()"),
-            nullable=True,
+            "created_at", sa.DateTime(), server_default=sa.text("now()"), nullable=True
         ),
-        sa.Column("updated_at", sa.DateTime(timezone=True), nullable=True),
+        sa.Column("updated_at", sa.DateTime(), nullable=True),
         sa.ForeignKeyConstraint(["user_id"], ["user.id"], ondelete="CASCADE"),
         sa.PrimaryKeyConstraint("id"),
     )
@@ -692,12 +596,9 @@ def upgrade() -> None:
         sa.Column("user_id", sa.Integer(), nullable=False),
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column(
-            "created_at",
-            sa.DateTime(timezone=True),
-            server_default=sa.text("now()"),
-            nullable=True,
+            "created_at", sa.DateTime(), server_default=sa.text("now()"), nullable=True
         ),
-        sa.Column("updated_at", sa.DateTime(timezone=True), nullable=True),
+        sa.Column("updated_at", sa.DateTime(), nullable=True),
         sa.CheckConstraint("coupon_amount IS NULL OR coupon_rate IS NULL"),
         sa.ForeignKeyConstraint(["billing_id"], ["billing.id"], ondelete="RESTRICT"),
         sa.ForeignKeyConstraint(["currency_id"], ["currency.id"], ondelete="RESTRICT"),
@@ -716,12 +617,9 @@ def upgrade() -> None:
         sa.Column("value_id", sa.Integer(), nullable=False),
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column(
-            "created_at",
-            sa.DateTime(timezone=True),
-            server_default=sa.text("now()"),
-            nullable=True,
+            "created_at", sa.DateTime(), server_default=sa.text("now()"), nullable=True
         ),
-        sa.Column("updated_at", sa.DateTime(timezone=True), nullable=True),
+        sa.Column("updated_at", sa.DateTime(), nullable=True),
         sa.ForeignKeyConstraint(
             ["option_id"], ["product_option.id"], ondelete="RESTRICT"
         ),
@@ -738,12 +636,9 @@ def upgrade() -> None:
         sa.Column("user_id", sa.Integer(), nullable=False),
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column(
-            "created_at",
-            sa.DateTime(timezone=True),
-            server_default=sa.text("now()"),
-            nullable=True,
+            "created_at", sa.DateTime(), server_default=sa.text("now()"), nullable=True
         ),
-        sa.Column("updated_at", sa.DateTime(timezone=True), nullable=True),
+        sa.Column("updated_at", sa.DateTime(), nullable=True),
         sa.ForeignKeyConstraint(["user_id"], ["user.id"], ondelete="CASCADE"),
         sa.PrimaryKeyConstraint("id"),
     )
@@ -754,12 +649,9 @@ def upgrade() -> None:
         sa.Column("sku_id", sa.Integer(), nullable=False),
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column(
-            "created_at",
-            sa.DateTime(timezone=True),
-            server_default=sa.text("now()"),
-            nullable=True,
+            "created_at", sa.DateTime(), server_default=sa.text("now()"), nullable=True
         ),
-        sa.Column("updated_at", sa.DateTime(timezone=True), nullable=True),
+        sa.Column("updated_at", sa.DateTime(), nullable=True),
         sa.ForeignKeyConstraint(["cart_id"], ["cart.id"], ondelete="CASCADE"),
         sa.ForeignKeyConstraint(["sku_id"], ["sku.id"], ondelete="RESTRICT"),
         sa.PrimaryKeyConstraint("id"),
@@ -768,18 +660,15 @@ def upgrade() -> None:
     op.create_table(
         "invoice",
         sa.Column("attributes", sa.JSON(), server_default="{}", nullable=False),
-        sa.Column("expires_at", sa.DateTime(timezone=True), nullable=True),
+        sa.Column("expires_at", sa.DateTime(), nullable=True),
         sa.Column("number", sa.String(length=16), nullable=False),
-        sa.Column("paid_at", sa.DateTime(timezone=True), nullable=True),
+        sa.Column("paid_at", sa.DateTime(), nullable=True),
         sa.Column("order_id", sa.Integer(), nullable=False),
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column(
-            "created_at",
-            sa.DateTime(timezone=True),
-            server_default=sa.text("now()"),
-            nullable=True,
+            "created_at", sa.DateTime(), server_default=sa.text("now()"), nullable=True
         ),
-        sa.Column("updated_at", sa.DateTime(timezone=True), nullable=True),
+        sa.Column("updated_at", sa.DateTime(), nullable=True),
         sa.ForeignKeyConstraint(["order_id"], ["order.id"], ondelete="RESTRICT"),
         sa.PrimaryKeyConstraint("id"),
         sa.UniqueConstraint("number"),
@@ -797,12 +686,9 @@ def upgrade() -> None:
         sa.Column("sku_id", sa.Integer(), nullable=False),
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column(
-            "created_at",
-            sa.DateTime(timezone=True),
-            server_default=sa.text("now()"),
-            nullable=True,
+            "created_at", sa.DateTime(), server_default=sa.text("now()"), nullable=True
         ),
-        sa.Column("updated_at", sa.DateTime(timezone=True), nullable=True),
+        sa.Column("updated_at", sa.DateTime(), nullable=True),
         sa.ForeignKeyConstraint(["order_id"], ["order.id"], ondelete="CASCADE"),
         sa.ForeignKeyConstraint(["sku_id"], ["sku.id"], ondelete="RESTRICT"),
         sa.PrimaryKeyConstraint("id"),
@@ -821,12 +707,9 @@ def upgrade() -> None:
         sa.Column("order_id", sa.Integer(), nullable=False),
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column(
-            "created_at",
-            sa.DateTime(timezone=True),
-            server_default=sa.text("now()"),
-            nullable=True,
+            "created_at", sa.DateTime(), server_default=sa.text("now()"), nullable=True
         ),
-        sa.Column("updated_at", sa.DateTime(timezone=True), nullable=True),
+        sa.Column("updated_at", sa.DateTime(), nullable=True),
         sa.ForeignKeyConstraint(["order_id"], ["order.id"], ondelete="RESTRICT"),
         sa.PrimaryKeyConstraint("id"),
         sa.UniqueConstraint("mollie_id"),
@@ -839,12 +722,9 @@ def upgrade() -> None:
         sa.Column("order_id", sa.Integer(), nullable=False),
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column(
-            "created_at",
-            sa.DateTime(timezone=True),
-            server_default=sa.text("now()"),
-            nullable=True,
+            "created_at", sa.DateTime(), server_default=sa.text("now()"), nullable=True
         ),
-        sa.Column("updated_at", sa.DateTime(timezone=True), nullable=True),
+        sa.Column("updated_at", sa.DateTime(), nullable=True),
         sa.ForeignKeyConstraint(["order_id"], ["order.id"], ondelete="RESTRICT"),
         sa.PrimaryKeyConstraint("id"),
         sa.UniqueConstraint("url", "order_id"),
