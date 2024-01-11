@@ -4,6 +4,7 @@ from flask import url_for
 from mollie.api.client import Client
 
 from web import config
+from web.helper.validation import strip_scheme
 
 #
 # Classes
@@ -32,7 +33,8 @@ def mollie_webhook() -> str | None:
     """Get the webhook URL for Mollie."""
     url = url_for(config.ENDPOINT_MOLLIE, _external=True, _scheme="https")
     if config.LOCALHOST:
+        localhost = strip_scheme(config.LOCALHOST)
         parsed = urllib.parse.urlparse(url)
-        replaced = parsed._replace(netloc=config.LOCALHOST)
+        replaced = parsed._replace(netloc=localhost)
         url = urllib.parse.urlunparse(replaced)
     return url
