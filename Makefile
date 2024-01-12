@@ -32,8 +32,10 @@ lint:
 .PHONY: sandbox
 sandbox:
 	cd sandbox && flask run --debug --port=5000
+sandbox_migrations:
+	cd sandbox && set -a; source .env; set +a && alembic revision --autogenerate -m ""
 sandbox_migrate:
-	cd sandbox && set -a; source .env; set +a && alembic revision --autogenerate -m "" && alembic upgrade head
+	cd sandbox && set -a; source .env; set +a && alembic upgrade head
 
 ## TESTING
 ## ----------
@@ -41,8 +43,10 @@ sandbox_migrate:
 .PHONY: test
 test:
 	cd tests && set -a; source .env; set +a && pytest .
+test_migrations:
+	cd tests && set -a; source .env; set +a && alembic revision --autogenerate -m ""
 test_migrate:
-	cd tests && set -a; source .env; set +a && alembic revision --autogenerate -m "" && alembic upgrade head
+	cd tests && set -a; source .env; set +a && alembic upgrade head
 
 ## TRANSLATIONS
 ## ----------
