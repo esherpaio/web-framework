@@ -108,14 +108,12 @@
                                                 onclick="updateCategory({{ x.id }});">
                                             Update
                                         </button>
-                                        {% if not x.is_locked or current_user.is_super %}
-                                            <button class="btn btn-load btn-sm btn-outline-danger"
-                                                    onclick="_categoryId = {{ x.id }};"
-                                                    data-bs-toggle="modal"
-                                                    data-bs-target="#modal-delete-category">
-                                                Delete
-                                            </button>
-                                        {% endif %}
+                                        <button class="btn btn-load btn-sm btn-outline-danger"
+                                                onclick="_categoryId = {{ x.id }};"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#modal-delete-category">
+                                            Delete
+                                        </button>
                                     </div>
                                 </td>
                             </tr>

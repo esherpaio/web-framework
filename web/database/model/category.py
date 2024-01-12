@@ -13,9 +13,7 @@ class Category(Base):
     __tablename__ = "category"
 
     attributes = MC(type_json, nullable=False, server_default="{}")
-    in_header = MC(Boolean, nullable=False, default=False)
     is_deleted = MC(Boolean, nullable=False, default=False)
-    is_locked = MC(Boolean, nullable=False, default=False)
     name = MC(String(64), nullable=False, unique=True)
     order = MC(Integer)
     slug = MC(String(64), nullable=False, unique=True)
