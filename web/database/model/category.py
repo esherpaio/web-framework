@@ -1,6 +1,6 @@
 from typing import Any
 
-from sqlalchemy import Boolean, ForeignKey, Integer, String
+from sqlalchemy import Boolean, Integer, String
 from sqlalchemy.orm import mapped_column as MC
 from sqlalchemy.orm import relationship, validates
 
@@ -20,9 +20,6 @@ class Category(Base):
     order = MC(Integer)
     slug = MC(String(64), nullable=False, unique=True)
 
-    child_id = MC(ForeignKey("category.id", ondelete="RESTRICT"))
-
-    child = relationship("Category", remote_side="Category.id")
     items = relationship(
         "CategoryItem", back_populates="category", order_by="CategoryItem.order"
     )
