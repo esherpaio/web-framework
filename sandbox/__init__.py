@@ -1,8 +1,5 @@
-from inspect import signature
-
 import flask_login
 from flask import Flask
-from sqlalchemy.orm import QueryableAttribute
 from werkzeug.security import generate_password_hash
 
 import web.seeder.model as seed
@@ -11,6 +8,7 @@ from web.blueprint.admin import admin_bp
 from web.blueprint.api_v1 import api_v1_bp
 from web.blueprint.webhook_v1 import webhook_v1_bp
 from web.database.client import conn
+from web.database.model import Category
 from web.database.model.user import User
 from web.database.model.user_role import UserRoleId
 
