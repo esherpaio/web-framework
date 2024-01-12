@@ -1,6 +1,7 @@
 {% extends "admin_main.html" %}
 {% block admin_body %}
     <script>
+        let _shipmentZoneId = undefined;
         async function addShipmentZone() {
             event.preventDefault();
             updateButton('add-shipment-zone', 1);
@@ -19,9 +20,9 @@
             });
             window.location.reload();
         }
-        async function deleteshipmentZone(zoneId) {
+        async function deleteShipmentZone(zoneId) {
             event.preventDefault();
-            updateButton(`delete-shipment-zone-${zoneId}`, 1);
+            updateButton(`delete-shipment-zone`, 1);
             await deleteShipmentZonesId(zoneId);
             window.location.reload();
         }
@@ -29,7 +30,7 @@
 
     <div class="row g-3">
         <div class="col-12">
-            <div class="d-flex justify-content-between">
+            <div class="d-flex justify-content-between gap-2">
                 <h2 class="mb-0">
                     Shipment Zones
                 </h2>
@@ -78,9 +79,10 @@
                                                 onclick="updateShipmentZone({{ zone.id }});">
                                             Update
                                         </button>
-                                        <button id="delete-shipment-zone-{{ zone.id }}"
-                                                class="btn btn-load btn-sm btn-outline-danger"
-                                                onclick="deleteshipmentZone({{ zone.id }});">
+                                        <button class="btn btn-load btn-sm btn-outline-danger"
+                                                onclick="_shipmentZoneId = {{ zone.id }};"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#modal-delete-shipment-zone">
                                             Delete
                                         </button>
                                     </div>
@@ -159,6 +161,41 @@
                             class="btn btn-load btn-success"
                             type="submit">
                         Add
+                    </button>
+                    <button type="button"
+                            class="btn btn-secondary"
+                            data-bs-dismiss="modal">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-delete-shipment-zone"
+         class="modal fade"
+         tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        Delete shipment zone
+                    </h5>
+                    <button type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal">
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p class="mb-0">
+                        Are you sure?
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button id="delete-shipment-zone"
+                            class="btn btn-load btn-danger"
+                            onclick="deleteShipmentZone(_shipmentZoneId);">
+                        Delete
                     </button>
                     <button type="button"
                             class="btn btn-secondary"

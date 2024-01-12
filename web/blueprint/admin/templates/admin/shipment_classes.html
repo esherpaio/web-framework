@@ -1,6 +1,7 @@
 {% extends "admin_main.html" %}
 {% block admin_body %}
     <script>
+        let _shipmentClassId = undefined;
         async function addShipmentClass() {
             event.preventDefault();
             updateButton('add-shipment-class', 1);
@@ -18,9 +19,9 @@
             });
             window.location.reload();
         }
-        async function deleteshipmentClass(classId) {
+        async function deleteShipmentClass(classId) {
             event.preventDefault();
-            updateButton(`delete-shipment-class-${classId}`, 1);
+            updateButton(`delete-shipment-class`, 1);
             await deleteShipmentClassesId(classId);
             window.location.reload();
         }
@@ -28,7 +29,7 @@
 
     <div class="row g-3">
         <div class="col-12">
-            <div class="d-flex justify-content-between">
+            <div class="d-flex justify-content-between gap-2">
                 <h2 class="mb-0">
                     Shipment Classes
                 </h2>
@@ -76,9 +77,10 @@
                                                 onclick="updateShipmentClass({{ x.id }});">
                                             Update
                                         </button>
-                                        <button id="delete-shipment-class-{{ x.id }}"
-                                                class="btn btn-load btn-sm btn-outline-danger"
-                                                onclick="deleteshipmentClass({{ x.id }});">
+                                        <button class="btn btn-load btn-sm btn-outline-danger"
+                                                onclick="_shipmentClassId = {{ x.id }}; console.log(_shipmentClassId);"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#modal-delete-shipment-class">
                                             Delete
                                         </button>
                                     </div>
@@ -135,6 +137,41 @@
                             class="btn btn-load btn-success"
                             type="submit">
                         Add
+                    </button>
+                    <button type="button"
+                            class="btn btn-secondary"
+                            data-bs-dismiss="modal">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-delete-shipment-class"
+         class="modal fade"
+         tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        Delete shipment class
+                    </h5>
+                    <button type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal">
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p class="mb-0">
+                        Are you sure?
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button id="delete-shipment-class"
+                            class="btn btn-load btn-danger"
+                            onclick="deleteShipmentClass(_shipmentClassId);">
+                        Delete
                     </button>
                     <button type="button"
                             class="btn btn-secondary"

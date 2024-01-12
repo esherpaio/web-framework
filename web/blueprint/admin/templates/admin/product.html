@@ -31,19 +31,17 @@
 
     <div class="row g-3">
         <div class="col-12">
-            <div class="d-flex justify-content-end">
-                <div class="d-grid d-sm-block gap-2">
-                    <button id="update-product"
-                            class="btn btn-primary btn-load"
-                            onclick="updateProduct({{ product.id }});">
-                        Update
-                    </button>
-                    <button class="btn btn-danger"
-                            data-bs-toggle="modal"
-                            data-bs-target="#modal-delete-product">
-                        Delete
-                    </button>
-                </div>
+            <div class="btn-toolbar justify-content-end gap-2">
+                <button id="update-product"
+                        class="btn btn-primary btn-load"
+                        onclick="updateProduct({{ product.id }});">
+                    Update
+                </button>
+                <button class="btn btn-danger"
+                        data-bs-toggle="modal"
+                        data-bs-target="#modal-delete-product">
+                    Delete
+                </button>
             </div>
         </div>
         <div class="col-12">
@@ -174,7 +172,7 @@
                     <button id="delete-product"
                             class="btn btn-load btn-danger"
                             onclick="deleteProduct({{ product.id }});">
-                        Proceed
+                        Delete
                     </button>
                     <button type="button"
                             class="btn btn-secondary"

@@ -1,6 +1,7 @@
 {% extends "admin_main.html" %}
 {% block admin_body %}
     <script>
+        let _mediaId = undefined;
         async function addMedia(productId) {
             event.preventDefault();
             updateButton(`add-media`, 1);
@@ -23,7 +24,7 @@
         }
         async function deleteMedia(mediaId, productId) {
             event.preventDefault();
-            updateButton(`delete-media-${mediaId}`, 1);
+            updateButton(`delete-media`, 1);
             await deleteProductsIdMediaId(productId, mediaId);
             await patchSetting({ cached_at: null });
             window.location.reload();
@@ -34,7 +35,7 @@
 
     <div class="row g-3">
         <div class="col-12">
-            <div class="d-flex justify-content-end">
+            <div class="btn-toolbar justify-content-end gap-2">
                 <button class="btn btn-success"
                         type="submit"
                         data-bs-toggle="modal"
@@ -82,12 +83,13 @@
                                 <div class="btn-group">
                                     <button id="update-media-{{ x.id }}"
                                             class="btn btn-load btn-sm btn-outline-primary"
-                                            onclick="updateMedia({{ x.id }}, {{ product.id }})">
+                                            onclick="updateMedia({{ x.id }}, {{ product.id }});">
                                         Update
                                     </button>
-                                    <button id="delete-media-{{ x.id }}"
-                                            class="btn btn-load btn-sm btn-outline-danger"
-                                            onclick="deleteMedia({{ x.id }}, {{ product.id }})">
+                                    <button class="btn btn-load btn-sm btn-outline-danger"
+                                            onclick="_mediaId = {{ x.id }};"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#modal-delete-media">
                                         Delete
                                     </button>
                                 </div>
@@ -132,6 +134,41 @@
                             class="btn btn-load btn-success"
                             type="submit">
                         Add
+                    </button>
+                    <button type="button"
+                            class="btn btn-secondary"
+                            data-bs-dismiss="modal">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-delete-media"
+         class="modal fade"
+         tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        Delete media
+                    </h5>
+                    <button type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal">
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p class="mb-0">
+                        Are you sure?
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button id="delete-media"
+                            class="btn btn-load btn-danger"
+                            onclick="deleteMedia(_mediaId, {{ product.id }});">
+                        Delete
                     </button>
                     <button type="button"
                             class="btn btn-secondary"

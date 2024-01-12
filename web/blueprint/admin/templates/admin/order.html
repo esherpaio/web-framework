@@ -27,11 +27,11 @@
 
     <div class="row g-3">
         <div class="col-12">
-            <div class="d-flex justify-content-between">
+            <div class="d-flex justify-content-between gap-2">
                 <h2 class="mb-0">
                     Order #{{ order.id }}
                 </h2>
-                <div class="d-grid d-sm-block gap-2">
+                <div class="btn-toolbar justify-content-end gap-2">
                     {% if order.invoice %}
                         <a class="btn btn-primary"
                            href="{{ url_for('admin.download_invoice', order_id=order.id, invoice_id=order.invoice.id) }}">

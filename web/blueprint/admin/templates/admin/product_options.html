@@ -1,6 +1,7 @@
 {% extends "admin_main.html" %}
 {% block admin_body %}
     <script>
+        let _optionId = undefined;
         async function addOption(productId) {
             event.preventDefault();
             updateButton(`add-option`, 1);
@@ -21,7 +22,7 @@
         }
         async function deleteOption(optionId, productId) {
             event.preventDefault();
-            updateButton(`delete-option-${optionId}`, 1);
+            updateButton(`delete-option`, 1);
             await deleteProductsIdOptionsId(productId, optionId);
             await patchSetting({ cached_at: null });
             window.location.reload();
@@ -32,7 +33,7 @@
 
     <div class="row g-3">
         <div class="col-12">
-            <div class="d-flex justify-content-end">
+            <div class="btn-toolbar justify-content-end gap-2">
                 <button class="btn btn-success"
                         type="submit"
                         data-bs-toggle="modal"
@@ -69,7 +70,9 @@
                                 </td>
                                 <td>
                                     {% for value in option.values %}
-                                        {{ value.name }}
+                                        {% if not value.is_deleted %}
+                                            {{ value.name }}
+                                        {% endif %}
                                     {% endfor %}
                                 </td>
                                 <td>
@@ -87,9 +90,10 @@
                                                 onclick="updateOption({{ option.id }}, {{ product.id }});">
                                             Update
                                         </button>
-                                        <button id="delete-option-{{ option.id }}"
-                                                class="btn btn-load btn-sm btn-outline-danger"
-                                                onclick="deleteOption({{ option.id }}, {{ product.id }});">
+                                        <button class="btn btn-load btn-sm btn-outline-danger"
+                                                onclick="_optionId = {{ option.id }};"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#modal-delete-option">
                                             Delete
                                         </button>
                                     </div>
@@ -136,6 +140,41 @@
                             class="btn btn-load btn-success"
                             type="submit">
                         Add
+                    </button>
+                    <button type="button"
+                            class="btn btn-secondary"
+                            data-bs-dismiss="modal">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-delete-option"
+         class="modal fade"
+         tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        Delete option
+                    </h5>
+                    <button type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal">
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p class="mb-0">
+                        Are you sure?
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button id="delete-option"
+                            class="btn btn-load btn-danger"
+                            onclick="deleteOption(_optionId, {{ product.id }});">
+                        Delete
                     </button>
                     <button type="button"
                             class="btn btn-secondary"

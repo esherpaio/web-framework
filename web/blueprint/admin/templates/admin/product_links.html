@@ -1,6 +1,7 @@
 {% extends "admin_main.html" %}
 {% block admin_body %}
     <script>
+        let _linkId = undefined;
         async function addLink(productId) {
             event.preventDefault();
             updateButton(`add-link`, 1);
@@ -13,7 +14,7 @@
         }
         async function deleteLink(linkId, productId) {
             event.preventDefault();
-            updateButton(`delete-link-${linkId}`, 1);
+            updateButton(`delete-link`, 1);
             await deleteProductsIdLinksId(productId, linkId);
             await patchSetting({ cached_at: null });
             window.location.reload();
@@ -24,7 +25,7 @@
 
     <div class="row g-3">
         <div class="col-12">
-            <div class="d-flex justify-content-end">
+            <div class="btn-toolbar justify-content-end gap-2">
                 <button class="btn btn-success"
                         type="submit"
                         data-bs-toggle="modal"
@@ -61,9 +62,10 @@
                                 </td>
                                 <td class="text-end">
                                     <div class="btn-group">
-                                        <button id="delete-link-{{ link.id }}"
-                                                class="btn btn-load btn-sm btn-outline-danger"
-                                                onclick="deleteLink({{ link.id }}, {{ product.id }});">
+                                        <button class="btn btn-load btn-sm btn-outline-danger"
+                                                onclick="_linkId = {{ link.id }};"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#modal-delete-link">
                                             Delete
                                         </button>
                                     </div>
@@ -136,6 +138,41 @@
                             class="btn btn-load btn-success"
                             type="submit">
                         Add
+                    </button>
+                    <button type="button"
+                            class="btn btn-secondary"
+                            data-bs-dismiss="modal">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-delete-link"
+         class="modal fade"
+         tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        Delete link
+                    </h5>
+                    <button type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal">
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p class="mb-0">
+                        Are you sure?
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button id="delete-link"
+                            class="btn btn-load btn-danger"
+                            onclick="deleteLink(_linkId, {{ product.id }});">
+                        Delete
                     </button>
                     <button type="button"
                             class="btn btn-secondary"

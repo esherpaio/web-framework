@@ -1,6 +1,7 @@
 {% extends "admin_main.html" %}
 {% block admin_body %}
     <script>
+        let _skuId = undefined;
         async function createSkus(productId) {
             event.preventDefault();
             updateButton(`create-skus`, 1);
@@ -19,7 +20,7 @@
         }
         async function deleteSku(skuId) {
             event.preventDefault();
-            updateButton(`delete-sku-${skuId}`, 1);
+            updateButton(`delete-sku`, 1);
             await deleteSkusId(skuId);
             await patchSetting({ cached_at: null });
             window.location.reload();
@@ -30,7 +31,7 @@
 
     <div class="row g-3">
         <div class="col-12">
-            <div class="d-flex justify-content-end">
+            <div class="btn-toolbar justify-content-end gap-2">
                 <button id="create-skus"
                         class="btn btn-load btn-primary"
                         type="submit"
@@ -84,9 +85,10 @@
                                                 onclick="updateSku({{ sku.id }});">
                                             Update
                                         </button>
-                                        <button id="delete-sku-{{ sku.id }}"
-                                                class="btn btn-load btn-sm btn-outline-danger"
-                                                onclick="deleteSku({{ sku.id }});">
+                                        <button class="btn btn-load btn-sm btn-outline-danger"
+                                                onclick="_skuId = {{ sku.id }};"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#modal-delete-sku">
                                             Delete
                                         </button>
                                     </div>
@@ -95,6 +97,41 @@
                         {% endfor %}
                     </tbody>
                 </table>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-delete-sku"
+         class="modal fade"
+         tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        Delete SKU
+                    </h5>
+                    <button type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal">
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p class="mb-0">
+                        Are you sure?
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button id="delete-sku"
+                            class="btn btn-load btn-danger"
+                            onclick="deleteSku(_skuId);">
+                        Delete
+                    </button>
+                    <button type="button"
+                            class="btn btn-secondary"
+                            data-bs-dismiss="modal">
+                        Cancel
+                    </button>
+                </div>
             </div>
         </div>
     </div>

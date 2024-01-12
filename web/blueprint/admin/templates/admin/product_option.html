@@ -1,6 +1,7 @@
 {% extends "admin_main.html" %}
 {% block admin_body %}
     <script>
+        let _valueId = undefined;
         async function addValue(optionId, productId) {
             event.preventDefault();
             updateButton(`add-value`, 1);
@@ -25,7 +26,7 @@
         }
         async function deleteValue(valueId, productId) {
             event.preventDefault();
-            updateButton(`delete-value-${valueId}`, 1);
+            updateButton(`delete-value`, 1);
             await deleteProductsIdValuesId(productId, valueId);
             await patchSetting({ cached_at: null });
             window.location.reload();
@@ -36,7 +37,7 @@
 
     <div class="row g-3">
         <div class="col-12">
-            <div class="d-flex justify-content-end">
+            <div class="btn-toolbar justify-content-end gap-2">
                 <button class="btn btn-success"
                         type="submit"
                         data-bs-toggle="modal"
@@ -109,9 +110,10 @@
                                                 onclick="updateValue({{ value.id }}, {{ option.product_id }});">
                                             Update
                                         </button>
-                                        <button id="delete-value-{{ value.id }}"
-                                                class="btn btn-load btn-sm btn-outline-danger"
-                                                onclick="deleteValue({{ value.id }}, {{ option.product_id }});">
+                                        <button class="btn btn-load btn-sm btn-outline-danger"
+                                                onclick="_valueId = {{ value.id }};"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#modal-delete-value">
                                             Delete
                                         </button>
                                     </div>
@@ -168,6 +170,41 @@
                             class="btn btn-load btn-success"
                             type="submit">
                         Add
+                    </button>
+                    <button type="button"
+                            class="btn btn-secondary"
+                            data-bs-dismiss="modal">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-delete-value"
+         class="modal fade"
+         tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        Delete value
+                    </h5>
+                    <button type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal">
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p class="mb-0">
+                        Are you sure?
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button id="delete-value"
+                            class="btn btn-load btn-danger"
+                            onclick="deleteValue(_valueId, {{ product.id }});">
+                        Delete
                     </button>
                     <button type="button"
                             class="btn btn-secondary"
