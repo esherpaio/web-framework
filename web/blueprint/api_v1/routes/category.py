@@ -44,8 +44,6 @@ def post_categories() -> Response:
 @api_v1_bp.patch("/categories/<int:category_id>")
 def patch_categories_id(category_id: int) -> Response:
     attributes, has_attributes = json_get("attributes", dict, default={})
-    child_id, has_child_id = json_get("child_id", int)
-    in_header, has_in_header = json_get("in_header", bool)
     order, has_order = json_get("order", int)
 
     with conn.begin() as s:
@@ -57,10 +55,6 @@ def patch_categories_id(category_id: int) -> Response:
         # Update category
         if has_attributes:
             category.attributes = attributes
-        if has_child_id:
-            category.child_id = child_id
-        if has_in_header:
-            category.in_header = in_header
         if has_order:
             category.order = order
 

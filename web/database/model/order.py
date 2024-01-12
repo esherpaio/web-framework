@@ -32,9 +32,9 @@ class Order(Base):
     user_id = MC(ForeignKey("user.id", ondelete="RESTRICT"), nullable=False)
 
     billing = relationship("Billing")
-    currency = relationship("Currency")
+    currency = relationship("Currency", lazy="joined")
     invoice = relationship("Invoice", uselist=False, back_populates="order")
-    lines = relationship("OrderLine", back_populates="order")
+    lines = relationship("OrderLine", back_populates="order", lazy="joined")
     refunds = relationship("Refund", back_populates="order")
     shipments = relationship("Shipment", back_populates="order")
     shipping = relationship("Shipping")

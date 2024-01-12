@@ -21,7 +21,6 @@ class Sku(Base):
 
     product_id = MC(ForeignKey("product.id", ondelete="RESTRICT"), nullable=False)
 
-    category_items = relationship("CategoryItem", back_populates="sku")
     details = relationship("SkuDetail", back_populates="sku")
     product = relationship("Product")
 

@@ -20,7 +20,7 @@ class OrderLine(Base):
     order_id = MC(ForeignKey("order.id", ondelete="CASCADE"), nullable=False)
     sku_id = MC(ForeignKey("sku.id", ondelete="RESTRICT"), nullable=False)
 
-    order = relationship("Order", back_populates="lines")
+    order = relationship("Order", back_populates="lines", lazy="joined")
     sku = relationship("Sku")
 
     # Validations

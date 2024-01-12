@@ -16,9 +16,7 @@
             event.preventDefault();
             updateButton(`update-category-${categoryId}`, 1);
             await patchCategoriesId(categoryId, {
-                child_id: parseInt(document.getElementById(`category-child-id-${categoryId}`).value),
                 order: parseInt(document.getElementById(`category-order-${categoryId}`).value),
-                in_header: document.getElementById(`category-in-header-${categoryId}`).checked,
             });
             await patchSetting({ cached_at: null });
             window.location.reload();
@@ -56,13 +54,7 @@
                                 Name
                             </th>
                             <th>
-                                Child
-                            </th>
-                            <th>
                                 Order
-                            </th>
-                            <th>
-                                Header
                             </th>
                             <th class="text-end">
                                 Actions
@@ -76,26 +68,10 @@
                                     {{ x.name }}
                                 </td>
                                 <td>
-                                    <select id="category-child-id-{{ x.id }}"
-                                            class="form-select form-select-sm">
-                                        <option>
-                                            None
-                                        </option>
-                                        {% for category in categories %}
-                                            <option {{ 'selected' if category.id == x.child_id }} value="{{ category.id }}">
-                                                {{ category.name }}
-                                            </option>
-                                        {% endfor %}
-                                    </select>
-                                </td>
-                                <td>
                                     <input id="category-order-{{ x.id }}"
                                            class="form-control form-control-sm"
                                            type="number"
                                            value="{{ x.order }}">
-                                </td>
-                                <td>
-                                    <input {{ 'checked' if x.in_header }} id="category-in-header-{{ x.id }}" class="form-check-input" type="checkbox">
                                 </td>
                                 <td class="text-end">
                                     <div class="btn-group">
