@@ -40,7 +40,6 @@ def mollie_payment() -> Response:
         if mollie_payment_.is_paid():
             order.status_id = OrderStatusId.PAID
             s.flush()
-            # TODO(Stan): add invoice.is_sent attribute
             if not order.invoice:
                 invoice = Invoice(
                     expires_at=mollie_payment_.expires_at,
