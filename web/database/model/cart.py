@@ -25,9 +25,11 @@ class Cart(Base):
     user_id = MC(ForeignKey("user.id", ondelete="CASCADE"), nullable=False, unique=True)
 
     billing = relationship("Billing")
-    coupon = relationship("Coupon")
+    coupon = relationship("Coupon", lazy="joined")
     currency = relationship("Currency", lazy="joined")
-    items = relationship("CartItem", back_populates="cart", passive_deletes=True)
+    items = relationship(
+        "CartItem", back_populates="cart", passive_deletes=True, lazy="joined"
+    )
     shipment_method = relationship("ShipmentMethod")
     shipping = relationship("Shipping")
     user = relationship("User")

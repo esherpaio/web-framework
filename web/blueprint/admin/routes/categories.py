@@ -13,7 +13,6 @@ def categories() -> str:
     with conn.begin() as s:
         categories_ = (
             s.query(Category)
-            .options(joinedload(Category.child))
             .filter_by(is_deleted=False)
             .order_by(Category.order, Category.id)
             .all()

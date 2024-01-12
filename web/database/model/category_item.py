@@ -21,4 +21,4 @@ class CategoryItem(Base):
 
     category = relationship("Category", back_populates="items")
     article = relationship("Article", back_populates="category_items")
-    sku = relationship("Sku", back_populates="category_items")
+    sku = relationship("Sku")

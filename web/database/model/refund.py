@@ -20,7 +20,7 @@ class Refund(Base):
 
     order_id = MC(ForeignKey("order.id", ondelete="RESTRICT"), nullable=False)
 
-    order = relationship("Order", back_populates="refunds")
+    order = relationship("Order", back_populates="refunds", lazy="joined")
 
     # Validation
 
