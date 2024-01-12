@@ -4,9 +4,10 @@ body {
     min-width: 320px;
 }
 
-.table th,
-.table td {
+table th,
+table td {
     text-wrap: nowrap;
+    white-space: nowrap;
 }
 
 /* style */

@@ -1,6 +1,7 @@
 {% extends "admin_main.html" %}
 {% block admin_body %}
     <script>
+        let _shipmentMethodId = undefined;
         async function addShipmentMethod() {
             event.preventDefault();
             updateButton('add-shipment-method', 1);
@@ -21,9 +22,9 @@
             });
             window.location.reload();
         }
-        async function deleteshipmentMethod(methodId) {
+        async function deleteShipmentMethod(methodId) {
             event.preventDefault();
-            updateButton(`delete-shipment-method-${methodId}`, 1);
+            updateButton(`delete-shipment-method`, 1);
             await deleteShipmentMethodsId(methodId);
             window.location.reload();
         }
@@ -31,7 +32,7 @@
 
     <div class="row g-3">
         <div class="col-12">
-            <div class="d-flex justify-content-between">
+            <div class="d-flex justify-content-between gap-2">
                 <h2 class="mb-0">
                     Shipment Methods
                 </h2>
@@ -99,9 +100,10 @@
                                                 onclick="updateShipmentMethod({{ method.id }});">
                                             Update
                                         </button>
-                                        <button id="delete-shipment-method-{{ method.id }}"
-                                                class="btn btn-load btn-sm btn-outline-danger"
-                                                onclick="deleteshipmentMethod({{ method.id }});">
+                                        <button class="btn btn-load btn-sm btn-outline-danger"
+                                                onclick="_shipmentMethodId = {{ method.id }};"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#modal-delete-shipment-method">
                                             Delete
                                         </button>
                                     </div>
@@ -196,6 +198,41 @@
                             class="btn btn-load btn-success"
                             type="submit">
                         Add
+                    </button>
+                    <button type="button"
+                            class="btn btn-secondary"
+                            data-bs-dismiss="modal">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-delete-shipment-method"
+         class="modal fade"
+         tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        Delete shipment method
+                    </h5>
+                    <button type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal">
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p class="mb-0">
+                        Are you sure?
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button id="delete-shipment-method"
+                            class="btn btn-load btn-danger"
+                            onclick="deleteShipmentMethod(_shipmentMethodId);">
+                        Delete
                     </button>
                     <button type="button"
                             class="btn btn-secondary"

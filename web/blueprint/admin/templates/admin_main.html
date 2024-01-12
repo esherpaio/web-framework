@@ -59,7 +59,7 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {{ 'active' if request.endpoint in ['admin.products', 'admin.product', 'admin.product_option'] }}"
+                        <a class="nav-link {{ 'active' if request.endpoint in ['admin.products', 'admin.product', 'admin.product_options', 'admin.product_option', 'admin.product_media', 'admin.product_links', 'admin.product_skus'] }}"
                            href="{{ url_for("admin.products") }}">
                             <i class="bi bi-boxes me-1"></i>
                             Products

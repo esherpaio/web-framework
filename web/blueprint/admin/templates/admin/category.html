@@ -1,6 +1,7 @@
 {% extends "admin_main.html" %}
 {% block admin_body %}
     <script>
+        let _categoryItemId = undefined;
         async function addCategoryItem(categoryId) {
             event.preventDefault();
             updateButton(`add-category-item`, 1);
@@ -11,7 +12,7 @@
             await patchSetting({ cached_at: null });
             window.location.reload();
         }
-        async function updateCategoryItem(categoryId, itemId) {
+        async function updateCategoryItem(itemId, categoryId) {
             event.preventDefault();
             updateButton(`update-category-item-${itemId}`, 1);
             await patchCategoriesIdItemsId(categoryId, itemId, {
@@ -20,9 +21,9 @@
             await patchSetting({ cached_at: null });
             window.location.reload();
         }
-        async function deleteCategoryItem(categoryId, itemId) {
+        async function deleteCategoryItem(itemId, categoryId) {
             event.preventDefault();
-            updateButton(`delete-category-item-${itemId}`, 1);
+            updateButton(`delete-category-item`, 1);
             await deleteCategoriesIdItemsId(categoryId, itemId);
             await patchSetting({ cached_at: null });
             window.location.reload();
@@ -31,19 +32,17 @@
 
     <div class="row g-3">
         <div class="col-12">
-            <div class="d-flex justify-content-between">
+            <div class="d-flex justify-content-between gap-2">
                 <h2 class="mb-0">
                     Category - {{ category.name }}
                 </h2>
-                <div>
-                    <button class="btn btn-success"
-                            type="submit"
-                            data-bs-toggle="modal"
-                            data-bs-target="#modal-add-category-item">
-                        Add
-                        <i class="bi bi-plus-square ms-1"></i>
-                    </button>
-                </div>
+                <button class="btn btn-success"
+                        type="submit"
+                        data-bs-toggle="modal"
+                        data-bs-target="#modal-add-category-item">
+                    Add
+                    <i class="bi bi-plus-square ms-1"></i>
+                </button>
             </div>
         </div>
         <div class="col-12">
@@ -78,12 +77,14 @@
                                     <div class="btn-group">
                                         <button id="update-category-item-{{ x.id }}"
                                                 class="btn btn-load btn-sm btn-outline-primary"
-                                                onclick="updateCategoryItem({{ category.id }}, {{ x.id }});">
+                                                onclick="updateCategoryItem({{ x.id }}, {{ category.id }});">
                                             Update
                                         </button>
                                         <button id="delete-category-item-{{ x.id }}"
                                                 class="btn btn-load btn-sm btn-outline-danger"
-                                                onclick="deleteCategoryItem({{ category.id }}, {{ x.id }});">
+                                                onclick="_categoryItemId = {{ x.id }};"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#modal-delete-category-item">
                                             Delete
                                         </button>
                                     </div>
@@ -147,6 +148,41 @@
                             class="btn btn-load btn-success"
                             type="submit">
                         Add
+                    </button>
+                    <button type="button"
+                            class="btn btn-secondary"
+                            data-bs-dismiss="modal">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-delete-category-item"
+         class="modal fade"
+         tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        Delete category item
+                    </h5>
+                    <button type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal">
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p class="mb-0">
+                        Are you sure?
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button id="delete-category-item"
+                            class="btn btn-load btn-danger"
+                            onclick="deleteCategoryItem(_categoryItemId, {{ category.id }});">
+                        Delete
                     </button>
                     <button type="button"
                             class="btn btn-secondary"

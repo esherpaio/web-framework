@@ -1,6 +1,7 @@
 {% extends "admin_main.html" %}
 {% block admin_body %}
     <script>
+        let _categoryId = undefined;
         async function addCategory() {
             event.preventDefault();
             updateButton('add-category', 1);
@@ -22,9 +23,9 @@
             await patchSetting({ cached_at: null });
             window.location.reload();
         }
-        async function removeCategory(categoryId) {
+        async function deleteCategory(categoryId) {
             event.preventDefault();
-            updateButton(`delete-category-${categoryId}`, 1);
+            updateButton(`delete-category`, 1);
             await deleteCategoriesId(categoryId);
             await patchSetting({ cached_at: null });
             window.location.reload();
@@ -33,7 +34,7 @@
 
     <div class="row g-3">
         <div class="col-12">
-            <div class="d-flex justify-content-between">
+            <div class="d-flex justify-content-between gap-2">
                 <h2 class="mb-0">
                     Categories
                 </h2>
@@ -108,9 +109,10 @@
                                             Update
                                         </button>
                                         {% if not x.is_locked or current_user.is_super %}
-                                            <button id="delete-category-{{ x.id }}"
-                                                    class="btn btn-load btn-sm btn-outline-danger"
-                                                    onclick="removeCategory({{ x.id }});">
+                                            <button class="btn btn-load btn-sm btn-outline-danger"
+                                                    onclick="_categoryId = {{ x.id }};"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#modal-delete-category">
                                                 Delete
                                             </button>
                                         {% endif %}
@@ -167,6 +169,41 @@
                             class="btn btn-load btn-success"
                             type="submit">
                         Add
+                    </button>
+                    <button type="button"
+                            class="btn btn-secondary"
+                            data-bs-dismiss="modal">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-delete-category"
+         class="modal fade"
+         tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        Delete category
+                    </h5>
+                    <button type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal">
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p class="mb-0">
+                        Are you sure?
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button id="delete-category"
+                            class="btn btn-load btn-danger"
+                            onclick="deleteCategory(_categoryId);">
+                        Delete
                     </button>
                     <button type="button"
                             class="btn btn-secondary"
