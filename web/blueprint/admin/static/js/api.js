@@ -1,10 +1,4 @@
-const callApi = async (
-    method,
-    url,
-    data = null,
-    contentType = null,
-    silent = false
-) => {
+async function callApi(method, url, data = null, contentType = null, silent = false) {
     if (method === "GET" && data) {
         let url_params = "?";
         for (const [key, value] of Object.entries(data)) {
@@ -22,7 +16,7 @@ const callApi = async (
     const timeoutId = setTimeout(() => controller.abort(), 25000);
     let options = {
         body: data,
-        headers: {"Content-Type": contentType},
+        headers: { "Content-Type": contentType },
         method: method,
         signal: controller.signal,
     }
@@ -50,8 +44,8 @@ const callApi = async (
             message = "Something went wrong on our end.";
             error = "No response from API.";
         }
-        resetButtons();
         if (!silent) {
+            resetButtons();
             showMessage(message);
             throw new Error(error);
         }
