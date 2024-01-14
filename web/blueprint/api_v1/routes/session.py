@@ -24,7 +24,7 @@ from web.i18n.base import _
 class Text(StrEnum):
     CHECK_DETAILS = _("API_SESSION_CHECK_DETAILS")
     CHECK_ACTIVATION = _("API_SESSION_CHECK_ACTIVATION")
-    GOOGLE_INVALID = ""
+    GOOGLE_INVALID = _("API_SESSION_GOOGLE_INVALID")
 
 
 #
@@ -63,26 +63,23 @@ def post_sessions() -> Response:
 @api_v1_bp.post("/sessions/google")
 @transfer_cart
 def post_sessions_google() -> Response:
-    email, _ = json_get("email", str, nullable=False)
     token_id, _ = json_get("token_id", str, nullable=False)
-
-    # Validate token
     token = id_token.verify_oauth2_token(
         token_id, requests.Request(), audience=config.GOOGLE_CLIENT_ID
     )
-    if token["email"] != email:
+    email = token.get("email")
+    if email is None:
         return response(400, Text.GOOGLE_INVALID)
-    if not token["email_verified"]:
-        return response(400, Text.GOOGLE_INVALID)
+    email = email.lower()
 
     # Get or add user
     with conn.begin() as s:
-        user = s.query(User).filter_by(email=email.lower(), is_active=True).first()
+        user = s.query(User).filter_by(email=email, is_active=True).first()
     if user and not user.is_active:
         return response(400, Text.CHECK_ACTIVATION)
     if not user:
         with conn.begin() as s:
-            user = User(email=email.lower(), is_active=True, role_id=UserRoleId.USER)
+            user = User(email=email, is_active=True, role_id=UserRoleId.USER)
             s.add(user)
 
     # Login user
