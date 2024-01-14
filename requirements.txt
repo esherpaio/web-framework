@@ -2,7 +2,6 @@ beautifulsoup4==4.12.2
 emoji==2.9.0
 flask-login==0.6.3
 flask-packer==2.1.8
-flask-talisman==1.1.0
 flask==3.0.0
 google-api-python-client==2.113.0
 jinja2==3.1.2

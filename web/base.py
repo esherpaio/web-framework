@@ -7,7 +7,6 @@ import alembic.config
 from flask import Blueprint, Flask, redirect, request, url_for
 from flask_login import LoginManager
 from flask_packer import FlaskPacker
-from flask_talisman import Talisman
 from werkzeug import Response
 
 from web import config
@@ -90,7 +89,6 @@ class FlaskWeb:
     def setup(self) -> "FlaskWeb":
         self.setup_flask()
         self.setup_jinja()
-        self.setup_security()
         self.setup_auth()
         self.setup_static()
         self.setup_database()
@@ -119,14 +117,6 @@ class FlaskWeb:
         self._app.add_template_global(_get_cdn_url, name="cdn_url")
         for key, value in self._jinja_global_hooks.items():
             self._app.add_template_global(value, name=key)
-
-    def setup_security(self) -> None:
-        # Initialize Flask-Talisman
-        Talisman(
-            self._app,
-            force_https=False,
-            content_security_policy=False,
-        )
 
     def setup_auth(self) -> None:
         # Initialize Flask-Login
