@@ -22,6 +22,7 @@
     "API_ORDER_VAT_REQUIRED": "Your VAT number is required.",
     "API_SESSION_CHECK_ACTIVATION": "Please activate your account.",
     "API_SESSION_CHECK_DETAILS": "Please check your login details.",
+    "API_SESSION_GOOGLE_INVALID": "We are unable to log you in with Google.",
     "API_USER_ACTIVATION_CHECK": "Please activate your account with the URL in your email.",
     "API_USER_ACTIVATION_SUCCESS": "Your account has been activated.",
     "API_USER_EMAIL_INVALID": "Please enter a valid email address.",
