@@ -14,7 +14,6 @@ from web.database.model import Page
 
 
 class MetaTag(StrEnum):
-    GOOGLE_SIGNIN = "<meta name='google-signin-client_id' content='%s'>"  # noqa: E501
     LINK_APPLE_TOUCH_ICON = "<link rel='apple-touch-icon' href='%s'/>"
     LINK_CANONICAL = "<link rel='canonical' href='%s'/>"
     LINK_ICON = "<link rel='icon' href='%s'/>"
@@ -147,9 +146,6 @@ class Meta:
         if self.favicon_url:
             yield Markup(MetaTag.LINK_ICON % self.favicon_url)
             yield Markup(MetaTag.LINK_APPLE_TOUCH_ICON % self.favicon_url)
-        # Signin
-        if config.GOOGLE_CLIENT_ID:
-            yield Markup(MetaTag.GOOGLE_SIGNIN % config.GOOGLE_CLIENT_ID)
         # Opengraph
         if self.canonical_url:
             yield Markup(MetaTag.OG_URL % self.canonical_url)
