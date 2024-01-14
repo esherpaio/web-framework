@@ -119,19 +119,16 @@ def patch_users_id(user_id: int) -> Response:
 def set_password(s: Session, data: dict, model: User) -> None:
     password = data["password"]
     password_eval = data["password_eval"]
-
     if len(password) < 8:
         abort(response(400, Text.PASSWORD_LENGTH))
     if password != password_eval:
         abort(response(400, Text.PASSWORD_NO_MATCH))
-
     password_hash = generate_password_hash(password, "pbkdf2:sha256:1000000")
     model.password_hash = password_hash
 
 
 def val_email(s: Session, data: dict, model: User) -> None:
     email = data["email"]
-
     if not re.match(r"[^@]+@[^@]+\.[^@]+", email):
         abort(response(400, Text.EMAIL_INVALID))
     user = s.query(User).filter(User.email == email.lower()).first()
