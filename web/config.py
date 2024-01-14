@@ -64,6 +64,7 @@ ENDPOINT_PASSWORD: str = config_var("ENDPOINT_PASSWORD")
 ENDPOINT_ORDER: str = config_var("ENDPOINT_ORDER")
 
 DATABASE_URL: str = env_var("DATABASE_URL", str)
+GOOGLE_CLIENT_ID: str = env_var("GOOGLE_CLIENT_ID", str)
 GOOGLE_KEY: str = env_var("GOOGLE_KEY", str)
 GOOGLE_PLACE_ID: str = env_var("GOOGLE_PLACE_ID", str)
 LOCALHOST: str = env_var("LOCALHOST", str)

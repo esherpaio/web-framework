@@ -14,6 +14,7 @@ from web.database.model import Page
 
 
 class MetaTag(StrEnum):
+    GOOGLE_SIGNIN= "<meta name='google-signin-client_id' content='%s'>"  # noqa: E501
     LINK_APPLE_TOUCH_ICON = "<link rel='apple-touch-icon' href='%s'/>"
     LINK_CANONICAL = "<link rel='canonical' href='%s'/>"
     LINK_ICON = "<link rel='icon' href='%s'/>"
@@ -23,13 +24,13 @@ class MetaTag(StrEnum):
     META_THEME_COLOR = "<meta name='theme-color' content='%s'/>"
     META_VIEWPORT = "<meta name='viewport' content='width=device-width, initial-scale=1'/>"  # noqa: E501
     OG_DESCRIPTION = "<meta property='og:description' content='%s'/>"
+    OG_IMAGE = "<meta property='og:image' content='%s'/>"
     OG_LOCALE = "<meta property='og:locale' content='%s'/>"
     OG_PUBLISHER = "<meta property='article:publisher' content='%s'/>"
     OG_SITE_NAME = "<meta property='og:site_name' content='%s'/>"
     OG_TITLE = "<meta property='og:title' content='%s'/>"
     OG_TYPE = "<meta property='og:type' content='%s'/>"
     OG_URL = "<meta property='og:url' content='%s'/>"
-    OG_IMAGE = "<meta property='og:image' content='%s'/>"
     TITLE = "<title>%s</title>"
     TWITTER_CARD = "<meta name='twitter:card' content='summary_large_image'/>"
     TWITTER_CREATOR = "<meta name='twitter:creator' content='%s'/>"
@@ -146,6 +147,9 @@ class Meta:
         if self.favicon_url:
             yield Markup(MetaTag.LINK_ICON % self.favicon_url)
             yield Markup(MetaTag.LINK_APPLE_TOUCH_ICON % self.favicon_url)
+        # Signin
+        if config.GOOGLE_CLIENT_ID:
+            yield Markup(MetaTag.GOOGLE_SIGNIN % config.GOOGLE_CLIENT_ID)
         # Opengraph
         if self.canonical_url:
             yield Markup(MetaTag.OG_URL % self.canonical_url)
