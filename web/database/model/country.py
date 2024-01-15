@@ -14,6 +14,7 @@ class Country(Base):
     code = MC(String(2), nullable=False, unique=True)
     in_sitemap = MC(Boolean, nullable=False, default=False)
     name = MC(String(64), nullable=False, unique=True)
+    state_required = MC(Boolean, nullable=False, default=False)
 
     currency_id = MC(ForeignKey("currency.id", ondelete="RESTRICT"), nullable=False)
     region_id = MC(ForeignKey("region.id", ondelete="RESTRICT"), nullable=False)

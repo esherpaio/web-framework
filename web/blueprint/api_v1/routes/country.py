@@ -21,6 +21,9 @@ class CountryAPI(API):
         Country.currency_id,
         Country.region_id,
     }
+    patch_columns = {
+        Country.state_required,
+    }
     get_columns = {
         Country.code,
         Country.in_sitemap,
