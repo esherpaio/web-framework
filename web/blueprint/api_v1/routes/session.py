@@ -83,7 +83,7 @@ def post_sessions_google() -> Response:
             s.add(user)
 
     # Login user
-    flask_login.login_user(user, remember=True)
+    flask_login.login_user(user, remember=False)
     return response()
 
 
