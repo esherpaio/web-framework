@@ -75,6 +75,10 @@ function getCountriesId(countryId, silent = false) {
     const url = `/api/v1/countries/${countryId}`;
     return callApi('GET', url, null, null, silent);
 }
+function patchCountriesId(countryId, data, silent = false) {
+    const url = `/api/v1/countries/${countryId}`;
+    return callApi('PATCH', url, data, 'application/json', silent);
+}
 function deleteCountriesId(countryId, silent = false) {
     const url = `/api/v1/countries/${countryId}`;
     return callApi('DELETE', url, null, null, silent);

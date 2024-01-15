@@ -69,6 +69,17 @@ def get_countries_id(country_id: int) -> Response:
     return response(data=resource)
 
 
+@api_v1_bp.patch("/countries/<int:country_id>")
+def patch_countries_id(country_id: int) -> Response:
+    api = CountryAPI()
+    data = api.gen_request_data(api.patch_columns)
+    with conn.begin() as s:
+        model: Country = api.get(s, country_id)
+        api.update(s, data, model)
+        resource = api.gen_resource(s, model)
+    return response(data=resource)
+
+
 @access_control(UserRoleLevel.ADMIN)
 @api_v1_bp.delete("/countries/<int:country_id>")
 def delete_countries_id(country_id: int) -> Response:
