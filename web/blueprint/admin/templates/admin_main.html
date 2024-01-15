@@ -103,6 +103,13 @@
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link {{ 'active' if request.endpoint in ['admin.countries'] }}"
+                           href="{{ url_for("admin.countries") }}">
+                            <i class="bi bi-flag me-1"></i>
+                            Countries
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link {{ 'active' if request.endpoint in ['admin.setting'] }}"
                            href="{{ url_for("admin.setting") }}">
                             <i class="bi bi-gear-wide-connected me-1"></i>
