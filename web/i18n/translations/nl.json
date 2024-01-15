@@ -20,6 +20,7 @@
     "API_ORDER_VAT_INVALID": "Uw BTW nummer lijkt ongeldig te zijn. Als u denkt dat dit een fout is, neem dan contact met ons op.",
     "API_ORDER_VAT_NO_CONNECTION": "We kunnen uw BTW nummer momenteel niet verifiëren. Probeer het over een uur opnieuw.",
     "API_ORDER_VAT_REQUIRED": "Uw BTW nummer is vereist.",
+    "API_ORDER_STATE_REQUIRED": "Uw staat is vereist voor dit land.",
     "API_SESSION_CHECK_ACTIVATION": "Uw account is nog niet geactiveerd.",
     "API_SESSION_CHECK_DETAILS": "Controleer a.u.b. uw inloggegevens.",
     "API_SESSION_GOOGLE_INVALID": "We kunnen je helaas niet inloggen met Google.",

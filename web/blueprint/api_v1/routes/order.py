@@ -28,6 +28,7 @@ class Text(StrEnum):
     VAT_INVALID = _("API_ORDER_VAT_INVALID")
     VAT_NO_CONNECTION = _("API_ORDER_VAT_NO_CONNECTION")
     VAT_REQUIRED = _("API_ORDER_VAT_REQUIRED")
+    STATE_REQUIRED = _("API_ORDER_STATE_REQUIRED")
 
 
 class OrderAPI(API):
@@ -114,6 +115,10 @@ def val_cart(s: Session, data: dict, model: Order) -> None:
         is_valid = is_vat_number_format_valid(vat_parsed, cart.billing.country.code)
         if not is_valid:
             abort(response(400, Text.VAT_INVALID))
+    # Check state
+    if cart.billing.country.state_required:
+        if cart.billing.state is None:
+            abort(response(400, Text.STATE_REQUIRED))
 
 
 def set_order(s: Session, data: dict, model: Order) -> None:

@@ -20,6 +20,7 @@
     "API_ORDER_VAT_INVALID": "Your VAT number seems to be invalid. If you believe this is a mistake, please contact us.",
     "API_ORDER_VAT_NO_CONNECTION": "We are currently unable to verify your VAT number. Please try again in one hour.",
     "API_ORDER_VAT_REQUIRED": "Your VAT number is required.",
+    "API_ORDER_STATE_REQUIRED": "Your state is required for this country.",
     "API_SESSION_CHECK_ACTIVATION": "Please activate your account.",
     "API_SESSION_CHECK_DETAILS": "Please check your login details.",
     "API_SESSION_GOOGLE_INVALID": "We are unable to log you in with Google.",
