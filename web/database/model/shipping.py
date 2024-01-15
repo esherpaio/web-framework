@@ -19,6 +19,7 @@ class Shipping(Base):
     first_name = MC(String(64), nullable=False)
     last_name = MC(String(64), nullable=False)
     phone = MC(String(64))
+    state = MC(String(64))
     zip_code = MC(String(64), nullable=False)
 
     country_id = MC(ForeignKey("country.id", ondelete="RESTRICT"), nullable=False)
@@ -30,7 +31,9 @@ class Shipping(Base):
 
     # Validation
 
-    @validates("address", "city", "zip_code", "company", "first_name", "last_name")
+    @validates(
+        "address", "city", "state", "zip_code", "company", "first_name", "last_name"
+    )
     def validate_address(self, key: str, value: Any) -> Any:
         val_length(value, min_=2)
         value = del_emoji(value)
