@@ -26,6 +26,7 @@ class ShippingAPI(API):
         Shipping.first_name,
         Shipping.last_name,
         Shipping.phone,
+        Shipping.state,
         Shipping.zip_code,
     }
     patch_columns = {
@@ -37,6 +38,7 @@ class ShippingAPI(API):
         Shipping.first_name,
         Shipping.last_name,
         Shipping.phone,
+        Shipping.state,
         Shipping.zip_code,
     }
     get_columns = {
@@ -49,6 +51,7 @@ class ShippingAPI(API):
         Shipping.id,
         Shipping.last_name,
         Shipping.phone,
+        Shipping.state,
         Shipping.user_id,
         Shipping.zip_code,
     }

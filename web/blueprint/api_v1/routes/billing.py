@@ -26,6 +26,7 @@ class BillingAPI(API):
         Billing.first_name,
         Billing.last_name,
         Billing.phone,
+        Billing.state,
         Billing.vat,
         Billing.zip_code,
     }
@@ -38,6 +39,7 @@ class BillingAPI(API):
         Billing.first_name,
         Billing.last_name,
         Billing.phone,
+        Billing.state,
         Billing.vat,
         Billing.zip_code,
     }
@@ -51,6 +53,7 @@ class BillingAPI(API):
         Billing.id,
         Billing.last_name,
         Billing.phone,
+        Billing.state,
         Billing.user_id,
         Billing.vat,
         Billing.zip_code,
