@@ -61,6 +61,8 @@ def _build_order_info(
     left_items.append(Paragraph(order.billing.full_name))
     left_items.append(Paragraph(order.billing.address))
     left_items.append(Paragraph(f"{order.billing.zip_code} {order.billing.city}"))
+    if order.billing.state:
+        left_items.append(Paragraph(order.billing.state))
     left_items.append(Paragraph(order.billing.country.name))
     left_items.append(Paragraph(order.billing.email))
 

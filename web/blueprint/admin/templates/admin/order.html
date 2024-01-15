@@ -109,6 +109,9 @@
                         <span class="d-block">{{ order.shipping.first_name }} {{ order.shipping.last_name }}</span>
                         <span class="d-block">{{ order.shipping.address }}</span>
                         <span class="d-block">{{ order.shipping.zip_code }} {{ order.shipping.city }}</span>
+                        {% if order.shipping.state %}
+                            <span class="d-block">{{ order.shipping.state }}</span>
+                        {% endif %}
                         <span class="d-block mb-2">{{ order.shipping.country.name }}</span>
                         <span class="d-block">{{ order.shipping.email }}</span>
                         {% if order.shipping.phone is not none %}
@@ -131,6 +134,9 @@
                         <span class="d-block">{{ order.billing.first_name }} {{ order.billing.last_name }}</span>
                         <span class="d-block">{{ order.billing.address }}</span>
                         <span class="d-block">{{ order.billing.zip_code }} {{ order.billing.city }}</span>
+                        {% if order.billing.state %}
+                            <span class="d-block">{{ order.billing.state }}</span>
+                        {% endif %}
                         <span class="d-block mb-2">{{ order.billing.country.name }}</span>
                         <span class="d-block">{{ order.billing.email }}</span>
                         {% if order.billing.phone %}

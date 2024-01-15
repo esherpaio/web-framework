@@ -39,8 +39,8 @@ def seed_hook(*args) -> None:
         seed.UserRoleSyncer().sync(s)
         # third party
         seed.CurrencySyncer().sync(s)
-        seed.CountrySyncer().sync(s)
         seed.RegionSyncer().sync(s)
+        seed.CountrySyncer().sync(s)
         # user defined
         seed.SkuSyncer().sync(s)
 
