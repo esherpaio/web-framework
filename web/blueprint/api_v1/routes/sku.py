@@ -2,7 +2,7 @@ from werkzeug import Response
 
 from web.blueprint.api_v1 import api_v1_bp
 from web.database.client import conn
-from web.database.model import CategoryItem, Sku, UserRoleLevel
+from web.database.model import CategoryItem, ProductLink, Sku, UserRoleLevel
 from web.helper.api import ApiText, json_get, response
 from web.helper.user import access_control
 
@@ -51,6 +51,11 @@ def delete_skus_id(sku_id: int) -> Response:
         category_items = s.query(CategoryItem).filter_by(sku_id=sku_id).all()
         for category_item in category_items:
             s.delete(category_item)
+
+        # Delete product links
+        product_links = s.query(ProductLink).filter_by(sku_id=sku_id).all()
+        for product_link in product_links:
+            s.delete(product_link)
 
     return response()
 
