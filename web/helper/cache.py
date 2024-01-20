@@ -24,17 +24,17 @@ class Cache(dict):
                 response = zlib.decompress(compressed).decode()
                 return response
 
-            logger.info(f"Cache miss: {request.url}")
+            logger.debug(f"Cache miss: {request.url}")
             response = f(*args, **kwargs)
-            if not config.APP_DEBUG:
+            if not config.APP_CACHE:
                 try:
                     compressed = zlib.compress(response.encode())
                 except AttributeError:
-                    logger.info(f"Cache could not compress: {request.url}")
+                    logger.warning(f"Cache could not compress: {request.url}")
                     pass
                 else:
                     self[request.url] = compressed
-                    logger.info(f"Cache set: {request.url}")
+                    logger.debug(f"Cache set: {request.url}")
             return response
 
         wrap.__name__ = f.__name__

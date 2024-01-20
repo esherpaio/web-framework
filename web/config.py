@@ -11,12 +11,12 @@ load_dotenv(override=True)
 @lru_cache
 def env_var(key: str, type_: str | int | bool) -> str | int | bool:
     value = os.getenv(key)
-    if isinstance(type_, int):
+    if type_ == int:
         try:
             value = int(value)
         except (ValueError, TypeError):
             pass
-    elif isinstance(type_, bool):
+    elif type_ == bool:
         value = value in ["true", "1"]
     return value
 
@@ -31,6 +31,7 @@ def config_var(key: str) -> Any:
     return data.get(key)
 
 
+APP_CACHE: bool = env_var("APP_CACHE", bool)
 APP_DEBUG: bool = env_var("APP_DEBUG", bool)
 APP_SECRET: str = env_var("APP_SECRET", str)
 
