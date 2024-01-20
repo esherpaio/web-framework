@@ -26,7 +26,7 @@ class Cache(dict):
 
             logger.debug(f"Cache miss: {request.url}")
             response = f(*args, **kwargs)
-            if not config.APP_CACHE:
+            if config.APP_CACHE:
                 try:
                     compressed = zlib.compress(response.encode())
                 except AttributeError:
