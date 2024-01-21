@@ -4,7 +4,7 @@ from web.packer.bundle import CssBundle
 
 
 class ScssBundle:
-    OUT_EXT = ".scss"
+    OUT_EXT = ".css"
 
     def __init__(self, in_path: str) -> None:
         self._in_path = in_path
