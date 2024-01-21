@@ -1,12 +1,32 @@
+import os
 import re
 
 
 class CssPacker:
+    ENCODING = "utf-8"
     IN_EXTS = [".css"]
     OUT_EXT = ".css"
 
-    @classmethod
-    def compile(cls, css: str, *args: any, **kwargs: any) -> str:
+    def __init__(self, in_dirs: list[str], follow_subdirs: bool = True) -> None:
+        self._in_dirs = in_dirs
+        self._follow_subdirs = follow_subdirs
+
+    def compile(self) -> str:
+        compiled = ""
+        for in_dir in self._in_dirs:
+            for subdir, _, fns in os.walk(in_dir):
+                for fn in fns:
+                    if not any([fn.endswith(ext) for ext in self.IN_EXTS]):
+                        continue
+                    path = os.path.join(subdir, fn)
+                    content = open(path, "r", encoding=self.ENCODING).read()
+                    compiled += self._compile(content)
+                if not self._follow_subdirs:
+                    break
+        return compiled
+
+    @staticmethod
+    def _compile(css: str) -> str:
         # remove comments
         css = re.sub(r"\s*/\*\s*\*/", "$$HACK1$$", css)  # preserve IE<6 comment hack
         css = re.sub(r"/\*[\s\S]*?\*/", "", css)
