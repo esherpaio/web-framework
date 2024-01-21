@@ -13,25 +13,11 @@
               href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css"
               as="style"
               onload="this.onload=null;this.rel='stylesheet';">
-        {% pack 'css' %}
-            <link rel="stylesheet"
-                  href="{{ url_for('admin.static', filename='css/bootstrap.css') }}">
-            <link rel="stylesheet"
-                  href="{{ url_for('admin.static', filename='css/quill-snow.css') }}">
-            <link rel="stylesheet"
-                  href="{{ url_for('admin.static', filename='css/custom.css') }}">
-        {% endpack %}
-        {% pack 'js' %}
-            <script src="{{ url_for('admin.static', filename='js/ext/bootstrap.js') }}"></script>
-            <script src="{{ url_for('admin.static', filename='js/ext/quill.js') }}"></script>
-            <script src="{{ url_for('admin.static', filename='js/api.js') }}"></script>
-            <script src="{{ url_for('admin.static', filename='js/buttons.js') }}"></script>
-            <script src="{{ url_for('admin.static', filename='js/common.js') }}"></script>
-            <script src="{{ url_for('admin.static', filename='js/data.js') }}"></script>
-            <script src="{{ url_for('admin.static', filename='js/endpoints.js') }}"></script>
-            <script src="{{ url_for('admin.static', filename='js/messages.js') }}"></script>
-            <script src="{{ url_for('admin.static', filename='js/parameters.js') }}"></script>
-        {% endpack %}
+        <link type="text/css"
+              rel="stylesheet"
+              href="https://web-framework.b-cdn.net/static/aa1eaf7a2a4f9e3a5e1b43e559555724.css">
+        <script defer
+                src="https://web-framework.b-cdn.net/static/76df3b549cf4a21effa4a456ceea6cca.js"></script>
     </head>
     <body class="h-100 w-100 d-flex flex-row">
         <nav id="sidebar"

@@ -4,7 +4,7 @@
     "BUSINESS_COUNTRY_CODE": "NL",
     "BUSINESS_COUNTRY": "Nederland",
     "BUSINESS_EMAIL": "contact@enlarge-online.nl",
-    "BUSINESS_NAME": "Enlarge",
+    "BUSINESS_NAME": "eSherpa",
     "BUSINESS_STREET": "Streetname 123",
     "BUSINESS_VAT_RATE": 1.00,
     "BUSINESS_VAT_REVERSE_CHARGE": false,
@@ -37,5 +37,5 @@
     "WEBSITE_LANGUAGE_CODE": "en",
     "WEBSITE_LOCALE": "nl-nl",
     "WEBSITE_LOGO_URL": "https://web-framework.b-cdn.net/logo.png",
-    "WEBSITE_NAME": "Enlarge"
+    "WEBSITE_NAME": "eSherpa"
 }
