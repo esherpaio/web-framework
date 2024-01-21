@@ -1,11 +1,11 @@
-from web.packer.base import CssPacker, JsPacker, Packer
+from web.packer.base import CssBundle, JsBundle, Packer
 
 
 def generate_admin_static() -> None:
     js_dir = "/Users/stan/code/web-framework/web/blueprint/admin/static/js"
     css_dir = "/Users/stan/code/web-framework/web/blueprint/admin/static/css"
-    Packer().pack(JsPacker([js_dir]), save_cdn=True)
-    Packer().pack(CssPacker([css_dir]), save_cdn=True)
+    Packer().pack(JsBundle(js_dir), save_cdn=True)
+    Packer().pack(CssBundle(css_dir), save_cdn=True)
 
 
 if __name__ == "__main__":
