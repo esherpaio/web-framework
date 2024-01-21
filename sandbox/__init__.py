@@ -23,7 +23,6 @@ def create_app() -> Flask:
         accept_request_auth=True,
         blueprints=[admin_bp, api_v1_bp, webhook_v1_bp],
         enable_locale=True,
-        enable_packer=True,
         seed_hook=seed_hook,
     ).setup()
     return app
