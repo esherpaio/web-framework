@@ -21,6 +21,7 @@ class JsBundle(object):
                 path = os.path.join(subdir, fn)
                 content = open(path, "r", encoding=self.ENCODING).read()
                 compiled += jsmin(content)
+                compiled += "\n"
             if not self._follow_subdirs:
                 break
         return compiled
