@@ -8,7 +8,6 @@ from web.blueprint.admin import admin_bp
 from web.blueprint.api_v1 import api_v1_bp
 from web.blueprint.webhook_v1 import webhook_v1_bp
 from web.database.client import conn
-from web.database.model import Category
 from web.database.model.user import User
 from web.database.model.user_role import UserRoleId
 
@@ -19,11 +18,10 @@ def create_app() -> Flask:
     app.add_url_rule("/login", endpoint="login", view_func=view_login)
     FlaskWeb(
         app,
+        blueprints=[admin_bp, api_v1_bp, webhook_v1_bp],
         accept_cookie_auth=True,
         accept_request_auth=True,
-        blueprints=[admin_bp, api_v1_bp, webhook_v1_bp],
-        enable_locale=True,
-        seed_hook=seed_hook,
+        sync_hook=seed_hook,
     ).setup()
     return app
 

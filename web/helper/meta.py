@@ -6,7 +6,7 @@ from flask import has_request_context, request
 from markupsafe import Markup
 
 from web import config
-from web.database.model import Page
+from web.database.model import FlaskRoute
 
 #
 # Enumerators
@@ -173,8 +173,8 @@ class Meta:
 #
 
 
-def gen_meta(page: Page | None = None) -> Meta:
-    if isinstance(page, Page):
-        return Meta(page.name, page.description, page.robots, page.image_url)
+def gen_meta(route: FlaskRoute | None = None) -> Meta:
+    if isinstance(route, FlaskRoute):
+        return Meta(route.name, route.description, route.robots, route.image_url)
     else:
         return Meta()

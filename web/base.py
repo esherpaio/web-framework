@@ -6,7 +6,6 @@ from typing import Callable
 import alembic.config
 from flask import Blueprint, Flask, redirect, request, url_for
 from flask_login import LoginManager
-from flask_packer import FlaskPacker
 from werkzeug import Response
 
 from web import config
@@ -15,9 +14,10 @@ from web.database.client import conn
 from web.database.model import (
     Country,
     Currency,
+    FlaskBlueprint,
+    FlaskRoute,
     Language,
     OrderStatus,
-    Page,
     ProductLinkType,
     ProductType,
     Redirect,
@@ -55,11 +55,8 @@ class FlaskWeb:
         accept_cookie_auth: bool = False,
         accept_request_auth: bool = False,
         static_hook: Callable | None = None,
-        event_hook: Callable | None = None,
-        seed_hook: Callable | None = None,
+        sync_hook: Callable | None = None,
         cache_hook: Callable | None = None,
-        enable_packer: bool = False,
-        enable_locale: bool = False,
     ) -> None:
         if jinja_filter_hooks is None:
             jinja_filter_hooks = {}
@@ -73,11 +70,8 @@ class FlaskWeb:
         self._accept_cookie_auth = accept_cookie_auth
         self._accept_request_auth = accept_request_auth
         self._static_hook = static_hook
-        self._event_hook = event_hook
-        self._seed_hook = seed_hook
+        self._sync_hook = sync_hook
         self._cache_hook = cache_hook
-        self._enable_packer = enable_packer
-        self._enable_locale = enable_locale
 
         self._cached_at: datetime = datetime.utcnow()
         self._cache_active: bool = True
@@ -134,9 +128,6 @@ class FlaskWeb:
         # Run static hook
         if self._static_hook is not None:
             self._static_hook(self._app)
-        # Initialize FlaskPacker
-        if self._enable_packer:
-            FlaskPacker(self._app)
 
     def setup_database(self) -> None:
         # Perform migrations
@@ -146,10 +137,8 @@ class FlaskWeb:
             if s.query(Setting).count() == 0:
                 s.add(Setting())
         # Run hooks
-        if self._event_hook is not None:
-            self._event_hook(self._app)
-        if self._seed_hook is not None:
-            self._seed_hook(self._app)
+        if self._sync_hook is not None:
+            self._sync_hook(self._app)
         # Run startup scripts
         for func in [clean_carts, clean_users]:
             try:
@@ -162,12 +151,11 @@ class FlaskWeb:
         self._app.before_request(check_redirects)
 
     def setup_locale(self) -> None:
-        if self._enable_locale:
-            # Register Flask hooks
-            self._app.before_request(_check_locale)
-            self._app.after_request(_set_locale)
-            self._app.url_defaults(_set_urls)
-            self._app.add_template_global(_get_locale_url, name="locale_url")
+        # Register Flask hooks
+        self._app.before_request(_check_locale)
+        self._app.after_request(_set_locale)
+        self._app.url_defaults(_set_urls)
+        self._app.add_template_global(_get_locale_url, name="locale_url")
 
     def setup_error_handling(self) -> None:
         # Register Flask hooks
@@ -216,7 +204,8 @@ class FlaskWeb:
             cache.product_link_types = s.query(ProductLinkType).order_by(ProductLinkType.name).all()
             cache.product_types = s.query(ProductType).order_by(ProductType.name).all()
             cache.user_roles = s.query(UserRole).order_by(UserRole.name).all()
-            cache.pages = s.query(Page).all()
+            cache.routes = s.query(FlaskRoute).all()
+            cache.blueprints = s.query(FlaskBlueprint).all()
             cache.redirects = s.query(Redirect).order_by(Redirect.url_from.desc()).all()
             cache.setting = s.query(Setting).first()
             # fmt: on

@@ -6,7 +6,7 @@ from xml.dom.minidom import Node
 from flask import current_app, request, url_for
 from werkzeug.local import LocalProxy
 
-from web.database.model import Page
+from web.database.model import FlaskBlueprint, FlaskRoute
 from web.helper.cache import cache
 
 #
@@ -77,22 +77,23 @@ def is_endpoint(endpoint: str) -> bool:
         return True
 
 
-def get_page(pages: list[Page]) -> Page | None:
-    """Get a page object for the current request."""
-    for page in pages:
-        if page.endpoint == request.endpoint:
-            return page
+def get_route() -> FlaskRoute | None:
+    """Get a route object for the current request."""
+    for route in cache.routes:
+        if route.endpoint == request.endpoint:
+            return route
 
 
-def _get_page() -> Page | None:
-    """Get a page object for the current request."""
-    for page in cache.pages:
-        if page.endpoint == request.endpoint:
-            return page
+def get_blueprint() -> FlaskBlueprint | None:
+    """Get a blueprint object for the current request."""
+    for blueprint in cache.blueprints:
+        if blueprint.name == request.blueprint:
+            return blueprint
 
 
 #
 # Variables
 #
 
-current_page: Any = LocalProxy(lambda: _get_page())
+current_route: Any = LocalProxy(lambda: get_route())
+current_blueprint: Any = LocalProxy(lambda: get_blueprint())

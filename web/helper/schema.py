@@ -4,7 +4,7 @@ from flask import request
 from markupsafe import Markup
 
 from web import config
-from web.database.model import Page
+from web.database.model import FlaskRoute
 from web.helper.localization import current_locale, url_for_locale
 
 #
@@ -157,13 +157,13 @@ class SchemaProduct(Schema):
 
 
 def gen_schemas(
-    page: Page | None = None, schemas: list[Schema] | None = None
+    route: FlaskRoute | None = None, schemas: list[Schema] | None = None
 ) -> list[Schema]:
     if schemas is None:
         schemas = []
-    if isinstance(page, Page):
-        if page.endpoint == config.ENDPOINT_HOME:
+    if isinstance(route, FlaskRoute):
+        if route.endpoint == config.ENDPOINT_HOME:
             schemas.append(SchemaWebsite())
             schemas.append(SchemaOrganization())
-        schemas.append(SchemaWebPage(page.name, page.description))
+        schemas.append(SchemaWebPage(route.name, route.description))
     return schemas

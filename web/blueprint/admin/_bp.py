@@ -35,5 +35,5 @@ def context() -> dict:
 
 @admin_bp.errorhandler(Exception)
 def error_handler(error: Exception) -> Response:
-    logger.error(f"Admin error: {error}")
+    logger.error(f"Admin error: {error}", exc_info=True)
     return redirect(url_for("admin.error"))

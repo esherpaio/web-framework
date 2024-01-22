@@ -22,7 +22,7 @@ from web.document.objects.invoice import gen_invoice
 from web.document.objects.refund import gen_refund
 from web.helper.api import ApiText, response
 from web.helper.fso import remove_file
-from web.helper.pages import render_pages
+from web.helper.pagination import get_pagination
 
 
 @admin_bp.get("/admin")
@@ -78,13 +78,13 @@ def orders() -> str:
             .all()
         )
 
-    pages = render_pages(offset, limit, orders_len)
+    pagination = get_pagination(offset, limit, orders_len)
     return render_template(
         "admin/orders.html",
         search=search,
         status_id=status_id,
         orders=orders_,
-        pages=pages,
+        pagination=pagination,
     )
 
 
