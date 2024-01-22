@@ -12,12 +12,13 @@ from .currency import Currency, CurrencyId
 from .email import Email
 from .file import File
 from .file_type import FileType, FileTypeId
+from .flask_blueprint import FlaskBlueprint
+from .flask_route import FlaskRoute
 from .invoice import Invoice
 from .language import Language
 from .order import Order
 from .order_line import OrderLine
 from .order_status import OrderStatus, OrderStatusId
-from .page import Page
 from .product import Product
 from .product_link import ProductLink
 from .product_link_type import ProductLinkType, ProductLinkTypeId

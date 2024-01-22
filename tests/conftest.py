@@ -54,8 +54,7 @@ def create_app() -> Flask:
         blueprints=[api_v1_bp, webhook_v1_bp],
         accept_cookie_auth=True,
         accept_request_auth=True,
-        seed_hook=seed_hook,
-        enable_locale=True,
+        sync_hook=seed_hook,
     )
     web.setup()
     web.stop_cache()

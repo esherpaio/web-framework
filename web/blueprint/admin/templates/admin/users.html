@@ -88,11 +88,11 @@
                 </table>
             </div>
         </div>
-        {% if pages|length > 1 %}
+        {% if pagination|length > 1 %}
             <div class="col-12">
                 <nav aria-label="Page numbers">
                     <ul class="pagination mb-0">
-                        {% for page in pages %}
+                        {% for page in pagination %}
                             <li class="page-item {{ page["classes"] }}">
                                 <a class="page-link"
                                    href="{{ url_for("admin.users", p=page["number"], s=search) }}">
