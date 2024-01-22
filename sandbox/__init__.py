@@ -21,12 +21,12 @@ def create_app() -> Flask:
         blueprints=[admin_bp, api_v1_bp, webhook_v1_bp],
         accept_cookie_auth=True,
         accept_request_auth=True,
-        sync_hook=seed_hook,
+        db_hook=db_hook,
     ).setup()
     return app
 
 
-def seed_hook(*args) -> None:
+def db_hook(*args) -> None:
     with conn.begin() as s:
         # defaults
         seed.FileTypeSyncer().sync(s)

@@ -55,7 +55,7 @@ class FlaskWeb:
         accept_cookie_auth: bool = False,
         accept_request_auth: bool = False,
         static_hook: Callable | None = None,
-        sync_hook: Callable | None = None,
+        db_hook: Callable | None = None,
         cache_hook: Callable | None = None,
     ) -> None:
         if jinja_filter_hooks is None:
@@ -70,7 +70,7 @@ class FlaskWeb:
         self._accept_cookie_auth = accept_cookie_auth
         self._accept_request_auth = accept_request_auth
         self._static_hook = static_hook
-        self._sync_hook = sync_hook
+        self._db_hook = db_hook
         self._cache_hook = cache_hook
 
         self._cached_at: datetime = datetime.utcnow()
@@ -137,8 +137,8 @@ class FlaskWeb:
             if s.query(Setting).count() == 0:
                 s.add(Setting())
         # Run hooks
-        if self._sync_hook is not None:
-            self._sync_hook(self._app)
+        if self._db_hook is not None:
+            self._db_hook(self._app)
         # Run startup scripts
         for func in [clean_carts, clean_users]:
             try:
