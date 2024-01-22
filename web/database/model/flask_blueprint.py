@@ -11,4 +11,4 @@ class FlaskBlueprint(Base):
     attributes = MC(type_json, nullable=False, server_default="{}")
     endpoint = MC(String(64), unique=True, nullable=False)
     in_sitemap = MC(Boolean, nullable=False)
-    static_path = MC(String(128), unique=True, nullable=False)
+    static_path = MC(String(128))

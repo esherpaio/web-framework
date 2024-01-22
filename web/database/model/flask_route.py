@@ -15,4 +15,4 @@ class FlaskRoute(Base):
     in_sitemap = MC(Boolean, nullable=False)
     name = MC(String(64), nullable=False)
     robots = MC(String(256), nullable=False)
-    static_path = MC(String(128), unique=True, nullable=False)
+    static_path = MC(String(128))
