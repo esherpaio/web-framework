@@ -18,7 +18,7 @@ class Packer:
         *args,
         **kwargs,
     ) -> tuple[str | None, str | None]:
-        out_path, cdn_url = None, None
+        out_path, cdn_path = None, None
         compiled = bundle.compile(*args, **kwargs)
         bytes_ = compiled.encode(self.encoding)
         hash_ = hashlib.md5(bytes_).hexdigest()
@@ -34,4 +34,4 @@ class Packer:
                 cdn.upload(file_, cdn_path)
                 cdn_url = cdn.url(cdn_path)
                 logger.info(f"Uploaded bundle to {cdn_url}")
-        return out_path, cdn_url
+        return out_path, cdn_path
