@@ -9,6 +9,7 @@ class FlaskBlueprint(Base):
     __tablename__ = "flask_blueprint"
 
     attributes = MC(type_json, nullable=False, server_default="{}")
+    css_path = MC(String(128))
     endpoint = MC(String(64), unique=True, nullable=False)
     in_sitemap = MC(Boolean, nullable=False)
-    static_path = MC(String(128))
+    js_path = MC(String(128))

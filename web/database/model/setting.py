@@ -9,3 +9,5 @@ class Setting(Base):
 
     banner = MC(String(256))
     cached_at = MC(DateTime())
+    css_path = MC(String(128))
+    js_path = MC(String(128))
