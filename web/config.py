@@ -9,7 +9,7 @@ load_dotenv(override=True)
 
 
 @lru_cache
-def env_var(key: str, type_: str | int | bool, default: Any) -> str | int | bool:
+def env_var(key: str, type_: str | int | bool, default: Any = None) -> str | int | bool:
     value = os.getenv(key, default)
     if type_ == int:
         try:
