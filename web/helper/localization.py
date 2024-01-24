@@ -22,6 +22,7 @@ class Locale:
         locale = view_locale or cookie_locale or config.WEBSITE_LOCALE
         return locale
     
+    @cached_property
     def locale_alt(self) -> str:
         language_code, country_code = self.locale_info
         return f"{language_code}_{country_code}"
