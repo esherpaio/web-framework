@@ -63,5 +63,5 @@ class StaticSyncer(Syncer):
                     seed.set_attribute(s, resource)
                 else:
                     logger.warning(
-                        f"Static seed for {seed.type}:{seed.endpoint} is not found"
+                        f"Static resource for {seed.type}:{seed.endpoint} is not found"
                     )
