@@ -21,6 +21,10 @@ class Locale:
         cookie_locale = request.cookies.get("locale")
         locale = view_locale or cookie_locale or config.WEBSITE_LOCALE
         return locale
+    
+    def locale_alt(self) -> str:
+        language_code, country_code = self.locale_info
+        return f"{language_code}_{country_code}"
 
     @cached_property
     def locale_info(self) -> tuple[str, str]:
