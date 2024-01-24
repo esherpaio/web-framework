@@ -9,8 +9,8 @@ load_dotenv(override=True)
 
 
 @lru_cache
-def env_var(key: str, type_: str | int | bool) -> str | int | bool:
-    value = os.getenv(key)
+def env_var(key: str, type_: str | int | bool, default: Any) -> str | int | bool:
+    value = os.getenv(key, default)
     if type_ == int:
         try:
             value = int(value)
@@ -31,9 +31,10 @@ def config_var(key: str) -> Any:
     return data.get(key)
 
 
-APP_CACHE: bool = env_var("APP_CACHE", bool)
-APP_DEBUG: bool = env_var("APP_DEBUG", bool)
+APP_CACHE: bool = env_var("APP_CACHE", bool, True)
+APP_DEBUG: bool = env_var("APP_DEBUG", bool, False)
 APP_SECRET: str = env_var("APP_SECRET", str)
+APP_STATIC: bool = env_var("APP_STATIC", bool, True)
 
 BUSINESS_CC: str = config_var("BUSINESS_CC")
 BUSINESS_CITY: str = config_var("BUSINESS_CITY")
