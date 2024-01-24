@@ -7,9 +7,13 @@ from web.seeder.abc import Syncer
 
 
 class ProductLinkeTypeSyncer(Syncer):
+    def __init__(self, seeds: list[ProductLinkType] = product_link_type_seeds) -> None:
+        super().__init__()
+        self.seeds: list[ProductLinkType] = seeds
+
     def sync(self, s: Session) -> None:
         # Insert seeds
-        for seed in product_link_type_seeds:
+        for seed in self.seeds:
             row = s.query(ProductLinkType).filter_by(id=seed.id).first()
             if not row:
                 s.add(seed)

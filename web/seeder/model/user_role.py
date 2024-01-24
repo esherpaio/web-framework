@@ -7,9 +7,13 @@ from web.seeder.abc import Syncer
 
 
 class UserRoleSyncer(Syncer):
+    def __init__(self, seeds: list[UserRole] = user_role_seeds) -> None:
+        super().__init__()
+        self.seeds: list[UserRole] = seeds
+
     def sync(self, s: Session) -> None:
         # Insert seeds
-        for seed in user_role_seeds:
+        for seed in self.seeds:
             row = s.query(UserRole).filter_by(id=seed.id).first()
             if not row:
                 s.add(seed)

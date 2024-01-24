@@ -7,9 +7,13 @@ from web.seeder.abc import Syncer
 
 
 class FileTypeSyncer(Syncer):
+    def __init__(self, seeds: list[FileType] = file_type_seeds) -> None:
+        super().__init__()
+        self.seeds: list[FileType] = seeds
+
     def sync(self, s: Session) -> None:
         # Insert seeds
-        for seed in file_type_seeds:
+        for seed in self.seeds:
             row = s.query(FileType).filter_by(id=seed.id).first()
             if not row:
                 s.add(seed)

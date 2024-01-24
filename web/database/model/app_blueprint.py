@@ -5,8 +5,8 @@ from . import Base
 from ._utils import type_json
 
 
-class FlaskBlueprint(Base):
-    __tablename__ = "flask_blueprint"
+class AppBlueprint(Base):
+    __tablename__ = "app_blueprint"
 
     attributes = MC(type_json, nullable=False, server_default="{}")
     css_path = MC(String(128))

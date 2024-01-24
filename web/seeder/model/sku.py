@@ -18,7 +18,6 @@ class SkuSyncer(Syncer):
                 )
                 .all()
             )
-
             # Iterate over skus
             # Calculate the unit price
             for sku in skus:

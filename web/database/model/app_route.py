@@ -5,8 +5,8 @@ from . import Base
 from ._utils import type_json
 
 
-class FlaskRoute(Base):
-    __tablename__ = "flask_route"
+class AppRoute(Base):
+    __tablename__ = "app_route"
 
     attributes = MC(type_json, nullable=False, server_default="{}")
     css_path = MC(String(128))
