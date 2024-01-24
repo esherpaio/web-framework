@@ -2,6 +2,7 @@ from enum import StrEnum
 
 from sqlalchemy.orm import Session
 
+from web import config
 from web.database.client import conn
 from web.database.model import AppBlueprint, AppRoute, AppSetting
 from web.helper.logger import logger
@@ -44,10 +45,13 @@ class StaticSeed:
         _, cdn_path = Packer().pack(self.bundle, save_cdn=True)
         # write resource
         if self.type == StaticType.JS:
-            resource.js_path = cdn_path
+            if resource.js_path != cdn_path:
+                resource.js_path = cdn_path
+                s.flush()
         elif self.type == StaticType.CSS:
-            resource.css_path = cdn_path
-        s.flush()
+            if resource.css_path != cdn_path:
+                resource.css_path = cdn_path
+                s.flush()
 
 
 class StaticSyncer(Syncer):
@@ -56,12 +60,15 @@ class StaticSyncer(Syncer):
         self.seeds: list[StaticSeed] = seeds
 
     def sync(self, s: Session) -> None:
+        if not config.APP_STATIC:
+            logger.warning("Static syncer is disabled")
+            return
         for seed in self.seeds:
             with conn.begin() as s:
                 resource = seed.get_resource(s)
                 if resource is not None:
                     seed.set_attribute(s, resource)
                 else:
-                    logger.warning(
+                    logger.error(
                         f"Static resource for {seed.type}:{seed.endpoint} is not found"
                     )
