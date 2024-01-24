@@ -26,10 +26,7 @@ class StaticSeed:
         self.model: AppSetting | AppBlueprint | AppRoute = model
         self.endpoint: str = endpoint
 
-    def set_attribute(self, s: Session) -> None:
-        # upload bundle to cdn
-        _, cdn_path = Packer().pack(self.bundle, save_cdn=True)
-        # get resource
+    def get_resource(self, s: Session) -> AppSetting | AppBlueprint | AppRoute | None:
         obj: AppSetting | AppBlueprint | AppRoute | None
         if self.model == AppSetting:
             obj = s.query(AppSetting).first()
@@ -37,14 +34,18 @@ class StaticSeed:
             obj = s.query(AppBlueprint).filter_by(endpoint=self.endpoint).first()
         elif self.model == AppRoute:
             obj = s.query(AppRoute).filter_by(endpoint=self.endpoint).first()
-        else:
-            raise ValueError
+        return obj
+
+    def set_attribute(
+        self, s: Session, resource: AppSetting | AppBlueprint | AppRoute
+    ) -> None:
+        # upload bundle to cdn
+        _, cdn_path = Packer().pack(self.bundle, save_cdn=True)
         # write resource
-        if obj is not None:
-            if self.type == StaticType.JS:
-                obj.js_path = cdn_path
-            elif self.type == StaticType.CSS:
-                obj.css_path = cdn_path
+        if self.type == StaticType.JS:
+            resource.js_path = cdn_path
+        elif self.type == StaticType.CSS:
+            resource.css_path = cdn_path
         s.flush()
 
 
@@ -56,4 +57,6 @@ class StaticSyncer(Syncer):
     def sync(self, s: Session) -> None:
         for seed in self.seeds:
             with conn.begin() as s:
-                seed.set_attribute(s)
+                resource = seed.get_resource(s)
+                if resource is not None:
+                    seed.set_attribute(s, resource)
