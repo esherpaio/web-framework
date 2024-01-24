@@ -12,10 +12,14 @@ from web.seeder.decorators import external_seed
 
 
 class CurrencySyncer(Syncer):
+    def __init__(self, seeds: list[Currency] = currency_seeds) -> None:
+        super().__init__()
+        self.seeds: list[Currency] = seeds
+
     @external_seed
     def sync(self, s: Session) -> None:
         # Insert seeds
-        for seed in currency_seeds:
+        for seed in self.seeds:
             row = s.query(Currency).filter_by(id=seed.id).first()
             if not row:
                 s.add(seed)

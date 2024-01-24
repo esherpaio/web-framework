@@ -6,7 +6,7 @@ from werkzeug import Response
 from web.blueprint.api_v1 import api_v1_bp
 from web.blueprint.api_v1._base import API
 from web.database.client import conn
-from web.database.model import Setting
+from web.database.model import AppSetting
 from web.helper.api import response
 
 #
@@ -15,14 +15,14 @@ from web.helper.api import response
 
 
 class SettingAPI(API):
-    model = Setting
+    model = AppSetting
     patch_columns = {
-        Setting.banner,
-        Setting.cached_at,
+        AppSetting.banner,
+        AppSetting.cached_at,
     }
     get_columns = {
-        Setting.banner,
-        Setting.cached_at,
+        AppSetting.banner,
+        AppSetting.cached_at,
     }
 
 
@@ -35,7 +35,7 @@ class SettingAPI(API):
 def get_setting() -> Response:
     api = SettingAPI()
     with conn.begin() as s:
-        model: Setting = api.get(s, None)
+        model: AppSetting = api.get(s, None)
         resource = api.gen_resource(s, model)
     return response(data=resource)
 
@@ -45,7 +45,7 @@ def patch_setting() -> Response:
     api = SettingAPI()
     data = api.gen_request_data(api.patch_columns)
     with conn.begin() as s:
-        model: Setting = api.get(s, None)
+        model: AppSetting = api.get(s, None)
         set_cache(s, data, model)
         api.update(s, data, model)
         resource = api.gen_resource(s, model)
@@ -57,6 +57,6 @@ def patch_setting() -> Response:
 #
 
 
-def set_cache(s: Session, data: dict, model: Setting) -> None:
+def set_cache(s: Session, data: dict, model: AppSetting) -> None:
     if "cached_at" in data:
         data["cached_at"] = datetime.utcnow().isoformat()

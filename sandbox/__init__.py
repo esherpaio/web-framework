@@ -20,7 +20,6 @@ def create_app() -> Flask:
         app,
         blueprints=[admin_bp, api_v1_bp, webhook_v1_bp],
         accept_cookie_auth=True,
-        accept_request_auth=True,
         db_hook=db_hook,
     ).setup()
     return app

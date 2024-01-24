@@ -6,7 +6,7 @@ from xml.dom.minidom import Node
 from flask import current_app, request, url_for
 from werkzeug.local import LocalProxy
 
-from web.database.model import FlaskBlueprint, FlaskRoute
+from web.database.model import AppBlueprint, AppRoute
 from web.helper.cache import cache
 
 #
@@ -77,14 +77,14 @@ def is_endpoint(endpoint: str) -> bool:
         return True
 
 
-def get_route() -> FlaskRoute | None:
+def get_route() -> AppRoute | None:
     """Get a route object for the current request."""
     for route in cache.routes:
         if route.endpoint == request.endpoint:
             return route
 
 
-def get_blueprint() -> FlaskBlueprint | None:
+def get_blueprint() -> AppBlueprint | None:
     """Get a blueprint object for the current request."""
     for blueprint in cache.blueprints:
         if blueprint.name == request.blueprint:

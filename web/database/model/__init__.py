@@ -1,4 +1,7 @@
 from ._base import B, Base
+from .app_blueprint import AppBlueprint
+from .app_route import AppRoute
+from .app_setting import AppSetting
 from .article import Article
 from .article_media import ArticleMedia
 from .billing import Billing
@@ -12,8 +15,6 @@ from .currency import Currency, CurrencyId
 from .email import Email
 from .file import File
 from .file_type import FileType, FileTypeId
-from .flask_blueprint import FlaskBlueprint
-from .flask_route import FlaskRoute
 from .invoice import Invoice
 from .language import Language
 from .order import Order
@@ -29,7 +30,6 @@ from .product_value import ProductValue
 from .redirect import Redirect
 from .refund import Refund
 from .region import Region
-from .setting import Setting
 from .shipment import Shipment
 from .shipment_class import ShipmentClass
 from .shipment_method import ShipmentMethod

@@ -6,4 +6,5 @@ from .product_link_type import ProductLinkeTypeSyncer
 from .product_type import ProductTypeSyncer
 from .region import RegionSyncer
 from .sku import SkuSyncer
+from .static import StaticSeed, StaticSyncer, StaticType
 from .user_role import UserRoleSyncer

@@ -12,17 +12,17 @@ from web import config
 from web.database.clean import clean_carts, clean_users
 from web.database.client import conn
 from web.database.model import (
+    AppBlueprint,
+    AppRoute,
+    AppSetting,
     Country,
     Currency,
-    FlaskBlueprint,
-    FlaskRoute,
     Language,
     OrderStatus,
     ProductLinkType,
     ProductType,
     Redirect,
     Region,
-    Setting,
     User,
 )
 from web.database.model.file_type import FileType
@@ -134,8 +134,8 @@ class FlaskWeb:
         alembic.config.main(argv=["upgrade", "head"])
         # Create settings
         with conn.begin() as s:
-            if s.query(Setting).count() == 0:
-                s.add(Setting())
+            if s.query(AppSetting).count() == 0:
+                s.add(AppSetting())
         # Run hooks
         if self._db_hook is not None:
             self._db_hook(self._app)
@@ -185,7 +185,7 @@ class FlaskWeb:
         if self._cached_at is None:
             return True
         with conn.begin() as s:
-            setting = s.query(Setting).first()
+            setting = s.query(AppSetting).first()
         if not setting or setting.cached_at is None:
             return False
         return setting.cached_at > self._cached_at
@@ -204,10 +204,10 @@ class FlaskWeb:
             cache.product_link_types = s.query(ProductLinkType).order_by(ProductLinkType.name).all()
             cache.product_types = s.query(ProductType).order_by(ProductType.name).all()
             cache.user_roles = s.query(UserRole).order_by(UserRole.name).all()
-            cache.routes = s.query(FlaskRoute).all()
-            cache.blueprints = s.query(FlaskBlueprint).all()
+            cache.routes = s.query(AppRoute).all()
+            cache.blueprints = s.query(AppBlueprint).all()
             cache.redirects = s.query(Redirect).order_by(Redirect.url_from.desc()).all()
-            cache.setting = s.query(Setting).first()
+            cache.setting = s.query(AppSetting).first()
             # fmt: on
         if self._cache_hook is not None:
             self._cache_hook(self._app)

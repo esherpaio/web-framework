@@ -18,7 +18,7 @@
     "EMAIL_METHOD": "smtp",
     "ENDPOINT_ERROR": "home",
     "ENDPOINT_HOME": "home",
-    "ENDPOINT_LOGIN": "home",
+    "ENDPOINT_LOGIN": "login",
     "ENDPOINT_MOLLIE": "webhook_v1.mollie_payment",
     "ENDPOINT_ORDER": null,
     "ENDPOINT_PASSWORD": null,
