@@ -1,4 +1,3 @@
-from datetime import datetime
 from typing import Any
 from xml.dom import minidom
 from xml.dom.minidom import Node
@@ -24,21 +23,13 @@ class Sitemap:
 
 
 class SitemapUrl:
-    def __init__(
-        self, endpoint: str, updated_at: datetime | None = None, **kwargs
-    ) -> None:
+    def __init__(self, endpoint: str, **kwargs) -> None:
         self._endpoint = endpoint
-        self._updated_at = updated_at
         self._kwargs = kwargs
 
     @property
     def loc(self) -> str:
         return url_for(self._endpoint, **self._kwargs, _scheme="https", _external=True)
-
-    @property
-    def lastmod(self) -> str | None:
-        if self._updated_at:
-            return self._updated_at.strftime("%Y-%m-%d")
 
 
 #
