@@ -20,7 +20,7 @@ class Sitemap:
 
     @property
     def loc(self) -> str:
-        return url_for(self._endpoint, _external=True)
+        return url_for(self._endpoint, _scheme="https", _external=True)
 
 
 class SitemapUrl:
