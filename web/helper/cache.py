@@ -24,7 +24,7 @@ class Cache(dict):
                 response = zlib.decompress(compressed).decode()
                 return response
 
-            logger.debug(f"Cache miss: {request.url}")
+            logger.info(f"Cache miss: {request.url}")
             response = f(*args, **kwargs)
             if config.APP_CACHE:
                 try:
@@ -34,7 +34,7 @@ class Cache(dict):
                     pass
                 else:
                     self[request.url] = compressed
-                    logger.debug(f"Cache set: {request.url}")
+                    logger.info(f"Cache set: {request.url}")
             return response
 
         wrap.__name__ = f.__name__
