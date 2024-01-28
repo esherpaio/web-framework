@@ -14,7 +14,7 @@ from .user_role import UserRoleId
 class User(Base):
     __tablename__ = "user"
 
-    allow_mass_email = MC(Boolean, nullable=False, default=False)
+    allow_mass_email = MC(Boolean, nullable=False, default=True)
     api_key = MC(String(64), unique=True)
     attributes = MC(type_json, nullable=False, server_default="{}")
     email = MC(String(64), unique=True)
