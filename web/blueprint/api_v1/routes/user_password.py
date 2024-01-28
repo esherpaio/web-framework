@@ -1,17 +1,14 @@
-import uuid
 from enum import StrEnum
 
-from flask import url_for
 from werkzeug import Response
 from werkzeug.security import generate_password_hash
 
-from web import config
 from web.blueprint.api_v1 import api_v1_bp
+from web.blueprint.api_v1._common import recover_user_password
 from web.database.client import conn
 from web.database.model import User, Verification
 from web.helper.api import ApiText, json_get, response
 from web.i18n.base import _
-from web.mail.routes.user import send_new_password
 
 #
 # Configuration
@@ -39,22 +36,8 @@ def post_users_id_password(user_id: int) -> Response:
         if user is None:
             return response(404, ApiText.HTTP_404)
 
-        # Insert verification
-        verification_key = str(uuid.uuid4())
-        verification = Verification(user_id=user.id, key=verification_key)
-        s.add(verification)
-        s.flush()
-
-        # Send email
-        reset_url = url_for(
-            config.ENDPOINT_PASSWORD,
-            verification_key=verification_key,
-            _external=True,
-        )
-        send_new_password(
-            email=user.email,
-            reset_url=reset_url,
-        )
+        # Recover password
+        recover_user_password(s, user)
 
     return response(200, Text.PASSWORD_REQUEST_SEND)
 

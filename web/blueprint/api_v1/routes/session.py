@@ -10,6 +10,7 @@ from werkzeug.security import check_password_hash
 
 from web import config
 from web.blueprint.api_v1 import api_v1_bp
+from web.blueprint.api_v1._common import recover_user_password
 from web.database.client import conn
 from web.database.model import User, UserRoleId
 from web.helper.api import json_get, response
@@ -24,6 +25,7 @@ from web.i18n.base import _
 class Text(StrEnum):
     CHECK_DETAILS = _("API_SESSION_CHECK_DETAILS")
     CHECK_ACTIVATION = _("API_SESSION_CHECK_ACTIVATION")
+    CHECK_PASSWORD = _("API_SESSION_CHECK_PASSWORD")
     GOOGLE_INVALID = _("API_SESSION_GOOGLE_INVALID")
 
 
@@ -48,6 +50,10 @@ def post_sessions() -> Response:
         return response(400, Text.CHECK_DETAILS)
     if not user.is_active:
         return response(400, Text.CHECK_ACTIVATION)
+    if not user.password_hash:
+        with conn.begin() as s:
+            recover_user_password(s, user)
+        return response(400, Text.CHECK_PASSWORD)
     if not check_password_hash(user.password_hash, password):
         return response(400, Text.CHECK_DETAILS)
 

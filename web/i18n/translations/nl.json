@@ -22,6 +22,7 @@
     "API_ORDER_VAT_REQUIRED": "Uw BTW nummer is vereist.",
     "API_ORDER_STATE_REQUIRED": "Uw staat is vereist voor dit land.",
     "API_SESSION_CHECK_ACTIVATION": "Uw account is nog niet geactiveerd.",
+    "API_SESSION_CHECK_PASSWORD": "Stel alstublieft uw wachtwoord opnieuw in. Controleer uw e-mail voor instructies.",
     "API_SESSION_CHECK_DETAILS": "Controleer a.u.b. uw inloggegevens.",
     "API_SESSION_GOOGLE_INVALID": "We kunnen je helaas niet inloggen met Google.",
     "API_USER_ACTIVATION_CHECK": "Gelieve uw account te activeren met de link in uw email.",

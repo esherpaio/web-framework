@@ -2,11 +2,12 @@ import json
 import os
 
 from web import config
+from web.helper.builtins import Singleton
 from web.helper.localization import current_locale
 from web.helper.logger import logger
 
 
-class Translator:
+class Translator(metaclass=Singleton):
     fallback_translation = "NA"
     fallback_language_code = "en"
 

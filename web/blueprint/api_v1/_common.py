@@ -1,9 +1,12 @@
-from flask import abort
+import uuid
+
+from flask import abort, url_for
 from flask_login import current_user
 from mollie.api.objects.payment import Payment
 from sqlalchemy.orm import Session
 
-from web.database.model import Cart, Order, Refund
+from web import config
+from web.database.model import Cart, Order, Refund, User, Verification
 from web.document.objects.refund import gen_refund
 from web.helper.api import ApiText, response
 from web.helper.builtins import none_aware_attrgetter
@@ -11,6 +14,7 @@ from web.helper.cart import get_shipment_methods
 from web.helper.fso import remove_file
 from web.helper.mollie_api import Mollie, mollie_amount
 from web.mail.routes.order import send_order_refunded
+from web.mail.routes.user import send_new_password
 
 
 def create_refund(
@@ -67,3 +71,14 @@ def update_cart_shipment_methods(s: Session, cart: Cart) -> None:
         cart.shipment_method_id = None
         cart.shipment_price = 0
     s.flush()
+
+
+def recover_user_password(s: Session, user: User) -> None:
+    verification_key = str(uuid.uuid4())
+    verification = Verification(user_id=user.id, key=verification_key)
+    s.add(verification)
+    s.flush()
+    reset_url = url_for(
+        config.ENDPOINT_PASSWORD, verification_key=verification_key, _external=True
+    )
+    send_new_password(email=user.email, reset_url=reset_url)
