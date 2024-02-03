@@ -7,7 +7,7 @@ from web.helper.localization import current_locale
 from web.helper.logger import logger
 
 
-class Translator(metaclass=Singleton):
+class _Translator(metaclass=Singleton):
     fallback_translation = "NA"
     fallback_language_code = "en"
 
@@ -65,5 +65,5 @@ class Translator(metaclass=Singleton):
             return self.fallback_translation
 
 
-translator = Translator()
+translator = _Translator()
 _ = translator.translate

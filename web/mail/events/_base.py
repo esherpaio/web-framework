@@ -3,14 +3,16 @@ from typing import Callable
 
 from web.helper.builtins import Singleton
 from web.helper.logger import logger
-from web.mail.routes.order import (
+from web.mail.events import (
+    mail_contact_business,
+    mail_contact_customer,
     mail_order_paid,
     mail_order_received,
     mail_order_refunded,
     mail_order_shipped,
+    mail_user_password,
+    mail_user_verification,
 )
-from web.mail.routes.user import mail_user_password, mail_user_verification
-from web.mail.routes.website import mail_contact_business, mail_contact_customer
 
 #
 # Classes
@@ -27,7 +29,7 @@ class MailEvent(StrEnum):
     WEBSITE_CONTACT = "website.contact"
 
 
-class Mail(metaclass=Singleton):
+class _Mail(metaclass=Singleton):
     def __init__(self) -> None:
         self.events: dict[MailEvent | str, list[Callable]] = {
             MailEvent.ORDER_PAID: [mail_order_paid],
@@ -50,4 +52,4 @@ class Mail(metaclass=Singleton):
 # Variables
 #
 
-mail = Mail()
+mail = _Mail()
