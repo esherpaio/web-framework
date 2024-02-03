@@ -39,7 +39,7 @@ from web.helper.localization import (
 from web.helper.logger import logger
 from web.helper.redirects import check_redirects
 from web.helper.user import cookie_loader, session_loader
-from web.mail.events import Mail, MailEvent
+from web.mail.events import MailEvent, mail
 
 #
 # Classes
@@ -168,7 +168,7 @@ class FlaskWeb:
         self._app.register_error_handler(Exception, _handle_frontend_error)
 
     def setup_mail(self) -> None:
-        Mail.events.update(self._mail_events)
+        mail.events.update(self._mail_events)
 
     def setup_cache(self) -> None:
         self._cache_active = True
