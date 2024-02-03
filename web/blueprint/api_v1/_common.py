@@ -13,7 +13,7 @@ from web.helper.builtins import none_aware_attrgetter
 from web.helper.cart import get_shipment_methods
 from web.helper.fso import remove_file
 from web.helper.mollie_api import Mollie, mollie_amount
-from web.mail.events import MailEvent, mail
+from web.mail.base import MailEvent, mail
 
 
 def create_refund(

@@ -8,7 +8,7 @@ from web.database.client import conn
 from web.database.model import Email
 from web.helper.api import json_get, response
 from web.i18n.base import _
-from web.mail.events import mail
+from web.mail.base import mail
 
 #
 # Configuration

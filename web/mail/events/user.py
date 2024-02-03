@@ -1,6 +1,6 @@
 from web import config
 from web.i18n.base import _
-from web.mail.base import render_email, send_email
+from web.mail.utils import render_email, send_email
 
 
 def mail_user_verification(

@@ -39,7 +39,7 @@ from web.helper.localization import (
 from web.helper.logger import logger
 from web.helper.redirects import check_redirects
 from web.helper.user import cookie_loader, session_loader
-from web.mail.events import MailEvent, mail
+from web.mail.base import MailEvent, mail
 
 #
 # Classes
