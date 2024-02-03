@@ -31,7 +31,7 @@ def post_emails_contact() -> Response:
     data, _ = json_get("data", dict, default={})
 
     with conn.begin() as s:
-        email = Email(template_id=event_id, data=data, user_id=current_user.id)
+        email = Email(event_id=event_id, data=data, user_id=current_user.id)
         s.add(email)
         s.flush()
         mail = Mail()

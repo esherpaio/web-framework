@@ -11,19 +11,21 @@ requirements:
 ## ----------
 ## format : run formatters
 .PHONY: format
-format:
+format_py:
 	ruff check . --fix
 	black .
+format_html:
 	djlint . --reformat
 
 ## LINTING
 ## ----------
 ## lint : run linters
 .PHONY: lint
-lint:
+lint_py:
 	ruff check .
 	black . --check --quiet --diff --color
 	mypy --install-types --non-interactive .
+lint_html:
 	djlint . --check
 
 ## SANDBOX

@@ -39,6 +39,7 @@ from web.helper.localization import (
 from web.helper.logger import logger
 from web.helper.redirects import check_redirects
 from web.helper.user import cookie_loader, session_loader
+from web.mail.events import Mail, MailEvent
 
 #
 # Classes
@@ -56,12 +57,15 @@ class FlaskWeb:
         accept_request_auth: bool = False,
         static_hook: Callable | None = None,
         db_hook: Callable | None = None,
+        mail_events: dict[MailEvent, list[Callable]] | None = None,
         cache_hook: Callable | None = None,
     ) -> None:
         if jinja_filter_hooks is None:
             jinja_filter_hooks = {}
         if jinja_global_hooks is None:
             jinja_global_hooks = {}
+        if mail_events is None:
+            mail_events = {}
 
         self._app = app
         self._blueprints = blueprints
@@ -71,6 +75,7 @@ class FlaskWeb:
         self._accept_request_auth = accept_request_auth
         self._static_hook = static_hook
         self._db_hook = db_hook
+        self._mail_events = mail_events
         self._cache_hook = cache_hook
 
         self._cached_at: datetime = datetime.utcnow()
@@ -160,6 +165,9 @@ class FlaskWeb:
     def setup_error_handling(self) -> None:
         # Register Flask hooks
         self._app.register_error_handler(Exception, _handle_frontend_error)
+
+    def setup_mail(self) -> None:
+        Mail.events.update(self._mail_events)
 
     def setup_cache(self) -> None:
         self._cache_active = True
