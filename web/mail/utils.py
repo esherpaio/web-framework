@@ -38,7 +38,7 @@ def send_email(
     if config.EMAIL_METHOD == "smtp":
         _send_smtp(config.EMAIL_FROM, to, subject, html, reply_to, blob_path, blob_name)
     else:
-        logger.warning("Email not send because no valid method is configured")
+        logger.error("Email not send because no valid method is configured")
 
 
 def _send_smtp(
