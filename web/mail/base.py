@@ -18,7 +18,7 @@ def render_email(name: str = "default", **attrs) -> str:
     dir_ = os.path.dirname(os.path.realpath(__file__))
     loader = jinja2.FileSystemLoader(dir_)
     environment = jinja2.Environment(loader=loader)
-    fp = os.path.join(os.path.dirname(__file__), "template", f"{name}.html")
+    fp = os.path.join("template", f"{name}.html")
     attrs.update({"config": config})
     html = environment.get_template(fp).render(attrs)
     return html

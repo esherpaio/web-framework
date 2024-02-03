@@ -3,7 +3,7 @@ from web.i18n.base import _
 from web.mail.base import render_email, send_email
 
 
-def send_contact_business(
+def mail_contact_business(
     email: str,
     name: str,
     message: str,
@@ -33,7 +33,7 @@ def send_contact_business(
     send_email(to, subject, html, reply_to=email)
 
 
-def send_contact_customer(
+def mail_contact_customer(
     email: str,
     message: str,
     **kwargs,

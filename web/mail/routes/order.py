@@ -3,7 +3,7 @@ from web.i18n.base import _
 from web.mail.base import render_email, send_email
 
 
-def send_order_received(
+def mail_order_received(
     order_id: int,
     billing_email: str,
     shipping_email: str,
@@ -23,7 +23,7 @@ def send_order_received(
     send_email(to, subject, html)
 
 
-def send_order_paid(
+def mail_order_paid(
     order_id: int,
     billing_email: str,
     invoice_number: str,
@@ -42,7 +42,7 @@ def send_order_paid(
     send_email(to, subject, html, blob_path=pdf_path, blob_name=pdf_name)
 
 
-def send_order_shipped(
+def mail_order_shipped(
     order_id: int,
     shipment_url: str,
     billing_email: str,
@@ -65,7 +65,7 @@ def send_order_shipped(
     send_email(to, subject, html)
 
 
-def send_order_refunded(
+def mail_order_refunded(
     order_id: int,
     billing_email: str,
     refund_number: int,

@@ -10,7 +10,7 @@ from web.document.objects.invoice import gen_invoice
 from web.helper.api import ApiText, response
 from web.helper.fso import remove_file
 from web.helper.mollie_api import Mollie
-from web.mail.routes.order import send_order_paid
+from web.mail.events import MailEvent, mail
 
 
 @webhook_v1_bp.post("/mollie/payment")
@@ -49,12 +49,13 @@ def mollie_payment() -> Response:
                 s.add(invoice)
                 s.flush()
                 _, pdf_path = gen_invoice(s, order, invoice)
-                send_order_paid(
-                    order_id=order.id,
-                    billing_email=order.billing.email,
-                    invoice_number=invoice.number,
-                    pdf_path=pdf_path,
-                )
+                for event in mail.get_events(MailEvent.ORDER_PAID):
+                    event(
+                        order_id=order.id,
+                        billing_email=order.billing.email,
+                        invoice_number=invoice.number,
+                        pdf_path=pdf_path,
+                    )
                 remove_file(pdf_path)
 
     return response()

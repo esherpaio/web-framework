@@ -5,7 +5,7 @@ from web.database.client import conn
 from web.database.model import Order, OrderStatusId, Shipment, UserRoleLevel
 from web.helper.api import ApiText, json_get, response
 from web.helper.user import access_control
-from web.mail.routes.order import send_order_shipped
+from web.mail.events import MailEvent, mail
 
 #
 # Configuration
@@ -38,13 +38,14 @@ def post_orders_id_shipments(order_id: int) -> Response:
         s.flush()
 
         # Send email
-        send_order_shipped(
-            order_id=order_id,
-            shipment_url=url,
-            billing_email=order.billing.email,
-            shipping_email=order.shipping.email,
-            shipping_address=order.shipping.full_address,
-        )
+        for event in mail.get_events(MailEvent.ORDER_SHIPPED):
+            event(
+                order_id=order_id,
+                shipment_url=url,
+                billing_email=order.billing.email,
+                shipping_email=order.shipping.email,
+                shipping_address=order.shipping.full_address,
+            )
 
     return response()
 
