@@ -42,7 +42,7 @@ def send_contact_customer(
     subject = _("MAIL_CONTACT_SUBJECT_CUSTOMER", business_name=config.BUSINESS_NAME)
     html = render_email(
         title=_("MAIL_CONTACT_TITLE"),
-        paragraph=[
+        paragraphs=[
             _("MAIL_CONTACT_CONFIRMATION"),
             _("MAIL_CONTACT_MESSAGE", message=message),
         ],
