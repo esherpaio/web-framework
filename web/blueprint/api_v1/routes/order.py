@@ -16,7 +16,7 @@ from web.helper.cart import get_shipment_methods
 from web.helper.mollie_api import Mollie
 from web.helper.user import access_control
 from web.i18n.base import _
-from web.mail.routes.order import send_order_received
+from web.mail.events import MailEvent, mail
 
 #
 # Configuration
@@ -156,11 +156,12 @@ def set_order_lines(s: Session, data: dict, model: Order) -> None:
 
 
 def mail_order(s: Session, data: dict, model: Order) -> None:
-    send_order_received(
-        order_id=model.id,
-        billing_email=model.billing.email,
-        shipping_email=model.shipping.email,
-    )
+    for event in mail.get_events(MailEvent.ORDER_RECEIVED):
+        event(
+            order_id=model.id,
+            billing_email=model.billing.email,
+            shipping_email=model.shipping.email,
+        )
 
 
 def cancel_mollie(s: Session, data: dict, model: Order) -> None:

@@ -23,7 +23,6 @@ class Formatter(logging.Formatter):
     def format(self, record: logging.LogRecord) -> str:
         color = AnsiCode[record.levelname]
         string = f"{color}%(levelname)s | %(message)s{AnsiCode.RESET}"
-        record.levelname = record.levelname
         formatter = logging.Formatter(string)
         return formatter.format(record)
 

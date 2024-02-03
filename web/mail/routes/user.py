@@ -3,7 +3,7 @@ from web.i18n.base import _
 from web.mail.base import render_email, send_email
 
 
-def send_verification_url(
+def mail_user_verification(
     email: str,
     verification_url: str,
     **kwargs,
@@ -21,7 +21,7 @@ def send_verification_url(
     send_email(to, subject, html)
 
 
-def send_new_password(
+def mail_user_password(
     email: str,
     reset_url: str,
     **kwargs,

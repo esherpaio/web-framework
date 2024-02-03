@@ -55,9 +55,9 @@ class FlaskWeb:
         jinja_global_hooks: dict[str, Callable] | None = None,
         accept_cookie_auth: bool = False,
         accept_request_auth: bool = False,
+        mail_events: dict[MailEvent | str, list[Callable]] | None = None,
         static_hook: Callable | None = None,
         db_hook: Callable | None = None,
-        mail_events: dict[MailEvent, list[Callable]] | None = None,
         cache_hook: Callable | None = None,
     ) -> None:
         if jinja_filter_hooks is None:
@@ -73,9 +73,9 @@ class FlaskWeb:
         self._jinja_global_hooks = jinja_global_hooks
         self._accept_cookie_auth = accept_cookie_auth
         self._accept_request_auth = accept_request_auth
+        self._mail_events = mail_events
         self._static_hook = static_hook
         self._db_hook = db_hook
-        self._mail_events = mail_events
         self._cache_hook = cache_hook
 
         self._cached_at: datetime = datetime.utcnow()
@@ -91,6 +91,7 @@ class FlaskWeb:
         self.setup_auth()
         self.setup_static()
         self.setup_database()
+        self.setup_mail()
         self.setup_cache()
         self.setup_redirects()
         self.setup_locale()

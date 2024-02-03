@@ -13,8 +13,7 @@ from web.helper.builtins import none_aware_attrgetter
 from web.helper.cart import get_shipment_methods
 from web.helper.fso import remove_file
 from web.helper.mollie_api import Mollie, mollie_amount
-from web.mail.routes.order import send_order_refunded
-from web.mail.routes.user import send_new_password
+from web.mail.events import MailEvent, mail
 
 
 def create_refund(
@@ -42,12 +41,13 @@ def create_refund(
 
     # Send email
     _, pdf_path = gen_refund(s, order, order.invoice, refund)
-    send_order_refunded(
-        order_id=order.id,
-        billing_email=order.billing.email,
-        refund_number=refund.number,
-        pdf_path=pdf_path,
-    )
+    for event in mail.get_events(MailEvent.ORDER_REFUNDED):
+        event(
+            order_id=order.id,
+            billing_email=order.billing.email,
+            refund_number=refund.number,
+            pdf_path=pdf_path,
+        )
     remove_file(pdf_path)
 
 
@@ -81,4 +81,5 @@ def recover_user_password(s: Session, user: User) -> None:
     reset_url = url_for(
         config.ENDPOINT_PASSWORD, verification_key=verification_key, _external=True
     )
-    send_new_password(email=user.email, reset_url=reset_url)
+    for event in mail.get_events(MailEvent.USER_REQUEST_PASSWORD):
+        event(email=user.email, reset_url=reset_url)
