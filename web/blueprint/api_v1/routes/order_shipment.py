@@ -5,7 +5,7 @@ from web.database.client import conn
 from web.database.model import Order, OrderStatusId, Shipment, UserRoleLevel
 from web.helper.api import ApiText, json_get, response
 from web.helper.user import access_control
-from web.mail.events import MailEvent, mail
+from web.mail.base import MailEvent, mail
 
 #
 # Configuration

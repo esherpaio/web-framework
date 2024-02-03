@@ -10,7 +10,7 @@ from web.document.objects.invoice import gen_invoice
 from web.helper.api import ApiText, response
 from web.helper.fso import remove_file
 from web.helper.mollie_api import Mollie
-from web.mail.events import MailEvent, mail
+from web.mail.base import MailEvent, mail
 
 
 @webhook_v1_bp.post("/mollie/payment")

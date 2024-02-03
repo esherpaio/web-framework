@@ -1,73 +1,55 @@
-import os
-from email.mime.application import MIMEApplication
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
-from smtplib import SMTP_SSL as SMTP
+from enum import StrEnum
+from typing import Callable
 
-import jinja2
-
-from web import config
+from web.helper.builtins import Singleton
 from web.helper.logger import logger
+from web.mail.events import (
+    mail_contact_business,
+    mail_contact_customer,
+    mail_order_paid,
+    mail_order_received,
+    mail_order_refunded,
+    mail_order_shipped,
+    mail_user_password,
+    mail_user_verification,
+)
 
 #
-# Functions
+# Classes
 #
 
 
-def render_email(name: str = "default", **attrs) -> str:
-    dir_ = os.path.dirname(os.path.realpath(__file__))
-    loader = jinja2.FileSystemLoader(dir_)
-    environment = jinja2.Environment(loader=loader)
-    fp = os.path.join("template", f"{name}.html")
-    attrs.update({"config": config})
-    html = environment.get_template(fp).render(attrs)
-    return html
+class MailEvent(StrEnum):
+    ORDER_PAID = "order.paid"
+    ORDER_RECEIVED = "order.received"
+    ORDER_REFUNDED = "order.refunded"
+    ORDER_SHIPPED = "order.shipped"
+    USER_REQUEST_PASSWORD = "user.request_password"
+    USER_REQUEST_VERIFICATION = "user.request_verification"
+    WEBSITE_CONTACT = "website.contact"
 
 
-def send_email(
-    to: list[str],
-    subject: str,
-    html: str,
-    reply_to: str | None = None,
-    blob_path: str | None = None,
-    blob_name: str | None = None,
-) -> None:
-    # Create list of unique to-addresses
-    to = list(set(to))
-    # Send email
-    if config.EMAIL_METHOD == "smtp":
-        _send_smtp(config.EMAIL_FROM, to, subject, html, reply_to, blob_path, blob_name)
-    else:
-        logger.warning("Email not send because no valid method is configured")
+class _Mail(metaclass=Singleton):
+    def __init__(self) -> None:
+        self.events: dict[MailEvent | str, list[Callable]] = {
+            MailEvent.ORDER_PAID: [mail_order_paid],
+            MailEvent.ORDER_RECEIVED: [mail_order_received],
+            MailEvent.ORDER_REFUNDED: [mail_order_refunded],
+            MailEvent.ORDER_SHIPPED: [mail_order_shipped],
+            MailEvent.USER_REQUEST_PASSWORD: [mail_user_password],
+            MailEvent.USER_REQUEST_VERIFICATION: [mail_user_verification],
+            MailEvent.WEBSITE_CONTACT: [mail_contact_business, mail_contact_customer],
+        }
+
+    def get_events(self, event: MailEvent | str) -> list[Callable]:
+        events = self.events.get(event, [])
+        if not events:
+            logger.error(f"Event {event} not found")
+        return events
 
 
-def _send_smtp(
-    from_: str,
-    to: list[str],
-    subject: str,
-    html: str,
-    reply_to: str | None = None,
-    blob_path: str | None = None,
-    blob_name: str | None = None,
-) -> None:
-    # Build the message
-    msg = MIMEMultipart()
-    msg["to"] = ",".join(to)
-    msg["subject"] = subject
-    msg["from"] = from_
-    msg["reply-to"] = reply_to or from_
-    body = MIMEText(html, "html")
-    msg.attach(body)
-    # Add attachment
-    if blob_path and blob_name:
-        with open(blob_path, "rb") as file_:
-            data = file_.read()
-        attachment = MIMEApplication(data)
-        attachment.add_header("Content-Disposition", "attachment", filename=blob_name)
-        msg.attach(attachment)
-    # Send the message
-    conn = SMTP(config.SMTP_HOST, port=config.SMTP_PORT, timeout=10)
-    conn.set_debuglevel(False)
-    conn.login(config.SMTP_USERNAME, config.SMTP_PASSWORD)
-    conn.sendmail(msg["from"], msg["to"], msg.as_string())
-    conn.quit()
+#
+# Variables
+#
+
+mail = _Mail()

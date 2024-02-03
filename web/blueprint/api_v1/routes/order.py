@@ -16,7 +16,7 @@ from web.helper.cart import get_shipment_methods
 from web.helper.mollie_api import Mollie
 from web.helper.user import access_control
 from web.i18n.base import _
-from web.mail.events import MailEvent, mail
+from web.mail.base import MailEvent, mail
 
 #
 # Configuration

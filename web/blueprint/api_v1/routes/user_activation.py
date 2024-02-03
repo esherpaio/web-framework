@@ -10,7 +10,7 @@ from web.database.client import conn
 from web.database.model import User, Verification
 from web.helper.api import ApiText, json_get, response
 from web.i18n.base import _
-from web.mail.events import MailEvent, mail
+from web.mail.base import MailEvent, mail
 
 #
 # Configuration

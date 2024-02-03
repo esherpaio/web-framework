@@ -1,4 +1,3 @@
-from ._base import MailEvent, mail
 from .order import (
     mail_order_paid,
     mail_order_received,
