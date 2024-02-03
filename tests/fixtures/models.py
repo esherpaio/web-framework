@@ -73,9 +73,9 @@ def post_billing(post_country, client, user) -> dict:
         json={
             "address": "Eisenhowerlaan 128",
             "city": "Utrecht",
-            "company": "Enlarge",
+            "company": "eSherpa",
             "country_id": country_id,
-            "email": "contact@enlarge-online.nl",
+            "email": "contact@esherpa.io",
             "first_name": "Stan",
             "last_name": "Mertens",
             "phone": "+31615389916",
@@ -94,9 +94,9 @@ def post_shipping(post_country, client, user) -> dict:
         json={
             "address": "Eisenhowerlaan 128",
             "city": "Utrecht",
-            "company": "Enlarge",
+            "company": "eSherpa",
             "country_id": country_id,
-            "email": "contact@enlarge-online.nl",
+            "email": "contact@esherpa.io",
             "first_name": "Stan",
             "last_name": "Mertens",
             "phone": "+31615389916",
@@ -116,7 +116,7 @@ def post_user(client, user) -> dict:
         "/api/v1/users",
         headers={**user},
         json={
-            "email": "contact@enlarge-online.nl",
+            "email": "contact@esherpa.io",
             "password": "password",
             "password_eval": "password",
         },

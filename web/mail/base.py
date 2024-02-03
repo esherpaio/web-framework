@@ -9,30 +9,18 @@ import jinja2
 from web import config
 from web.helper.logger import logger
 
+#
+# Functions
+#
 
-def render_email(
-    title: str,
-    paragraphs: list[str],
-    **kwargs,
-) -> str:
-    # Add CSS and config to kwargs
+
+def render_email(name: str = "default", **attrs) -> str:
     dir_ = os.path.dirname(os.path.realpath(__file__))
-    css_path = os.path.join(dir_, "template", "template.css")
-    with open(css_path, "r") as file:
-        css = file.read()
-    kwargs.update(
-        {
-            "css": css,
-            "config": config,
-            "title": title,
-            "paragraphs": paragraphs,
-        }
-    )
-    # Render with Jinja2
     loader = jinja2.FileSystemLoader(dir_)
     environment = jinja2.Environment(loader=loader)
-    html_path = "template/template.html"  # Jinja requires relative path
-    html = environment.get_template(html_path).render(kwargs)
+    fp = os.path.join(os.path.dirname(__file__), "template", f"{name}.html")
+    attrs.update({"config": config})
+    html = environment.get_template(fp).render(attrs)
     return html
 
 

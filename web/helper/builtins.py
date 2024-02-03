@@ -1,3 +1,4 @@
+import threading
 from operator import attrgetter
 from typing import Any, Callable
 
@@ -7,11 +8,15 @@ from typing import Any, Callable
 
 
 class Singleton(type):
-    _instances: dict[type, type] = {}
+    _instances: dict[Any, Any] = {}
 
     def __call__(cls, *args, **kwargs):
         if cls not in cls._instances:
-            cls._instances[cls] = super(Singleton, cls).__call__(*args, **kwargs)
+            with _lock:
+                if cls not in cls._instances:
+                    cls._instances[cls] = super(Singleton, cls).__call__(
+                        *args, **kwargs
+                    )
         return cls._instances[cls]
 
 
@@ -29,3 +34,10 @@ def none_aware_attrgetter(attr: str) -> Callable[[Any], tuple[bool, Any]]:
 
     getter = attrgetter(attr)
     return wrap
+
+
+#
+# Variables
+#
+
+_lock = threading.Lock()

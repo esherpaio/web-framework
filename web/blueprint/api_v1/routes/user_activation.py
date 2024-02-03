@@ -10,7 +10,7 @@ from web.database.client import conn
 from web.database.model import User, Verification
 from web.helper.api import ApiText, json_get, response
 from web.i18n.base import _
-from web.mail.routes.user import send_verification_url
+from web.mail.events import Mail, MailEvent
 
 #
 # Configuration
@@ -48,10 +48,9 @@ def post_users_id_activation(user_id: int) -> Response:
             verification_key=verification.key,
             _external=True,
         )
-        send_verification_url(
-            email=user.email,
-            verification_url=verification_url,
-        )
+        mail = Mail()
+        for event in mail.events[MailEvent.USER_REQUEST_VERIFICATION]:
+            event(email=user.email, verification_url=verification_url)
 
     return response(200, message=Text.ACTIVATION_CHECK)
 

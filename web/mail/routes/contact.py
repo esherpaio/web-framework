@@ -9,6 +9,7 @@ def send_contact_business(
     message: str,
     company: str | None = None,
     phone: str | None = None,
+    **kwargs,
 ) -> None:
     to = [config.EMAIL_TO]
     subject = _(
@@ -16,25 +17,34 @@ def send_contact_business(
         business_name=config.BUSINESS_NAME,
         name=name,
     )
-    title = _("MAIL_CONTACT_TITLE")
-    paragraphs = [
-        _("MAIL_CONTACT_DETAILS", name=name, company=company, email=email, phone=phone),
-        _("MAIL_CONTACT_MESSAGE", message=message),
-    ]
-    html = render_email(title, paragraphs)
-    send_email(to, subject, html, email)
+    html = render_email(
+        title=_("MAIL_CONTACT_TITLE"),
+        paragraphs=[
+            _(
+                "MAIL_CONTACT_DETAILS",
+                name=name,
+                company=company,
+                email=email,
+                phone=phone,
+            ),
+            _("MAIL_CONTACT_MESSAGE", message=message),
+        ],
+    )
+    send_email(to, subject, html, reply_to=email)
 
 
 def send_contact_customer(
     email: str,
     message: str,
+    **kwargs,
 ) -> None:
     to = [email]
     subject = _("MAIL_CONTACT_SUBJECT_CUSTOMER", business_name=config.BUSINESS_NAME)
-    title = _("MAIL_CONTACT_TITLE")
-    paragraphs = [
-        _("MAIL_CONTACT_CONFIRMATION"),
-        _("MAIL_CONTACT_MESSAGE", message=message),
-    ]
-    html = render_email(title, paragraphs)
+    html = render_email(
+        title=_("MAIL_CONTACT_TITLE"),
+        paragraph=[
+            _("MAIL_CONTACT_CONFIRMATION"),
+            _("MAIL_CONTACT_MESSAGE", message=message),
+        ],
+    )
     send_email(to, subject, html)

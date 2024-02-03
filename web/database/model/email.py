@@ -9,7 +9,7 @@ class Email(Base):
     __tablename__ = "email"
 
     data = MC(JSON, nullable=False, server_default="{}")
-    template_id = MC(String(64), nullable=False)
+    event_id = MC(String(64), nullable=False)
 
     user_id = MC(ForeignKey("user.id", ondelete="CASCADE"))
 

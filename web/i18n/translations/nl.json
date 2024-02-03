@@ -11,7 +11,7 @@
     "API_HTTP_410": "The resource(s) is no longer available.",
     "API_HTTP_500": "Something went wrong on our end.",
     "API_MAIL_CONTACT_SUCCESS": "We hebben uw bericht ontvangen en nemen zo snel mogelijk contact met u op.",
-    "API_MAIL_INVALID_TEMPLATE_ID": "De template ID is ongeldig.",
+    "API_MAIL_INVALID_EVENT_ID": "De event ID is ongeldig.",
     "API_ORDER_PHONE_REQUIRED": "Uw telefoonnummer is vereist.",
     "API_ORDER_REFUND_INVOICE_NOT_FOUND": "We kunnen niet doorgaan omdat er geen factuur is aangemaakt.",
     "API_ORDER_REFUND_NOT_ALLOWED": "Mollie staat geen terugbetalingen toe voor deze betaling.",
