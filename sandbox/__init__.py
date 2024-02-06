@@ -20,6 +20,7 @@ def create_app() -> Flask:
         app,
         blueprints=[admin_bp, api_v1_bp, webhook_v1_bp],
         accept_cookie_auth=True,
+        accept_request_auth=True,
         db_hook=db_hook,
     ).setup()
     return app
@@ -58,6 +59,5 @@ def view_login() -> str:
                 role_id=UserRoleId.ADMIN,
             )
             s.add(user)
-        flask_login.logout_user()
         flask_login.login_user(user, remember=True)
     return "Logged in as admin"
