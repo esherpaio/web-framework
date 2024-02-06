@@ -58,7 +58,7 @@ class User(Base):
     def is_super(self) -> bool:
         return self.role_id == UserRoleId.SUPER
 
-    # Flask Mixin
+    # Flask mixin
 
     @property
     def is_authenticated(self) -> bool:
@@ -73,11 +73,9 @@ class User(Base):
 
     def __eq__(self, other: object) -> bool:
         if isinstance(other, User):
-            if self.is_guest:
-                return False
-            return self.get_id() == other.get_id()
-        else:
-            return False
+            if not self.is_guest:
+                return self.get_id() == other.get_id()
+        return False
 
     def __ne__(self, other: object) -> bool:
         return not self.__eq__(other)

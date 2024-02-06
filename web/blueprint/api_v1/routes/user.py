@@ -33,7 +33,6 @@ class Text(StrEnum):
 class UserAPI(API):
     model = User
     post_columns = {
-        User.attributes,
         User.billing_id,
         User.email,
         User.shipping_id,
@@ -49,7 +48,6 @@ class UserAPI(API):
         User.email,
     }
     get_columns = {
-        User.attributes,
         User.billing_id,
         User.email,
         User.id,
