@@ -16,8 +16,9 @@ from web.helper.user import access_control
 #
 
 
-@access_control(UserRoleLevel.ADMIN)
+
 @api_v1_bp.post("/products/<int:product_id>/links")
+@access_control(UserRoleLevel.ADMIN)
 def post_products_id_links(product_id: int) -> Response:
     sku_id, _ = json_get("sku_id", int, nullable=False)
     type_id, _ = json_get("type_id", int, nullable=False)
@@ -45,8 +46,9 @@ def post_products_id_links(product_id: int) -> Response:
     return response()
 
 
-@access_control(UserRoleLevel.ADMIN)
+
 @api_v1_bp.delete("/products/<int:product_id>/links/<int:link_id>")
+@access_control(UserRoleLevel.ADMIN)
 def delete_products_id_links_id(product_id: int, link_id: int) -> Response:
     with conn.begin() as s:
         # Delete product link

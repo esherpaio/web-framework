@@ -19,8 +19,9 @@ from web.seeder.model.sku import SkuSyncer
 #
 
 
-@access_control(UserRoleLevel.ADMIN)
+
 @api_v1_bp.post("/products")
+@access_control(UserRoleLevel.ADMIN)
 @sync_after(SkuSyncer)
 def post_products() -> Response:
     name, _ = json_get("name", str, nullable=False)
@@ -42,8 +43,9 @@ def post_products() -> Response:
     return response()
 
 
-@access_control(UserRoleLevel.ADMIN)
+
 @api_v1_bp.patch("/products/<int:product_id>")
+@access_control(UserRoleLevel.ADMIN)
 @sync_after(SkuSyncer)
 def patch_products_id(product_id: int) -> Response:
     attributes, has_attributes = json_get("attributes", dict, default={})
@@ -79,8 +81,9 @@ def patch_products_id(product_id: int) -> Response:
     return response()
 
 
-@access_control(UserRoleLevel.ADMIN)
+
 @api_v1_bp.delete("/products/<int:product_id>")
+@access_control(UserRoleLevel.ADMIN)
 def delete_products_id(product_id: int) -> Response:
     with conn.begin() as s:
         # Delete product

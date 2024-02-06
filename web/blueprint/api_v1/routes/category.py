@@ -17,8 +17,9 @@ from web.helper.validation import gen_slug
 #
 
 
-@access_control(UserRoleLevel.ADMIN)
+
 @api_v1_bp.post("/categories")
+@access_control(UserRoleLevel.ADMIN)
 def post_categories() -> Response:
     name, _ = json_get("name", str, nullable=False)
     order, _ = json_get("order", int)
@@ -40,8 +41,9 @@ def post_categories() -> Response:
     return response()
 
 
-@access_control(UserRoleLevel.ADMIN)
+
 @api_v1_bp.patch("/categories/<int:category_id>")
+@access_control(UserRoleLevel.ADMIN)
 def patch_categories_id(category_id: int) -> Response:
     attributes, has_attributes = json_get("attributes", dict, default={})
     order, has_order = json_get("order", int)
@@ -61,8 +63,9 @@ def patch_categories_id(category_id: int) -> Response:
     return response()
 
 
-@access_control(UserRoleLevel.ADMIN)
+
 @api_v1_bp.delete("/categories/<int:category_id>")
+@access_control(UserRoleLevel.ADMIN)
 def delete_categories_id(category_id: int) -> Response:
     with conn.begin() as s:
         # Delete category

@@ -22,8 +22,9 @@ from web.seeder.model.sku import SkuSyncer
 #
 
 
-@access_control(UserRoleLevel.ADMIN)
+
 @api_v1_bp.post("/products/<int:product_id>/skus")
+@access_control(UserRoleLevel.ADMIN)
 @sync_after(SkuSyncer)
 def post_skus(product_id: int) -> Response:
     with conn.begin() as s:

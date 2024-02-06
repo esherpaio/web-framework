@@ -83,9 +83,9 @@ def access_control(
 
     def decorate(f: Callable) -> Callable[..., Response]:
         def wrap(*args, **kwargs) -> Response:
-            if current_user.is_authenticated and current_user.role.level >= level:
+            if current_user.is_active and current_user.role.level >= level:
                 return f(*args, **kwargs)
-            if request.blueprint is not None and "api" in request.blueprint:
+            if request.blueprint is not None and any([x in request.blueprint for x in ["api", "webhook"]]):
                 return response(403, ApiText.HTTP_403)
             return redirect(url_for(config.ENDPOINT_LOGIN))
 

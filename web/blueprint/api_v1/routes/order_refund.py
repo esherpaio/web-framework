@@ -28,8 +28,9 @@ class Text(StrEnum):
 #
 
 
-@access_control(UserRoleLevel.ADMIN)
+
 @api_v1_bp.post("/orders/<int:order_id>/refunds")
+@access_control(UserRoleLevel.ADMIN)
 def post_orders_id_refund(order_id: int) -> Response:
     price, _ = json_get("total_price", int | float, nullable=False)
 

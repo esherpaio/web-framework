@@ -10,8 +10,9 @@ from web.helper.api import ApiText, json_get, response
 from web.helper.user import access_control
 
 
-@access_control(UserRoleLevel.EXTERNAL)
+
 @webhook_v1_bp.get("/intime/open-orders/count")
+@access_control(UserRoleLevel.EXTERNAL)
 def intime_open_orders_count() -> Response:
     with conn.begin() as s:
         count = s.query(Order).filter(Order.status_id == OrderStatusId.READY).count()
@@ -19,8 +20,9 @@ def intime_open_orders_count() -> Response:
     return response(data=data)
 
 
-@access_control(UserRoleLevel.EXTERNAL)
+
 @webhook_v1_bp.get("/intime/open-orders/list")
+@access_control(UserRoleLevel.EXTERNAL)
 def intime_open_orders_list() -> Response:
     data = []
     with conn.begin() as s:
@@ -57,21 +59,24 @@ def intime_open_orders_list() -> Response:
     return response(data=data)
 
 
-@access_control(UserRoleLevel.EXTERNAL)
+
 @webhook_v1_bp.get("/intime/products/<int:product_id>/stock")
+@access_control(UserRoleLevel.EXTERNAL)
 def intime_products_id_stock(product_id: int) -> Response:
     data = {"count": 0}
     return response(data=data)
 
 
-@access_control(UserRoleLevel.EXTERNAL)
+
 @webhook_v1_bp.patch("/intime/products/<int:product_id>/update-inventory")
+@access_control(UserRoleLevel.EXTERNAL)
 def intime_products_id(product_id: int) -> Response:
     return response()
 
 
-@access_control(UserRoleLevel.EXTERNAL)
+
 @webhook_v1_bp.get("/intime/products/count")
+@access_control(UserRoleLevel.EXTERNAL)
 def intime_products_count() -> Response:
     with conn.begin() as s:
         count = (
@@ -81,8 +86,9 @@ def intime_products_count() -> Response:
     return response(data=data)
 
 
-@access_control(UserRoleLevel.EXTERNAL)
+
 @webhook_v1_bp.get("/intime/products/list")
+@access_control(UserRoleLevel.EXTERNAL)
 def intime_products_list() -> Response:
     data = []
     with conn.begin() as s:
@@ -104,8 +110,9 @@ def intime_products_list() -> Response:
     return response(data=data)
 
 
-@access_control(UserRoleLevel.EXTERNAL)
+
 @webhook_v1_bp.post("/intime/orders/<int:order_id>/fulfill")
+@access_control(UserRoleLevel.EXTERNAL)
 def intime_orders_id_fulfill(order_id: int) -> Response:
     with conn.begin() as s:
         order = (
@@ -123,8 +130,9 @@ def intime_orders_id_fulfill(order_id: int) -> Response:
     return response()
 
 
-@access_control(UserRoleLevel.EXTERNAL)
+
 @webhook_v1_bp.patch("/intime/orders/<int:order_id>/update-tracking")
+@access_control(UserRoleLevel.EXTERNAL)
 def intime_orders_id_update_tracking(order_id: int) -> Response:
     carrier = json_get("carrierCode", type_=Any)
     code = json_get("trackingCode", type_=Any)

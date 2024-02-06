@@ -32,8 +32,9 @@ class CurrencyAPI(API):
 #
 
 
-@access_control(UserRoleLevel.ADMIN)
+
 @api_v1_bp.post("/currencies")
+@access_control(UserRoleLevel.ADMIN)
 def post_currencies() -> Response:
     api = CurrencyAPI()
     data = api.gen_request_data(api.post_columns)
@@ -62,8 +63,9 @@ def get_currencies_id(currency_id: int) -> Response:
     return response(data=resource)
 
 
-@access_control(UserRoleLevel.ADMIN)
+
 @api_v1_bp.delete("/currencies/<int:currency_id>")
+@access_control(UserRoleLevel.ADMIN)
 def delete_currencies_id(currency_id: int) -> Response:
     api = CurrencyAPI()
     with conn.begin() as s:

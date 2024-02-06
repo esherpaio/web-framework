@@ -32,8 +32,9 @@ class SettingAPI(API):
 #
 
 
-@access_control(UserRoleLevel.ADMIN)
+
 @api_v1_bp.get("/setting")
+@access_control(UserRoleLevel.ADMIN)
 def get_setting() -> Response:
     api = SettingAPI()
     with conn.begin() as s:
@@ -42,8 +43,9 @@ def get_setting() -> Response:
     return response(data=resource)
 
 
-@access_control(UserRoleLevel.ADMIN)
+
 @api_v1_bp.patch("/setting")
+@access_control(UserRoleLevel.ADMIN)
 def patch_setting() -> Response:
     api = SettingAPI()
     data = api.gen_request_data(api.patch_columns)

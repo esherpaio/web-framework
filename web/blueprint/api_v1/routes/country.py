@@ -39,8 +39,9 @@ class CountryAPI(API):
 #
 
 
-@access_control(UserRoleLevel.ADMIN)
+
 @api_v1_bp.post("/countries")
+@access_control(UserRoleLevel.ADMIN)
 def post_countries() -> Response:
     api = CountryAPI()
     data = api.gen_request_data(api.post_columns)
@@ -69,8 +70,9 @@ def get_countries_id(country_id: int) -> Response:
     return response(data=resource)
 
 
-@access_control(UserRoleLevel.ADMIN)
+
 @api_v1_bp.patch("/countries/<int:country_id>")
+@access_control(UserRoleLevel.ADMIN)
 def patch_countries_id(country_id: int) -> Response:
     api = CountryAPI()
     data = api.gen_request_data(api.patch_columns)
@@ -81,8 +83,9 @@ def patch_countries_id(country_id: int) -> Response:
     return response(data=resource)
 
 
-@access_control(UserRoleLevel.ADMIN)
+
 @api_v1_bp.delete("/countries/<int:country_id>")
+@access_control(UserRoleLevel.ADMIN)
 def delete_countries_id(country_id: int) -> Response:
     api = CountryAPI()
     with conn.begin() as s:

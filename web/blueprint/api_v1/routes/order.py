@@ -62,8 +62,8 @@ def post_orders() -> Response:
     return response(data=resource)
 
 
-@access_control(UserRoleLevel.ADMIN)
 @api_v1_bp.delete("/orders/<int:order_id>")
+@access_control(UserRoleLevel.ADMIN)
 def delete_orders_id(order_id: int) -> Response:
     api = OrderAPI()
     data = api.gen_view_args_data()

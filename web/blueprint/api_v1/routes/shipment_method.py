@@ -16,8 +16,9 @@ from web.helper.user import access_control
 #
 
 
-@access_control(UserRoleLevel.ADMIN)
+
 @api_v1_bp.post("/shipment-methods")
+@access_control(UserRoleLevel.ADMIN)
 def post_shipment_methods() -> Response:
     class_id, _ = json_get("class_id", int, nullable=False)
     name, _ = json_get("name", str, nullable=False)
@@ -39,8 +40,9 @@ def post_shipment_methods() -> Response:
     return response()
 
 
-@access_control(UserRoleLevel.ADMIN)
+
 @api_v1_bp.patch("/shipment-methods/<int:shipment_method_id>")
+@access_control(UserRoleLevel.ADMIN)
 def patch_shipment_methods_id(shipment_method_id: int) -> Response:
     name, has_name = json_get("name", str)
     phone_required, has_phone_required = json_get("phone_required", bool)
@@ -65,8 +67,9 @@ def patch_shipment_methods_id(shipment_method_id: int) -> Response:
     return response()
 
 
-@access_control(UserRoleLevel.ADMIN)
+
 @api_v1_bp.delete("/shipment-methods/<int:shipment_method_id>")
+@access_control(UserRoleLevel.ADMIN)
 def delete_shipment_methods_id(shipment_method_id: int) -> Response:
     with conn.begin() as s:
         # Delete shipment method

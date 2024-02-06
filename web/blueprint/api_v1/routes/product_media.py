@@ -23,8 +23,9 @@ from web.helper.user import access_control
 #
 
 
-@access_control(UserRoleLevel.ADMIN)
+
 @api_v1_bp.post("/products/<int:product_id>/media")
+@access_control(UserRoleLevel.ADMIN)
 def post_products_id_media(product_id: int) -> Response:
     with conn.begin() as s:
         # Get product
@@ -89,8 +90,9 @@ def post_products_id_media(product_id: int) -> Response:
     return response()
 
 
-@access_control(UserRoleLevel.ADMIN)
+
 @api_v1_bp.patch("/products/<int:product_id>/media/<int:media_id>")
+@access_control(UserRoleLevel.ADMIN)
 def patch_products_id_media_id(product_id: int, media_id: int) -> Response:
     description, has_description = json_get("description", str)
     order, has_order = json_get("order", int)
@@ -115,8 +117,9 @@ def patch_products_id_media_id(product_id: int, media_id: int) -> Response:
     return response()
 
 
-@access_control(UserRoleLevel.ADMIN)
+
 @api_v1_bp.delete("/products/<int:product_id>/media/<int:media_id>")
+@access_control(UserRoleLevel.ADMIN)
 def delete_products_id_media_id(product_id: int, media_id) -> Response:
     with conn.begin() as s:
         # Get product media and file

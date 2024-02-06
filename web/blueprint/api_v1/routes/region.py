@@ -28,8 +28,9 @@ class RegionAPI(API):
 #
 
 
-@access_control(UserRoleLevel.ADMIN)
+
 @api_v1_bp.post("/regions")
+@access_control(UserRoleLevel.ADMIN)
 def post_regions() -> Response:
     api = RegionAPI()
     data = api.gen_request_data(api.post_columns)
@@ -58,8 +59,9 @@ def get_regions_id(region_id: int) -> Response:
     return response(data=resource)
 
 
-@access_control(UserRoleLevel.ADMIN)
+
 @api_v1_bp.delete("/regions/<int:region_id>")
+@access_control(UserRoleLevel.ADMIN)
 def delete_regions_id(region_id: int) -> Response:
     api = RegionAPI()
     with conn.begin() as s:
