@@ -70,6 +70,7 @@ GOOGLE_CLIENT_ID: str = env_var("GOOGLE_CLIENT_ID", str)
 GOOGLE_KEY: str = env_var("GOOGLE_KEY", str)
 GOOGLE_PLACE_ID: str = env_var("GOOGLE_PLACE_ID", str)
 LOCALHOST: str = env_var("LOCALHOST", str)
+INTIME: bool = env_var("INTIME", bool, False)
 MOLLIE_KEY: str = env_var("MOLLIE_KEY", str)
 SEED_EXTERNAL: bool = env_var("SEED_EXTERNAL", bool)
 
