@@ -11,6 +11,8 @@ class Shipment(Base):
     __table_args__ = (UniqueConstraint("url", "order_id"),)
 
     attributes = MC(type_json, nullable=False, server_default="{}")
+    carrier = MC(String(64))
+    code = MC(String(64))
     url = MC(String(256), nullable=False)
 
     order_id = MC(ForeignKey("order.id", ondelete="RESTRICT"), nullable=False)
