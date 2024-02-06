@@ -16,7 +16,6 @@ from web.helper.user import access_control
 #
 
 
-
 @api_v1_bp.post("/shipment-classes")
 @access_control(UserRoleLevel.ADMIN)
 def post_shipment_classes() -> Response:
@@ -38,7 +37,6 @@ def post_shipment_classes() -> Response:
     return response()
 
 
-
 @api_v1_bp.patch("/shipment-classes/<int:shipment_class_id>")
 @access_control(UserRoleLevel.ADMIN)
 def patch_shipment_classes_id(shipment_class_id: int) -> Response:
@@ -55,7 +53,6 @@ def patch_shipment_classes_id(shipment_class_id: int) -> Response:
             shipment_zone.order = order
 
     return response()
-
 
 
 @api_v1_bp.delete("/shipment-classes/<int:shipment_class_id>")

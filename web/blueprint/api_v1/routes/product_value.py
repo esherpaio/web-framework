@@ -21,7 +21,6 @@ from web.seeder.model.sku import SkuSyncer
 #
 
 
-
 @api_v1_bp.post("/products/<int:product_id>/values")
 @access_control(UserRoleLevel.ADMIN)
 def post_products_id_values(product_id: int) -> Response:
@@ -56,7 +55,6 @@ def post_products_id_values(product_id: int) -> Response:
     return response()
 
 
-
 @api_v1_bp.patch("/products/<int:product_id>/values/<int:value_id>")
 @access_control(UserRoleLevel.ADMIN)
 @sync_after(SkuSyncer)
@@ -80,7 +78,6 @@ def patch_products_id_values_id(product_id: int, value_id: int) -> Response:
             product_value.order = order
 
     return response()
-
 
 
 @api_v1_bp.delete("/products/<int:product_id>/values/<int:value_id>")

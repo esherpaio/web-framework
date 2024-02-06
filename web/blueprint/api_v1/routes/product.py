@@ -19,7 +19,6 @@ from web.seeder.model.sku import SkuSyncer
 #
 
 
-
 @api_v1_bp.post("/products")
 @access_control(UserRoleLevel.ADMIN)
 @sync_after(SkuSyncer)
@@ -41,7 +40,6 @@ def post_products() -> Response:
         s.add(product)
 
     return response()
-
 
 
 @api_v1_bp.patch("/products/<int:product_id>")
@@ -79,7 +77,6 @@ def patch_products_id(product_id: int) -> Response:
             product.file_url = file_url
 
     return response()
-
 
 
 @api_v1_bp.delete("/products/<int:product_id>")

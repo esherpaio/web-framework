@@ -10,7 +10,6 @@ from web.helper.api import ApiText, json_get, response
 from web.helper.user import access_control
 
 
-
 @webhook_v1_bp.get("/intime/open-orders/count")
 @access_control(UserRoleLevel.EXTERNAL)
 def intime_open_orders_count() -> Response:
@@ -18,7 +17,6 @@ def intime_open_orders_count() -> Response:
         count = s.query(Order).filter(Order.status_id == OrderStatusId.READY).count()
     data = {"count": count}
     return response(data=data)
-
 
 
 @webhook_v1_bp.get("/intime/open-orders/list")
@@ -59,7 +57,6 @@ def intime_open_orders_list() -> Response:
     return response(data=data)
 
 
-
 @webhook_v1_bp.get("/intime/products/<int:product_id>/stock")
 @access_control(UserRoleLevel.EXTERNAL)
 def intime_products_id_stock(product_id: int) -> Response:
@@ -67,12 +64,10 @@ def intime_products_id_stock(product_id: int) -> Response:
     return response(data=data)
 
 
-
 @webhook_v1_bp.patch("/intime/products/<int:product_id>/update-inventory")
 @access_control(UserRoleLevel.EXTERNAL)
 def intime_products_id(product_id: int) -> Response:
     return response()
-
 
 
 @webhook_v1_bp.get("/intime/products/count")
@@ -84,7 +79,6 @@ def intime_products_count() -> Response:
         )
     data = {"count": count}
     return response(data=data)
-
 
 
 @webhook_v1_bp.get("/intime/products/list")
@@ -110,7 +104,6 @@ def intime_products_list() -> Response:
     return response(data=data)
 
 
-
 @webhook_v1_bp.post("/intime/orders/<int:order_id>/fulfill")
 @access_control(UserRoleLevel.EXTERNAL)
 def intime_orders_id_fulfill(order_id: int) -> Response:
@@ -128,7 +121,6 @@ def intime_orders_id_fulfill(order_id: int) -> Response:
         else:
             return response(404, ApiText.HTTP_404)
     return response()
-
 
 
 @webhook_v1_bp.patch("/intime/orders/<int:order_id>/update-tracking")

@@ -16,7 +16,6 @@ from web.helper.user import access_control
 #
 
 
-
 @api_v1_bp.post("/products/<int:product_id>/links")
 @access_control(UserRoleLevel.ADMIN)
 def post_products_id_links(product_id: int) -> Response:
@@ -44,7 +43,6 @@ def post_products_id_links(product_id: int) -> Response:
         s.add(product_link)
 
     return response()
-
 
 
 @api_v1_bp.delete("/products/<int:product_id>/links/<int:link_id>")

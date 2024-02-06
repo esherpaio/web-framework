@@ -22,7 +22,6 @@ from web.seeder.model.sku import SkuSyncer
 #
 
 
-
 @api_v1_bp.post("/products/<int:product_id>/skus")
 @access_control(UserRoleLevel.ADMIN)
 @sync_after(SkuSyncer)

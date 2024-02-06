@@ -61,7 +61,6 @@ def get_languages_id(language_id: int) -> Response:
     return response(data=resource)
 
 
-
 @api_v1_bp.delete("/languages/<int:language_id>")
 @access_control(UserRoleLevel.ADMIN)
 def delete_languages_id(language_id: int) -> Response:

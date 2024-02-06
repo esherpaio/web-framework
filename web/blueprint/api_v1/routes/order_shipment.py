@@ -17,7 +17,6 @@ from web.mail.base import MailEvent, mail
 #
 
 
-
 @api_v1_bp.post("/orders/<int:order_id>/shipments")
 @access_control(UserRoleLevel.ADMIN)
 def post_orders_id_shipments(order_id: int) -> Response:

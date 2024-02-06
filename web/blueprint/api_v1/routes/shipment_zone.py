@@ -16,7 +16,6 @@ from web.helper.user import access_control
 #
 
 
-
 @api_v1_bp.post("/shipment-zones")
 @access_control(UserRoleLevel.ADMIN)
 def post_shipment_zones() -> Response:
@@ -52,7 +51,6 @@ def post_shipment_zones() -> Response:
     return response()
 
 
-
 @api_v1_bp.patch("/shipment-zones/<int:shipment_zone_id>")
 @access_control(UserRoleLevel.ADMIN)
 def patch_shipment_zones_id(shipment_zone_id: int) -> Response:
@@ -75,7 +73,6 @@ def patch_shipment_zones_id(shipment_zone_id: int) -> Response:
             shipment_zone.region_id = region_id
 
     return response()
-
 
 
 @api_v1_bp.delete("/shipment-zones/<int:shipment_zone_id>")

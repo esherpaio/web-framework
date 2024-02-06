@@ -16,7 +16,6 @@ from web.helper.user import access_control
 #
 
 
-
 @api_v1_bp.post("/shipment-methods")
 @access_control(UserRoleLevel.ADMIN)
 def post_shipment_methods() -> Response:
@@ -38,7 +37,6 @@ def post_shipment_methods() -> Response:
         s.add(shipment_method)
 
     return response()
-
 
 
 @api_v1_bp.patch("/shipment-methods/<int:shipment_method_id>")
@@ -65,7 +63,6 @@ def patch_shipment_methods_id(shipment_method_id: int) -> Response:
             shipment_method.phone_required = phone_required
 
     return response()
-
 
 
 @api_v1_bp.delete("/shipment-methods/<int:shipment_method_id>")

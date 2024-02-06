@@ -23,7 +23,6 @@ from web.helper.user import access_control
 #
 
 
-
 @api_v1_bp.post("/products/<int:product_id>/media")
 @access_control(UserRoleLevel.ADMIN)
 def post_products_id_media(product_id: int) -> Response:
@@ -90,7 +89,6 @@ def post_products_id_media(product_id: int) -> Response:
     return response()
 
 
-
 @api_v1_bp.patch("/products/<int:product_id>/media/<int:media_id>")
 @access_control(UserRoleLevel.ADMIN)
 def patch_products_id_media_id(product_id: int, media_id: int) -> Response:
@@ -115,7 +113,6 @@ def patch_products_id_media_id(product_id: int, media_id: int) -> Response:
             file.description = description
 
     return response()
-
 
 
 @api_v1_bp.delete("/products/<int:product_id>/media/<int:media_id>")

@@ -65,7 +65,6 @@ def patch_categories_id_items_id(category_id: int, item_id: int) -> Response:
     return response()
 
 
-
 @api_v1_bp.delete("/categories/<int:category_id>/items/<int:item_id>")
 @access_control(UserRoleLevel.ADMIN)
 def delete_categories_id_items_id(category_id: int, item_id: int) -> Response:
