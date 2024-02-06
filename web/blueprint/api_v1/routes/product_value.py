@@ -21,8 +21,9 @@ from web.seeder.model.sku import SkuSyncer
 #
 
 
-@access_control(UserRoleLevel.ADMIN)
+
 @api_v1_bp.post("/products/<int:product_id>/values")
+@access_control(UserRoleLevel.ADMIN)
 def post_products_id_values(product_id: int) -> Response:
     name, _ = json_get("name", str, nullable=False)
     option_id, _ = json_get("option_id", int, nullable=False)
@@ -55,8 +56,9 @@ def post_products_id_values(product_id: int) -> Response:
     return response()
 
 
-@access_control(UserRoleLevel.ADMIN)
+
 @api_v1_bp.patch("/products/<int:product_id>/values/<int:value_id>")
+@access_control(UserRoleLevel.ADMIN)
 @sync_after(SkuSyncer)
 def patch_products_id_values_id(product_id: int, value_id: int) -> Response:
     media_id, has_media_id = json_get("media_id", int)
@@ -80,8 +82,9 @@ def patch_products_id_values_id(product_id: int, value_id: int) -> Response:
     return response()
 
 
-@access_control(UserRoleLevel.ADMIN)
+
 @api_v1_bp.delete("/products/<int:product_id>/values/<int:value_id>")
+@access_control(UserRoleLevel.ADMIN)
 def delete_products_id_values_id(product_id: int, value_id: int) -> Response:
     with conn.begin() as s:
         # Delete product value

@@ -16,8 +16,8 @@ from web.helper.user import access_control
 #
 
 
-@access_control(UserRoleLevel.ADMIN)
 @api_v1_bp.post("/categories/<int:category_id>/items")
+@access_control(UserRoleLevel.ADMIN)
 def post_categories_id_items(category_id: int) -> Response:
     order, _ = json_get("order", int)
     sku_id, _ = json_get("sku_id", int)
@@ -45,8 +45,8 @@ def post_categories_id_items(category_id: int) -> Response:
     return response()
 
 
-@access_control(UserRoleLevel.ADMIN)
 @api_v1_bp.patch("/categories/<int:category_id>/items/<int:item_id>")
+@access_control(UserRoleLevel.ADMIN)
 def patch_categories_id_items_id(category_id: int, item_id: int) -> Response:
     order, has_order = json_get("order", int)
 
@@ -65,8 +65,9 @@ def patch_categories_id_items_id(category_id: int, item_id: int) -> Response:
     return response()
 
 
-@access_control(UserRoleLevel.ADMIN)
+
 @api_v1_bp.delete("/categories/<int:category_id>/items/<int:item_id>")
+@access_control(UserRoleLevel.ADMIN)
 def delete_categories_id_items_id(category_id: int, item_id: int) -> Response:
     with conn.begin() as s:
         # Delete category item

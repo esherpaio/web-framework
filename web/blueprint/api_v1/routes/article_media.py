@@ -23,8 +23,8 @@ from web.helper.user import access_control
 #
 
 
-@access_control(UserRoleLevel.ADMIN)
 @api_v1_bp.post("/articles/<int:article_id>/media")
+@access_control(UserRoleLevel.ADMIN)
 def post_articles_id_media(article_id: int) -> Response:
     with conn.begin() as s:
         # Get article
@@ -88,8 +88,8 @@ def post_articles_id_media(article_id: int) -> Response:
     return response()
 
 
-@access_control(UserRoleLevel.ADMIN)
 @api_v1_bp.patch("/articles/<int:article_id>/media/<int:media_id>")
+@access_control(UserRoleLevel.ADMIN)
 def patch_articles_id_media_id(article_id: int, media_id: int) -> Response:
     description, has_description = json_get("description", str)
     order, has_order = json_get("order", int)
@@ -114,8 +114,8 @@ def patch_articles_id_media_id(article_id: int, media_id: int) -> Response:
     return response()
 
 
-@access_control(UserRoleLevel.ADMIN)
 @api_v1_bp.delete("/articles/<int:article_id>/media/<int:media_id>")
+@access_control(UserRoleLevel.ADMIN)
 def delete_articles_id_media_id(article_id: int, media_id: int) -> Response:
     with conn.begin() as s:
         # Get article media and file

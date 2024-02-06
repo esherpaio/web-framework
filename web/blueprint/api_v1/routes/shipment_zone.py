@@ -16,8 +16,9 @@ from web.helper.user import access_control
 #
 
 
-@access_control(UserRoleLevel.ADMIN)
+
 @api_v1_bp.post("/shipment-zones")
+@access_control(UserRoleLevel.ADMIN)
 def post_shipment_zones() -> Response:
     country_id, _ = json_get("country_id", int)
     order, _ = json_get("order", int, nullable=False)
@@ -51,8 +52,9 @@ def post_shipment_zones() -> Response:
     return response()
 
 
-@access_control(UserRoleLevel.ADMIN)
+
 @api_v1_bp.patch("/shipment-zones/<int:shipment_zone_id>")
+@access_control(UserRoleLevel.ADMIN)
 def patch_shipment_zones_id(shipment_zone_id: int) -> Response:
     country_id, has_country_id = json_get("country_id", int)
     order, has_order = json_get("order", int)
@@ -75,8 +77,9 @@ def patch_shipment_zones_id(shipment_zone_id: int) -> Response:
     return response()
 
 
-@access_control(UserRoleLevel.ADMIN)
+
 @api_v1_bp.delete("/shipment-zones/<int:shipment_zone_id>")
+@access_control(UserRoleLevel.ADMIN)
 def delete_shipment_zones_id(shipment_zone_id: int) -> Response:
     with conn.begin() as s:
         # Delete shipment zone

@@ -62,7 +62,7 @@ class User(Base):
 
     @property
     def is_authenticated(self) -> bool:
-        return not self.is_guest and self.is_active
+        return (not self.is_guest) and self.is_active
 
     @property
     def is_anonymous(self) -> bool:

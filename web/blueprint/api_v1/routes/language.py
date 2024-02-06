@@ -31,8 +31,8 @@ class LanguageAPI(API):
 #
 
 
-@access_control(UserRoleLevel.ADMIN)
 @api_v1_bp.post("/languages")
+@access_control(UserRoleLevel.ADMIN)
 def post_languages() -> Response:
     api = LanguageAPI()
     data = api.gen_request_data(api.post_columns)
@@ -61,8 +61,9 @@ def get_languages_id(language_id: int) -> Response:
     return response(data=resource)
 
 
-@access_control(UserRoleLevel.ADMIN)
+
 @api_v1_bp.delete("/languages/<int:language_id>")
+@access_control(UserRoleLevel.ADMIN)
 def delete_languages_id(language_id: int) -> Response:
     api = LanguageAPI()
     with conn.begin() as s:

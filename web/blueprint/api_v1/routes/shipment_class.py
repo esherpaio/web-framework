@@ -16,8 +16,9 @@ from web.helper.user import access_control
 #
 
 
-@access_control(UserRoleLevel.ADMIN)
+
 @api_v1_bp.post("/shipment-classes")
+@access_control(UserRoleLevel.ADMIN)
 def post_shipment_classes() -> Response:
     name, _ = json_get("name", str, nullable=False)
     order, _ = json_get("order", int, nullable=False)
@@ -37,8 +38,9 @@ def post_shipment_classes() -> Response:
     return response()
 
 
-@access_control(UserRoleLevel.ADMIN)
+
 @api_v1_bp.patch("/shipment-classes/<int:shipment_class_id>")
+@access_control(UserRoleLevel.ADMIN)
 def patch_shipment_classes_id(shipment_class_id: int) -> Response:
     order, has_order = json_get("order", int)
 
@@ -55,8 +57,9 @@ def patch_shipment_classes_id(shipment_class_id: int) -> Response:
     return response()
 
 
-@access_control(UserRoleLevel.ADMIN)
+
 @api_v1_bp.delete("/shipment-classes/<int:shipment_class_id>")
+@access_control(UserRoleLevel.ADMIN)
 def delete_shipment_classes_id(shipment_class_id: int) -> Response:
     with conn.begin() as s:
         # Delete shipment class

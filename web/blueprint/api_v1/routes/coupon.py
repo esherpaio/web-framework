@@ -16,8 +16,9 @@ from web.helper.user import access_control
 #
 
 
-@access_control(UserRoleLevel.ADMIN)
+
 @api_v1_bp.post("/coupons")
+@access_control(UserRoleLevel.ADMIN)
 def post_coupons() -> Response:
     amount, _ = json_get("amount", int | float)
     code, _ = json_get("code", str, nullable=False)
@@ -37,8 +38,9 @@ def post_coupons() -> Response:
     return response()
 
 
-@access_control(UserRoleLevel.ADMIN)
+
 @api_v1_bp.delete("/coupons/<int:coupon_id>")
+@access_control(UserRoleLevel.ADMIN)
 def delete_coupons_id(coupon_id: int) -> Response:
     with conn.begin() as s:
         # Delete coupon

@@ -17,8 +17,8 @@ from web.helper.validation import gen_slug
 #
 
 
-@access_control(UserRoleLevel.ADMIN)
 @api_v1_bp.post("/articles")
+@access_control(UserRoleLevel.ADMIN)
 def post_articles() -> Response:
     name, _ = json_get("name", str, nullable=False)
 
@@ -39,8 +39,8 @@ def post_articles() -> Response:
     return response()
 
 
-@access_control(UserRoleLevel.ADMIN)
 @api_v1_bp.patch("/articles/<int:article_id>")
+@access_control(UserRoleLevel.ADMIN)
 def patch_articles_id(article_id: int) -> Response:
     attributes, has_attributes = json_get("attributes", dict, default={})
     name, has_name = json_get("name", str)
@@ -66,8 +66,8 @@ def patch_articles_id(article_id: int) -> Response:
     return response()
 
 
-@access_control(UserRoleLevel.ADMIN)
 @api_v1_bp.delete("/articles/<int:article_id>")
+@access_control(UserRoleLevel.ADMIN)
 def delete_articles_id(article_id: int) -> Response:
     with conn.begin() as s:
         # Delete article
