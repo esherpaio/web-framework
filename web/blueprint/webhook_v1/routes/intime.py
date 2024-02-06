@@ -57,16 +57,27 @@ def intime_open_orders_list() -> Response:
     return response(data=data)
 
 
-@webhook_v1_bp.get("/intime/products/<int:product_id>/stock")
+@webhook_v1_bp.get("/intime/products/<int:sku_number>/stock")
 @access_control(UserRoleLevel.EXTERNAL)
-def intime_products_id_stock(product_id: int) -> Response:
+def intime_products_id_stock(sku_number: str) -> Response:
     data = {"count": 0}
     return response(data=data)
 
 
-@webhook_v1_bp.patch("/intime/products/<int:product_id>/update-inventory")
+@webhook_v1_bp.patch("/intime/products/<int:sku_number>/update-inventory")
 @access_control(UserRoleLevel.EXTERNAL)
-def intime_products_id(product_id: int) -> Response:
+def intime_products_id(sku_number: str) -> Response:
+    count = json_get("count", type_=int, nullable=False)
+    with conn.begin() as s:
+        sku = (
+            s.query(Sku)
+            .filter(Sku.number == sku_number, Sku.is_deleted == false())
+            .first()
+        )
+        if sku is not None:
+            sku.is_visible = bool(count)
+        else:
+            return response(404, ApiText.HTTP_404)
     return response()
 
 
