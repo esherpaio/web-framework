@@ -66,6 +66,17 @@ def post_sessions() -> Response:
     return response()
 
 
+@api_v1_bp.delete("/sessions")
+def delete_sessions() -> Response:
+    # Wait random interval
+    sleep_s = randint(0, 1000) / 1000
+    time.sleep(sleep_s)
+
+    # Logout user
+    flask_login.logout_user()
+    return response()
+
+
 @api_v1_bp.post("/sessions/google")
 @transfer_cart
 def post_sessions_google() -> Response:
@@ -90,17 +101,6 @@ def post_sessions_google() -> Response:
 
     # Login user
     flask_login.login_user(user, remember=False)
-    return response()
-
-
-@api_v1_bp.delete("/sessions")
-def delete_sessions() -> Response:
-    # Wait random interval
-    sleep_s = randint(0, 1000) / 1000
-    time.sleep(sleep_s)
-
-    # Logout user
-    flask_login.logout_user()
     return response()
 
 

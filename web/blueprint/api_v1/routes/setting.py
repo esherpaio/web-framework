@@ -6,8 +6,9 @@ from werkzeug import Response
 from web.blueprint.api_v1 import api_v1_bp
 from web.blueprint.api_v1._base import API
 from web.database.client import conn
-from web.database.model import AppSetting
+from web.database.model import AppSetting, UserRoleLevel
 from web.helper.api import response
+from web.helper.user import access_control
 
 #
 # Configuration
@@ -31,6 +32,7 @@ class SettingAPI(API):
 #
 
 
+@access_control(UserRoleLevel.ADMIN)
 @api_v1_bp.get("/setting")
 def get_setting() -> Response:
     api = SettingAPI()
@@ -40,6 +42,7 @@ def get_setting() -> Response:
     return response(data=resource)
 
 
+@access_control(UserRoleLevel.ADMIN)
 @api_v1_bp.patch("/setting")
 def patch_setting() -> Response:
     api = SettingAPI()

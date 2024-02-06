@@ -26,7 +26,7 @@ class Text(StrEnum):
 
 
 @api_v1_bp.post("/emails")
-def post_emails_contact() -> Response:
+def post_emails() -> Response:
     event_id, _ = json_get("event_id", str)
     data, _ = json_get("data", dict, default={})
 

@@ -69,6 +69,7 @@ def get_countries_id(country_id: int) -> Response:
     return response(data=resource)
 
 
+@access_control(UserRoleLevel.ADMIN)
 @api_v1_bp.patch("/countries/<int:country_id>")
 def patch_countries_id(country_id: int) -> Response:
     api = CountryAPI()

@@ -16,6 +16,7 @@ class UserRole(Base):
 class UserRoleId(IntEnum):
     GUEST = 1
     USER = 2
+    EXTERNAL = 5
     ADMIN = 3
     SUPER = 4
 
@@ -23,5 +24,6 @@ class UserRoleId(IntEnum):
 class UserRoleLevel(IntEnum):
     GUEST = 100
     USER = 200
+    EXTERNAL = 250
     ADMIN = 300
     SUPER = 400
