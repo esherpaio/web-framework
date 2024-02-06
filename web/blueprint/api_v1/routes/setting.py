@@ -32,7 +32,6 @@ class SettingAPI(API):
 #
 
 
-
 @api_v1_bp.get("/setting")
 @access_control(UserRoleLevel.ADMIN)
 def get_setting() -> Response:
@@ -41,7 +40,6 @@ def get_setting() -> Response:
         model: AppSetting = api.get(s, None)
         resource = api.gen_resource(s, model)
     return response(data=resource)
-
 
 
 @api_v1_bp.patch("/setting")

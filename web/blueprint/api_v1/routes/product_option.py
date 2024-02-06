@@ -25,7 +25,6 @@ from web.helper.validation import gen_slug
 #
 
 
-
 @api_v1_bp.post("/products/<int:product_id>/options")
 @access_control(UserRoleLevel.ADMIN)
 def post_products_id_options(product_id: int) -> Response:
@@ -53,7 +52,6 @@ def post_products_id_options(product_id: int) -> Response:
     return response()
 
 
-
 @api_v1_bp.patch("/products/<int:product_id>/options/<int:option_id>")
 @access_control(UserRoleLevel.ADMIN)
 def patch_products_id_options_id(product_id: int, option_id: int) -> Response:
@@ -74,7 +72,6 @@ def patch_products_id_options_id(product_id: int, option_id: int) -> Response:
             product_option.order = order
 
     return response()
-
 
 
 @api_v1_bp.delete("/products/<int:product_id>/options/<int:option_id>")

@@ -17,7 +17,6 @@ from web.helper.validation import gen_slug
 #
 
 
-
 @api_v1_bp.post("/categories")
 @access_control(UserRoleLevel.ADMIN)
 def post_categories() -> Response:
@@ -41,7 +40,6 @@ def post_categories() -> Response:
     return response()
 
 
-
 @api_v1_bp.patch("/categories/<int:category_id>")
 @access_control(UserRoleLevel.ADMIN)
 def patch_categories_id(category_id: int) -> Response:
@@ -61,7 +59,6 @@ def patch_categories_id(category_id: int) -> Response:
             category.order = order
 
     return response()
-
 
 
 @api_v1_bp.delete("/categories/<int:category_id>")

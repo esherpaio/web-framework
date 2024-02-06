@@ -39,7 +39,6 @@ class CountryAPI(API):
 #
 
 
-
 @api_v1_bp.post("/countries")
 @access_control(UserRoleLevel.ADMIN)
 def post_countries() -> Response:
@@ -70,7 +69,6 @@ def get_countries_id(country_id: int) -> Response:
     return response(data=resource)
 
 
-
 @api_v1_bp.patch("/countries/<int:country_id>")
 @access_control(UserRoleLevel.ADMIN)
 def patch_countries_id(country_id: int) -> Response:
@@ -81,7 +79,6 @@ def patch_countries_id(country_id: int) -> Response:
         api.update(s, data, model)
         resource = api.gen_resource(s, model)
     return response(data=resource)
-
 
 
 @api_v1_bp.delete("/countries/<int:country_id>")

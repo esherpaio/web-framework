@@ -16,7 +16,6 @@ from web.helper.user import access_control
 #
 
 
-
 @api_v1_bp.post("/coupons")
 @access_control(UserRoleLevel.ADMIN)
 def post_coupons() -> Response:
@@ -36,7 +35,6 @@ def post_coupons() -> Response:
         s.add(coupon)
 
     return response()
-
 
 
 @api_v1_bp.delete("/coupons/<int:coupon_id>")

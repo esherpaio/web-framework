@@ -16,7 +16,6 @@ from web.helper.user import access_control
 #
 
 
-
 @api_v1_bp.patch("/skus/<int:sku_id>")
 @access_control(UserRoleLevel.ADMIN)
 def patch_skus_id(sku_id: int) -> Response:
@@ -36,7 +35,6 @@ def patch_skus_id(sku_id: int) -> Response:
             sku.is_visible = is_visible
 
     return response()
-
 
 
 @api_v1_bp.delete("/skus/<int:sku_id>")

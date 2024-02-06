@@ -32,7 +32,6 @@ class CurrencyAPI(API):
 #
 
 
-
 @api_v1_bp.post("/currencies")
 @access_control(UserRoleLevel.ADMIN)
 def post_currencies() -> Response:
@@ -61,7 +60,6 @@ def get_currencies_id(currency_id: int) -> Response:
         model: Currency = api.get(s, currency_id)
         resource = api.gen_resource(s, model)
     return response(data=resource)
-
 
 
 @api_v1_bp.delete("/currencies/<int:currency_id>")

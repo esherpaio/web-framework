@@ -78,14 +78,16 @@ def _set_guest_session(persistent: bool = False) -> User:
 
 def access_control(
     level: UserRoleLevel,
-) -> Callable[[Callable[..., Response | None]], Callable[..., Response | None]]:
+) -> Callable[[Callable[..., Response | None]], Callable[..., Response]]:
     """Authorize a user based on their role level."""
 
     def decorate(f: Callable) -> Callable[..., Response]:
         def wrap(*args, **kwargs) -> Response:
             if current_user.is_active and current_user.role.level >= level:
                 return f(*args, **kwargs)
-            if request.blueprint is not None and any([x in request.blueprint for x in ["api", "webhook"]]):
+            if request.blueprint is not None and any(
+                [x in request.blueprint for x in ["api", "webhook"]]
+            ):
                 return response(403, ApiText.HTTP_403)
             return redirect(url_for(config.ENDPOINT_LOGIN))
 
