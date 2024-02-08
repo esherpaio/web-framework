@@ -1,4 +1,3 @@
-import base64
 from typing import Callable
 
 import flask_login
@@ -34,8 +33,7 @@ def session_loader(*args, **kwargs) -> User | None:
 def _get_api_session() -> User | None:
     authorization = request.headers.get("Authorization")
     if authorization is not None:
-        encoded = authorization.replace("Basic ", "", 1).encode()
-        api_key = base64.b64decode(encoded).decode()
+        api_key = authorization.replace("Bearer ", "", 1)
         with conn.begin() as s:
             user = (
                 s.query(User)

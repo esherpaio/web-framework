@@ -1,4 +1,3 @@
-import base64
 import contextlib
 
 import pytest
@@ -125,17 +124,14 @@ def create_users(s: Session) -> None:
 
 @pytest.fixture(scope="session")
 def guest() -> dict[str, str]:
-    credentials = base64.b64encode(b"guest").decode()
-    return {"Authorization": f"Basic {credentials}"}
+    return {"Authorization": "Bearer guest"}
 
 
 @pytest.fixture(scope="session")
 def user() -> dict[str, str]:
-    credentials = base64.b64encode(b"user").decode()
-    return {"Authorization": f"Basic {credentials}"}
+    return {"Authorization": "Bearer user"}
 
 
 @pytest.fixture(scope="session")
 def admin() -> dict[str, str]:
-    credentials = base64.b64encode(b"admin").decode()
-    return {"Authorization": f"Basic {credentials}"}
+    return {"Authorization": "Bearer admin"}
