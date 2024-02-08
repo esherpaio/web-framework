@@ -23,7 +23,7 @@ def env_var(key: str, type_: str | int | bool, default: Any = None) -> str | int
 
 @lru_cache
 def config_var(key: str) -> Any:
-    path = env_var("CONFIG_PATH", str)
+    path = env_var("APP_CONFIG", str)
     if path is None or not os.path.isfile(path):
         raise EnvironmentError
     with open(path, "r") as file:
@@ -34,6 +34,7 @@ def config_var(key: str) -> Any:
 APP_CACHE: bool = env_var("APP_CACHE", bool, True)
 APP_DEBUG: bool = env_var("APP_DEBUG", bool, False)
 APP_SECRET: str = env_var("APP_SECRET", str)
+APP_SEED_EXT: bool = env_var("APP_SEED_EXT", bool)
 APP_STATIC: bool = env_var("APP_STATIC", bool, True)
 
 BUSINESS_CC: str = config_var("BUSINESS_CC")
@@ -72,7 +73,6 @@ GOOGLE_PLACE_ID: str = env_var("GOOGLE_PLACE_ID", str)
 LOCALHOST: str = env_var("LOCALHOST", str)
 INTIME: bool = env_var("INTIME", bool, False)
 MOLLIE_KEY: str = env_var("MOLLIE_KEY", str)
-SEED_EXTERNAL: bool = env_var("SEED_EXTERNAL", bool)
 
 ROBOT_DEFAULT_TAGS: str = config_var("ROBOT_DEFAULT_TAGS")
 ROBOT_DISALLOW_URLS: list[str] = config_var("ROBOT_DISALLOW_URLS")
