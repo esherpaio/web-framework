@@ -11,6 +11,7 @@ requirements:
 ## ----------
 ## format : run formatters
 .PHONY: format
+format: format_py format_html
 format_py:
 	ruff check . --fix
 	black .
@@ -21,6 +22,7 @@ format_html:
 ## ----------
 ## lint : run linters
 .PHONY: lint
+lint: lint_py lint_html
 lint_py:
 	ruff check .
 	black . --check --quiet --diff --color
