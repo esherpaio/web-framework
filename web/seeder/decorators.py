@@ -9,7 +9,7 @@ from web.seeder.abc import Syncer
 
 def external_seed(f: Callable) -> Callable[..., None]:
     def wrap(*args, **kwargs) -> None:
-        if not config.SEED_EXTERNAL:
+        if not config.APP_SEED_EXT:
             return
         return f(*args, **kwargs)
 
