@@ -1,10 +1,17 @@
+import glob
+import os
 import threading
+import time
 from operator import attrgetter
+from threading import Thread
 from typing import Any, Callable
 
 #
 # Classes
 #
+
+
+_lock = threading.Lock()
 
 
 class Singleton(type):
@@ -25,7 +32,27 @@ class Singleton(type):
 #
 
 
-def none_aware_attrgetter(attr: str) -> Callable[[Any], tuple[bool, Any]]:
+def remove_dir(path: str) -> None:
+    """Remove the content of a directory."""
+    if os.path.isdir(path):
+        for file_ in glob.glob(f"{path.rstrip('/')}/*"):
+            if os.access(file_, os.W_OK):
+                os.remove(file_)
+
+
+def remove_file(path: str, delay_s: int = 0) -> None:
+    """Remove a file with an optional delay."""
+
+    def remove() -> None:
+        if delay_s:
+            time.sleep(delay_s)
+        if os.path.isfile(path):
+            os.remove(path)
+
+    Thread(target=remove, daemon=True).start()
+
+
+def _none_attrgetter(attr: str) -> Callable[[Any], tuple[bool, Any]]:
     """Attribute getter that accepts None values."""
 
     def wrap(item: list) -> tuple[bool, Any]:
@@ -34,10 +61,3 @@ def none_aware_attrgetter(attr: str) -> Callable[[Any], tuple[bool, Any]]:
 
     getter = attrgetter(attr)
     return wrap
-
-
-#
-# Variables
-#
-
-_lock = threading.Lock()

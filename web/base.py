@@ -4,9 +4,8 @@ from threading import Thread
 from typing import Callable
 
 import alembic.config
-from flask import Blueprint, Flask, redirect, request, url_for
+from flask import Blueprint, Flask
 from flask_login import LoginManager
-from werkzeug import Response
 
 from web import config
 from web.database.clean import clean_carts, clean_users
@@ -27,18 +26,18 @@ from web.database.model import (
 )
 from web.database.model.file_type import FileType
 from web.database.model.user_role import UserRole
-from web.helper import cdn
-from web.helper.cache import cache
-from web.helper.errors import _handle_frontend_error
-from web.helper.localization import (
+from web.libs import cdn
+from web.libs.app import check_redirects, handle_frontend_error
+from web.libs.auth import _cookie_loader, _session_loader
+from web.libs.cache import cache
+from web.libs.locale import (
+    _get_locale_url,
+    _redirect_locale,
+    _set_locale,
+    _set_locale_urls,
     current_locale,
-    expects_locale,
-    gen_locale,
-    lacks_locale,
 )
-from web.helper.logger import logger
-from web.helper.redirects import check_redirects
-from web.helper.user import cookie_loader, session_loader
+from web.libs.logger import log
 from web.mail.base import MailEvent, mail
 
 #
@@ -107,14 +106,16 @@ class FlaskWeb:
 
     def setup_jinja(self) -> None:
         # Register context
-        self._app.context_processor(_add_context)
+        self._app.context_processor(
+            lambda: dict(cache=cache, config=config, current_locale=current_locale)
+        )
         # Register filters
-        self._app.add_template_filter(_get_price, name="price")
-        self._app.add_template_filter(_get_datetime, name="datetime")
+        self._app.add_template_filter(lambda a, b: f"{a:.{b}f}", name="price")
+        self._app.add_template_filter(lambda a, b: a.strftime(b), name="datetime")
         for key, value in self._jinja_filter_hooks.items():
             self._app.add_template_filter(value, name=key)
         # Register globals
-        self._app.add_template_global(_get_cdn_url, name="cdn_url")
+        self._app.add_template_global(cdn.url, name="cdn_url")
         for key, value in self._jinja_global_hooks.items():
             self._app.add_template_global(value, name=key)
 
@@ -126,9 +127,9 @@ class FlaskWeb:
         manager.anonymous_user = User
         # Register user loaders
         if self._accept_cookie_auth:
-            manager.user_loader(cookie_loader)
+            manager.user_loader(_cookie_loader)
         if self._accept_request_auth:
-            manager.request_loader(session_loader)
+            manager.request_loader(_session_loader)
 
     def setup_static(self) -> None:
         # Run static hook
@@ -150,7 +151,7 @@ class FlaskWeb:
             try:
                 func()
             except Exception:
-                logger.error(f"Failed to run startup script: {func.__name__}")
+                log.error(f"Failed to run startup script: {func.__name__}")
 
     def setup_redirects(self) -> None:
         # Register Flask hooks
@@ -158,19 +159,21 @@ class FlaskWeb:
 
     def setup_locale(self) -> None:
         # Register Flask hooks
-        self._app.before_request(_check_locale)
+        self._app.before_request(_redirect_locale)
         self._app.after_request(_set_locale)
-        self._app.url_defaults(_set_urls)
+        self._app.url_defaults(_set_locale_urls)
         self._app.add_template_global(_get_locale_url, name="locale_url")
 
     def setup_error_handling(self) -> None:
         # Register Flask hooks
-        self._app.register_error_handler(Exception, _handle_frontend_error)
+        self._app.register_error_handler(Exception, handle_frontend_error)
 
     def setup_mail(self) -> None:
+        # Update mail events
         mail.events.update(self._mail_events)
 
     def setup_cache(self) -> None:
+        # Start cache reloading
         self._cache_active = True
         self.update_cache(force=True)
 
@@ -200,7 +203,7 @@ class FlaskWeb:
         return setting.cached_at > self._cached_at
 
     def _update_cache(self) -> None:
-        logger.info("Updating cache")
+        log.info("Updating cache")
         self._cached_at = datetime.utcnow()
         with conn.begin() as s:
             # fmt: off
@@ -220,67 +223,7 @@ class FlaskWeb:
             # fmt: on
         if self._cache_hook is not None:
             self._cache_hook(self._app)
-        cache.delete_routes()
+        cache.delete_urls()
 
     def stop_cache(self) -> None:
         self._cache_active = False
-
-
-#
-# Functions - default
-#
-
-
-def _add_context() -> dict:
-    return dict(cache=cache, config=config, current_locale=current_locale)
-
-
-def _get_price(price: float, decimals: int = 2) -> str:
-    return f"{price:.{decimals}f}"
-
-
-def _get_datetime(datetime_: datetime, format_: str) -> str:
-    return datetime_.strftime(format_)
-
-
-def _get_cdn_url(path_: str) -> str:
-    return cdn.url(path_)
-
-
-#
-# Functions - locale
-#
-
-
-def _check_locale() -> Response | None:
-    if request.endpoint is None:
-        return None
-    if request.view_args is None:
-        return None
-    if lacks_locale(request.endpoint, request.view_args):
-        request.view_args["_locale"] = current_locale.locale
-        url = url_for(request.endpoint, **request.view_args)
-        return redirect(url, code=301)
-
-
-def _set_locale(resp: Response) -> Response:
-    resp.set_cookie("locale", current_locale.locale)
-    return resp
-
-
-def _set_urls(endpoint: str, values: dict) -> None:
-    if lacks_locale(endpoint, values):
-        values["_locale"] = current_locale.locale
-
-
-def _get_locale_url(language_code: str, country_code: str) -> str:
-    if request.endpoint is None:
-        return ""
-    if request.view_args is not None:
-        kwargs = request.view_args.copy()
-    else:
-        kwargs = {}
-    if expects_locale(request.endpoint):
-        locale = gen_locale(language_code, country_code)
-        kwargs["_locale"] = locale
-    return url_for(request.endpoint, **kwargs, _external=True)

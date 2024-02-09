@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from web import config
 from web.database.client import conn
 from web.database.model import AppBlueprint, AppRoute, AppSetting
-from web.helper.logger import logger
+from web.libs.logger import log
 from web.packer.base import CssBundle, JsBundle, Packer, ScssBundle
 from web.seeder.abc import Syncer
 
@@ -61,7 +61,7 @@ class StaticSyncer(Syncer):
 
     def sync(self, s: Session) -> None:
         if not config.APP_STATIC:
-            logger.warning("Static syncer is disabled")
+            log.warning("Static syncer is disabled")
             return
         for seed in self.seeds:
             with conn.begin() as s:
@@ -69,6 +69,6 @@ class StaticSyncer(Syncer):
                 if resource is not None:
                     seed.set_attribute(s, resource)
                 else:
-                    logger.error(
+                    log.error(
                         f"Static resource for {seed.type}:{seed.endpoint} is not found"
                     )

@@ -2,12 +2,13 @@ import re
 from functools import cached_property
 from typing import Any
 
-from flask import current_app, g, has_request_context, request, url_for
+from flask import current_app, g, has_request_context, redirect, request, url_for
+from werkzeug import Response
 from werkzeug.local import LocalProxy
 
 from web import config
 from web.database.model import Country, Currency, Language
-from web.helper.cache import cache
+from web.libs.cache import cache
 
 #
 # Classes
@@ -112,10 +113,50 @@ def url_for_locale(endpoint: str, *args, **kwargs) -> str:
 
 
 def _get_proxy_locale() -> Locale | None:
+    """Get the locale proxy."""
     if has_request_context():
         if "_locale" not in g:
             g._locale = Locale()
         return g._locale
+
+
+#
+# Flask hooks
+#
+
+
+def _redirect_locale() -> Response | None:
+    if request.endpoint is None:
+        return None
+    if request.view_args is None:
+        return None
+    if lacks_locale(request.endpoint, request.view_args):
+        request.view_args["_locale"] = current_locale.locale
+        url = url_for(request.endpoint, **request.view_args)
+        return redirect(url, code=301)
+
+
+def _set_locale(resp: Response) -> Response:
+    resp.set_cookie("locale", current_locale.locale)
+    return resp
+
+
+def _set_locale_urls(endpoint: str, values: dict) -> None:
+    if lacks_locale(endpoint, values):
+        values["_locale"] = current_locale.locale
+
+
+def _get_locale_url(language_code: str, country_code: str) -> str:
+    if request.endpoint is None:
+        return ""
+    if request.view_args is not None:
+        kwargs = request.view_args.copy()
+    else:
+        kwargs = {}
+    if expects_locale(request.endpoint):
+        locale = gen_locale(language_code, country_code)
+        kwargs["_locale"] = locale
+    return url_for(request.endpoint, **kwargs, _external=True)
 
 
 #

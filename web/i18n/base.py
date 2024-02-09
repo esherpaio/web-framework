@@ -2,9 +2,9 @@ import json
 import os
 
 from web import config
-from web.helper.builtins import Singleton
-from web.helper.localization import current_locale
-from web.helper.logger import logger
+from web.libs.locale import current_locale
+from web.libs.logger import log
+from web.libs.utils import Singleton
 
 
 class _Translator(metaclass=Singleton):
@@ -48,20 +48,20 @@ class _Translator(metaclass=Singleton):
                 translations = self.translations[language_code]
                 break
             except KeyError:
-                logger.error(f"Translations for {language_code} not found")
+                log.error(f"Translations for {language_code} not found")
         else:
             return self.fallback_translation
         # Try to find translation for key
         try:
             text = translations[key]
         except KeyError:
-            logger.error(f"Translation for {key} not found")
+            log.error(f"Translation for {key} not found")
             return self.fallback_translation
         # Try to fill in keyword arguments
         try:
             return text % kwargs
         except KeyError:
-            logger.error(f"Translation for {key} is missing arguments")
+            log.error(f"Translation for {key} is missing arguments")
             return self.fallback_translation
 
 

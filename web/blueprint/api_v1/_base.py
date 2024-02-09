@@ -6,8 +6,8 @@ from sqlalchemy.orm.attributes import InstrumentedAttribute
 from sqlalchemy.orm.session import Session
 
 from web.database.model import B
-from web.helper.api import ApiText, args_get, json_get, response
-from web.helper.logger import logger
+from web.libs.api import ApiText, args_get, json_get, response
+from web.libs.logger import log
 
 
 class API(Generic[B]):
@@ -106,7 +106,7 @@ class API(Generic[B]):
             elif isinstance(attr, str):
                 key, value = attr, getattr(model, attr)
             else:
-                logger.warning(f"Unknown attribute: {attr}")
+                log.warning(f"Unknown attribute: {attr}")
                 continue
             data[key] = value
         return data

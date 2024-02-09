@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 from web.database.client import conn
 from web.database.model import Currency
 from web.database.seeds import currency_seeds
-from web.helper.logger import logger
+from web.libs.logger import log
 from web.seeder.abc import Syncer
 from web.seeder.decorators import external_seed
 
@@ -30,7 +30,7 @@ class CurrencySyncer(Syncer):
         try:
             resource = requests.request("GET", url, timeout=2)
         except RequestException as error:
-            logger.critical(error)
+            log.critical(error)
             return
 
         # Load currencies
@@ -44,7 +44,7 @@ class CurrencySyncer(Syncer):
                 code = element["currency"]
                 rate = element["rate"]
             except KeyError as error:
-                logger.critical(error)
+                log.critical(error)
                 return
 
             # Update currency

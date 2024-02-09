@@ -5,8 +5,8 @@ from typing import Any, Callable
 from flask import request
 from werkzeug import Response
 
-from web.helper.exceptions import WebError
 from web.i18n.base import _
+from web.libs.errors import APINullError, APITypeError
 
 #
 # Enumerators
@@ -26,29 +26,6 @@ class ApiText(StrEnum):
     HTTP_409 = _("API_HTTP_409")
     HTTP_410 = _("API_HTTP_410")
     HTTP_500 = _("API_HTTP_500")
-
-
-#
-# Exceptions
-#
-
-
-class APIError(WebError):
-    """Base class for API errors."""
-
-    pass
-
-
-class APITypeError(APIError):
-    """Raised when a type does not match."""
-
-    code = 400
-
-
-class APINullError(APIError):
-    """Raised when a value is null but cannot be null."""
-
-    code = 400
 
 
 #
@@ -86,10 +63,7 @@ def response(
 
 
 def json_get(
-    key: str,
-    type_: Any,
-    nullable: bool = True,
-    default: Any = None,
+    key: str, type_: Any, nullable: bool = True, default: Any = None
 ) -> tuple[Any, bool]:
     """Get a value from the request body."""
 
@@ -116,10 +90,7 @@ def json_get(
 
 
 def args_get(
-    key: str,
-    type_: Any,
-    nullable: bool = True,
-    default: Any = None,
+    key: str, type_: Any, nullable: bool = True, default: Any = None
 ) -> tuple[Any, bool]:
     """Get a value from the request args."""
 

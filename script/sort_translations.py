@@ -1,7 +1,7 @@
 import json
 import os
 
-from web.helper.logger import logger
+from web.libs.logger import log
 
 
 def sort_translations() -> None:
@@ -19,7 +19,7 @@ def sort_translations() -> None:
         data_out = dict(sorted(data_in.items()))
         with open(path, "w", encoding="utf-8") as file:
             json.dump(data_out, file, ensure_ascii=False, indent=4)
-        logger.info(f"Sorted {path}")
+        log.info(f"Sorted {path}")
 
 
 if __name__ == "__main__":

@@ -2,8 +2,8 @@ import hashlib
 import io
 import os
 
-from web.helper import cdn
-from web.helper.logger import logger
+from web.libs import cdn
+from web.libs.logger import log
 from web.packer.bundle import CssBundle, JsBundle, ScssBundle
 
 
@@ -27,11 +27,11 @@ class Packer:
                 out_path = os.path.join(out_dir, f"{hash_}{bundle.OUT_EXT}")
                 with open(out_path, "w", encoding=self.encoding) as file_:
                     file_.write(compiled)
-                logger.info(f"Saved bundle to {out_path}")
+                log.info(f"Saved bundle to {out_path}")
             if save_cdn:
                 file_ = io.BytesIO(bytes_)  # type: ignore
                 cdn_path = os.path.join("static", f"{hash_}{bundle.OUT_EXT}")
                 cdn.upload(file_, cdn_path)
                 cdn_url = cdn.url(cdn_path)
-                logger.info(f"Uploaded bundle to {cdn_url}")
+                log.info(f"Uploaded bundle to {cdn_url}")
         return out_path, cdn_path

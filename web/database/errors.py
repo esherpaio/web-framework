@@ -1,4 +1,4 @@
-from web.helper.exceptions import WebError
+from web.libs.errors import WebError
 
 
 class DbError(WebError):

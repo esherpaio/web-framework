@@ -6,7 +6,9 @@ from typing import Any
 #
 
 
-def get_pagination(offset: int, limit: int, total: int) -> list[dict[str, Any]]:
+def get_pages(offset: int, limit: int, total: int) -> list[dict[str, Any]]:
+    """Generate pagination for Bootstrap"""
+
     def _append_page(number_: int, name_: str, disabled: bool = False) -> None:
         class_list = []
         if disabled:

@@ -4,7 +4,7 @@ from flask import url_for
 from mollie.api.client import Client
 
 from web import config
-from web.helper.validation import strip_scheme
+from web.libs.parse import strip_scheme
 
 #
 # Classes

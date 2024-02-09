@@ -7,7 +7,7 @@ from smtplib import SMTP_SSL as SMTP
 import jinja2
 
 from web import config
-from web.helper.logger import logger
+from web.libs.logger import log
 
 #
 # Functions
@@ -38,7 +38,7 @@ def send_email(
     if config.EMAIL_METHOD == "smtp":
         _send_smtp(config.EMAIL_FROM, to, subject, html, reply_to, blob_path, blob_name)
     else:
-        logger.error("Email not send because no valid method is configured")
+        log.error("Email not send because no valid method is configured")
 
 
 def _send_smtp(

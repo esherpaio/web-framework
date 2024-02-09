@@ -8,11 +8,10 @@ from sqlalchemy.orm import Session
 from web import config
 from web.database.model import Cart, Order, Refund, User, Verification
 from web.document.objects.refund import gen_refund
-from web.helper.api import ApiText, response
-from web.helper.builtins import none_aware_attrgetter
-from web.helper.cart import get_shipment_methods
-from web.helper.fso import remove_file
-from web.helper.mollie_api import Mollie, mollie_amount
+from web.ext.mollie import Mollie, mollie_amount
+from web.libs.api import ApiText, response
+from web.libs.cart import get_shipment_methods
+from web.libs.utils import _none_attrgetter, remove_file
 from web.mail.base import MailEvent, mail
 
 
@@ -64,7 +63,7 @@ def authorize_cart(s: Session, data: dict) -> Cart:  # type: ignore
 def update_cart_shipment_methods(s: Session, cart: Cart) -> None:
     shipment_methods = get_shipment_methods(s, cart)
     if shipment_methods:
-        shipment_method = min(shipment_methods, key=none_aware_attrgetter("unit_price"))
+        shipment_method = min(shipment_methods, key=_none_attrgetter("unit_price"))
         cart.shipment_method_id = shipment_method.id
         cart.shipment_price = shipment_method.unit_price * cart.currency.rate
     else:

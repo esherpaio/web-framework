@@ -1,7 +1,7 @@
 import emoji
 
 from web.database.errors import DbEmailError, DbLengthError, DbNumberError, DbPhoneError
-from web.helper.validation import gen_slug, is_email, is_phone
+from web.libs.parse import gen_slug, is_email, is_phone
 
 
 def val_length(

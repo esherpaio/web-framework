@@ -9,19 +9,21 @@ from werkzeug import Response
 from web import config
 from web.database.client import conn
 from web.database.model import User, UserRoleId, UserRoleLevel
-from web.helper.api import ApiText, response
+from web.libs.api import ApiText, response
 
 #
 # Functions
 #
 
 
-def cookie_loader(user_id: int, *args, **kwargs) -> User | None:
+def _cookie_loader(user_id: int, *args, **kwargs) -> User | None:
     return _get_user_session(user_id)
 
 
-def session_loader(*args, **kwargs) -> User | None:
-    if request.blueprint is not None and "api" in request.blueprint:
+def _session_loader(*args, **kwargs) -> User | None:
+    if request.blueprint is not None and any(
+        [x in request.blueprint for x in ["api", "webhook"]]
+    ):
         user = _get_api_session()
         if user is None:
             user = _set_guest_session(persistent=True)
