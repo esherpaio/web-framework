@@ -3,9 +3,9 @@ from werkzeug import Response
 from web.blueprint.api_v1 import api_v1_bp
 from web.database.client import conn
 from web.database.model import CategoryItem, Product, ProductTypeId, Sku, UserRoleLevel
-from web.helper.api import ApiText, json_get, response
-from web.helper.user import access_control
-from web.helper.validation import gen_slug
+from web.libs.api import ApiText, json_get, response
+from web.libs.auth import access_control
+from web.libs.parse import gen_slug
 from web.seeder.decorators import sync_after
 from web.seeder.model.sku import SkuSyncer
 

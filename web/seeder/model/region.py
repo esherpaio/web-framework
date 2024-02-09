@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 
 from web.database.client import conn
 from web.database.model import Region
-from web.helper.logger import logger
+from web.libs.logger import log
 from web.seeder.abc import Syncer
 from web.seeder.decorators import external_seed
 
@@ -18,7 +18,7 @@ class RegionSyncer(Syncer):
             response = requests.request("GET", url, timeout=2)
             resources = response.json()
         except RequestException as error:
-            logger.critical(error)
+            log.critical(error)
             return
 
         # Load regions
@@ -28,7 +28,7 @@ class RegionSyncer(Syncer):
         try:
             region_names = set(x["region"] for x in resources)
         except KeyError as error:
-            logger.critical(error)
+            log.critical(error)
             return
 
         # Insert regions

@@ -11,9 +11,9 @@ from web.database.model import (
     SkuDetail,
     UserRoleLevel,
 )
-from web.helper.api import ApiText, json_get, response
-from web.helper.user import access_control
-from web.helper.validation import gen_slug
+from web.libs.api import ApiText, json_get, response
+from web.libs.auth import access_control
+from web.libs.parse import gen_slug
 
 #
 # Configuration

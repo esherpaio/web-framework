@@ -20,9 +20,9 @@ from web.database.model import (
 )
 from web.document.objects.invoice import gen_invoice
 from web.document.objects.refund import gen_refund
-from web.helper.api import ApiText, response
-from web.helper.fso import remove_file
-from web.helper.pagination import get_pagination
+from web.ext.bootstrap import get_pages
+from web.libs.api import ApiText, response
+from web.libs.utils import remove_file
 
 
 @admin_bp.get("/admin")
@@ -78,7 +78,7 @@ def orders() -> str:
             .all()
         )
 
-    pagination = get_pagination(offset, limit, orders_len)
+    pagination = get_pages(offset, limit, orders_len)
     return render_template(
         "admin/orders.html",
         search=search,

@@ -5,10 +5,10 @@ from werkzeug import Response
 from web.blueprint.api_v1 import api_v1_bp
 from web.database.client import conn
 from web.database.model import Product, ProductValue, Sku, SkuDetail, UserRoleLevel
-from web.helper.api import ApiText, response
-from web.helper.logger import logger
-from web.helper.user import access_control
-from web.helper.validation import gen_slug
+from web.libs.api import ApiText, response
+from web.libs.auth import access_control
+from web.libs.logger import log
+from web.libs.parse import gen_slug
 from web.seeder.decorators import sync_after
 from web.seeder.model.sku import SkuSyncer
 
@@ -45,7 +45,7 @@ def post_skus(product_id: int) -> Response:
             for sku in skus:
                 # Skip if sku already exists
                 if sku.value_ids == sorted(value_ids):
-                    logger.info("Restoring SKU %d", sku.id)
+                    log.info("Restoring SKU %d", sku.id)
                     sku.is_deleted = False
                     break
             else:

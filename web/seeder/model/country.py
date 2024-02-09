@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 
 from web.database.client import conn
 from web.database.model import Country, Currency, CurrencyId, Region
-from web.helper.logger import logger
+from web.libs.logger import log
 from web.seeder.abc import Syncer
 from web.seeder.decorators import external_seed
 
@@ -18,7 +18,7 @@ class CountrySyncer(Syncer):
             response = requests.request("GET", url, timeout=2)
             resources = response.json()
         except RequestException as error:
-            logger.critical(f"Country seeder failed: {error}")
+            log.critical(f"Country seeder failed: {error}")
             return
 
         # Load iteration objects
@@ -29,7 +29,7 @@ class CountrySyncer(Syncer):
 
         # Sanity checks
         if currency_usd is None:
-            logger.warning("Country seeder failed: USD currency not found")
+            log.warning("Country seeder failed: USD currency not found")
             return
 
         # Get resource details
@@ -40,7 +40,7 @@ class CountrySyncer(Syncer):
                 region_name = resource["region"]
                 currency_codes = list(resource["currencies"].keys())
             except KeyError as error:
-                logger.critical(error)
+                log.critical(error)
                 continue
 
             # Get currency, fallback to USD
@@ -54,7 +54,7 @@ class CountrySyncer(Syncer):
             try:
                 region = next(x for x in regions if x.name == region_name)
             except StopIteration as error:
-                logger.critical(error)
+                log.critical(error)
                 continue
 
             # Update or insert country

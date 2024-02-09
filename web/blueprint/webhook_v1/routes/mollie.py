@@ -7,9 +7,9 @@ from web.database.client import conn
 from web.database.model import Invoice, Order
 from web.database.model.order_status import OrderStatusId
 from web.document.objects.invoice import gen_invoice
-from web.helper.api import ApiText, response
-from web.helper.fso import remove_file
-from web.helper.mollie_api import Mollie
+from web.ext.mollie import Mollie
+from web.libs.api import ApiText, response
+from web.libs.utils import remove_file
 from web.mail.base import MailEvent, mail
 
 

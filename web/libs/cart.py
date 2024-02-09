@@ -20,7 +20,7 @@ from web.database.model import (
     Shipping,
     User,
 )
-from web.helper.localization import current_locale
+from web.libs.locale import current_locale
 
 #
 # Functions
@@ -127,7 +127,7 @@ def get_vat(
     country_code: str,
     is_business: bool,
 ) -> tuple[float, bool]:
-    """Calculate a VAT rate and determine whether it's reversed."""
+    """Get the VAT rate and whether it's applied."""
 
     date = datetime.utcnow().date()
     type_ = ItemType.generic_electronic_service

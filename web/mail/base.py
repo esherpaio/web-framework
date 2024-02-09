@@ -1,8 +1,8 @@
 from enum import StrEnum
 from typing import Callable
 
-from web.helper.builtins import Singleton
-from web.helper.logger import logger
+from web.libs.logger import log
+from web.libs.utils import Singleton
 from web.mail.events import (
     mail_contact_business,
     mail_contact_customer,
@@ -44,7 +44,7 @@ class _Mail(metaclass=Singleton):
     def get_events(self, event: MailEvent | str) -> list[Callable]:
         events = self.events.get(event, [])
         if not events:
-            logger.error(f"Event {event} not found")
+            log.error(f"Event {event} not found")
         return events
 
 

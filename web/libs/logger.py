@@ -6,7 +6,7 @@ from enum import StrEnum
 #
 
 
-class AnsiCode(StrEnum):
+class _AnsiCode(StrEnum):
     """ANSI escape codes for colored logging."""
 
     DEBUG = "\x1b[37m"
@@ -17,12 +17,12 @@ class AnsiCode(StrEnum):
     RESET = "\x1b[0m"
 
 
-class Formatter(logging.Formatter):
+class _Formatter(logging.Formatter):
     """A custom logging formatter."""
 
     def format(self, record: logging.LogRecord) -> str:
-        color = AnsiCode[record.levelname]
-        string = f"{color}%(levelname)s | %(message)s{AnsiCode.RESET}"
+        color = _AnsiCode[record.levelname]
+        string = f"{color}%(levelname)s | %(message)s{_AnsiCode.RESET}"
         formatter = logging.Formatter(string)
         return formatter.format(record)
 
@@ -32,14 +32,14 @@ class Formatter(logging.Formatter):
 #
 
 
-def get_logger(name: str) -> logging.Logger:
+def _get_logger(name: str) -> logging.Logger:
     """Get a logger."""
     base = logging.getLogger(name)
     base.setLevel(logging.DEBUG)
     if base.hasHandlers():
         base.handlers.clear()
     stream = logging.StreamHandler()
-    stream.setFormatter(Formatter())
+    stream.setFormatter(_Formatter())
     base.addHandler(stream)
     base.propagate = False
     return base
@@ -48,4 +48,4 @@ def get_logger(name: str) -> logging.Logger:
 # Variables
 
 
-logger = get_logger(__name__)
+log = _get_logger(__name__)

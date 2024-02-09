@@ -5,7 +5,7 @@ from markupsafe import Markup
 
 from web import config
 from web.database.model import AppRoute
-from web.helper.localization import current_locale, url_for_locale
+from web.libs.locale import current_locale, url_for_locale
 
 #
 # Classes

@@ -10,10 +10,10 @@ from web.blueprint.api_v1 import api_v1_bp
 from web.blueprint.api_v1._base import API
 from web.database.client import conn
 from web.database.model import Billing, Cart, Coupon, Shipping
-from web.helper.api import ApiText, response
-from web.helper.builtins import none_aware_attrgetter
-from web.helper.cart import get_shipment_methods, get_vat
-from web.helper.localization import current_locale
+from web.libs.api import ApiText, response
+from web.libs.cart import get_shipment_methods, get_vat
+from web.libs.locale import current_locale
+from web.libs.utils import _none_attrgetter
 
 #
 # Configuration
@@ -172,7 +172,7 @@ def set_shipment(s: Session, data: dict, model: Cart) -> None:
     if shipment_methods and shipment_method is None:
         shipment_method = min(
             shipment_methods,
-            key=none_aware_attrgetter("unit_price"),
+            key=_none_attrgetter("unit_price"),
         )
 
     if shipment_method is not None:

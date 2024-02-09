@@ -5,10 +5,10 @@ from werkzeug import Response
 
 from web import config
 from web.database.model.user_role import UserRoleLevel
-from web.helper.cache import cache
-from web.helper.logger import logger
-from web.helper.meta import Meta
-from web.helper.user import access_control
+from web.libs.auth import access_control
+from web.libs.cache import cache
+from web.libs.logger import log
+from web.libs.meta import Meta
 
 _dir = os.path.dirname(os.path.abspath(__file__))
 admin_bp = Blueprint(
@@ -35,5 +35,5 @@ def context() -> dict:
 
 @admin_bp.errorhandler(Exception)
 def error_handler(error: Exception) -> Response:
-    logger.error(f"Admin error: {error}", exc_info=True)
+    log.error(f"Admin error - error {error}", exc_info=True)
     return redirect(url_for("admin.error"))

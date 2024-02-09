@@ -5,7 +5,7 @@ from flask import request
 from werkzeug import Response
 
 from web import config
-from web.helper.logger import logger
+from web.libs.logger import log
 
 #
 # Classes
@@ -16,7 +16,7 @@ class Cache(dict):
     """A simple cache mechanism for routes and objects."""
 
     def route(self, f: Callable) -> Callable[..., Response | str]:
-        """Cache a route."""
+        """Cache decorator for a route."""
 
         def wrap(*args, **kwargs) -> Response | str:
             if request.url in self:
@@ -24,30 +24,30 @@ class Cache(dict):
                 response = zlib.decompress(compressed).decode()
                 return response
 
-            logger.info(f"Cache miss: {request.url}")
+            log.info(f"Cache miss: {request.url}")
             response = f(*args, **kwargs)
             if config.APP_CACHE:
                 try:
                     compressed = zlib.compress(response.encode())
                 except AttributeError:
-                    logger.warning(f"Cache could not compress: {request.url}")
+                    log.warning(f"Cache could not compress: {request.url}")
                     pass
                 else:
                     self[request.url] = compressed
-                    logger.info(f"Cache set: {request.url}")
+                    log.info(f"Cache set: {request.url}")
             return response
 
         wrap.__name__ = f.__name__
         return wrap
 
-    def delete_routes(self) -> None:
-        """Delete all cached routes."""
+    def delete_urls(self) -> None:
+        """Delete cached urls."""
         for key in self.copy().keys():
             if key.startswith("http"):
                 del self[key]
 
     def __setattr__(self, key: str, value: Any) -> None:
-        """Cache an object."""
+        """Set a cache object."""
         self[key] = value
 
     def __getattr__(self, key: str) -> Any:

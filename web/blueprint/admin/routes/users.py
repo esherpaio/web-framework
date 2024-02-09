@@ -4,7 +4,7 @@ from sqlalchemy.orm import joinedload
 from web.blueprint.admin import admin_bp
 from web.database.client import conn
 from web.database.model import User
-from web.helper.pagination import get_pagination
+from web.ext.bootstrap import get_pages
 
 
 @admin_bp.get("/admin/users")
@@ -30,7 +30,7 @@ def users() -> str:
             .all()
         )
 
-    pagination = get_pagination(offset, limit, users_len)
+    pagination = get_pages(offset, limit, users_len)
     return render_template(
         "admin/users.html",
         search=search,
