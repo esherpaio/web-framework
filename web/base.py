@@ -110,7 +110,7 @@ class FlaskWeb:
             lambda: dict(cache=cache, config=config, current_locale=current_locale)
         )
         # Register filters
-        self._app.add_template_filter(lambda a, b: f"{a:.{b}f}", name="price")
+        self._app.add_template_filter(lambda a: f"{a:.{2}f}", name="price")
         self._app.add_template_filter(lambda a, b: a.strftime(b), name="datetime")
         for key, value in self._jinja_filter_hooks.items():
             self._app.add_template_filter(value, name=key)
