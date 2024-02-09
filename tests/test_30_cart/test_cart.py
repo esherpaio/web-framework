@@ -24,3 +24,10 @@ class TestCart:
         assert 200 <= resp.status_code <= 299
         assert resp.json
         assert resp.json["data"]["billing_id"] == billing_id
+
+    def test_delete_cart(self, post_cart, client, user):
+        cart_id = post_cart.json["data"]["id"]
+        resp = client.delete(f"/api/v1/carts/{cart_id}", headers={**user})
+        assert 200 <= resp.status_code <= 299
+        assert resp.json
+        assert resp.json["data"]

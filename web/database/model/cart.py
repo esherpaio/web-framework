@@ -28,7 +28,7 @@ class Cart(Base):
     coupon = relationship("Coupon", lazy="joined")
     currency = relationship("Currency", lazy="joined")
     items = relationship(
-        "CartItem", back_populates="cart", passive_deletes=True, lazy="joined"
+        "CartItem", back_populates="cart", cascade="all, delete", lazy="joined"
     )
     shipment_method = relationship("ShipmentMethod")
     shipping = relationship("Shipping")
