@@ -1,15 +1,17 @@
 import flask_login
 from flask import Flask
+from sqlalchemy.orm import Session
 from werkzeug.security import generate_password_hash
 
 import web.seeder.model as seed
-from web.base import FlaskWeb
 from web.blueprint.admin import admin_bp
 from web.blueprint.api_v1 import api_v1_bp
 from web.blueprint.webhook_v1 import webhook_v1_bp
 from web.database.client import conn
 from web.database.model.user import User
 from web.database.model.user_role import UserRoleId
+from web.flask import FlaskWeb
+from web.seeder import Syncer
 
 
 def create_app() -> Flask:
@@ -26,6 +28,24 @@ def create_app() -> Flask:
     return app
 
 
+users = [
+    User(api_key="guest", is_active=True, role_id=UserRoleId.GUEST),
+    User(api_key="user", is_active=True, role_id=UserRoleId.USER),
+    User(api_key="external", is_active=True, role_id=UserRoleId.EXTERNAL),
+    User(api_key="admin", is_active=True, role_id=UserRoleId.ADMIN),
+    User(api_key="super", is_active=True, role_id=UserRoleId.SUPER),
+]
+
+
+class UserSyncer(Syncer):
+    def sync(self, s: Session) -> None:
+        for user in users:
+            row = s.query(User).filter_by(api_key=user.api_key).first()
+            if not row:
+                s.add(user)
+                s.flush()
+
+
 def db_hook(*args) -> None:
     with conn.begin() as s:
         # defaults
@@ -40,6 +60,7 @@ def db_hook(*args) -> None:
         seed.CountrySyncer().sync(s)
         # user defined
         seed.SkuSyncer().sync(s)
+        UserSyncer().sync(s)
 
 
 def view_home() -> str:

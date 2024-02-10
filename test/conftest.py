@@ -5,11 +5,11 @@ from flask import Flask
 from flask.testing import FlaskClient
 from sqlalchemy.orm import Session
 
-from web.base import FlaskWeb
 from web.blueprint.api_v1 import api_v1_bp
 from web.blueprint.webhook_v1 import webhook_v1_bp
 from web.database.client import conn, engine
 from web.database.model import Base, User, UserRoleId
+from web.flask import FlaskWeb
 from web.seeder.model import (
     FileTypeSyncer,
     OrderStatusSyncer,
@@ -23,7 +23,7 @@ from web.seeder.model import (
 #
 
 pytest_plugins = [
-    "tests.fixtures.models",
+    "test.fixtures.models",
 ]
 
 

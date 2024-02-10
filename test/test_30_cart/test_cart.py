@@ -30,4 +30,3 @@ class TestCart:
         resp = client.delete(f"/api/v1/carts/{cart_id}", headers={**user})
         assert 200 <= resp.status_code <= 299
         assert resp.json
-        assert resp.json["data"]

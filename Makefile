@@ -29,32 +29,3 @@ lint_py:
 	mypy --install-types --non-interactive .
 lint_html:
 	djlint . --check
-
-## SANDBOX
-## ----------
-## sandbox : run sandbox
-.PHONY: sandbox
-sandbox:
-	cd sandbox && flask run --debug --port=5000
-sandbox_migrations:
-	cd sandbox && set -a; source .env; set +a && alembic revision --autogenerate -m ""
-sandbox_migrate:
-	cd sandbox && set -a; source .env; set +a && alembic upgrade head
-
-## TESTING
-## ----------
-## test : run testers
-.PHONY: test
-test:
-	cd tests && set -a; source .env; set +a && pytest .
-test_migrations:
-	cd tests && set -a; source .env; set +a && alembic revision --autogenerate -m ""
-test_migrate:
-	cd tests && set -a; source .env; set +a && alembic upgrade head
-
-## TRANSLATIONS
-## ----------
-## translations : fix translations
-.PHONY: translations
-translations:
-	python3 -c 'from script.sort_translations import sort_translations; sort_translations();'
