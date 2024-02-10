@@ -1,3 +1,4 @@
+import json
 from typing import Any
 
 from sqlalchemy import false, null
@@ -6,8 +7,14 @@ from werkzeug import Response
 from web.blueprint.webhook_v1 import webhook_v1_bp
 from web.database.client import conn
 from web.database.model import Order, OrderStatusId, Shipment, Sku, UserRoleLevel
-from web.libs.api import ApiText, json_get, response
+from web.libs.api import ApiText, json_get
 from web.libs.auth import access_control
+
+
+def response(code: int = 200, data: list | dict | None = None) -> Response:
+    if data is None:
+        data = {}
+    return Response(json.dumps(data), status=code, mimetype="application/json")
 
 
 @webhook_v1_bp.get("/intime/open-orders/count")
@@ -64,7 +71,7 @@ def intime_products_id_stock(sku_number: str) -> Response:
     return response(data=data)
 
 
-@webhook_v1_bp.patch("/intime/products/<int:sku_number>/update-inventory")
+@webhook_v1_bp.patch("/intime/products/<string:sku_number>/update-inventory")
 @access_control(UserRoleLevel.EXTERNAL)
 def intime_products_id(sku_number: str) -> Response:
     count = json_get("count", type_=int, nullable=False)
@@ -115,7 +122,7 @@ def intime_products_list() -> Response:
     return response(data=data)
 
 
-@webhook_v1_bp.post("/intime/orders/<int:order_id>/fulfill")
+@webhook_v1_bp.patch("/intime/orders/<int:order_id>/fulfill")
 @access_control(UserRoleLevel.EXTERNAL)
 def intime_orders_id_fulfill(order_id: int) -> Response:
     with conn.begin() as s:

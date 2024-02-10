@@ -26,8 +26,8 @@ def config_var(key: str) -> Any:
     path = env_var("APP_CONFIG", str)
     if path is None or not os.path.isfile(path):
         raise EnvironmentError
-    with open(path, "r") as file:
-        data = json.loads(file.read())
+    with open(path, "r") as file_:
+        data = json.loads(file_.read())
     return data.get(key)
 
 
