@@ -10,6 +10,15 @@ from web.libs.api import json_get
 from web.libs.auth import access_control
 from web.mail import MailEvent, mail
 
+#
+# Helpers
+#
+
+
+OPEN_ORDER_FILTERS = (Order.status_id == OrderStatusId.READY,)
+SKU_FILTERS = (Sku.number != null(), Sku.is_deleted == false())
+ORDER_FILTERS = (Order.status_id.in_([OrderStatusId.READY, OrderStatusId.COMPLETED]),)
+
 
 def response(code: int = 200, data: list | dict | None = None) -> Response:
     if data is None:
@@ -17,13 +26,17 @@ def response(code: int = 200, data: list | dict | None = None) -> Response:
     return Response(json.dumps(data), status=code, mimetype="application/json")
 
 
+#
+# Routes
+#
+
+
 @webhook_v1_bp.get("/intime/open-orders/count")
 @access_control(UserRoleLevel.EXTERNAL)
 def intime_open_orders_count() -> Response:
     with conn.begin() as s:
-        count = s.query(Order).filter(Order.status_id == OrderStatusId.READY).count()
-    data = {"count": count}
-    return response(data=data)
+        count = s.query(Order).filter(*OPEN_ORDER_FILTERS).count()
+    return response(data={"count": count})
 
 
 @webhook_v1_bp.get("/intime/open-orders/list")
@@ -31,7 +44,7 @@ def intime_open_orders_count() -> Response:
 def intime_open_orders_list() -> Response:
     data = []
     with conn.begin() as s:
-        orders = s.query(Order).filter(Order.status_id == OrderStatusId.READY).all()
+        orders = s.query(Order).filter(*OPEN_ORDER_FILTERS).all()
         for order in orders:
             data.append(
                 {
@@ -66,21 +79,16 @@ def intime_open_orders_list() -> Response:
 
 @webhook_v1_bp.get("/intime/skus/<string:sku_number>/stock")
 @access_control(UserRoleLevel.EXTERNAL)
-def intime_products_id_stock(sku_number: str) -> Response:
-    data = {"count": 0}
-    return response(data=data)
+def intime_skus_id_stock(sku_number: str) -> Response:
+    return response(data={"count": 0})
 
 
 @webhook_v1_bp.post("/intime/skus/<string:sku_number>/update-inventory")
 @access_control(UserRoleLevel.EXTERNAL)
-def intime_products_id(sku_number: str) -> Response:
+def intime_skus_id(sku_number: str) -> Response:
     count, _ = json_get("count", type_=int, nullable=False)
     with conn.begin() as s:
-        sku = (
-            s.query(Sku)
-            .filter(Sku.number == sku_number, Sku.is_deleted == false())
-            .first()
-        )
+        sku = s.query(Sku).filter(Sku.number == sku_number, *SKU_FILTERS).first()
         if sku is None:
             return response(404)
         sku.is_visible = bool(count)
@@ -89,23 +97,18 @@ def intime_products_id(sku_number: str) -> Response:
 
 @webhook_v1_bp.get("/intime/skus/count")
 @access_control(UserRoleLevel.EXTERNAL)
-def intime_products_count() -> Response:
+def intime_skus_count() -> Response:
     with conn.begin() as s:
-        count = (
-            s.query(Sku).filter(Sku.number != null(), Sku.is_deleted == false()).count()
-        )
-    data = {"count": count}
-    return response(data=data)
+        count = s.query(Sku).filter(*SKU_FILTERS).count()
+    return response(data={"count": count})
 
 
 @webhook_v1_bp.get("/intime/skus/list")
 @access_control(UserRoleLevel.EXTERNAL)
-def intime_products_list() -> Response:
+def intime_skus_list() -> Response:
     data = []
     with conn.begin() as s:
-        skus = (
-            s.query(Sku).filter(Sku.number != null(), Sku.is_deleted == false()).all()
-        )
+        skus = s.query(Sku).filter(*SKU_FILTERS).all()
         for sku in skus:
             data.append(
                 {
@@ -125,14 +128,7 @@ def intime_products_list() -> Response:
 @access_control(UserRoleLevel.EXTERNAL)
 def intime_orders_id_fulfill(order_id: int) -> Response:
     with conn.begin() as s:
-        order = (
-            s.query(Order)
-            .filter(
-                Order.id == order_id,
-                Order.status_id.in_([OrderStatusId.READY, OrderStatusId.COMPLETED]),
-            )
-            .first()
-        )
+        order = s.query(Order).filter(Order.id == order_id, *ORDER_FILTERS).first()
         if order is None:
             return response(404)
         order.status_id = OrderStatusId.COMPLETED
@@ -146,14 +142,7 @@ def intime_orders_id_update_tracking(order_id: int) -> Response:
     code, _ = json_get("trackingCode", type_=str, nullable=False)
     url, _ = json_get("trackingLink", type_=str, nullable=False)
     with conn.begin() as s:
-        order = (
-            s.query(Order)
-            .filter(
-                Order.id == order_id,
-                Order.status_id.in_([OrderStatusId.READY, OrderStatusId.COMPLETED]),
-            )
-            .first()
-        )
+        order = s.query(Order).filter(Order.id == order_id, *ORDER_FILTERS).first()
         if order is None:
             return response(404)
         shipment = next((s for s in order.shipments if s.code == code), None)

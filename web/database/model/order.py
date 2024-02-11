@@ -102,8 +102,10 @@ class Order(Base):
     def next_statuses(self) -> list:
         if self.is_paid:
             ids = [OrderStatusId.IN_PROGRESS, OrderStatusId.READY]
-        if self.is_in_progress:
+        elif self.is_in_progress:
             ids = [OrderStatusId.READY]
+        else:
+            ids = []
         return [x for x in cache.order_statuses if x.id in ids]
 
     # Properties - refund
