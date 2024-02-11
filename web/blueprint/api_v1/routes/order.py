@@ -105,16 +105,8 @@ def get_cart(s: Session, data: dict, model: Order) -> None:
 
 
 def val_status(s: Session, data: dict, model: Order) -> None:
-    status_id = data["status_id"]
-    if model.status_id in [
-        OrderStatusId.PAID,
-        OrderStatusId.PRODUCTION,
-    ] and status_id in [
-        OrderStatusId.PRODUCTION,
-        OrderStatusId.READY,
-    ]:
-        return
-    abort(response(400, Text.STATUS_INVALID))
+    if data["status_id"] not in model.status_choices:
+        abort(response(400, Text.STATUS_INVALID))
 
 
 def val_cart(s: Session, data: dict, model: Order) -> None:
