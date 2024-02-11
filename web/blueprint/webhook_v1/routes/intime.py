@@ -56,7 +56,7 @@ def intime_open_orders_list() -> Response:
                         "zip": order.shipping.zip_code,
                         "city": order.shipping.city,
                         "state": order.shipping.state,
-                        "countryCode": order.shipping.country.code,
+                        "country": order.shipping.country.code,
                         "business": order.shipping.company,
                         "phone": order.shipping.phone,
                         "email": order.shipping.email,
@@ -66,7 +66,9 @@ def intime_open_orders_list() -> Response:
                             "id": line.sku.number,
                             "name": line.sku.name,
                             "quantity": line.quantity,
-                            "unitPriceEur": line.sku.unit_price,
+                            "weight": 0,
+                            "unitPrice": line.sku.unit_price,
+                            "stock": line.sku.stock,
                             "productId": line.sku.product.id,
                             "variantId": line.sku.id,
                         }
@@ -87,7 +89,7 @@ def intime_skus_id_stock(sku_number: str) -> Response:
     return response(data={"count": sku.stock})
 
 
-@webhook_v1_bp.post("/intime/skus/<string:sku_number>/update-inventory")
+@webhook_v1_bp.post("/intime/skus/<string:sku_number>/update-stock")
 @access_control(UserRoleLevel.EXTERNAL)
 def intime_skus_id(sku_number: str) -> Response:
     stock, _ = json_get("count", type_=int, nullable=False)
@@ -118,9 +120,9 @@ def intime_skus_list() -> Response:
                 {
                     "id": sku.number,
                     "name": sku.name,
-                    "weightGram": 0,
-                    "unitPriceEur": sku.unit_price,
-                    "stockCount": sku.stock,
+                    "weight": 0,
+                    "unitPrice": sku.unit_price,
+                    "stock": sku.stock,
                     "productId": sku.product.id,
                     "variantId": sku.id,
                 }
