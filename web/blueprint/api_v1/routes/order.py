@@ -105,7 +105,7 @@ def get_cart(s: Session, data: dict, model: Order) -> None:
 
 
 def val_status(s: Session, data: dict, model: Order) -> None:
-    if data["status_id"] not in model.status_choices:
+    if data["status_id"] not in model.next_statuses:
         abort(response(400, Text.STATUS_INVALID))
 
 
