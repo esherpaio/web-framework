@@ -17,9 +17,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
           cache: 'pip'
       - name: Install dependencies
-        run: |
-          pip install --upgrade pip
-          pip install -r requirements-dev.txt
+        run: make requirements
       - name: Check with Ruff
         run: ruff check .
       - name: Check with Mypy
