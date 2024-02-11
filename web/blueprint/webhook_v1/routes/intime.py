@@ -8,6 +8,7 @@ from web.database.client import conn
 from web.database.model import Order, OrderStatusId, Shipment, Sku, UserRoleLevel
 from web.libs.api import json_get
 from web.libs.auth import access_control
+from web.mail import MailEvent, mail
 
 
 def response(code: int = 200, data: list | dict | None = None) -> Response:
@@ -155,13 +156,20 @@ def intime_orders_id_update_tracking(order_id: int) -> Response:
         )
         if order is None:
             return response(404)
-        for shipment in order.shipments:
-            if shipment.code == code:
-                shipment.carrier = carrier
-                shipment.url = url
-                break
-        else:
+        shipment = next((s for s in order.shipments if s.code == code), None)
+        if shipment is None:
             shipment = Shipment(order_id=order.id, carrier=carrier, code=code, url=url)
             s.add(shipment)
+            for event in mail.get_events(MailEvent.ORDER_SHIPPED):
+                event(
+                    order_id=order_id,
+                    shipment_url=shipment.url,
+                    billing_email=order.billing.email,
+                    shipping_email=order.shipping.email,
+                    shipping_address=order.shipping.full_address,
+                )
+        else:
+            shipment.carrier = carrier
+            shipment.url = url
         order.status_id = OrderStatusId.COMPLETED
     return response()

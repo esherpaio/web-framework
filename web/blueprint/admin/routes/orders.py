@@ -12,6 +12,7 @@ from web.database.model import (
     Billing,
     Order,
     OrderLine,
+    OrderStatusId,
     Refund,
     Shipment,
     Shipping,
@@ -128,6 +129,7 @@ def order(order_id: int) -> str:
         order=order_,
         order_lines=order_lines,
         refunds=refunds,
+        status_ready=OrderStatusId.READY,
     )
 
 
