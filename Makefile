@@ -3,7 +3,7 @@
 ## requirements : install requirements
 requirements:
 	pip install --upgrade pip
-	pip uninstall web
+	pip uninstall web-framework -y
 	pip install -r requirements.txt
 	pip install -r requirements-dev.txt
 
