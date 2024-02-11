@@ -1,5 +1,4 @@
 import json
-from typing import Any
 
 from sqlalchemy import false, null
 from werkzeug import Response
@@ -53,7 +52,7 @@ def intime_open_orders_list() -> Response:
                             "id": line.sku.number,
                             "name": line.sku.name,
                             "quantity": line.quantity,
-                            "price": line.sku.unit_price,
+                            "unitPriceEur": line.sku.unit_price,
                             "productId": line.sku.product.id,
                             "variantId": line.sku.id,
                         }
@@ -74,7 +73,7 @@ def intime_products_id_stock(sku_number: str) -> Response:
 @webhook_v1_bp.post("/intime/skus/<string:sku_number>/update-inventory")
 @access_control(UserRoleLevel.EXTERNAL)
 def intime_products_id(sku_number: str) -> Response:
-    count, has_count = json_get("count", type_=int, nullable=False)
+    count, _ = json_get("count", type_=int, nullable=False)
     with conn.begin() as s:
         sku = (
             s.query(Sku)
@@ -83,8 +82,7 @@ def intime_products_id(sku_number: str) -> Response:
         )
         if sku is None:
             return response(404)
-        if has_count:
-            sku.is_visible = bool(count)
+        sku.is_visible = bool(count)
     return response()
 
 
@@ -143,9 +141,9 @@ def intime_orders_id_fulfill(order_id: int) -> Response:
 @webhook_v1_bp.post("/intime/orders/<int:order_id>/update-tracking")
 @access_control(UserRoleLevel.EXTERNAL)
 def intime_orders_id_update_tracking(order_id: int) -> Response:
-    carrier = json_get("carrierCode", type_=Any)
-    code = json_get("trackingCode", type_=Any, nullable=False)
-    url = json_get("trackingLink", type_=str, nullable=False)
+    carrier, _ = json_get("carrierCode", type_=str)
+    code, _ = json_get("trackingCode", type_=str, nullable=False)
+    url, _ = json_get("trackingLink", type_=str, nullable=False)
     with conn.begin() as s:
         order = (
             s.query(Order)
