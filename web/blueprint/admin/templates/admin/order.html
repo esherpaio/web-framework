@@ -221,8 +221,14 @@
                         <thead class="table-secondary">
                             <tr>
                                 <th>
-                                    URL
+                                    Carrier
                                 </th>
+                                <td>
+                                    Code
+                                </td>
+                                <td>
+                                    URL
+                                </td>
                                 <th class="text-end">
                                     Actions
                                 </th>
@@ -231,6 +237,12 @@
                         <tbody class="table-light">
                             {% for shipment in order.shipments %}
                                 <tr>
+                                    <td>
+                                        {{ shipment.carrier if shipment.carrier }}
+                                    </td>
+                                    <td>
+                                        {{ shipment.code if shipment.code }}
+                                    </td>
                                     <td>
                                         {{ shipment.url }}
                                     </td>

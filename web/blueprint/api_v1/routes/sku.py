@@ -21,6 +21,7 @@ from web.libs.auth import access_control
 def patch_skus_id(sku_id: int) -> Response:
     attributes, has_attributes = json_get("attributes", dict, default={})
     is_visible, has_is_visible = json_get("is_visible", bool)
+    number, has_number = json_get("number", str)
 
     with conn.begin() as s:
         # Get sku
@@ -33,6 +34,8 @@ def patch_skus_id(sku_id: int) -> Response:
             sku.attributes = attributes
         if has_is_visible:
             sku.is_visible = is_visible
+        if has_number:
+            sku.number = number
 
     return response()
 

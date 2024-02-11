@@ -16,7 +16,7 @@ class Sku(Base):
     attributes = MC(type_json, nullable=False, server_default="{}")
     is_deleted = MC(Boolean, nullable=False, default=False)
     is_visible = MC(Boolean, nullable=False, default=False)
-    number = MC(String(64))
+    number = MC(String(64), unique=True)
     slug = MC(String(128), unique=True, nullable=False)
     unit_price = MC(default_price, nullable=False)
 
