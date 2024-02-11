@@ -18,9 +18,5 @@ jobs:
           cache: 'pip'
       - name: Install dependencies
         run: make requirements
-      - name: Check with Ruff
-        run: ruff check .
-      - name: Check with Mypy
-        run: mypy --install-types --non-interactive .
-      - name: Check with djLint
-        run: djlint . --check
+      - name: Run linters
+        run: make lint
