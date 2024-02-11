@@ -14,7 +14,7 @@
             updateButton(`update-sku-${skuId}`, 1);
             await patchSkusId(skuId, {
                 is_visible: document.getElementById(`sku-is-visible-${skuId}`).checked,
-                stock: parseInt(document.getElementById(`sku-stock-${skuId}`)),
+                stock: parseInt(document.getElementById(`sku-stock-${skuId}`).value),
                 number: document.getElementById(`sku-number-${skuId}`).value,
             });
             await patchSetting({ cached_at: null });
