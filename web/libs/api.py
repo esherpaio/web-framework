@@ -111,7 +111,7 @@ def args_get(
 
 
 def modify_request(
-    mapping: dict[str, Callable]
+    mapping: dict[str, Callable],
 ) -> Callable[[Callable[..., None]], Callable[..., None]]:
     """Modify the request body."""
 
@@ -129,7 +129,7 @@ def modify_request(
 
 
 def modify_response(
-    mapping: dict[str, Callable]
+    mapping: dict[str, Callable],
 ) -> Callable[[Callable[..., Response]], Callable[..., Response]]:
     """Modify the response body."""
 

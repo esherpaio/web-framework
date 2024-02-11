@@ -22,8 +22,6 @@ jobs:
           pip install -r requirements-dev.txt
       - name: Check with Ruff
         run: ruff check .
-      - name: Check with Black
-        run: black . --check --quiet --diff --color
       - name: Check with Mypy
         run: mypy --install-types --non-interactive .
       - name: Check with djLint

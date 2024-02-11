@@ -114,7 +114,7 @@ def val_status(s: Session, data: dict, model: Order) -> None:
         OrderStatusId.READY,
     ]:
         return
-    abort(response(400, ApiText.STATUS_INVALID))
+    abort(response(400, Text.STATUS_INVALID))
 
 
 def val_cart(s: Session, data: dict, model: Order) -> None:
