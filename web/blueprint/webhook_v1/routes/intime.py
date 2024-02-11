@@ -48,14 +48,14 @@ def intime_open_orders_list() -> Response:
                         "phone": order.shipping.phone,
                         "email": order.shipping.email,
                     },
-                    "products": [
+                    "skus": [
                         {
-                            "sku": line.sku.number,
+                            "id": line.sku.number,
                             "name": line.sku.name,
                             "quantity": line.quantity,
                             "price": line.sku.unit_price,
                             "productId": line.sku.product.id,
-                            "variantId": line.sku.slug,
+                            "variantId": line.sku.id,
                         }
                         for line in order.lines
                     ],
@@ -64,14 +64,14 @@ def intime_open_orders_list() -> Response:
     return response(data=data)
 
 
-@webhook_v1_bp.get("/intime/products/<int:sku_number>/stock")
+@webhook_v1_bp.get("/intime/skus/<string:sku_number>/stock")
 @access_control(UserRoleLevel.EXTERNAL)
 def intime_products_id_stock(sku_number: str) -> Response:
     data = {"count": 0}
     return response(data=data)
 
 
-@webhook_v1_bp.patch("/intime/products/<string:sku_number>/update-inventory")
+@webhook_v1_bp.post("/intime/skus/<string:sku_number>/update-inventory")
 @access_control(UserRoleLevel.EXTERNAL)
 def intime_products_id(sku_number: str) -> Response:
     count, has_count = json_get("count", type_=int, nullable=False)
@@ -88,7 +88,7 @@ def intime_products_id(sku_number: str) -> Response:
     return response()
 
 
-@webhook_v1_bp.get("/intime/products/count")
+@webhook_v1_bp.get("/intime/skus/count")
 @access_control(UserRoleLevel.EXTERNAL)
 def intime_products_count() -> Response:
     with conn.begin() as s:
@@ -99,7 +99,7 @@ def intime_products_count() -> Response:
     return response(data=data)
 
 
-@webhook_v1_bp.get("/intime/products/list")
+@webhook_v1_bp.get("/intime/skus/list")
 @access_control(UserRoleLevel.EXTERNAL)
 def intime_products_list() -> Response:
     data = []
@@ -110,19 +110,19 @@ def intime_products_list() -> Response:
         for sku in skus:
             data.append(
                 {
-                    "sku": sku.number,
+                    "id": sku.number,
                     "name": sku.name,
                     "weightGram": 0,
-                    "unitPrice": sku.unit_price,
+                    "unitPriceEur": sku.unit_price,
                     "stockCount": 0,
                     "productId": sku.product.id,
-                    "variantId": sku.slug,
+                    "variantId": sku.id,
                 }
             )
     return response(data=data)
 
 
-@webhook_v1_bp.patch("/intime/orders/<int:order_id>/fulfill")
+@webhook_v1_bp.post("/intime/orders/<int:order_id>/fulfill")
 @access_control(UserRoleLevel.EXTERNAL)
 def intime_orders_id_fulfill(order_id: int) -> Response:
     with conn.begin() as s:
@@ -140,11 +140,11 @@ def intime_orders_id_fulfill(order_id: int) -> Response:
     return response()
 
 
-@webhook_v1_bp.patch("/intime/orders/<int:order_id>/update-tracking")
+@webhook_v1_bp.post("/intime/orders/<int:order_id>/update-tracking")
 @access_control(UserRoleLevel.EXTERNAL)
 def intime_orders_id_update_tracking(order_id: int) -> Response:
     carrier = json_get("carrierCode", type_=Any)
-    code = json_get("trackingCode", type_=Any)
+    code = json_get("trackingCode", type_=Any, nullable=False)
     url = json_get("trackingLink", type_=str, nullable=False)
     with conn.begin() as s:
         order = (
@@ -159,10 +159,11 @@ def intime_orders_id_update_tracking(order_id: int) -> Response:
             return response(404)
         for shipment in order.shipments:
             if shipment.code == code:
+                shipment.carrier = carrier
+                shipment.url = url
                 break
         else:
-            return response(404)
+            shipment = Shipment(order_id=order.id, carrier=carrier, code=code, url=url)
+            s.add(shipment)
         order.status_id = OrderStatusId.COMPLETED
-        shipment = Shipment(order_id=order.id, carrier=carrier, code=code, url=url)
-        s.add(shipment)
     return response()
