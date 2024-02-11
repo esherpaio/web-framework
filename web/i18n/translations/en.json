@@ -18,6 +18,7 @@
     "API_ORDER_REFUND_PAYMENT_INCOMPLETE": "The customer has not completed the payment yet.",
     "API_ORDER_REFUND_TOO_HIGH": "The requested refund price is too high.",
     "API_ORDER_STATE_REQUIRED": "Your state is required for this country.",
+    "API_ORDER_STATUS_INVALID": "We cannot update the current order status.",
     "API_ORDER_VAT_INVALID": "Your VAT number seems to be invalid. If you believe this is a mistake, please contact us.",
     "API_ORDER_VAT_NO_CONNECTION": "We are currently unable to verify your VAT number. Please try again in one hour.",
     "API_ORDER_VAT_REQUIRED": "Your VAT number is required.",
