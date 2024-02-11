@@ -16,6 +16,6 @@ class OrderStatus(Base):
 class OrderStatusId(IntEnum):
     PENDING = 1
     PAID = 2
-    PRODUCTION = 3
+    IN_PROGRESS = 3
     READY = 4
     COMPLETED = 5

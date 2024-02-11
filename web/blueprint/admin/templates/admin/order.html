@@ -1,11 +1,11 @@
 {% extends "admin_main.html" %}
 {% block admin_body %}
     <script>
-        async function setStatusReady(orderId) {
+        async function updateOrderStatus(orderId) {
             event.preventDefault();
-            updateButton('set-status-ready', 1);
+            updateButton('update-order-status', 1);
             await patchOrdersId(orderId, {
-                status_id: {{ status_ready }},
+                status_id: parseInt(document.getElementById('order-status-id').value),
             });
             window.location.reload();
         }
@@ -52,11 +52,11 @@
                             Download CSV
                         </a>
                     {% endif %}
-                    {% if order.is_paid or order.is_production %}
+                    {% if order.next_statuses %}
                         <button class="btn btn-primary"
                                 data-bs-toggle="modal"
-                                data-bs-target="#modal-set-status-ready">
-                            Ready for shipment
+                                data-bs-target="#modal-update-order-status">
+                            Update status
                         </button>
                     {% endif %}
                     {% if not order.is_pending %}
@@ -322,7 +322,7 @@
         {% endif %}
     </div>
 
-    <div id="modal-set-status-ready"
+    <div id="modal-update-order-status"
          class="modal fade"
          tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
@@ -337,14 +337,22 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <p class="mb-0">
-                        The order status will be set to ready for shipment.
-                    </p>
+                    <div class="input-group">
+                        <span class="input-group-text">Status</span>
+                        <select id="order-status-id"
+                                class="form-select">
+                            {% for x in order.next_statuses %}
+                                <option {{ 'selected' if x.id == order.status_id }} value="{{ x.id }}">
+                                    {{ x.name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
                 </div>
                 <div class="modal-footer">
-                    <button id="set-status-ready"
+                    <button id="update-order-status"
                             class="btn btn-load btn-warning"
-                            onclick="setStatusReady({{ order.id }})">
+                            onclick="updateOrderStatus({{ order.id }})">
                         Update
                     </button>
                     <button type="button"
