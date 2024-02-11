@@ -20,8 +20,9 @@ from web.libs.auth import access_control
 @access_control(UserRoleLevel.ADMIN)
 def patch_skus_id(sku_id: int) -> Response:
     attributes, has_attributes = json_get("attributes", dict, default={})
-    stock, has_stock = json_get("stock", int)
+    is_visible, has_is_visible = json_get("is_visible", bool)
     number, has_number = json_get("number", str)
+    stock, has_stock = json_get("stock", int)
 
     with conn.begin() as s:
         # Get sku
@@ -32,6 +33,8 @@ def patch_skus_id(sku_id: int) -> Response:
         # Update sku
         if has_attributes:
             sku.attributes = attributes
+        if has_is_visible:
+            sku.is_visible = is_visible
         if has_stock:
             sku.stock = stock
         if has_number:
