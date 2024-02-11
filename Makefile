@@ -4,6 +4,7 @@
 .PHONY: requirements
 requirements:
 	pip install --upgrade pip
+	pip uninstall web
 	pip install -r requirements.txt
 	pip install -r requirements-dev.txt
 

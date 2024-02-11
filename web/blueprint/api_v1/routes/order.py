@@ -25,10 +25,11 @@ from web.mail.base import MailEvent, mail
 
 class Text(StrEnum):
     PHONE_REQUIRED = _("API_ORDER_PHONE_REQUIRED")
+    STATE_REQUIRED = _("API_ORDER_STATE_REQUIRED")
+    STATUS_INVALID = _("API_ORDER_STATUS_INVALID")
     VAT_INVALID = _("API_ORDER_VAT_INVALID")
     VAT_NO_CONNECTION = _("API_ORDER_VAT_NO_CONNECTION")
     VAT_REQUIRED = _("API_ORDER_VAT_REQUIRED")
-    STATE_REQUIRED = _("API_ORDER_STATE_REQUIRED")
 
 
 class OrderAPI(API):
@@ -38,6 +39,9 @@ class OrderAPI(API):
     }
     get_columns = {
         Order.id,
+    }
+    patch_columns = {
+        Order.status_id,
     }
 
 
@@ -58,6 +62,19 @@ def post_orders() -> Response:
         api.insert(s, data, model)
         set_order_lines(s, data, model)
         mail_order(s, data, model)
+        resource = api.gen_resource(s, model)
+    return response(data=resource)
+
+
+@api_v1_bp.patch("/orders/<int:order_id>")
+@access_control(UserRoleLevel.ADMIN)
+def patch_orders_id(order_id: int) -> Response:
+    api = OrderAPI()
+    data = api.gen_request_data(api.patch_columns)
+    with conn.begin() as s:
+        model: Order = api.get(s, order_id)
+        val_status(s, data, model)
+        api.update(s, data, model)
         resource = api.gen_resource(s, model)
     return response(data=resource)
 
@@ -85,6 +102,19 @@ def get_cart(s: Session, data: dict, model: Order) -> None:
     if cart is None:
         abort(response(404, ApiText.HTTP_404))
     g.cart = cart
+
+
+def val_status(s: Session, data: dict, model: Order) -> None:
+    status_id = data["status_id"]
+    if model.status_id in [
+        OrderStatusId.PAID,
+        OrderStatusId.PRODUCTION,
+    ] and status_id in [
+        OrderStatusId.PRODUCTION,
+        OrderStatusId.READY,
+    ]:
+        return
+    abort(response(400, ApiText.STATUS_INVALID))
 
 
 def val_cart(s: Session, data: dict, model: Order) -> None:
