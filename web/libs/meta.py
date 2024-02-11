@@ -21,7 +21,7 @@ class MetaTag(StrEnum):
     META_DESCRIPTION = "<meta name='description' content='%s'/>"
     META_ROBOTS = "<meta name='robots' content='%s'/>"
     META_THEME_COLOR = "<meta name='theme-color' content='%s'/>"
-    META_VIEWPORT = "<meta name='viewport' content='width=device-width, initial-scale=1'/>"  # noqa: E501
+    META_VIEWPORT = "<meta name='viewport' content='width=device-width, initial-scale=1'/>"  # fmt: skip
     OG_DESCRIPTION = "<meta property='og:description' content='%s'/>"
     OG_IMAGE = "<meta property='og:image' content='%s'/>"
     OG_LOCALE = "<meta property='og:locale' content='%s'/>"
@@ -41,7 +41,7 @@ class RobotTag(StrEnum):
     NOINDEX_FOLLOW = "noindex, follow"
     INDEX_NOFOLLOW = "index, nofollow"
     NOINDEX_NOFOLLOW = "noindex, nofollow"
-    INDEX_FOLLOW_MAX = "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"  # noqa: E501
+    INDEX_FOLLOW_MAX = "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"  # fmt: skip
 
 
 #

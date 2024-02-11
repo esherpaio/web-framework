@@ -15,7 +15,7 @@ requirements:
 format: format_py format_html
 format_py:
 	ruff check . --fix
-	black .
+	ruff format .
 format_html:
 	djlint . --reformat
 
@@ -26,7 +26,7 @@ format_html:
 lint: lint_py lint_html
 lint_py:
 	ruff check .
-	black . --check --quiet --diff --color
+	ruff format . --check
 	mypy --install-types --non-interactive .
 lint_html:
 	djlint . --check
