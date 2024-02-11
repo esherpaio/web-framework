@@ -86,12 +86,12 @@ def intime_skus_id_stock(sku_number: str) -> Response:
 @webhook_v1_bp.post("/intime/skus/<string:sku_number>/update-inventory")
 @access_control(UserRoleLevel.EXTERNAL)
 def intime_skus_id(sku_number: str) -> Response:
-    count, _ = json_get("count", type_=int, nullable=False)
+    stock, _ = json_get("count", type_=int, nullable=False)
     with conn.begin() as s:
         sku = s.query(Sku).filter(Sku.number == sku_number, *SKU_FILTERS).first()
         if sku is None:
             return response(404)
-        sku.is_visible = bool(count)
+        sku.stock = stock
     return response()
 
 

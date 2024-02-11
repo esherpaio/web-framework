@@ -1,6 +1,6 @@
 from typing import Any
 
-from sqlalchemy import Boolean, ForeignKey, String
+from sqlalchemy import Boolean, ForeignKey, Integer, String
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import mapped_column as MC
 from sqlalchemy.orm import relationship, validates
@@ -18,6 +18,7 @@ class Sku(Base):
     is_visible = MC(Boolean, nullable=False, default=False)
     number = MC(String(64), unique=True)
     slug = MC(String(128), unique=True, nullable=False)
+    stock = MC(Integer, nullable=False, default=0)
     unit_price = MC(default_price, nullable=False)
 
     product_id = MC(ForeignKey("product.id", ondelete="RESTRICT"), nullable=False)

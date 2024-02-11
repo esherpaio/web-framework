@@ -63,7 +63,11 @@ def post_skus(product_id: int) -> Response:
 
                 # Insert objects
                 sku = Sku(
-                    product_id=product_id, slug=slug, is_visible=True, unit_price=0
+                    product_id=product_id,
+                    slug=slug,
+                    stock=1,
+                    is_visible=True,
+                    unit_price=0,
                 )
                 s.add(sku)
                 s.flush()
