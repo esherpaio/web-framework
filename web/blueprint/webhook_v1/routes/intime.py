@@ -74,17 +74,17 @@ def intime_products_id_stock(sku_number: str) -> Response:
 @webhook_v1_bp.patch("/intime/products/<string:sku_number>/update-inventory")
 @access_control(UserRoleLevel.EXTERNAL)
 def intime_products_id(sku_number: str) -> Response:
-    count = json_get("count", type_=int, nullable=False)
+    count, has_count = json_get("count", type_=int, nullable=False)
     with conn.begin() as s:
         sku = (
             s.query(Sku)
             .filter(Sku.number == sku_number, Sku.is_deleted == false())
             .first()
         )
-        if sku is not None:
-            sku.is_visible = bool(count)
-        else:
+        if sku is None:
             return response(404)
+        if has_count:
+            sku.is_visible = bool(count)
     return response()
 
 
@@ -134,10 +134,9 @@ def intime_orders_id_fulfill(order_id: int) -> Response:
             )
             .first()
         )
-        if order is not None:
-            order.status_id = OrderStatusId.COMPLETED
-        else:
+        if order is None:
             return response(404)
+        order.status_id = OrderStatusId.COMPLETED
     return response()
 
 
@@ -156,13 +155,14 @@ def intime_orders_id_update_tracking(order_id: int) -> Response:
             )
             .first()
         )
-        if order is not None:
-            for shipment in order.shipments:
-                if shipment.code == code:
-                    break
-            order.status_id = OrderStatusId.COMPLETED
-            shipment = Shipment(order_id=order.id, carrier=carrier, code=code, url=url)
-            s.add(shipment)
+        if order is None:
+            return response(404)
+        for shipment in order.shipments:
+            if shipment.code == code:
+                break
         else:
             return response(404)
+        order.status_id = OrderStatusId.COMPLETED
+        shipment = Shipment(order_id=order.id, carrier=carrier, code=code, url=url)
+        s.add(shipment)
     return response()
