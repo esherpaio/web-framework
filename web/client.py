@@ -64,7 +64,7 @@ class APIClient(API):
         self.await_connection()
 
     def _get_resource(self, **kwargs) -> Resource:
-        if "___" in kwargs.get("base_url"):
+        if "___" in kwargs.get("base_url", ""):
             kwargs["base_url"] = kwargs["base_url"].replace("___", "-")
         return super()._get_resource(**kwargs)
 

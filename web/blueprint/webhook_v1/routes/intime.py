@@ -7,7 +7,7 @@ from werkzeug import Response
 from web.blueprint.webhook_v1 import webhook_v1_bp
 from web.database.client import conn
 from web.database.model import Order, OrderStatusId, Shipment, Sku, UserRoleLevel
-from web.libs.api import ApiText, json_get
+from web.libs.api import json_get
 from web.libs.auth import access_control
 
 
@@ -84,7 +84,7 @@ def intime_products_id(sku_number: str) -> Response:
         if sku is not None:
             sku.is_visible = bool(count)
         else:
-            return response(404, ApiText.HTTP_404)
+            return response(404)
     return response()
 
 
@@ -137,7 +137,7 @@ def intime_orders_id_fulfill(order_id: int) -> Response:
         if order is not None:
             order.status_id = OrderStatusId.COMPLETED
         else:
-            return response(404, ApiText.HTTP_404)
+            return response(404)
     return response()
 
 
@@ -164,5 +164,5 @@ def intime_orders_id_update_tracking(order_id: int) -> Response:
             shipment = Shipment(order_id=order.id, carrier=carrier, code=code, url=url)
             s.add(shipment)
         else:
-            return response(404, ApiText.HTTP_404)
+            return response(404)
     return response()

@@ -13,7 +13,8 @@
             event.preventDefault();
             updateButton(`update-sku-${skuId}`, 1);
             await patchSkusId(skuId, {
-                is_visible: document.getElementById(`sku-is-visible-${skuId}`).checked
+                is_visible: document.getElementById(`sku-is-visible-${skuId}`).checked,
+                number: document.getElementById(`sku-number-${skuId}`).value,
             });
             await patchSetting({ cached_at: null });
             window.location.reload();
@@ -49,6 +50,9 @@
                                 ID
                             </th>
                             <th>
+                                Number
+                            </th>
+                            <th>
                                 Options
                             </th>
                             <th>
@@ -64,6 +68,12 @@
                             <tr>
                                 <td>
                                     {{ sku.id }}
+                                </td>
+                                <td>
+                                    <input id="sku-number-{{ sku.id }}"
+                                           class="form-control form-control-sm"
+                                           type="text"
+                                           value="{{ sku.number if sku.number }}">
                                 </td>
                                 <td class="small ps-2">
                                     {% if sku.details %}
