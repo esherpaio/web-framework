@@ -80,7 +80,11 @@ def intime_open_orders_list() -> Response:
 @webhook_v1_bp.get("/intime/skus/<string:sku_number>/stock")
 @access_control(UserRoleLevel.EXTERNAL)
 def intime_skus_id_stock(sku_number: str) -> Response:
-    return response(data={"count": 0})
+    with conn.begin() as s:
+        sku = s.query(Sku).filter(Sku.number == sku_number, *SKU_FILTERS).first()
+        if sku is None:
+            return response(404)
+    return response(data={"count": sku.stock})
 
 
 @webhook_v1_bp.post("/intime/skus/<string:sku_number>/update-inventory")
@@ -116,7 +120,7 @@ def intime_skus_list() -> Response:
                     "name": sku.name,
                     "weightGram": 0,
                     "unitPriceEur": sku.unit_price,
-                    "stockCount": 0,
+                    "stockCount": sku.stock,
                     "productId": sku.product.id,
                     "variantId": sku.id,
                 }
@@ -145,8 +149,12 @@ def intime_orders_id_update_tracking(order_id: int) -> Response:
         order = s.query(Order).filter(Order.id == order_id, *ORDER_FILTERS).first()
         if order is None:
             return response(404)
+        # Update or create shipment
         shipment = next((s for s in order.shipments if s.code == code), None)
-        if shipment is None:
+        if shipment is not None:
+            shipment.carrier = carrier
+            shipment.url = url
+        else:
             shipment = Shipment(order_id=order.id, carrier=carrier, code=code, url=url)
             s.add(shipment)
             for event in mail.get_events(MailEvent.ORDER_SHIPPED):
@@ -157,8 +165,6 @@ def intime_orders_id_update_tracking(order_id: int) -> Response:
                     shipping_email=order.shipping.email,
                     shipping_address=order.shipping.full_address,
                 )
-        else:
-            shipment.carrier = carrier
-            shipment.url = url
+        # Update order status
         order.status_id = OrderStatusId.COMPLETED
     return response()
