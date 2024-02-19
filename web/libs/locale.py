@@ -6,7 +6,7 @@ from flask import current_app, g, has_request_context, redirect, request, url_fo
 from werkzeug import Response
 from werkzeug.local import LocalProxy
 
-from web import config
+from web.config import config
 from web.database.model import Country, Currency, Language
 from web.libs.cache import cache
 

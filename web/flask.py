@@ -7,7 +7,7 @@ import alembic.config
 from flask import Blueprint, Flask
 from flask_login import LoginManager
 
-from web import config
+from web.config import config
 from web.database.clean import clean_carts, clean_users
 from web.database.client import conn
 from web.database.model import (

@@ -1,4 +1,4 @@
-from web import config
+from web.config import config
 from web.i18n.base import _
 from web.mail.utils import render_email, send_email
 

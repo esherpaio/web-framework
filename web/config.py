@@ -1,102 +1,142 @@
 import json
 import os
-from functools import lru_cache
+from functools import cached_property
 from typing import Any
 
 from dotenv import load_dotenv
 
-load_dotenv(override=True)
+from web.libs.utils import Singleton
+
+#
+# Types
+#
 
 
-@lru_cache
-def env_var(key: str, type_: str | int | bool, default: Any = None) -> str | int | bool:
-    value = os.getenv(key, default)
-    if type_ == int:
-        try:
-            value = int(value)
-        except (ValueError, TypeError):
-            pass
-    elif type_ == bool:
-        value = value in ["true", "1"]
-    return value
+class StaticVar:
+    def __init__(self, value: Any) -> None:
+        self.value = value
 
 
-@lru_cache
-def config_var(key: str) -> Any:
-    path = env_var("APP_CONFIG", str)
-    if path is None or not os.path.isfile(path):
-        raise EnvironmentError
-    with open(path, "r") as file_:
-        data = json.loads(file_.read())
-    return data.get(key)
+class EnvVar:
+    def __init__(self, key: str, type_: Any, default: Any = None) -> None:
+        self.key = key
+        self.type = type_
+        self.default = default
+
+    @cached_property
+    def value(self) -> Any:
+        return self.parse(os.getenv(self.key, self.default))
+
+    def parse(self, value: str, type_: Any = None) -> Any:
+        if type_ is None:
+            type_ = self.type
+        if type_ == str:
+            return value
+        if type_ == int:
+            try:
+                return int(value)
+            except (ValueError, TypeError):
+                pass
+        if type_ == bool:
+            return value in ["true", "1"]
+        if type_ == list:
+            return [self.parse(x, self.type) for x in value.split(",")]
 
 
-APP_CACHE: bool = env_var("APP_CACHE", bool, True)
-APP_DEBUG: bool = env_var("APP_DEBUG", bool, False)
-APP_SECRET: str = env_var("APP_SECRET", str)
-APP_SEED_EXT: bool = env_var("APP_SEED_EXT", bool)
-APP_STATIC: bool = env_var("APP_STATIC", bool, True)
+class ConfigVar:
+    def __init__(self, key: str) -> None:
+        self.key = key
 
-BUSINESS_CC: str = config_var("BUSINESS_CC")
-BUSINESS_CITY: str = config_var("BUSINESS_CITY")
-BUSINESS_COUNTRY_CODE: str = config_var("BUSINESS_COUNTRY_CODE")
-BUSINESS_COUNTRY: str = config_var("BUSINESS_COUNTRY")
-BUSINESS_EMAIL: str = config_var("BUSINESS_EMAIL")
-BUSINESS_NAME: str = config_var("BUSINESS_NAME")
-BUSINESS_STREET: str = config_var("BUSINESS_STREET")
-BUSINESS_VAT_RATE: float = config_var("BUSINESS_VAT_RATE")
-BUSINESS_VAT_REVERSE_CHARGE: bool = config_var("BUSINESS_VAT_REVERSE_CHARGE")
-BUSINESS_VAT: str = config_var("BUSINESS_VAT")
-BUSINESS_ZIP_CODE: str = config_var("BUSINESS_ZIP_CODE")
+    @cached_property
+    def value(self) -> Any:
+        path = EnvVar("APP_CONFIG", str).value
+        if path is None or not os.path.isfile(path):
+            raise EnvironmentError
+        with open(path, "r") as file_:
+            data = json.loads(file_.read())
+        return data.get(self.key)
 
-CDN_AUTO_NAMING: bool = config_var("CDN_AUTO_NAMING")
-CDN_HOSTNAME: str = config_var("CDN_HOSTNAME")
-CDN_USERNAME: str = config_var("CDN_USERNAME")
-CDN_PASSWORD: str = env_var("CDN_PASSWORD", str)
-CDN_ZONE: str = config_var("CDN_ZONE")
-CDN_URL: str = config_var("CDN_URL")
-CDN_IMAGE_EXTS: list[str] = ["jpg", "jpeg", "png", "webp"]
-CDN_VIDEO_EXTS: list[str] = ["mp4"]
 
-ENDPOINT_ERROR: str = config_var("ENDPOINT_ERROR")
-ENDPOINT_HOME: str = config_var("ENDPOINT_HOME")
-ENDPOINT_LOGIN: str = config_var("ENDPOINT_LOGIN")
-ENDPOINT_MOLLIE: str = config_var("ENDPOINT_MOLLIE")
-ENDPOINT_USER: str = config_var("ENDPOINT_USER")
-ENDPOINT_PASSWORD: str = config_var("ENDPOINT_PASSWORD")
-ENDPOINT_ORDER: str = config_var("ENDPOINT_ORDER")
+#
+# Classes
+#
 
-DATABASE_URL: str = env_var("DATABASE_URL", str)
-GOOGLE_CLIENT_ID: str = env_var("GOOGLE_CLIENT_ID", str)
-GOOGLE_KEY: str = env_var("GOOGLE_KEY", str)
-GOOGLE_PLACE_ID: str = env_var("GOOGLE_PLACE_ID", str)
-LOCALHOST: str = env_var("LOCALHOST", str)
-INTIME: bool = env_var("INTIME", bool, False)
-MOLLIE_KEY: str = env_var("MOLLIE_KEY", str)
 
-ROBOT_DEFAULT_TAGS: str = config_var("ROBOT_DEFAULT_TAGS")
-ROBOT_DISALLOW_URLS: list[str] = config_var("ROBOT_DISALLOW_URLS")
+class Config(metaclass=Singleton):
+    _VARS: dict[str, StaticVar | EnvVar | ConfigVar] = {
+        "APP_CACHE": EnvVar("APP_CACHE", bool, True),
+        "APP_DEBUG": EnvVar("APP_DEBUG", bool, False),
+        "APP_SECRET": EnvVar("APP_SECRET", str),
+        "APP_SEED_EXT": EnvVar("APP_SEED_EXT", bool),
+        "APP_STATIC": EnvVar("APP_STATIC", bool, True),
+        "BUSINESS_CC": ConfigVar("BUSINESS_CC"),
+        "BUSINESS_CITY": ConfigVar("BUSINESS_CITY"),
+        "BUSINESS_COUNTRY_CODE": ConfigVar("BUSINESS_COUNTRY_CODE"),
+        "BUSINESS_COUNTRY": ConfigVar("BUSINESS_COUNTRY"),
+        "BUSINESS_EMAIL": ConfigVar("BUSINESS_EMAIL"),
+        "BUSINESS_NAME": ConfigVar("BUSINESS_NAME"),
+        "BUSINESS_STREET": ConfigVar("BUSINESS_STREET"),
+        "BUSINESS_VAT_RATE": ConfigVar("BUSINESS_VAT_RATE"),
+        "BUSINESS_VAT_REVERSE_CHARGE": ConfigVar("BUSINESS_VAT_REVERSE_CHARGE"),
+        "BUSINESS_VAT": ConfigVar("BUSINESS_VAT"),
+        "BUSINESS_ZIP_CODE": ConfigVar("BUSINESS_ZIP_CODE"),
+        "CDN_AUTO_NAMING": ConfigVar("CDN_AUTO_NAMING"),
+        "CDN_HOSTNAME": ConfigVar("CDN_HOSTNAME"),
+        "CDN_USERNAME": ConfigVar("CDN_USERNAME"),
+        "CDN_PASSWORD": EnvVar("CDN_PASSWORD", str),
+        "CDN_ZONE": ConfigVar("CDN_ZONE"),
+        "CDN_URL": ConfigVar("CDN_URL"),
+        "CDN_IMAGE_EXTS": StaticVar(["jpg", "jpeg", "png", "webp"]),
+        "CDN_VIDEO_EXTS": StaticVar(["mp4"]),
+        "ENDPOINT_ERROR": ConfigVar("ENDPOINT_ERROR"),
+        "ENDPOINT_HOME": ConfigVar("ENDPOINT_HOME"),
+        "ENDPOINT_LOGIN": ConfigVar("ENDPOINT_LOGIN"),
+        "ENDPOINT_MOLLIE": ConfigVar("ENDPOINT_MOLLIE"),
+        "ENDPOINT_USER": ConfigVar("ENDPOINT_USER"),
+        "ENDPOINT_PASSWORD": ConfigVar("ENDPOINT_PASSWORD"),
+        "ENDPOINT_ORDER": ConfigVar("ENDPOINT_ORDER"),
+        "DATABASE_URL": EnvVar("DATABASE_URL", str),
+        "GOOGLE_CLIENT_ID": EnvVar("GOOGLE_CLIENT_ID", str),
+        "GOOGLE_KEY": EnvVar("GOOGLE_KEY", str),
+        "GOOGLE_PLACE_ID": EnvVar("GOOGLE_PLACE_ID", str),
+        "LOCALHOST": EnvVar("LOCALHOST", str),
+        "INTIME": EnvVar("INTIME", bool, False),
+        "MOLLIE_KEY": EnvVar("MOLLIE_KEY", str),
+        "ROBOT_DEFAULT_TAGS": ConfigVar("ROBOT_DEFAULT_TAGS"),
+        "ROBOT_DISALLOW_URLS": ConfigVar("ROBOT_DISALLOW_URLS"),
+        "SOCIAL_DISCORD": ConfigVar("SOCIAL_DISCORD"),
+        "SOCIAL_FACEBOOK": ConfigVar("SOCIAL_FACEBOOK"),
+        "SOCIAL_INSTAGRAM": ConfigVar("SOCIAL_INSTAGRAM"),
+        "SOCIAL_PINTEREST": ConfigVar("SOCIAL_PINTEREST"),
+        "SOCIAL_TWITTER": ConfigVar("SOCIAL_TWITTER"),
+        "SOCIAL_YOUTUBE": ConfigVar("SOCIAL_YOUTUBE"),
+        "EMAIL_METHOD": ConfigVar("EMAIL_METHOD"),
+        "EMAIL_FROM": EnvVar("EMAIL_FROM", str),
+        "EMAIL_TO": EnvVar("EMAIL_TO", str),
+        "SMTP_HOST": EnvVar("SMTP_HOST", str),
+        "SMTP_PORT": EnvVar("SMTP_PORT", int),
+        "SMTP_USERNAME": EnvVar("SMTP_USERNAME", str),
+        "SMTP_PASSWORD": EnvVar("SMTP_PASSWORD", str),
+        "WEBSITE_URL": EnvVar("WEBSITE_URL", str),
+        "WEBSITE_NAME": ConfigVar("WEBSITE_NAME"),
+        "WEBSITE_LOCALE": ConfigVar("WEBSITE_LOCALE"),
+        "WEBSITE_LANGUAGE_CODE": ConfigVar("WEBSITE_LANGUAGE_CODE"),
+        "WEBSITE_COUNTRY_CODE": ConfigVar("WEBSITE_COUNTRY_CODE"),
+        "WEBSITE_FAVICON_URL": ConfigVar("WEBSITE_FAVICON_URL"),
+        "WEBSITE_LOGO_URL": ConfigVar("WEBSITE_LOGO_URL"),
+        "WEBSITE_HEX_COLOR": ConfigVar("WEBSITE_HEX_COLOR"),
+    }
 
-SOCIAL_DISCORD: str = config_var("SOCIAL_DISCORD")
-SOCIAL_FACEBOOK: str = config_var("SOCIAL_FACEBOOK")
-SOCIAL_INSTAGRAM: str = config_var("SOCIAL_INSTAGRAM")
-SOCIAL_PINTEREST: str = config_var("SOCIAL_PINTEREST")
-SOCIAL_TWITTER: str = config_var("SOCIAL_TWITTER")
-SOCIAL_YOUTUBE: str = config_var("SOCIAL_YOUTUBE")
+    def __init__(self) -> None:
+        load_dotenv(override=True)
 
-EMAIL_METHOD: str = config_var("EMAIL_METHOD")
-EMAIL_FROM: str = env_var("EMAIL_FROM", str)
-EMAIL_TO: str = env_var("EMAIL_TO", str)
-SMTP_HOST: str = env_var("SMTP_HOST", str)
-SMTP_PORT: int = env_var("SMTP_PORT", int)
-SMTP_USERNAME: str = env_var("SMTP_USERNAME", str)
-SMTP_PASSWORD: str = env_var("SMTP_PASSWORD", str)
+    def __getattr__(self, key: str) -> Any:
+        if key in self._VARS:
+            return self._VARS[key].value
+        raise AttributeError
 
-WEBSITE_URL: str = env_var("WEBSITE_URL", str)
-WEBSITE_NAME: str = config_var("WEBSITE_NAME")
-WEBSITE_LOCALE: str = config_var("WEBSITE_LOCALE")
-WEBSITE_LANGUAGE_CODE: str = config_var("WEBSITE_LANGUAGE_CODE")
-WEBSITE_COUNTRY_CODE: str = config_var("WEBSITE_COUNTRY_CODE")
-WEBSITE_FAVICON_URL: str = config_var("WEBSITE_FAVICON_URL")
-WEBSITE_LOGO_URL: str = config_var("WEBSITE_LOGO_URL")
-WEBSITE_HEX_COLOR: str = config_var("WEBSITE_HEX_COLOR")
+    def __setattr__(self, key: str, value: Any) -> None:
+        self._VARS[key] = value
+
+
+config = Config()

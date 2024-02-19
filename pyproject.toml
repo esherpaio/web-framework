@@ -14,12 +14,7 @@ line-ending = "auto"
 [tool.mypy]
 ignore_missing_imports=true
 no_warn_no_return=true
-exclude="web/(config)/*"
 cache_dir=".cache/mypy"
-
-[[tool.mypy.overrides]]
-module = "web.config.*"
-follow_imports="skip"
 
 [tool.djlint]
 profile="jinja"

@@ -6,7 +6,7 @@ from smtplib import SMTP_SSL as SMTP
 
 import jinja2
 
-from web import config
+from web.config import config
 from web.libs.logger import log
 
 #

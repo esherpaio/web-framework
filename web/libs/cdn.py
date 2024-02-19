@@ -1,7 +1,7 @@
 import os
 from ftplib import FTP, error_perm
 
-from web import config
+from web.config import config
 
 #
 # Functions
