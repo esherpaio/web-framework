@@ -110,7 +110,7 @@ class Config(metaclass=Singleton):
         "SOCIAL_PINTEREST": ConfigVar("SOCIAL_PINTEREST"),
         "SOCIAL_TWITTER": ConfigVar("SOCIAL_TWITTER"),
         "SOCIAL_YOUTUBE": ConfigVar("SOCIAL_YOUTUBE"),
-        "EMAIL_METHOD": ConfigVar("EMAIL_METHOD"),
+        "EMAIL_METHOD": EnvVar("EMAIL_METHOD", str),
         "EMAIL_FROM": EnvVar("EMAIL_FROM", str),
         "EMAIL_TO": EnvVar("EMAIL_TO", str),
         "SMTP_HOST": EnvVar("SMTP_HOST", str),

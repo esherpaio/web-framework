@@ -15,7 +15,6 @@
     "CDN_URL": "https://web-framework.b-cdn.net/",
     "CDN_USERNAME": "web-framework",
     "CDN_ZONE": "web-framework",
-    "EMAIL_METHOD": "smtp",
     "ENDPOINT_ERROR": "home",
     "ENDPOINT_HOME": "home",
     "ENDPOINT_LOGIN": "home",
