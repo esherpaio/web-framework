@@ -1,6 +1,6 @@
 from alembic import context
 
-from web import config
+from web.config import config
 from web.database.client import engine
 from web.database.model import Base
 

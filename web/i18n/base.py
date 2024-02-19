@@ -1,7 +1,7 @@
 import json
 import os
 
-from web import config
+from web.config import config
 from web.libs.locale import current_locale
 from web.libs.logger import log
 from web.libs.utils import Singleton

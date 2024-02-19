@@ -3,7 +3,7 @@ import json
 from flask import request
 from markupsafe import Markup
 
-from web import config
+from web.config import config
 from web.database.model import AppRoute
 from web.libs.locale import current_locale, url_for_locale
 

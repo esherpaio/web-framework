@@ -8,9 +8,9 @@ from google.oauth2 import id_token
 from werkzeug import Response
 from werkzeug.security import check_password_hash
 
-from web import config
 from web.blueprint.api_v1 import api_v1_bp
 from web.blueprint.api_v1._common import recover_user_password
+from web.config import config
 from web.database.client import conn
 from web.database.model import User, UserRoleId
 from web.i18n.base import _

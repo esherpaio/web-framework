@@ -5,7 +5,7 @@ from typing import Generator
 from flask import has_request_context, request
 from markupsafe import Markup
 
-from web import config
+from web.config import config
 from web.database.model import AppRoute
 
 #

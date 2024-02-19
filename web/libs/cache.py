@@ -4,7 +4,7 @@ from typing import Any, Callable
 from flask import request
 from werkzeug import Response
 
-from web import config
+from web.config import config
 from web.libs.logger import log
 
 #

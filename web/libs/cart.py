@@ -9,7 +9,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy.sql.expression import false
 from werkzeug import Response
 
-from web import config
+from web.config import config
 from web.database.client import conn
 from web.database.model import (
     Billing,

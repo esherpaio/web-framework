@@ -6,7 +6,7 @@ from flask_login import current_user
 from sqlalchemy.orm import joinedload
 from werkzeug import Response
 
-from web import config
+from web.config import config
 from web.database.client import conn
 from web.database.model import User, UserRoleId, UserRoleLevel
 from web.libs.api import ApiText, response

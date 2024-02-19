@@ -6,7 +6,7 @@ from slumber import API, Resource
 from web.libs.logger import log
 
 
-class APISession(Session):
+class _Session(Session):
     """Wrapper for request session."""
 
     def request(self, method, url, *args, **kwargs) -> Response:
@@ -14,19 +14,17 @@ class APISession(Session):
         resp = super().request(method, url, *args, **kwargs)
         duration = int(1000 * (time.time() - start))
         message = f"[API] {method} {url} {resp.status_code} {duration}ms"
-        if 300 <= resp.status_code <= 399:
-            func = log.warning
+        if 200 <= resp.status_code <= 399:
+            func = log.info
         elif 400 <= resp.status_code <= 499:
             func = log.warning
-        elif 500 <= resp.status_code <= 599:
-            func = log.error
         else:
-            func = log.info
+            func = log.error
         func(message)
         return resp
 
 
-class APIResource(Resource):
+class _Resource(Resource):
     """Wrapper for API resource."""
 
     def _request(self, method, data=None, files=None, params=None):
@@ -50,13 +48,13 @@ class APIResource(Resource):
         return url
 
 
-class APIClient(API):
+class Client(API):
     """Wrapper for API client."""
 
-    resource_class = APIResource
+    resource_class = _Resource
 
     def __init__(self, base_url: str, api_key: str | None = None):
-        session = APISession()
+        session = _Session()
         super().__init__(base_url, session=session, append_slash=False)
         if api_key is not None:
             self._store["session"].auth = None

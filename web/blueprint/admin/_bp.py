@@ -3,7 +3,7 @@ import os
 from flask import Blueprint, redirect, url_for
 from werkzeug import Response
 
-from web import config
+from web.config import config
 from web.database.model.user_role import UserRoleLevel
 from web.libs.auth import access_control
 from web.libs.cache import cache

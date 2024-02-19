@@ -3,7 +3,7 @@ import urllib.parse
 from flask import url_for
 from mollie.api.client import Client
 
-from web import config
+from web.config import config
 from web.libs.parse import strip_scheme
 
 #

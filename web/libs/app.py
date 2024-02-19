@@ -6,7 +6,7 @@ from werkzeug import Response
 from werkzeug.exceptions import HTTPException
 from werkzeug.local import LocalProxy
 
-from web import config
+from web.config import config
 from web.database.model import AppBlueprint, AppRoute
 from web.i18n.base import _
 from web.libs.api import ApiText, response

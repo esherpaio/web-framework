@@ -2,7 +2,7 @@ from typing import Callable, Type
 
 from werkzeug import Response
 
-from web import config
+from web.config import config
 from web.database.client import conn
 from web.seeder.abc import Syncer
 

@@ -2,7 +2,7 @@ from enum import StrEnum
 
 from sqlalchemy.orm import Session
 
-from web import config
+from web.config import config
 from web.database.client import conn
 from web.database.model import AppBlueprint, AppRoute, AppSetting
 from web.libs.logger import log

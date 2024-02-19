@@ -4,8 +4,8 @@ from enum import StrEnum
 from flask import url_for
 from werkzeug import Response
 
-from web import config
 from web.blueprint.api_v1 import api_v1_bp
+from web.config import config
 from web.database.client import conn
 from web.database.model import User, Verification
 from web.i18n.base import _

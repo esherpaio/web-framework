@@ -5,7 +5,7 @@ from flask_login import current_user
 from mollie.api.objects.payment import Payment
 from sqlalchemy.orm import Session
 
-from web import config
+from web.config import config
 from web.database.model import Cart, Order, Refund, User, Verification
 from web.document.objects.refund import gen_refund
 from web.ext.mollie import Mollie, mollie_amount
