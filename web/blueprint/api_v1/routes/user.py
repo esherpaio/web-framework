@@ -10,10 +10,9 @@ from werkzeug.security import generate_password_hash
 
 from web.blueprint.api_v1 import api_v1_bp
 from web.blueprint.api_v1._base import API
-from web.database.client import conn
-from web.database.model import User
-from web.database.model.user_role import UserRoleId
-from web.i18n.base import _
+from web.database import conn
+from web.database.model import User, UserRoleId
+from web.i18n import _
 from web.libs.api import response
 
 #
@@ -33,27 +32,29 @@ class Text(StrEnum):
 class UserAPI(API):
     model = User
     post_columns = {
-        User.billing_id,
         User.email,
+        User.billing_id,
         User.shipping_id,
+        User.allow_mass_email,
         "password",
         "password_eval",
-        "email",
     }
     patch_columns = {
         User.billing_id,
         User.shipping_id,
+        User.allow_mass_email,
     }
     get_args = {
         User.email,
     }
     get_columns = {
-        User.billing_id,
-        User.email,
         User.id,
         User.is_active,
         User.role_id,
+        User.email,
+        User.billing_id,
         User.shipping_id,
+        User.allow_mass_email,
     }
 
 
