@@ -6,6 +6,7 @@ from web.libs.utils import Singleton
 from web.mail.events import (
     mail_contact_business,
     mail_contact_customer,
+    mail_mass,
     mail_order_paid,
     mail_order_received,
     mail_order_refunded,
@@ -27,6 +28,7 @@ class MailEvent(StrEnum):
     USER_REQUEST_PASSWORD = "user.request_password"
     USER_REQUEST_VERIFICATION = "user.request_verification"
     WEBSITE_CONTACT = "website.contact"
+    WEBSITE_MASS = "website.mass"
 
 
 class _Mail(metaclass=Singleton):
@@ -39,6 +41,7 @@ class _Mail(metaclass=Singleton):
             MailEvent.USER_REQUEST_PASSWORD: [mail_user_password],
             MailEvent.USER_REQUEST_VERIFICATION: [mail_user_verification],
             MailEvent.WEBSITE_CONTACT: [mail_contact_business, mail_contact_customer],
+            MailEvent.WEBSITE_MASS: [mail_mass],
         }
 
     def get_events(self, event: MailEvent | str) -> list[Callable]:

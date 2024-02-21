@@ -14,6 +14,7 @@ class API(Generic[B]):
     model: B | None = None
     post_columns: set[InstrumentedAttribute | str] = set()
     patch_columns: set[InstrumentedAttribute | str] = set()
+    # TODO(Stan): rename to get_filters
     get_args: set[InstrumentedAttribute | str] = set()
     get_columns: set[InstrumentedAttribute | str] = set()
 

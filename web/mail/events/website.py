@@ -48,3 +48,12 @@ def mail_contact_customer(
         ],
     )
     send_email(to, subject, html)
+
+
+def mail_mass(
+    emails: list[str],
+    subject: str,
+    message: str,
+) -> None:
+    html = render_email(subject=subject, message=message)
+    send_email(emails, subject, html)

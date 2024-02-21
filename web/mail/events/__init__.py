@@ -5,7 +5,7 @@ from .order import (
     mail_order_shipped,
 )
 from .user import mail_user_password, mail_user_verification
-from .website import mail_contact_business, mail_contact_customer
+from .website import mail_contact_business, mail_contact_customer, mail_mass
 
 __all__ = [
     "mail_order_paid",
@@ -16,4 +16,5 @@ __all__ = [
     "mail_user_verification",
     "mail_contact_business",
     "mail_contact_customer",
+    "mail_mass",
 ]

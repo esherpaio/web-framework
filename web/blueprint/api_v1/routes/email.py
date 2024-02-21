@@ -4,11 +4,11 @@ from flask_login import current_user
 from werkzeug import Response
 
 from web.blueprint.api_v1 import api_v1_bp
-from web.database.client import conn
-from web.database.model import Email
-from web.i18n.base import _
+from web.database import conn
+from web.database.model import Email, User
+from web.i18n import _
 from web.libs.api import json_get, response
-from web.mail.base import mail
+from web.mail import MailEvent, mail
 
 #
 # Configuration
@@ -34,6 +34,11 @@ def post_emails() -> Response:
         email = Email(event_id=event_id, data=data, user_id=current_user.id)
         s.add(email)
         s.flush()
+        if event_id == MailEvent.WEBSITE_MASS:
+            data["emails"] = set(
+                user.email
+                for user in s.query(User).filter_by(allow_mass_email=True).all()
+            )
         for event in mail.get_events(event_id):
             event(**data)
 
