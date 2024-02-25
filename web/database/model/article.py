@@ -5,7 +5,7 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import mapped_column as MC
 from sqlalchemy.orm import relationship, validates
 
-from web.libs.utils import _none_attrgetter
+from web.libs.utils import none_attrgetter
 
 from . import Base
 from ._utils import type_json
@@ -41,12 +41,12 @@ class Article(Base):
     def images(self) -> list[ArticleMedia]:
         return sorted(
             [x for x in self.medias if x.file.is_image],
-            key=_none_attrgetter("order"),
+            key=none_attrgetter("order"),
         )
 
     @hybrid_property
     def videos(self) -> list[ArticleMedia]:
         return sorted(
             [x for x in self.medias if x.file.is_video],
-            key=_none_attrgetter("order"),
+            key=none_attrgetter("order"),
         )

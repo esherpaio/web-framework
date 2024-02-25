@@ -44,7 +44,7 @@ class UserAPI(API):
         User.shipping_id,
         User.allow_mass_email,
     }
-    get_args = {
+    get_filters = {
         User.email,
     }
     get_columns = {
@@ -80,7 +80,7 @@ def post_users() -> Response:
 @api_v1_bp.get("/users")
 def get_users() -> Response:
     api = UserAPI()
-    data = api.gen_query_data(api.get_args)
+    data = api.gen_query_data(api.get_filters)
     with conn.begin() as s:
         filters = api.gen_query_filters(data, required=True)
         models: list[User] = api.list_(s, *filters, limit=1)

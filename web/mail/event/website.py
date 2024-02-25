@@ -13,9 +13,7 @@ def mail_contact_business(
 ) -> None:
     to = [config.EMAIL_TO]
     subject = _(
-        "MAIL_CONTACT_SUBJECT_BUSINESS",
-        business_name=config.BUSINESS_NAME,
-        name=name,
+        "MAIL_CONTACT_SUBJECT_BUSINESS", business_name=config.BUSINESS_NAME, name=name
     )
     html = render_email(
         title=_("MAIL_CONTACT_TITLE"),

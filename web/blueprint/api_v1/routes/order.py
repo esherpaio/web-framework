@@ -178,12 +178,12 @@ def set_order_lines(s: Session, data: dict, model: Order) -> None:
 
 
 def mail_order(s: Session, data: dict, model: Order) -> None:
-    for event in mail.get_events(MailEvent.ORDER_RECEIVED):
-        event(
-            order_id=model.id,
-            billing_email=model.billing.email,
-            shipping_email=model.shipping.email,
-        )
+    mail.trigger_events(
+        MailEvent.ORDER_RECEIVED,
+        order_id=model.id,
+        billing_email=model.billing.email,
+        shipping_email=model.shipping.email,
+    )
 
 
 def cancel_mollie(s: Session, data: dict, model: Order) -> None:

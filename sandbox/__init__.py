@@ -3,7 +3,7 @@ from flask import Flask
 from sqlalchemy.orm import Session
 from werkzeug.security import generate_password_hash
 
-import web.seeder.model as seed
+import web.seeder.seed as seed
 from web.blueprint.admin import admin_bp
 from web.blueprint.api_v1 import api_v1_bp
 from web.blueprint.webhook_v1 import webhook_v1_bp
@@ -64,7 +64,7 @@ def db_hook(*args) -> None:
 
 
 def view_home() -> str:
-    return "Hello, World!"
+    return "Home"
 
 
 def view_login() -> str:

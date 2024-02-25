@@ -48,8 +48,11 @@ def post_users_id_activation(user_id: int) -> Response:
             verification_key=verification.key,
             _external=True,
         )
-        for event in mail.get_events(MailEvent.USER_REQUEST_VERIFICATION):
-            event(email=user.email, verification_url=verification_url)
+        mail.trigger_events(
+            MailEvent.USER_REQUEST_VERIFICATION,
+            email=user.email,
+            verification_url=verification_url,
+        )
 
     return response(200, message=Text.ACTIVATION_CHECK)
 

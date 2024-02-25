@@ -13,7 +13,7 @@ from web.database.model import Billing, Cart, Coupon, Shipping
 from web.libs.api import ApiText, response
 from web.libs.cart import get_shipment_methods, get_vat
 from web.libs.locale import current_locale
-from web.libs.utils import _none_attrgetter
+from web.libs.utils import none_attrgetter
 
 #
 # Configuration
@@ -172,7 +172,7 @@ def set_shipment(s: Session, data: dict, model: Cart) -> None:
     if shipment_methods and shipment_method is None:
         shipment_method = min(
             shipment_methods,
-            key=_none_attrgetter("unit_price"),
+            key=none_attrgetter("unit_price"),
         )
 
     if shipment_method is not None:

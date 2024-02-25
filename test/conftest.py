@@ -10,7 +10,7 @@ from web.blueprint.webhook_v1 import webhook_v1_bp
 from web.database.client import conn, engine
 from web.database.model import Base, User, UserRoleId
 from web.flask import FlaskWeb
-from web.seeder.model import (
+from web.seeder.seed import (
     FileTypeSyncer,
     OrderStatusSyncer,
     ProductLinkeTypeSyncer,

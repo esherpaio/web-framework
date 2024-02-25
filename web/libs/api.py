@@ -40,7 +40,6 @@ def response(
     links: dict | None = None,
 ) -> Response:
     """Create a default API response."""
-
     if message is None:
         message = ApiText.HTTP_200
     if data is None:
@@ -66,26 +65,21 @@ def json_get(
     key: str, type_: Any, nullable: bool = True, default: Any = None
 ) -> tuple[Any, bool]:
     """Get a value from the request body."""
-
     if request.is_json and request.json is not None:
         value = request.json.get(key, default)
         data = request.json
     else:
         value = None
         data = {}
-
     has_key = key in data
-
     if type_ in (float, int):
         type_ = (float, int)
-
     if nullable and value is None:
         pass
     elif not isinstance(value, type_):
         raise APITypeError
     elif not nullable and value is None:
         raise APINullError
-
     return value, has_key
 
 
@@ -93,15 +87,12 @@ def args_get(
     key: str, type_: Any, nullable: bool = True, default: Any = None
 ) -> tuple[Any, bool]:
     """Get a value from the request args."""
-
     value = request.args.get(key, default, type_)
     has_key = key in request.args
-
     if nullable and value is None:
         pass
     elif not nullable and value is None:
         raise APINullError
-
     return value, has_key
 
 

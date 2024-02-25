@@ -7,7 +7,7 @@ from web.libs.logger import log
 from web.libs.utils import Singleton
 
 
-class _Translator(metaclass=Singleton):
+class Translator(metaclass=Singleton):
     fallback_translation = "NA"
     fallback_language_code = "en"
 
@@ -18,7 +18,7 @@ class _Translator(metaclass=Singleton):
     def _load(self) -> None:
         translations_dir = os.path.join(
             os.path.dirname(os.path.realpath(__file__)),
-            "translations",
+            "translation",
         )
         for dir_, _, filenames in os.walk(translations_dir):
             for filename in filenames:
@@ -65,5 +65,5 @@ class _Translator(metaclass=Singleton):
             return self.fallback_translation
 
 
-translator = _Translator()
+translator = Translator()
 _ = translator.translate

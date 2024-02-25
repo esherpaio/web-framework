@@ -7,11 +7,11 @@ from sqlalchemy.orm import Session
 
 from web.config import config
 from web.database.model import Cart, Order, Refund, User, Verification
-from web.document.objects.refund import gen_refund
+from web.document.object.refund import gen_refund
 from web.ext.mollie import Mollie, mollie_amount
 from web.libs.api import ApiText, response
 from web.libs.cart import get_shipment_methods
-from web.libs.utils import _none_attrgetter, remove_file
+from web.libs.utils import none_attrgetter, remove_file
 from web.mail.base import MailEvent, mail
 
 
@@ -40,13 +40,13 @@ def create_refund(
 
     # Send email
     _, pdf_path = gen_refund(s, order, order.invoice, refund)
-    for event in mail.get_events(MailEvent.ORDER_REFUNDED):
-        event(
-            order_id=order.id,
-            billing_email=order.billing.email,
-            refund_number=refund.number,
-            pdf_path=pdf_path,
-        )
+    mail.trigger_events(
+        MailEvent.ORDER_REFUNDED,
+        order_id=order.id,
+        billing_email=order.billing.email,
+        refund_number=refund.number,
+        pdf_path=pdf_path,
+    )
     remove_file(pdf_path)
 
 
@@ -63,7 +63,7 @@ def authorize_cart(s: Session, data: dict) -> Cart:  # type: ignore
 def update_cart_shipment_methods(s: Session, cart: Cart) -> None:
     shipment_methods = get_shipment_methods(s, cart)
     if shipment_methods:
-        shipment_method = min(shipment_methods, key=_none_attrgetter("unit_price"))
+        shipment_method = min(shipment_methods, key=none_attrgetter("unit_price"))
         cart.shipment_method_id = shipment_method.id
         cart.shipment_price = shipment_method.unit_price * cart.currency.rate
     else:
@@ -78,7 +78,12 @@ def recover_user_password(s: Session, user: User) -> None:
     s.add(verification)
     s.flush()
     reset_url = url_for(
-        config.ENDPOINT_PASSWORD, verification_key=verification_key, _external=True
+        config.ENDPOINT_PASSWORD,
+        verification_key=verification_key,
+        _external=True,
     )
-    for event in mail.get_events(MailEvent.USER_REQUEST_PASSWORD):
-        event(email=user.email, reset_url=reset_url)
+    mail.trigger_events(
+        MailEvent.USER_REQUEST_PASSWORD,
+        email=user.email,
+        reset_url=reset_url,
+    )

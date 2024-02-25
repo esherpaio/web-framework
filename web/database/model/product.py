@@ -5,7 +5,7 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import mapped_column as MC
 from sqlalchemy.orm import relationship, validates
 
-from web.libs.utils import _none_attrgetter
+from web.libs.utils import none_attrgetter
 
 from . import Base
 from ._utils import default_price, type_json
@@ -69,9 +69,9 @@ class Product(Base):
     @hybrid_property
     def images(self) -> list[ProductMedia]:
         medias = [x for x in self.medias if x.file.is_image]
-        return sorted(medias, key=_none_attrgetter("order"))
+        return sorted(medias, key=none_attrgetter("order"))
 
     @hybrid_property
     def videos(self) -> list[ProductMedia]:
         medias = [x for x in self.medias if x.file.is_video]
-        return sorted(medias, key=_none_attrgetter("order"))
+        return sorted(medias, key=none_attrgetter("order"))

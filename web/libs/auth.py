@@ -16,11 +16,11 @@ from web.libs.api import ApiText, response
 #
 
 
-def _cookie_loader(user_id: int, *args, **kwargs) -> User | None:
+def cookie_loader(user_id: int, *args, **kwargs) -> User | None:
     return _get_user_session(user_id)
 
 
-def _session_loader(*args, **kwargs) -> User | None:
+def session_loader(*args, **kwargs) -> User | None:
     if request.blueprint is not None and any(
         [x in request.blueprint for x in ["api", "webhook"]]
     ):

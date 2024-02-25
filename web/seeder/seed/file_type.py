@@ -2,7 +2,7 @@ from sqlalchemy.orm import Session
 
 from web.database.client import conn
 from web.database.model import FileType
-from web.database.seeds import file_type_seeds
+from web.database.seed import file_type_seeds
 from web.seeder.abc import Syncer
 
 

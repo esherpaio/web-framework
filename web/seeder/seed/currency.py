@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 
 from web.database.client import conn
 from web.database.model import Currency
-from web.database.seeds import currency_seeds
+from web.database.seed import currency_seeds
 from web.libs.logger import log
 from web.seeder.abc import Syncer
 from web.seeder.decorators import external_seed

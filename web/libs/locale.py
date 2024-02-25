@@ -2,8 +2,7 @@ import re
 from functools import cached_property
 from typing import Any
 
-from flask import current_app, g, has_request_context, redirect, request, url_for
-from werkzeug import Response
+from flask import current_app, g, has_request_context, request, url_for
 from werkzeug.local import LocalProxy
 
 from web.config import config
@@ -16,20 +15,40 @@ from web.libs.cache import cache
 
 
 class Locale:
+    """A class for handling locale information.
+
+    If you want to use locales in routes, it is expected that you use the
+    "_locale" variable. For example "/<string:_locale>/home". Because we
+    keep URLs always in lowercase, the locale will be in lowercase as well.
+    """
+
     @cached_property
     def locale(self) -> str:
-        view_locale = get_locale()
+        """Return locale in format "language-country".
+
+        Example: "en-us" or "de-de".
+        """
+        view_locale = get_route_locale()
         cookie_locale = request.cookies.get("locale")
         locale = view_locale or cookie_locale or config.WEBSITE_LOCALE
         return locale
 
     @cached_property
     def locale_alt(self) -> str:
+        """Return locale in format "language_COUNTRY".
+
+        Example: "en_US" or "de_DE".
+        """
         language_code, country_code = self.locale_info
         return f"{language_code}_{country_code}"
 
     @cached_property
     def locale_info(self) -> tuple[str, str]:
+        """Return the language and country code.
+
+        The language code will in be in ISO 639-1 format.
+        The country code will be in ISO 3166-1 alpha-2 format.
+        """
         language_code, country_code = match_locale(self.locale)
         if language_code is None:
             language_code = config.WEBSITE_LANGUAGE_CODE
@@ -68,15 +87,15 @@ class Locale:
 #
 
 
-def get_locale() -> str | None:
-    """Get the locale."""
+def get_route_locale() -> str | None:
+    """Get the locale for the current route."""
     if has_request_context() and request.endpoint:
         if request.view_args is not None and "_locale" in request.view_args:
             return request.view_args["_locale"]
 
 
 def expects_locale(endpoint: str | None) -> bool:
-    """Determine whether a locale is expected."""
+    """Determine whether a locale is expected for the current route."""
     if endpoint:
         if current_app.url_map.is_endpoint_expecting(endpoint, "_locale"):
             return True
@@ -84,17 +103,16 @@ def expects_locale(endpoint: str | None) -> bool:
 
 
 def lacks_locale(endpoint: str | None, values: dict) -> bool:
-    """Determine whether a locale is expected and not present."""
+    """Determine whether a locale lacks for the current route."""
     return expects_locale(endpoint) and "_locale" not in values
 
 
 def match_locale(locale: str) -> tuple[str | None, ...]:
-    """Match a locale and return the result."""
+    """Return the language and country code for a locale."""
     match = re.fullmatch(r"^([a-z]{2})-([a-z]{2})$", locale)
     if match:
         return match.groups()
-    else:
-        return None, None
+    return None, None
 
 
 def gen_locale(
@@ -106,57 +124,17 @@ def gen_locale(
 
 
 def url_for_locale(endpoint: str, *args, **kwargs) -> str:
-    """Generate a URL to a locale-aware endpoint."""
+    """Generate an URL for a route with locale."""
     if not expects_locale(endpoint) and "_locale" in kwargs:
         kwargs.pop("_locale")
     return url_for(endpoint, *args, **kwargs)
 
 
 def _get_proxy_locale() -> Locale | None:
-    """Get the locale proxy."""
     if has_request_context():
         if "_locale" not in g:
             g._locale = Locale()
         return g._locale
-
-
-#
-# Flask hooks
-#
-
-
-def _redirect_locale() -> Response | None:
-    if request.endpoint is None:
-        return None
-    if request.view_args is None:
-        return None
-    if lacks_locale(request.endpoint, request.view_args):
-        request.view_args["_locale"] = current_locale.locale
-        url = url_for(request.endpoint, **request.view_args)
-        return redirect(url, code=301)
-
-
-def _set_locale(resp: Response) -> Response:
-    resp.set_cookie("locale", current_locale.locale)
-    return resp
-
-
-def _set_locale_urls(endpoint: str, values: dict) -> None:
-    if lacks_locale(endpoint, values):
-        values["_locale"] = current_locale.locale
-
-
-def _get_locale_url(language_code: str, country_code: str) -> str:
-    if request.endpoint is None:
-        return ""
-    if request.view_args is not None:
-        kwargs = request.view_args.copy()
-    else:
-        kwargs = {}
-    if expects_locale(request.endpoint):
-        locale = gen_locale(language_code, country_code)
-        kwargs["_locale"] = locale
-    return url_for(request.endpoint, **kwargs, _external=True)
 
 
 #

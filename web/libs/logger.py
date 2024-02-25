@@ -17,9 +17,7 @@ class _AnsiCode(StrEnum):
     RESET = "\x1b[0m"
 
 
-class _Formatter(logging.Formatter):
-    """A custom logging formatter."""
-
+class Formatter(logging.Formatter):
     def format(self, record: logging.LogRecord) -> str:
         color = _AnsiCode[record.levelname]
         string = f"{color}%(levelname)s | %(message)s{_AnsiCode.RESET}"
@@ -33,13 +31,12 @@ class _Formatter(logging.Formatter):
 
 
 def _get_logger(name: str) -> logging.Logger:
-    """Get a logger."""
     base = logging.getLogger(name)
     base.setLevel(logging.DEBUG)
     if base.hasHandlers():
         base.handlers.clear()
     stream = logging.StreamHandler()
-    stream.setFormatter(_Formatter())
+    stream.setFormatter(Formatter())
     base.addHandler(stream)
     base.propagate = False
     return base
