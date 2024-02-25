@@ -176,5 +176,4 @@ class Meta:
 def gen_meta(route: AppRoute | None = None) -> Meta:
     if isinstance(route, AppRoute):
         return Meta(route.name, route.description, route.robots, route.image_url)
-    else:
-        return Meta()
+    return Meta()

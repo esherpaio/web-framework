@@ -10,7 +10,7 @@ from web.libs.auth import access_control
 from web.libs.logger import log
 from web.libs.parse import gen_slug
 from web.seeder.decorators import sync_after
-from web.seeder.model.sku import SkuSyncer
+from web.seeder.seed.sku import SkuSyncer
 
 #
 # Configuration

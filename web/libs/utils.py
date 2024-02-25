@@ -52,7 +52,7 @@ def remove_file(path: str, delay_s: int = 0) -> None:
     Thread(target=remove, daemon=True).start()
 
 
-def _none_attrgetter(attr: str) -> Callable[[Any], tuple[bool, Any]]:
+def none_attrgetter(attr: str) -> Callable[[Any], tuple[bool, Any]]:
     """Attribute getter that accepts None values."""
 
     def wrap(item: list) -> tuple[bool, Any]:

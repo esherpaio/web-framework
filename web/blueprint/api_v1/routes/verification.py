@@ -22,7 +22,7 @@ class Text(StrEnum):
 
 class VerificationAPI(API):
     model = Verification
-    get_args = {
+    get_filters = {
         Verification.key,
     }
     get_columns = {
@@ -40,7 +40,7 @@ class VerificationAPI(API):
 @api_v1_bp.get("/verifications")
 def get_verifications() -> Response:
     api = VerificationAPI()
-    data = api.gen_query_data(api.get_args)
+    data = api.gen_query_data(api.get_filters)
     with conn.begin() as s:
         filters = api.gen_query_filters(data, required=True)
         models: list[Verification] = api.list_(s, *filters, limit=1)

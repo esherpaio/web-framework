@@ -39,8 +39,7 @@ def post_emails() -> Response:
                 user.email
                 for user in s.query(User).filter_by(allow_mass_email=True).all()
             )
-        for event in mail.get_events(event_id):
-            event(**data)
+        mail.trigger_events(event_id, **data)
 
     return response(200, Text.CONTACT_SUCCESS)
 

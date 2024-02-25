@@ -8,7 +8,7 @@ from web.packer.bundle import CssBundle, JsBundle, ScssBundle
 
 
 class Packer:
-    encoding = "utf-8"
+    ENCODING = "utf-8"
 
     def pack(
         self,
@@ -20,12 +20,12 @@ class Packer:
     ) -> tuple[str | None, str | None]:
         out_path, cdn_path = None, None
         compiled = bundle.compile(*args, **kwargs)
-        bytes_ = compiled.encode(self.encoding)
+        bytes_ = compiled.encode(self.ENCODING)
         hash_ = hashlib.md5(bytes_).hexdigest()
         if compiled:
             if out_dir is not None:
                 out_path = os.path.join(out_dir, f"{hash_}{bundle.OUT_EXT}")
-                with open(out_path, "w", encoding=self.encoding) as file_:
+                with open(out_path, "w", encoding=self.ENCODING) as file_:
                     file_.write(compiled)
                 log.info(f"Saved bundle to {out_path}")
             if save_cdn:

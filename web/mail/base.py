@@ -3,7 +3,7 @@ from typing import Callable
 
 from web.libs.logger import log
 from web.libs.utils import Singleton
-from web.mail.events import (
+from web.mail.event import (
     mail_contact_business,
     mail_contact_customer,
     mail_mass,
@@ -31,28 +31,33 @@ class MailEvent(StrEnum):
     WEBSITE_MASS = "website.mass"
 
 
-class _Mail(metaclass=Singleton):
-    def __init__(self) -> None:
-        self.events: dict[MailEvent | str, list[Callable]] = {
-            MailEvent.ORDER_PAID: [mail_order_paid],
-            MailEvent.ORDER_RECEIVED: [mail_order_received],
-            MailEvent.ORDER_REFUNDED: [mail_order_refunded],
-            MailEvent.ORDER_SHIPPED: [mail_order_shipped],
-            MailEvent.USER_REQUEST_PASSWORD: [mail_user_password],
-            MailEvent.USER_REQUEST_VERIFICATION: [mail_user_verification],
-            MailEvent.WEBSITE_CONTACT: [mail_contact_business, mail_contact_customer],
-            MailEvent.WEBSITE_MASS: [mail_mass],
-        }
+class Mail(metaclass=Singleton):
+    EVENTS: dict[MailEvent | str, list[Callable]] = {
+        MailEvent.ORDER_PAID: [mail_order_paid],
+        MailEvent.ORDER_RECEIVED: [mail_order_received],
+        MailEvent.ORDER_REFUNDED: [mail_order_refunded],
+        MailEvent.ORDER_SHIPPED: [mail_order_shipped],
+        MailEvent.USER_REQUEST_PASSWORD: [mail_user_password],
+        MailEvent.USER_REQUEST_VERIFICATION: [mail_user_verification],
+        MailEvent.WEBSITE_CONTACT: [mail_contact_business, mail_contact_customer],
+        MailEvent.WEBSITE_MASS: [mail_mass],
+    }
 
-    def get_events(self, event: MailEvent | str) -> list[Callable]:
-        events = self.events.get(event, [])
+    @classmethod
+    def get_events(cls, event_id: MailEvent | str) -> list[Callable]:
+        events = cls.EVENTS.get(event_id, [])
         if not events:
-            log.error(f"Event {event} not found")
+            log.error(f"Event {event_id} not found")
         return events
+
+    @classmethod
+    def trigger_events(cls, event_id: MailEvent | str, **kwargs) -> None:
+        for event in cls.get_events(event_id):
+            event(**kwargs)
 
 
 #
 # Variables
 #
 
-mail = _Mail()
+mail = Mail()

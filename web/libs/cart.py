@@ -36,26 +36,26 @@ def predict_cart_info(
     In the following order: cart -> user -> None.
     This is useful for pre-filling forms on a frontend.
     """
-
+    # Get user
     if current_user and current_user.id:
         user = s.query(User).filter_by(id=current_user.id).first()
     else:
         user = None
-
+    # Get shipping
     if cart and cart.shipping_id:
         shipping = s.query(Shipping).filter_by(id=cart.shipping_id).first()
     elif user and user.shipping_id:
         shipping = s.query(Shipping).filter_by(id=user.shipping_id).first()
     else:
         shipping = None
-
+    # Get billing
     if cart and cart.billing_id:
         billing = s.query(Billing).filter_by(id=cart.billing_id).first()
     elif user and user.billing_id:
         billing = s.query(Billing).filter_by(id=user.billing_id).first()
     else:
         billing = None
-
+    # Return
     return shipping, billing
 
 
@@ -64,14 +64,12 @@ def get_shipment_methods(
     cart: Cart,
 ) -> list[ShipmentMethod]:
     """Generate a list of shipment methods."""
-
     # Get all possible shipping class ids
     shipment_class_ids = []
     for item in cart.items:
         shipment_class_id = item.sku.product.shipment_class_id
         if shipment_class_id:
             shipment_class_ids.append(shipment_class_id)
-
     # Determine the shipping class
     shipment_class = (
         s.query(ShipmentClass)
@@ -82,7 +80,6 @@ def get_shipment_methods(
         .order_by(ShipmentClass.order)
         .first()
     )
-
     # Get country_id and region_id
     if cart.shipping:
         country_id = cart.shipping.country_id
@@ -90,7 +87,6 @@ def get_shipment_methods(
     else:
         country_id = current_locale.country.id
         region_id = current_locale.country.region_id
-
     # Determine the shipping zone
     shipment_zone = (
         s.query(ShipmentZone)
@@ -104,7 +100,6 @@ def get_shipment_methods(
         .order_by(ShipmentZone.order)
         .first()
     )
-
     # Get shipment methods
     if shipment_zone and shipment_class:
         shipment_methods = (
@@ -119,7 +114,7 @@ def get_shipment_methods(
         )
     else:
         shipment_methods = []
-
+    # Return
     return shipment_methods
 
 
@@ -128,13 +123,11 @@ def get_vat(
     is_business: bool,
 ) -> tuple[float, bool]:
     """Get the VAT rate and whether it's applied."""
-
     date = datetime.utcnow().date()
     type_ = ItemType.generic_electronic_service
     buyer = Party(country_code, is_business)
     seller = Party(config.BUSINESS_COUNTRY_CODE, True)
     vat = pyvat.get_sale_vat_charge(date, type_, buyer, seller)
-
     if vat.action == VatChargeAction.charge:
         vat_rate = int(vat.rate) / 100 + 1
         vat_reverse = False
@@ -146,7 +139,6 @@ def get_vat(
         vat_reverse = True
     else:
         raise NotImplementedError(f"Unknown VAT action: {vat.action}")
-
     return vat_rate, vat_reverse
 
 

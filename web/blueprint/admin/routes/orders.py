@@ -19,8 +19,8 @@ from web.database.model import (
     Sku,
     SkuDetail,
 )
-from web.document.objects.invoice import gen_invoice
-from web.document.objects.refund import gen_refund
+from web.document.object.invoice import gen_invoice
+from web.document.object.refund import gen_refund
 from web.ext.bootstrap import get_pages
 from web.libs.api import ApiText, response
 from web.libs.utils import remove_file

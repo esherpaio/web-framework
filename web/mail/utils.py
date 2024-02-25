@@ -35,10 +35,11 @@ def send_email(
     # Create list of unique to-addresses
     to = list(set(to))
     # Send email
+    log.info(f"Sending email over {config.EMAIL_METHOD} to {', '.join(to)}")
     if config.EMAIL_METHOD == "smtp":
         _send_smtp(config.EMAIL_FROM, to, subject, html, reply_to, blob_path, blob_name)
     else:
-        log.error("Email not send because no valid method is configured")
+        log.error("Email not send, no valid method configured")
 
 
 def _send_smtp(
@@ -66,6 +67,7 @@ def _send_smtp(
         attachment.add_header("Content-Disposition", "attachment", filename=blob_name)
         msg.attach(attachment)
     # Send the message
+    log.info(f"Sending email to {', '.join(to)} with subject {subject}")
     conn = SMTP(config.SMTP_HOST, port=config.SMTP_PORT, timeout=10)
     conn.set_debuglevel(False)
     conn.login(config.SMTP_USERNAME, config.SMTP_PASSWORD)

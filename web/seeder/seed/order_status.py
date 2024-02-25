@@ -2,7 +2,7 @@ from sqlalchemy.orm import Session
 
 from web.database.client import conn
 from web.database.model import OrderStatus
-from web.database.seeds import order_status_seeds
+from web.database.seed import order_status_seeds
 from web.seeder.abc import Syncer
 
 

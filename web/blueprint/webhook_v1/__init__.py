@@ -8,7 +8,7 @@ if config.INTIME:
 
 
 __all__ = [
-    "webhook_v1_bp",
-    "mollie",
     "intime",
+    "mollie",
+    "webhook_v1_bp",
 ]

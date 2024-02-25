@@ -4,8 +4,9 @@ from threading import Thread
 from typing import Callable
 
 import alembic.config
-from flask import Blueprint, Flask
+from flask import Blueprint, Flask, redirect, request, url_for
 from flask_login import LoginManager
+from werkzeug import Response
 
 from web.config import config
 from web.database.clean import clean_carts, clean_users
@@ -28,17 +29,11 @@ from web.database.model.file_type import FileType
 from web.database.model.user_role import UserRole
 from web.libs import cdn
 from web.libs.app import check_redirects, handle_frontend_error
-from web.libs.auth import _cookie_loader, _session_loader
+from web.libs.auth import cookie_loader, session_loader
 from web.libs.cache import cache
-from web.libs.locale import (
-    _get_locale_url,
-    _redirect_locale,
-    _set_locale,
-    _set_locale_urls,
-    current_locale,
-)
+from web.libs.locale import current_locale, expects_locale, gen_locale, lacks_locale
 from web.libs.logger import log
-from web.mail.base import MailEvent, mail
+from web.mail import MailEvent, mail
 
 #
 # Classes
@@ -127,9 +122,9 @@ class FlaskWeb:
         manager.anonymous_user = User
         # Register user loaders
         if self._accept_cookie_auth:
-            manager.user_loader(_cookie_loader)
+            manager.user_loader(cookie_loader)
         if self._accept_request_auth:
-            manager.request_loader(_session_loader)
+            manager.request_loader(session_loader)
 
     def setup_static(self) -> None:
         # Run static hook
@@ -159,10 +154,10 @@ class FlaskWeb:
 
     def setup_locale(self) -> None:
         # Register Flask hooks
-        self._app.before_request(_redirect_locale)
-        self._app.after_request(_set_locale)
-        self._app.url_defaults(_set_locale_urls)
-        self._app.add_template_global(_get_locale_url, name="locale_url")
+        self._app.before_request(self.redirect_locale)
+        self._app.url_defaults(self.set_locale_urls)
+        self._app.add_template_global(self.get_locale_url, name="locale_url")
+        self._app.after_request(self.set_locale)
 
     def setup_error_handling(self) -> None:
         # Register Flask hooks
@@ -170,12 +165,50 @@ class FlaskWeb:
 
     def setup_mail(self) -> None:
         # Update mail events
-        mail.events.update(self._mail_events)
+        mail.EVENTS.update(self._mail_events)
 
     def setup_cache(self) -> None:
         # Start cache reloading
         self._cache_active = True
         self.update_cache(force=True)
+
+    #
+    # Locale
+    #
+
+    @staticmethod
+    def redirect_locale() -> Response | None:
+        if request.endpoint is None:
+            return None
+        if request.view_args is None:
+            return None
+        if lacks_locale(request.endpoint, request.view_args):
+            request.view_args["_locale"] = current_locale.locale
+            url = url_for(request.endpoint, **request.view_args)
+            return redirect(url, code=301)
+
+    @staticmethod
+    def set_locale_urls(endpoint: str, values: dict) -> None:
+        if lacks_locale(endpoint, values):
+            values["_locale"] = current_locale.locale
+
+    @staticmethod
+    def get_locale_url(language_code: str, country_code: str) -> str:
+        if request.endpoint is None:
+            return ""
+        if request.view_args is not None:
+            kwargs = request.view_args.copy()
+        else:
+            kwargs = {}
+        if expects_locale(request.endpoint):
+            locale = gen_locale(language_code, country_code)
+            kwargs["_locale"] = locale
+        return url_for(request.endpoint, **kwargs, _external=True)
+
+    @staticmethod
+    def set_locale(resp: Response) -> Response:
+        resp.set_cookie("locale", current_locale.locale)
+        return resp
 
     #
     # Cache
