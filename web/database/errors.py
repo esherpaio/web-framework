@@ -8,26 +8,26 @@ class DbError(WebError):
 
 
 class DbLengthError(DbError):
-    """Raised when a string length cannot be validated.."""
+    """String length cannot be validated.."""
 
     code = 400
 
 
 class DbNumberError(DbError):
-    """Raised when a number cannot be validated ."""
+    """Number cannot be validated ."""
 
     code = 400
 
 
 class DbEmailError(DbError):
-    """Raised when an email address cannot be validated."""
+    """Email address cannot be validated."""
 
     code = 400
     translation_key = "DATABASE_EMAIL_ERROR"
 
 
 class DbPhoneError(DbError):
-    """Raised when a phone number cannot be validated."""
+    """Phone number cannot be validated."""
 
     code = 400
     translation_key = "DATABASE_PHONE_ERROR"

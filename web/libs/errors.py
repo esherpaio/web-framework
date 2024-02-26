@@ -4,7 +4,7 @@
 
 
 class WebError(Exception):
-    """Base class for web errors."""
+    """Base class for errors."""
 
     code: int = 400
     translation_key: str | None = None
@@ -28,6 +28,6 @@ class APITypeError(APIError):
 
 
 class APINullError(APIError):
-    """Raised when a value is null but cannot be null."""
+    """Raised when a value is null."""
 
     code = 400

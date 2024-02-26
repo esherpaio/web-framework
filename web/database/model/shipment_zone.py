@@ -2,7 +2,7 @@ from sqlalchemy import Boolean, CheckConstraint, ForeignKey, Integer
 from sqlalchemy.orm import mapped_column as MC
 from sqlalchemy.orm import relationship
 
-from . import Base
+from ._base import Base
 
 
 class ShipmentZone(Base):

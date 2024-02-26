@@ -33,7 +33,6 @@ class Singleton(type):
 
 
 def remove_dir(path: str) -> None:
-    """Remove the content of a directory."""
     if os.path.isdir(path):
         for file_ in glob.glob(f"{path.rstrip('/')}/*"):
             if os.access(file_, os.W_OK):
@@ -41,8 +40,6 @@ def remove_dir(path: str) -> None:
 
 
 def remove_file(path: str, delay_s: int = 0) -> None:
-    """Remove a file with an optional delay."""
-
     def remove() -> None:
         if delay_s:
             time.sleep(delay_s)
@@ -53,8 +50,6 @@ def remove_file(path: str, delay_s: int = 0) -> None:
 
 
 def none_attrgetter(attr: str) -> Callable[[Any], tuple[bool, Any]]:
-    """Attribute getter that accepts None values."""
-
     def wrap(item: list) -> tuple[bool, Any]:
         value = getter(item)
         return value is None, value

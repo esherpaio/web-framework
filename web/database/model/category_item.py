@@ -2,7 +2,7 @@ from sqlalchemy import CheckConstraint, ForeignKey, Integer, UniqueConstraint
 from sqlalchemy.orm import mapped_column as MC
 from sqlalchemy.orm import relationship
 
-from . import Base
+from ._base import Base
 
 
 class CategoryItem(Base):

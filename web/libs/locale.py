@@ -95,7 +95,7 @@ def get_route_locale() -> str | None:
 
 
 def expects_locale(endpoint: str | None) -> bool:
-    """Determine whether a locale is expected for the current route."""
+    """Determine whether a locale is expected."""
     if endpoint:
         if current_app.url_map.is_endpoint_expecting(endpoint, "_locale"):
             return True
@@ -103,15 +103,16 @@ def expects_locale(endpoint: str | None) -> bool:
 
 
 def lacks_locale(endpoint: str | None, values: dict) -> bool:
-    """Determine whether a locale lacks for the current route."""
+    """Determine whether a locale lacks."""
     return expects_locale(endpoint) and "_locale" not in values
 
 
 def match_locale(locale: str) -> tuple[str | None, ...]:
-    """Return the language and country code for a locale."""
-    match = re.fullmatch(r"^([a-z]{2})-([a-z]{2})$", locale)
+    """Parse a language and country code."""
+    match = re.fullmatch(r"^([a-zA-Z]{2})[-_]+([a-zA-Z]{2})$", locale)
     if match:
-        return match.groups()
+        language_code, country_code = match.groups()
+        return language_code.lower(), country_code.lower()
     return None, None
 
 
@@ -119,7 +120,7 @@ def gen_locale(
     language_code: str = config.WEBSITE_LANGUAGE_CODE,
     country_code: str = config.BUSINESS_COUNTRY_CODE,
 ) -> str:
-    """Generate a locale using a language code and country code."""
+    """Generate a locale."""
     return f"{language_code}-{country_code}".lower()
 
 

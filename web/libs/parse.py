@@ -32,8 +32,6 @@ def strip_scheme(url: str) -> str:
 
 
 def str_to_xml(string: str) -> bytes:
-    """Convert a string to an XML object."""
-
     def strip_node(node_: Node) -> None:
         for x in node_.childNodes:
             if x.nodeType == Node.TEXT_NODE:

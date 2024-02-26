@@ -7,7 +7,7 @@ from enum import StrEnum
 
 
 class _AnsiCode(StrEnum):
-    """ANSI escape codes for colored logging."""
+    """ANSI escape codes."""
 
     DEBUG = "\x1b[37m"
     INFO = "\x1b[37m"

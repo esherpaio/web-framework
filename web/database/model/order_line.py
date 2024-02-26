@@ -5,9 +5,8 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import mapped_column as MC
 from sqlalchemy.orm import relationship, validates
 
-from . import Base
-from ._utils import default_price
-from ._validation import val_number
+from ._base import Base
+from ._utils import default_price, val_number
 
 
 class OrderLine(Base):

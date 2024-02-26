@@ -5,7 +5,7 @@ from typing import Any, Callable
 from flask import request
 from werkzeug import Response
 
-from web.i18n.base import _
+from web.i18n import _
 from web.libs.errors import APINullError, APITypeError
 
 #
@@ -14,7 +14,7 @@ from web.libs.errors import APINullError, APITypeError
 
 
 class ApiText(StrEnum):
-    """API response messages."""
+    """Default API response messages."""
 
     HTTP_200 = _("API_HTTP_200")
     HTTP_202 = _("API_HTTP_202")
@@ -64,7 +64,7 @@ def response(
 def json_get(
     key: str, type_: Any, nullable: bool = True, default: Any = None
 ) -> tuple[Any, bool]:
-    """Get a value from the request body."""
+    """Get a value from the request json."""
     if request.is_json and request.json is not None:
         value = request.json.get(key, default)
         data = request.json

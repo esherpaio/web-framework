@@ -3,11 +3,12 @@ from enum import StrEnum
 from sqlalchemy.orm import Session
 
 from web.config import config
-from web.database.client import conn
+from web.database import conn
 from web.database.model import AppBlueprint, AppRoute, AppSetting
 from web.libs.logger import log
-from web.packer.base import CssBundle, JsBundle, Packer, ScssBundle
-from web.seeder.abc import Syncer
+from web.packer import Packer
+from web.packer.bundle import CssBundle, JsBundle, ScssBundle
+from web.seeder import Syncer
 
 
 class StaticType(StrEnum):
@@ -55,15 +56,12 @@ class StaticSeed:
 
 
 class StaticSyncer(Syncer):
-    def __init__(self, seeds: list[StaticSeed]) -> None:
-        super().__init__()
-        self.seeds: list[StaticSeed] = seeds
-
-    def sync(self, s: Session) -> None:
+    @classmethod
+    def sync(cls, s: Session) -> None:
         if not config.APP_STATIC:
             log.warning("Static syncer is disabled")
             return
-        for seed in self.seeds:
+        for seed in cls.SEEDS:
             with conn.begin() as s:
                 resource = seed.get_resource(s)
                 if resource is not None:

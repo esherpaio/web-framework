@@ -3,27 +3,22 @@ from bs4 import BeautifulSoup
 from requests import RequestException
 from sqlalchemy.orm import Session
 
-from web.database.client import conn
 from web.database.model import Currency
 from web.database.seed import currency_seeds
 from web.libs.logger import log
-from web.seeder.abc import Syncer
-from web.seeder.decorators import external_seed
+from web.seeder import Syncer, external_seed
 
 
 class CurrencySyncer(Syncer):
-    def __init__(self, seeds: list[Currency] = currency_seeds) -> None:
-        super().__init__()
-        self.seeds: list[Currency] = seeds
+    MODEL = Currency
+    KEY = "id"
+    SEEDS = currency_seeds
 
+    @classmethod
     @external_seed
-    def sync(self, s: Session) -> None:
+    def sync(cls, s: Session) -> None:
         # Insert seeds
-        for seed in self.seeds:
-            row = s.query(Currency).filter_by(id=seed.id).first()
-            if not row:
-                s.add(seed)
-                s.flush()
+        super().sync(s)
 
         # Call API
         url = "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml"
@@ -52,8 +47,3 @@ class CurrencySyncer(Syncer):
             if currency:
                 currency.rate = rate
                 s.flush()
-
-
-if __name__ == "__main__":
-    with conn.begin() as s_:
-        CurrencySyncer().sync(s_)

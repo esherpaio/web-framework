@@ -5,7 +5,7 @@ from sqlalchemy.orm import joinedload
 from werkzeug import Response
 
 from web.blueprint.webhook_v1 import webhook_v1_bp
-from web.database.client import conn
+from web.database import conn
 from web.database.model import (
     Order,
     OrderLine,

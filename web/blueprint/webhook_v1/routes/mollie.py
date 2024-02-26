@@ -4,22 +4,21 @@ from werkzeug import Response
 
 from web.blueprint.webhook_v1 import webhook_v1_bp
 from web.database.client import conn
-from web.database.model import Invoice, Order
-from web.database.model.order_status import OrderStatusId
-from web.document.object.invoice import gen_invoice
+from web.database.model import Invoice, Order, OrderStatusId
+from web.document.object import gen_invoice
 from web.ext.mollie import Mollie
 from web.libs.api import ApiText, response
 from web.libs.utils import remove_file
-from web.mail.base import MailEvent, mail
+from web.mail import MailEvent, mail
 
 
 @webhook_v1_bp.post("/mollie/payment")
 def mollie_payment() -> Response:
     """Mollie payment webhook.
 
-    A 200 OK response is returned if the payment is processed or when it is unknown to
-    our system. The latter is recommended by Mollie for security reasons:
-    https://docs.mollie.com/overview/webhooks.
+    A 200 OK response is returned if the payment is processed or when it is
+    unknown to the system. The latter is recommended by Mollie for security
+    reasons: https://docs.mollie.com/overview/webhooks.
     """
 
     mollie_payment_id = request.form.get("id")

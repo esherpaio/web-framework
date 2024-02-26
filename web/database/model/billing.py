@@ -7,7 +7,7 @@ from sqlalchemy.orm import relationship, validates
 
 from web.database.model import Base
 
-from ._validation import del_emoji, get_lower, val_email, val_length, val_phone
+from ._utils import del_emoji, get_lower, val_email, val_length, val_phone
 
 
 class Billing(Base):

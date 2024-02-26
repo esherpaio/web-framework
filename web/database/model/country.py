@@ -4,8 +4,8 @@ from sqlalchemy import Boolean, ForeignKey, String
 from sqlalchemy.orm import mapped_column as MC
 from sqlalchemy.orm import relationship, validates
 
-from . import Base
-from ._validation import get_upper, val_length
+from ._base import Base
+from ._utils import get_upper, val_length
 
 
 class Country(Base):

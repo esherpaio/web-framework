@@ -7,8 +7,8 @@ from sqlalchemy.orm import relationship, validates
 
 from web.config import config
 
-from . import Base
-from ._validation import val_number
+from ._base import Base
+from ._utils import val_number
 
 
 class CartItem(Base):

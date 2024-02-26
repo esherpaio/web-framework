@@ -5,9 +5,8 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import mapped_column as MC
 from sqlalchemy.orm import validates
 
-from . import Base
-from ._utils import default_price, default_rate
-from ._validation import get_upper, val_length, val_number
+from ._base import Base
+from ._utils import default_price, default_rate, get_upper, val_length, val_number
 
 
 class Coupon(Base):
