@@ -5,12 +5,12 @@ from flask import request
 from werkzeug import Response
 from werkzeug.utils import secure_filename
 
+from web.api.utils import ApiText, json_get, response
 from web.blueprint.api_v1 import api_v1_bp
 from web.config import config
-from web.database.client import conn
+from web.database import conn
 from web.database.model import File, FileTypeId, Product, ProductMedia, UserRoleLevel
 from web.libs import cdn
-from web.libs.api import ApiText, json_get, response
 from web.libs.auth import access_control
 
 #

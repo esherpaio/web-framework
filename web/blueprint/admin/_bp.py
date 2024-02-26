@@ -4,7 +4,7 @@ from flask import Blueprint, redirect, url_for
 from werkzeug import Response
 
 from web.config import config
-from web.database.model.user_role import UserRoleLevel
+from web.database.model import UserRoleLevel
 from web.libs.auth import access_control
 from web.libs.cache import cache
 from web.libs.logger import log
@@ -14,10 +14,10 @@ _dir = os.path.dirname(os.path.abspath(__file__))
 admin_bp = Blueprint(
     name="admin",
     import_name=__name__,
+    url_prefix=None,
+    template_folder=os.path.join(_dir, "templates"),
     static_folder=os.path.join(_dir, "static"),
     static_url_path="/admin/static",
-    template_folder=os.path.join(_dir, "templates"),
-    url_prefix=None,
 )
 
 

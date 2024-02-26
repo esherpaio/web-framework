@@ -73,5 +73,5 @@ class Client(API):
                 break
             except Exception:
                 log.warning("[API] Connection failed")
-                time.sleep(2)
+                time.sleep(5)
         log.info("[API] Connected established")

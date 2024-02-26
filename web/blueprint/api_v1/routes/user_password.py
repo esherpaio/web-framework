@@ -3,12 +3,13 @@ from enum import StrEnum
 from werkzeug import Response
 from werkzeug.security import generate_password_hash
 
+from web.api.utils import ApiText, json_get, response
 from web.blueprint.api_v1 import api_v1_bp
-from web.blueprint.api_v1._common import recover_user_password
-from web.database.client import conn
+from web.database import conn
 from web.database.model import User, Verification
-from web.i18n.base import _
-from web.libs.api import ApiText, json_get, response
+from web.i18n import _
+
+from ._common import recover_user_password
 
 #
 # Configuration

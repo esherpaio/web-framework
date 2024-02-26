@@ -8,12 +8,12 @@ from sqlalchemy.orm.session import Session
 from werkzeug import Response
 from werkzeug.security import generate_password_hash
 
+from web.api import API
+from web.api.utils import response
 from web.blueprint.api_v1 import api_v1_bp
-from web.blueprint.api_v1._base import API
 from web.database import conn
 from web.database.model import User, UserRoleId
 from web.i18n import _
-from web.libs.api import response
 
 #
 # Configuration

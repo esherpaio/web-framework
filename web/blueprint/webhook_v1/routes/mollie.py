@@ -2,12 +2,12 @@ from flask import request
 from mollie.api.error import NotFoundError
 from werkzeug import Response
 
+from web.api.utils import ApiText, response
 from web.blueprint.webhook_v1 import webhook_v1_bp
 from web.database.client import conn
 from web.database.model import Invoice, Order, OrderStatusId
 from web.document.object import gen_invoice
 from web.ext.mollie import Mollie
-from web.libs.api import ApiText, response
 from web.libs.utils import remove_file
 from web.mail import MailEvent, mail
 
