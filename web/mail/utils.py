@@ -2,7 +2,7 @@ import os
 from email.mime.application import MIMEApplication
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-from smtplib import SMTP_SSL as SMTP
+from smtplib import SMTP_SSL
 
 import jinja2
 
@@ -67,7 +67,7 @@ def _send_smtp(
         attachment.add_header("Content-Disposition", "attachment", filename=blob_name)
         msg.attach(attachment)
     # Send the message
-    conn = SMTP(config.SMTP_HOST, port=config.SMTP_PORT, timeout=20)
+    conn = SMTP_SSL(config.SMTP_HOST, port=config.SMTP_PORT, timeout=20)
     conn.set_debuglevel(False)
     conn.login(config.SMTP_USERNAME, config.SMTP_PASSWORD)
     conn.sendmail(msg["from"], msg["to"], msg.as_string())
