@@ -67,8 +67,7 @@ def _send_smtp(
         attachment.add_header("Content-Disposition", "attachment", filename=blob_name)
         msg.attach(attachment)
     # Send the message
-    log.info(f"Sending email to {', '.join(to)} with subject {subject}")
-    conn = SMTP(config.SMTP_HOST, port=config.SMTP_PORT, timeout=10)
+    conn = SMTP(config.SMTP_HOST, port=config.SMTP_PORT, timeout=20)
     conn.set_debuglevel(False)
     conn.login(config.SMTP_USERNAME, config.SMTP_PASSWORD)
     conn.sendmail(msg["from"], msg["to"], msg.as_string())
