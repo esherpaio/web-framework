@@ -5,11 +5,11 @@ from flask_login import current_user
 from mollie.api.objects.payment import Payment
 from sqlalchemy.orm import Session
 
+from web.api.utils import ApiText, response
 from web.config import config
 from web.database.model import Cart, Order, Refund, User, Verification
-from web.document.object.refund import gen_refund
+from web.document.object import gen_refund
 from web.ext.mollie import Mollie, mollie_amount
-from web.libs.api import ApiText, response
 from web.libs.cart import get_shipment_methods
 from web.libs.utils import none_attrgetter, remove_file
 from web.mail.base import MailEvent, mail

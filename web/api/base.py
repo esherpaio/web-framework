@@ -5,8 +5,8 @@ from sqlalchemy import ColumnExpressionArgument
 from sqlalchemy.orm.attributes import InstrumentedAttribute
 from sqlalchemy.orm.session import Session
 
+from web.api.utils import ApiText, args_get, json_get, response
 from web.database.model import B
-from web.libs.api import ApiText, args_get, json_get, response
 from web.libs.logger import log
 
 
@@ -14,7 +14,6 @@ class API(Generic[B]):
     model: B | None = None
     post_columns: set[InstrumentedAttribute | str] = set()
     patch_columns: set[InstrumentedAttribute | str] = set()
-    # TODO(Stan): rename to get_filters
     get_filters: set[InstrumentedAttribute | str] = set()
     get_columns: set[InstrumentedAttribute | str] = set()
 

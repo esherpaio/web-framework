@@ -6,11 +6,11 @@ from sqlalchemy.orm.session import Session
 from sqlalchemy.orm.util import has_identity
 from werkzeug import Response
 
+from web.api import API
+from web.api.utils import ApiText, response
 from web.blueprint.api_v1 import api_v1_bp
-from web.blueprint.api_v1._base import API
-from web.database.client import conn
+from web.database import conn
 from web.database.model import Billing, Cart, Coupon, Shipping
-from web.libs.api import ApiText, response
 from web.libs.cart import get_shipment_methods, get_vat
 from web.libs.locale import current_locale
 from web.libs.utils import none_attrgetter

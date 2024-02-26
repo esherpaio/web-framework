@@ -6,17 +6,18 @@ from pyvat import is_vat_number_format_valid
 from sqlalchemy.orm.session import Session
 from werkzeug import Response
 
+from web.api import API
+from web.api.utils import ApiText, response
 from web.blueprint.api_v1 import api_v1_bp
-from web.blueprint.api_v1._base import API
-from web.blueprint.api_v1._common import create_refund
-from web.database.client import conn
+from web.database import conn
 from web.database.model import Cart, Order, OrderLine, OrderStatusId, UserRoleLevel
 from web.ext.mollie import Mollie
-from web.i18n.base import _
-from web.libs.api import ApiText, response
+from web.i18n import _
 from web.libs.auth import access_control
 from web.libs.cart import get_shipment_methods
-from web.mail.base import MailEvent, mail
+from web.mail import MailEvent, mail
+
+from ._common import create_refund
 
 #
 # Configuration

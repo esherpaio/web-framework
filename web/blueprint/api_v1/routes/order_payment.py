@@ -4,12 +4,12 @@ from flask import url_for
 from flask_login import current_user
 from werkzeug import Response
 
+from web.api.utils import ApiText, response
 from web.blueprint.api_v1 import api_v1_bp
 from web.config import config
-from web.database.client import conn
+from web.database import conn
 from web.database.model import Order
 from web.ext.mollie import Mollie, mollie_amount, mollie_webhook
-from web.libs.api import ApiText, response
 
 #
 # Configuration

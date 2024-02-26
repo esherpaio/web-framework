@@ -1,10 +1,10 @@
 from werkzeug import Response
 
+from web.api import API
+from web.api.utils import response
 from web.blueprint.api_v1 import api_v1_bp
-from web.blueprint.api_v1._base import API
-from web.database.client import conn
+from web.database import conn
 from web.database.model import Country, UserRoleLevel
-from web.libs.api import response
 from web.libs.auth import access_control
 
 #

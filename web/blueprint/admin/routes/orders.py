@@ -6,6 +6,7 @@ from sqlalchemy import or_
 from sqlalchemy.orm import contains_eager, joinedload
 from werkzeug import Response
 
+from web.api.utils import ApiText, response
 from web.blueprint.admin import admin_bp
 from web.database.client import conn
 from web.database.model import (
@@ -22,7 +23,6 @@ from web.database.model import (
 from web.document.object.invoice import gen_invoice
 from web.document.object.refund import gen_refund
 from web.ext.bootstrap import get_pages
-from web.libs.api import ApiText, response
 from web.libs.utils import remove_file
 
 

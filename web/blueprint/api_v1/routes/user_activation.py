@@ -4,13 +4,13 @@ from enum import StrEnum
 from flask import url_for
 from werkzeug import Response
 
+from web.api.utils import ApiText, json_get, response
 from web.blueprint.api_v1 import api_v1_bp
 from web.config import config
-from web.database.client import conn
+from web.database import conn
 from web.database.model import User, Verification
-from web.i18n.base import _
-from web.libs.api import ApiText, json_get, response
-from web.mail.base import MailEvent, mail
+from web.i18n import _
+from web.mail import MailEvent, mail
 
 #
 # Configuration

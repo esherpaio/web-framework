@@ -5,12 +5,12 @@ from flask import request
 from werkzeug import Response
 from werkzeug.utils import secure_filename
 
+from web.api.utils import ApiText, json_get, response
 from web.blueprint.api_v1 import api_v1_bp
 from web.config import config
-from web.database.client import conn
+from web.database import conn
 from web.database.model import Article, ArticleMedia, File, FileTypeId, UserRoleLevel
 from web.libs import cdn
-from web.libs.api import ApiText, json_get, response
 from web.libs.auth import access_control
 
 #
@@ -79,10 +79,10 @@ def post_articles_id_media(article_id: int) -> Response:
             cdn.upload(request_file, cdn_path)
 
             # Insert file and article media
-            file = File(path=cdn_path, type_id=type_id)
-            s.add(file)
+            file_ = File(path=cdn_path, type_id=type_id)
+            s.add(file_)
             s.flush()
-            article_media = ArticleMedia(article_id=article_id, file_id=file.id)
+            article_media = ArticleMedia(article_id=article_id, file_id=file_.id)
             s.add(article_media)
 
     return response()
@@ -101,15 +101,15 @@ def patch_articles_id_media_id(article_id: int, media_id: int) -> Response:
         )
         if not article_media:
             return response(404, ApiText.HTTP_404)
-        file = s.query(File).filter_by(id=article_media.file_id).first()
-        if not file:
+        file_ = s.query(File).filter_by(id=article_media.file_id).first()
+        if not file_:
             return response(404, ApiText.HTTP_404)
 
         # Update article media and file
         if has_order:
             article_media.order = order
         if has_description:
-            file.description = description
+            file_.description = description
 
     return response()
 
@@ -124,15 +124,15 @@ def delete_articles_id_media_id(article_id: int, media_id: int) -> Response:
         )
         if not article_media:
             return response(404, ApiText.HTTP_404)
-        file = s.query(File).filter_by(id=article_media.file_id).first()
-        if not file:
+        file_ = s.query(File).filter_by(id=article_media.file_id).first()
+        if not file_:
             return response(404, ApiText.HTTP_404)
 
         # Delete file from CDN
-        cdn.delete(file.path)
+        cdn.delete(file_.path)
 
         # Delete article media and file
-        s.delete(file)
+        s.delete(file_)
         s.delete(article_media)
 
     return response()
