@@ -2,7 +2,7 @@ from sqlalchemy import DateTime, ForeignKey, String
 from sqlalchemy.orm import mapped_column as MC
 from sqlalchemy.orm import relationship
 
-from . import Base
+from ._base import Base
 from ._utils import type_json
 
 

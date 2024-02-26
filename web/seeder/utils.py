@@ -4,7 +4,7 @@ from werkzeug import Response
 
 from web.config import config
 from web.database.client import conn
-from web.seeder.abc import Syncer
+from web.seeder import Syncer
 
 
 def external_seed(f: Callable) -> Callable[..., None]:

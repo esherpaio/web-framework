@@ -1,25 +1,9 @@
-from sqlalchemy.orm import Session
-
-from web.database.client import conn
 from web.database.model import ProductLinkType
 from web.database.seed import product_link_type_seeds
-from web.seeder.abc import Syncer
+from web.seeder import Syncer
 
 
 class ProductLinkeTypeSyncer(Syncer):
-    def __init__(self, seeds: list[ProductLinkType] = product_link_type_seeds) -> None:
-        super().__init__()
-        self.seeds: list[ProductLinkType] = seeds
-
-    def sync(self, s: Session) -> None:
-        # Insert seeds
-        for seed in self.seeds:
-            row = s.query(ProductLinkType).filter_by(id=seed.id).first()
-            if not row:
-                s.add(seed)
-                s.flush()
-
-
-if __name__ == "__main__":
-    with conn.begin() as s_:
-        ProductLinkeTypeSyncer().sync(s_)
+    MODEL = ProductLinkType
+    KEY = "id"
+    SEEDS = product_link_type_seeds

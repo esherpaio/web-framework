@@ -7,9 +7,15 @@ from sqlalchemy.orm import relationship, validates
 
 from web.libs.cache import cache
 
-from . import Base
-from ._utils import default_price, default_rate, default_vat
-from ._validation import get_upper, val_length, val_number
+from ._base import Base
+from ._utils import (
+    default_price,
+    default_rate,
+    default_vat,
+    get_upper,
+    val_length,
+    val_number,
+)
 from .order_status import OrderStatusId
 
 

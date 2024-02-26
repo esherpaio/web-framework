@@ -5,9 +5,8 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import mapped_column as MC
 from sqlalchemy.orm import relationship, validates
 
-from . import Base
-from ._utils import type_json
-from ._validation import get_lower, val_email
+from ._base import Base
+from ._utils import get_lower, type_json, val_email
 from .user_role import UserRoleId
 
 

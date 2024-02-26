@@ -2,16 +2,15 @@ import requests
 from requests import RequestException
 from sqlalchemy.orm import Session
 
-from web.database.client import conn
 from web.database.model import Country, Currency, CurrencyId, Region
 from web.libs.logger import log
-from web.seeder.abc import Syncer
-from web.seeder.decorators import external_seed
+from web.seeder import Syncer, external_seed
 
 
 class CountrySyncer(Syncer):
+    @classmethod
     @external_seed
-    def sync(self, s: Session) -> None:
+    def sync(cls, s: Session) -> None:
         # Call API
         url = "https://restcountries.com/v3.1/all?fields=name,cca2,region,currencies"
         try:
@@ -72,8 +71,3 @@ class CountrySyncer(Syncer):
                 )
                 s.add(country)
             s.flush()
-
-
-if __name__ == "__main__":
-    with conn.begin() as s_:
-        CountrySyncer().sync(s_)

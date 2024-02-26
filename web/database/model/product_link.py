@@ -3,7 +3,7 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import mapped_column as MC
 from sqlalchemy.orm import relationship
 
-from . import Base
+from ._base import Base
 from .product_link_type import ProductLinkTypeId
 
 

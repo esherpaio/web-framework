@@ -13,7 +13,7 @@ from web.libs.logger import log
 
 
 class Cache(dict):
-    """A simple cache mechanism for routes and objects."""
+    """A simple in-memory cache mechanism."""
 
     def route(self, f: Callable) -> Callable[..., Response | str]:
         def wrap(*args, **kwargs) -> Response | str:

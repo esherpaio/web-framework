@@ -6,8 +6,8 @@ from web.database.model import CategoryItem, Product, ProductTypeId, Sku, UserRo
 from web.libs.api import ApiText, json_get, response
 from web.libs.auth import access_control
 from web.libs.parse import gen_slug
-from web.seeder.decorators import sync_after
 from web.seeder.seed.sku import SkuSyncer
+from web.seeder.utils import sync_after
 
 #
 # Configuration

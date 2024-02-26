@@ -4,8 +4,8 @@ from sqlalchemy import Boolean, String
 from sqlalchemy.orm import mapped_column as MC
 from sqlalchemy.orm import validates
 
-from . import Base
-from ._validation import get_lower, val_length
+from ._base import Base
+from ._utils import get_lower, val_length
 
 
 class Language(Base):

@@ -4,8 +4,8 @@ from sqlalchemy import Boolean, ForeignKey, Integer, String, UniqueConstraint
 from sqlalchemy.orm import mapped_column as MC
 from sqlalchemy.orm import relationship, validates
 
-from . import Base
-from ._validation import get_slug
+from ._base import Base
+from ._utils import get_slug
 
 
 class ProductOption(Base):

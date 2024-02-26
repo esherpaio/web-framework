@@ -1,7 +1,7 @@
 from sqlalchemy import Boolean, Integer, String
 from sqlalchemy.orm import mapped_column as MC
 
-from . import Base
+from ._base import Base
 
 
 class ShipmentClass(Base):

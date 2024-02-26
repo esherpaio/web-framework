@@ -16,7 +16,7 @@ from web.config import config
 from web.database.model import Invoice, Order, Refund
 from web.document._base import FONT_BOLD, FONT_SIZE_TITLE, Paragraph, TableCell
 from web.document._utils import cells_to_tables, num_to_str, save_pdf
-from web.i18n.base import _
+from web.i18n import _
 
 
 def gen_refund(

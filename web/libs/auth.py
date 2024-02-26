@@ -7,7 +7,7 @@ from sqlalchemy.orm import joinedload
 from werkzeug import Response
 
 from web.config import config
-from web.database.client import conn
+from web.database import conn
 from web.database.model import User, UserRoleId, UserRoleLevel
 from web.libs.api import ApiText, response
 
@@ -79,8 +79,6 @@ def _set_guest_session(persistent: bool = False) -> User:
 def access_control(
     level: UserRoleLevel,
 ) -> Callable[[Callable[..., Response | None]], Callable[..., Response]]:
-    """Authorize a user based on their role level."""
-
     def decorate(f: Callable) -> Callable[..., Response]:
         def wrap(*args, **kwargs) -> Response:
             if current_user.is_active and current_user.role.level >= level:

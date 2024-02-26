@@ -7,9 +7,8 @@ from sqlalchemy.orm import relationship, validates
 
 from web.libs.utils import none_attrgetter
 
-from . import Base
-from ._utils import default_price, type_json
-from ._validation import get_slug, val_number
+from ._base import Base
+from ._utils import default_price, get_slug, type_json, val_number
 from .product_media import ProductMedia
 from .product_type import ProductTypeId
 

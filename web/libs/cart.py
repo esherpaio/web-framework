@@ -10,7 +10,7 @@ from sqlalchemy.sql.expression import false
 from werkzeug import Response
 
 from web.config import config
-from web.database.client import conn
+from web.database import conn
 from web.database.model import (
     Billing,
     Cart,
@@ -34,7 +34,7 @@ def predict_cart_info(
     """Predict the most accurate shipping and billing objects.
 
     In the following order: cart -> user -> None.
-    This is useful for pre-filling forms on a frontend.
+    Useful for pre-filling forms on a frontend.
     """
     # Get user
     if current_user and current_user.id:
@@ -63,7 +63,6 @@ def get_shipment_methods(
     s: Session,
     cart: Cart,
 ) -> list[ShipmentMethod]:
-    """Generate a list of shipment methods."""
     # Get all possible shipping class ids
     shipment_class_ids = []
     for item in cart.items:
@@ -122,7 +121,16 @@ def get_vat(
     country_code: str,
     is_business: bool,
 ) -> tuple[float, bool]:
-    """Get the VAT rate and whether it's applied."""
+    """Get VAT information.
+
+    Args:
+        country_code: ISO 3166-1 alpha-2 country code.
+        is_business: Whether it is a business.
+
+    Returns:
+        vat_rate: The VAT rate.
+        vat_reverse: Whether the VAT is reverse charged.
+    """
     date = datetime.utcnow().date()
     type_ = ItemType.generic_electronic_service
     buyer = Party(country_code, is_business)
@@ -150,7 +158,10 @@ def get_vat(
 def transfer_cart(
     f: Callable,
 ) -> Callable[..., Response]:
-    """Transfer a cart from one session to another."""
+    """Transfer a cart from one session to another.
+
+    Useful for when an user logs in or out.
+    """
 
     def wrap(*args, **kwargs) -> Response:
         with conn.begin() as s:

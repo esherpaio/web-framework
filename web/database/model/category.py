@@ -4,9 +4,8 @@ from sqlalchemy import Boolean, Integer, String
 from sqlalchemy.orm import mapped_column as MC
 from sqlalchemy.orm import relationship, validates
 
-from . import Base
-from ._utils import type_json
-from ._validation import get_slug
+from ._base import Base
+from ._utils import get_slug, type_json
 
 
 class Category(Base):

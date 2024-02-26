@@ -5,8 +5,8 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import mapped_column as MC
 from sqlalchemy.orm import relationship, validates
 
-from . import Base
-from ._validation import del_emoji, get_lower, val_email, val_length, val_phone
+from ._base import Base
+from ._utils import del_emoji, get_lower, val_email, val_length, val_phone
 
 
 class Shipping(Base):

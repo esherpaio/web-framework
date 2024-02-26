@@ -2,11 +2,12 @@ from sqlalchemy.orm import Session, joinedload
 
 from web.database.client import conn
 from web.database.model import Sku, SkuDetail
-from web.seeder.abc import Syncer
+from web.seeder import Syncer
 
 
 class SkuSyncer(Syncer):
-    def sync(self, s: Session) -> None:
+    @classmethod
+    def sync(cls, s: Session) -> None:
         # Query all skus
         with conn.begin() as s:
             skus = (
@@ -18,6 +19,7 @@ class SkuSyncer(Syncer):
                 )
                 .all()
             )
+
             # Iterate over skus
             # Calculate the unit price
             for sku in skus:
@@ -26,8 +28,3 @@ class SkuSyncer(Syncer):
                     unit_price += sku_detail.value.unit_price
                 sku.unit_price = unit_price
                 s.flush()
-
-
-if __name__ == "__main__":
-    with conn.begin() as s_:
-        SkuSyncer().sync(s_)
