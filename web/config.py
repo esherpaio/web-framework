@@ -63,7 +63,7 @@ class ConfigVar:
 
 
 class Config(metaclass=Singleton):
-    _VARS: dict[str, StaticVar | EnvVar | ConfigVar] = {
+    VARS: dict[str, StaticVar | EnvVar | ConfigVar] = {
         "APP_CACHE": EnvVar("APP_CACHE", bool, True),
         "APP_DEBUG": EnvVar("APP_DEBUG", bool, False),
         "APP_SECRET": EnvVar("APP_SECRET", str),
@@ -131,12 +131,12 @@ class Config(metaclass=Singleton):
         load_dotenv(override=True)
 
     def __getattr__(self, key: str) -> Any:
-        if key in self._VARS:
-            return self._VARS[key].value
+        if key in self.VARS:
+            return self.VARS[key].value
         raise AttributeError
 
     def __setattr__(self, key: str, value: Any) -> None:
-        self._VARS[key] = value
+        self.VARS[key] = value
 
 
 config = Config()

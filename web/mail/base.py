@@ -51,9 +51,9 @@ class Mail(metaclass=Singleton):
         return events
 
     @classmethod
-    def trigger_events(cls, event_id: MailEvent | str, **kwargs) -> None:
-        for event in cls.get_events(event_id):
-            event(**kwargs)
+    def trigger_events(cls, event_id: MailEvent | str, **kwargs) -> bool:
+        results = [event(**kwargs) for event in cls.get_events(event_id)]
+        return all(results)
 
 
 #

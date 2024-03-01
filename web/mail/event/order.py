@@ -8,8 +8,7 @@ def mail_order_received(
     billing_email: str,
     shipping_email: str,
     **kwargs,
-) -> None:
-    to = [billing_email, shipping_email]
+) -> bool:
     subject = _(
         "MAIL_ORDER_SUBJECT", business_name=config.BUSINESS_NAME, order_id=order_id
     )
@@ -20,7 +19,7 @@ def mail_order_received(
             _("MAIL_ORDER_RECEIVED_P2"),
         ],
     )
-    send_email(to, subject, html)
+    return send_email(subject, html, to=[billing_email, shipping_email])
 
 
 def mail_order_paid(
@@ -29,8 +28,7 @@ def mail_order_paid(
     invoice_number: str,
     pdf_path: str,
     **kwargs,
-) -> None:
-    to = [billing_email]
+) -> bool:
     subject = _(
         "MAIL_ORDER_SUBJECT", business_name=config.BUSINESS_NAME, order_id=order_id
     )
@@ -39,7 +37,9 @@ def mail_order_paid(
         paragraphs=[_("MAIL_ORDER_PAID_P1"), _("MAIL_ORDER_PAID_P2")],
     )
     pdf_name = _("MAIL_ORDER_PAID_FILENAME", invoice_number=invoice_number)
-    send_email(to, subject, html, blob_path=pdf_path, blob_name=pdf_name)
+    return send_email(
+        subject, html, to=[billing_email], blob_path=pdf_path, blob_name=pdf_name
+    )
 
 
 def mail_order_shipped(
@@ -49,8 +49,7 @@ def mail_order_shipped(
     shipping_email: str,
     shipping_address: str,
     **kwargs,
-) -> None:
-    to = [billing_email, shipping_email]
+) -> bool:
     subject = _(
         "MAIL_ORDER_SUBJECT", business_name=config.BUSINESS_NAME, order_id=order_id
     )
@@ -62,7 +61,7 @@ def mail_order_shipped(
             _("MAIL_ORDER_SHIPPED_P3", shipping_address=shipping_address),
         ],
     )
-    send_email(to, subject, html)
+    return send_email(subject, html, to=[billing_email, shipping_email])
 
 
 def mail_order_refunded(
@@ -71,8 +70,7 @@ def mail_order_refunded(
     refund_number: int,
     pdf_path: str,
     **kwargs,
-) -> None:
-    to = [billing_email]
+) -> bool:
     subject = _(
         "MAIL_ORDER_SUBJECT", business_name=config.BUSINESS_NAME, order_id=order_id
     )
@@ -81,4 +79,6 @@ def mail_order_refunded(
         paragraphs=[_("MAIL_ORDER_REFUNDED_P1"), _("MAIL_ORDER_REFUNDED_P2")],
     )
     pdf_name = _("MAIL_ORDER_REFUNDED_FILENAME", refund_number=refund_number)
-    send_email(to, subject, html, blob_path=pdf_path, blob_name=pdf_name)
+    return send_email(
+        subject, html, to=[billing_email], blob_path=pdf_path, blob_name=pdf_name
+    )

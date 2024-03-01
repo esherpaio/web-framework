@@ -131,7 +131,7 @@
                         </div>
                     </div>
                     <script defer>
-                        let htmlEl = document.getElementById('html-editor');
+                        let htmlElement = document.getElementById('html-editor');
                         let htmlOptions = [
                             [{'header': [3, 4, 5, 6, false]}],
                             ['bold', 'italic', 'underline', 'strike'],
@@ -141,7 +141,7 @@
                             ['clean'],
                         ];
                         const htmlValue = '{{ product.attributes["html"]|safe if product.attributes["html"] else '' }}';
-                        htmlEditor = new Quill(htmlEl, {theme: 'snow', modules: {toolbar: htmlOptions}});
+                        htmlEditor = new Quill(htmlElement, {theme: 'snow', modules: {toolbar: htmlOptions}});
                         htmlEditor.clipboard.dangerouslyPasteHTML(htmlValue);
                     </script>
                 </div>

@@ -40,6 +40,7 @@ class UserSyncer(Syncer):
 def db_hook(*args) -> None:
     with conn.begin() as s:
         # defaults
+        seed.EmailStatusSyncer().sync(s)
         seed.FileTypeSyncer().sync(s)
         seed.OrderStatusSyncer().sync(s)
         seed.ProductLinkeTypeSyncer().sync(s)

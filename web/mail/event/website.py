@@ -10,8 +10,7 @@ def mail_contact_business(
     company: str | None = None,
     phone: str | None = None,
     **kwargs,
-) -> None:
-    to = [config.EMAIL_TO]
+) -> bool:
     subject = _(
         "MAIL_CONTACT_SUBJECT_BUSINESS", business_name=config.BUSINESS_NAME, name=name
     )
@@ -28,15 +27,14 @@ def mail_contact_business(
             _("MAIL_CONTACT_MESSAGE", message=message),
         ],
     )
-    send_email(to, subject, html, reply_to=email)
+    return send_email(subject, html, to=[config.EMAIL_TO], reply_to=email)
 
 
 def mail_contact_customer(
     email: str,
     message: str,
     **kwargs,
-) -> None:
-    to = [email]
+) -> bool:
     subject = _("MAIL_CONTACT_SUBJECT_CUSTOMER", business_name=config.BUSINESS_NAME)
     html = render_email(
         title=_("MAIL_CONTACT_TITLE"),
@@ -45,13 +43,14 @@ def mail_contact_customer(
             _("MAIL_CONTACT_MESSAGE", message=message),
         ],
     )
-    send_email(to, subject, html)
+    return send_email(subject, html, to=[email])
 
 
 def mail_mass(
     emails: list[str],
     subject: str,
-    message: str,
-) -> None:
-    html = render_email(subject=subject, message=message)
-    send_email(emails, subject, html)
+    html: str,
+    **kwargs,
+) -> bool:
+    html = render_email("html", title=subject, html=html)
+    return send_email(subject, html, bcc=emails)

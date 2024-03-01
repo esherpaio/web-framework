@@ -2,12 +2,22 @@ import os
 from email.mime.application import MIMEApplication
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+from enum import StrEnum
 from smtplib import SMTP_SSL
 
 import jinja2
 
 from web.config import config
 from web.libs.logger import log
+
+#
+# Classes
+#
+
+
+class MailMethod(StrEnum):
+    SMTP = "smtp"
+
 
 #
 # Functions
@@ -25,38 +35,57 @@ def render_email(name: str = "default", **attrs) -> str:
 
 
 def send_email(
-    to: list[str],
     subject: str,
     html: str,
+    to: list[str] | None = None,
     reply_to: str | None = None,
+    cc: list[str] | None = None,
+    bcc: list[str] | None = None,
     blob_path: str | None = None,
     blob_name: str | None = None,
-) -> None:
-    # Create list of unique to-addresses
-    to = list(set(to))
+) -> bool:
+    # Make unique addresses
+    if to is not None:
+        to = list(set(to))
+    if cc is not None:
+        cc = list(set(cc))
+    if bcc is not None:
+        bcc = list(set(bcc))
     # Send email
-    log.info(f"Sending email over {config.EMAIL_METHOD} to {', '.join(to)}")
-    if config.EMAIL_METHOD == "smtp":
-        _send_smtp(config.EMAIL_FROM, to, subject, html, reply_to, blob_path, blob_name)
-    else:
-        log.error("Email not send, no valid method configured")
+    if not config.EMAIL_METHOD:
+        log.error("Cannot send email, no valid method configured")
+        return False
+    try:
+        if config.EMAIL_METHOD == MailMethod.SMTP:
+            _send_smtp(subject, html, to, reply_to, cc, bcc, blob_path, blob_name)
+    except Exception:
+        log.error(f"Error sending {config.EMAIL_METHOD} email", exc_info=True)
+        return False
+    return True
 
 
 def _send_smtp(
-    from_: str,
-    to: list[str],
     subject: str,
     html: str,
+    to: list[str] | None = None,
     reply_to: str | None = None,
+    cc: list[str] | None = None,
+    bcc: list[str] | None = None,
     blob_path: str | None = None,
     blob_name: str | None = None,
 ) -> None:
-    # Build the message
+    # Create message
     msg = MIMEMultipart()
-    msg["to"] = ",".join(to)
+    msg["from"] = config.EMAIL_FROM
+    msg["reply-to"] = reply_to or config.EMAIL_FROM
     msg["subject"] = subject
-    msg["from"] = from_
-    msg["reply-to"] = reply_to or from_
+    if to is not None:
+        msg["to"] = ",".join(to)
+    if cc is not None:
+        msg["cc"] = ",".join(cc)
+    if bcc is not None:
+        msg["bcc"] = ",".join(bcc)
+    # Add body
     body = MIMEText(html, "html")
     msg.attach(body)
     # Add attachment
@@ -66,9 +95,9 @@ def _send_smtp(
         attachment = MIMEApplication(data)
         attachment.add_header("Content-Disposition", "attachment", filename=blob_name)
         msg.attach(attachment)
-    # Send the message
+    # Send email
     conn = SMTP_SSL(config.SMTP_HOST, port=config.SMTP_PORT, timeout=20)
     conn.set_debuglevel(False)
     conn.login(config.SMTP_USERNAME, config.SMTP_PASSWORD)
-    conn.sendmail(msg["from"], msg["to"], msg.as_string())
+    conn.send_message(msg)
     conn.quit()

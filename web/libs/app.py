@@ -57,30 +57,31 @@ def get_blueprint() -> AppBlueprint | None:
 
 def handle_frontend_error(error: Exception) -> Response:
     """Handle frontend errors."""
+    info = ["Frontend error", f"url {request.full_path}"]
     if isinstance(error, HTTPException):
-        log.warning(f"Frontend error - HTTP {error.code} - message {error.description}")
+        info.extend([f"HTTP {error.code}", f"message {error.description}"])
+        log.warning(" - ".join(info), exc_info=True)
     else:
-        log.error("Frontend error", exc_info=True)
+        log.error(" - ".join(info), exc_info=True)
     return redirect(url_for(config.ENDPOINT_ERROR))
 
 
 def handle_backend_error(error: Exception) -> Response:
     """Handle backend errors."""
-    code: int
-    message: str | ApiText
+    info = ["Backend error", f"url {request.full_path}"]
     if isinstance(error, WebError):
-        code = getattr(error, "code", 500)
-        translation_key = getattr(error, "translation_key", None)
-        message = ApiText.HTTP_500
-        if isinstance(translation_key, str):
-            message = _(translation_key)
-        log.warning(f"Backend error - code {code} - message {message}")
+        code = error.code
+        if error.translation_key is not None:
+            message = _(error.translation_key)
+        else:
+            message = ApiText.HTTP_500
     else:
-        data = None
-        if request.is_json:
-            data = request.get_json()
-        log.error(f"Backend error - data {data}", exc_info=True)
-        code, message = 500, ApiText.HTTP_500
+        code = 500
+        message = ApiText.HTTP_500
+    info.extend([f"HTTP {code}", f"message {message}"])
+    if request.is_json:
+        info.append(f"data {request.get_json()}")
+    log.error(" - ".join(info), exc_info=True)
     return response(code, message)
 
 

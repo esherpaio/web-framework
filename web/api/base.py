@@ -1,4 +1,4 @@
-from typing import Any, Callable, Generic
+from typing import Any, Callable, Generic, TypeVar
 
 from flask import abort, has_request_context, request
 from sqlalchemy import ColumnExpressionArgument
@@ -6,8 +6,10 @@ from sqlalchemy.orm.attributes import InstrumentedAttribute
 from sqlalchemy.orm.session import Session
 
 from web.api.utils import ApiText, args_get, json_get, response
-from web.database.model import B
+from web.database.model import Base
 from web.libs.logger import log
+
+B = TypeVar("B", bound=Base)
 
 
 class API(Generic[B]):

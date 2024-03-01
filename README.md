@@ -1,3 +1,3 @@
 # Web Framework
 
-This repository is a custom web framework for clients of Enlarge.
+This repository contains a web framework for clients of eSherpa.
