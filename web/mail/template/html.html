@@ -95,7 +95,8 @@
                                 display: block;
                                 margin: 0 auto;
                                 max-width: 580px;
-                                padding: 10px">
+                                padding-top: 10px;
+                                padding-bottom: 10px">
                         <!-- header -->
                         <div class="header"
                              style="clear: both;
@@ -167,20 +168,7 @@
                                                        font-size: 14px;
                                                        vertical-align: top"
                                                 valign="top">
-                                                <h1 style="font-family: sans-serif;
-                                                           font-size: 28px;
-                                                           font-weight: 700;
-                                                           margin: 0">
-                                                    {{ title }}
-                                                </h1>
-                                                {% for paragraph in paragraphs %}
-                                                    <p style="font-family: sans-serif;
-                                                              font-size: 14px;
-                                                              font-weight: normal;
-                                                              margin: 15px 0 0 0">
-                                                        {{ paragraph }}
-                                                    </p>
-                                                {% endfor %}
+                                                {{ html }}
                                             </td>
                                         </tr>
                                     </table>
@@ -214,8 +202,7 @@
                                                text-align: center"
                                         valign="top"
                                         align="center">
-                                        <span class="apple-link"
-                                              style="color: #999999;
+                                        <span style="color: #999999;
                                                      font-size: 12px;
                                                      text-align: center">
                                             © {{ config.BUSINESS_NAME }}

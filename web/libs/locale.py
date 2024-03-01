@@ -117,10 +117,13 @@ def match_locale(locale: str) -> tuple[str | None, ...]:
 
 
 def gen_locale(
-    language_code: str = config.WEBSITE_LANGUAGE_CODE,
-    country_code: str = config.BUSINESS_COUNTRY_CODE,
+    language_code: str | None = None, country_code: str | None = None
 ) -> str:
     """Generate a locale."""
+    if language_code is None:
+        language_code = config.WEBSITE_LANGUAGE_CODE
+    if country_code is None:
+        country_code = config.BUSINESS_COUNTRY_CODE
     return f"{language_code}-{country_code}".lower()
 
 

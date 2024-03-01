@@ -1,5 +1,6 @@
 from .country import CountrySyncer
 from .currency import CurrencySyncer
+from .email_status import EmailStatusSyncer
 from .file_type import FileTypeSyncer
 from .order_status import OrderStatusSyncer
 from .product_link_type import ProductLinkeTypeSyncer
@@ -12,6 +13,7 @@ from .user_role import UserRoleSyncer
 __all__ = [
     "CountrySyncer",
     "CurrencySyncer",
+    "EmailStatusSyncer",
     "FileTypeSyncer",
     "OrderStatusSyncer",
     "ProductLinkeTypeSyncer",

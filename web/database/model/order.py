@@ -46,7 +46,7 @@ class Order(Base):
     refunds = relationship("Refund", back_populates="order")
     shipments = relationship("Shipment", back_populates="order")
     shipping = relationship("Shipping")
-    status = relationship("OrderStatus")
+    status = relationship("OrderStatus", lazy="joined")
     user = relationship("User")
 
     # Validation

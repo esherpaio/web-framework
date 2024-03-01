@@ -17,6 +17,7 @@ from web.database.model import (
     AppSetting,
     Country,
     Currency,
+    FileType,
     Language,
     OrderStatus,
     ProductLinkType,
@@ -24,9 +25,8 @@ from web.database.model import (
     Redirect,
     Region,
     User,
+    UserRole,
 )
-from web.database.model.file_type import FileType
-from web.database.model.user_role import UserRole
 from web.libs import cdn
 from web.libs.app import check_redirects, handle_frontend_error
 from web.libs.auth import cookie_loader, session_loader
@@ -122,8 +122,10 @@ class FlaskWeb:
         manager.anonymous_user = User
         # Register user loaders
         if self._accept_cookie_auth:
+            log.info("Accepting cookie authentication")
             manager.user_loader(cookie_loader)
         if self._accept_request_auth:
+            log.info("Accepting bearer authentication")
             manager.request_loader(session_loader)
 
     def setup_static(self) -> None:
@@ -150,7 +152,8 @@ class FlaskWeb:
 
     def setup_redirects(self) -> None:
         # Register Flask hooks
-        self._app.before_request(check_redirects)
+        if cache.redirects:
+            self._app.before_request(check_redirects)
 
     def setup_locale(self) -> None:
         # Register Flask hooks
@@ -166,6 +169,11 @@ class FlaskWeb:
     def setup_mail(self) -> None:
         # Update mail events
         mail.EVENTS.update(self._mail_events)
+        # Log status
+        if config.EMAIL_METHOD:
+            log.info(f"Email method {config.EMAIL_METHOD} configured")
+        else:
+            log.warning("No email method configured")
 
     def setup_cache(self) -> None:
         # Start cache reloading

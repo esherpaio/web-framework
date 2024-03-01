@@ -1,4 +1,4 @@
-from ._base import B, Base
+from ._base import Base
 from .app_blueprint import AppBlueprint
 from .app_route import AppRoute
 from .app_setting import AppSetting
@@ -13,6 +13,7 @@ from .country import Country
 from .coupon import Coupon
 from .currency import Currency, CurrencyId
 from .email import Email
+from .email_status import EmailStatus, EmailStatusId
 from .file import File
 from .file_type import FileType, FileTypeId
 from .invoice import Invoice
@@ -47,7 +48,6 @@ __all__ = [
     "AppSetting",
     "Article",
     "ArticleMedia",
-    "B",
     "Base",
     "Billing",
     "Cart",
@@ -59,6 +59,8 @@ __all__ = [
     "Currency",
     "CurrencyId",
     "Email",
+    "EmailStatus",
+    "EmailStatusId",
     "File",
     "FileType",
     "FileTypeId",
