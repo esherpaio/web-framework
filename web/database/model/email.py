@@ -19,5 +19,5 @@ class Email(Base):
     )
     user_id = MC(ForeignKey("user.id", ondelete="SET NULL"))
 
-    status = relationship("EmailStatus", lazy="joined")
+    status = relationship("EmailStatus")
     user = relationship("User")
