@@ -1,5 +1,5 @@
 import time
-from datetime import datetime
+from datetime import datetime, timedelta
 from threading import Thread
 from typing import Callable, Type
 
@@ -245,7 +245,12 @@ class FlaskWeb:
     def retry_emails() -> None:
         with conn.begin() as s:
             emails = (
-                s.query(Email).filter(Email.status_id == EmailStatusId.FAILED).all()
+                s.query(Email)
+                .filter(
+                    Email.created_at > datetime.utcnow() - timedelta(weeks=1),
+                    Email.status_id.in_([EmailStatusId.QUEUED, EmailStatusId.FAILED]),
+                )
+                .all()
             )
             if not emails:
                 return
