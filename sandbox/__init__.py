@@ -1,28 +1,14 @@
 import flask_login
 from flask import Flask
 
-import web.seeder.seed as seed
 from web.blueprint.admin import admin_bp
 from web.blueprint.api_v1 import api_v1_bp
 from web.blueprint.webhook_v1 import webhook_v1_bp
 from web.database import conn
 from web.database.model import User, UserRoleId
 from web.flask import FlaskWeb
-from web.seeder import Syncer
-
-
-def create_app() -> Flask:
-    app = Flask(__name__)
-    app.add_url_rule("/", endpoint="home", view_func=lambda: "Home")
-    app.add_url_rule("/login", endpoint="login", view_func=view_login)
-    FlaskWeb(
-        app,
-        blueprints=[admin_bp, api_v1_bp, webhook_v1_bp],
-        accept_cookie_auth=True,
-        accept_request_auth=True,
-        db_hook=db_hook,
-    ).setup()
-    return app
+from web.syncer import Syncer
+from web.syncer.object import CountrySyncer, CurrencySyncer, RegionSyncer, SkuSyncer
 
 
 class UserSyncer(Syncer):
@@ -37,22 +23,18 @@ class UserSyncer(Syncer):
     ]
 
 
-def db_hook(*args) -> None:
-    with conn.begin() as s:
-        # defaults
-        seed.EmailStatusSyncer().sync(s)
-        seed.FileTypeSyncer().sync(s)
-        seed.OrderStatusSyncer().sync(s)
-        seed.ProductLinkeTypeSyncer().sync(s)
-        seed.ProductTypeSyncer().sync(s)
-        seed.UserRoleSyncer().sync(s)
-        # third party
-        seed.CurrencySyncer().sync(s)
-        seed.RegionSyncer().sync(s)
-        seed.CountrySyncer().sync(s)
-        # user defined
-        seed.SkuSyncer().sync(s)
-        UserSyncer().sync(s)
+def create_app() -> Flask:
+    app = Flask(__name__)
+    app.add_url_rule("/", endpoint="home", view_func=lambda: "Home")
+    app.add_url_rule("/login", endpoint="login", view_func=view_login)
+    FlaskWeb(
+        app,
+        blueprints=[admin_bp, api_v1_bp, webhook_v1_bp],
+        accept_cookie_auth=True,
+        accept_request_auth=True,
+        syncers=[CurrencySyncer, RegionSyncer, CountrySyncer, SkuSyncer, UserSyncer],
+    ).setup()
+    return app
 
 
 def view_login() -> str:

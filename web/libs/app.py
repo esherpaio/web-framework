@@ -1,4 +1,5 @@
 import fnmatch
+import logging
 from typing import Any
 
 from flask import current_app, redirect, request, url_for
@@ -57,18 +58,28 @@ def get_blueprint() -> AppBlueprint | None:
 
 def handle_frontend_error(error: Exception) -> Response:
     """Handle frontend errors."""
-    info = ["Frontend error", f"url {request.full_path}"]
+    # Parse error information
     if isinstance(error, HTTPException):
-        info.extend([f"HTTP {error.code}", f"message {error.description}"])
-        log.warning(" - ".join(info), exc_info=True)
+        code = error.code
+        if code is None:
+            level = logging.ERROR
+        elif 300 <= code <= 399 or code == 404:
+            level = logging.WARNING
+        else:
+            level = logging.ERROR
     else:
-        log.error(" - ".join(info), exc_info=True)
+        code = None
+        level = logging.ERROR
+    # Log error and redirect
+    info = ["Frontend error", f"HTTP {code} {request.method} {request.full_path}"]
+    exc_info = True if level >= logging.ERROR else False
+    log.log(level, " - ".join(info), exc_info=exc_info)
     return redirect(url_for(config.ENDPOINT_ERROR))
 
 
 def handle_backend_error(error: Exception) -> Response:
     """Handle backend errors."""
-    info = ["Backend error", f"url {request.full_path}"]
+    # Parse error information
     if isinstance(error, WebError):
         code = error.code
         if error.translation_key is not None:
@@ -78,7 +89,12 @@ def handle_backend_error(error: Exception) -> Response:
     else:
         code = 500
         message = ApiText.HTTP_500
-    info.extend([f"HTTP {code}", f"message {message}"])
+    # Log error and return response
+    info = [
+        "Backend error",
+        f"HTTP {code} {request.method} {request.full_path}",
+        f"message {message}",
+    ]
     if request.is_json:
         info.append(f"data {request.get_json()}")
     log.error(" - ".join(info), exc_info=True)

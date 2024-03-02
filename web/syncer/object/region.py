@@ -4,12 +4,12 @@ from sqlalchemy.orm import Session
 
 from web.database.model import Region
 from web.libs.logger import log
-from web.seeder import Syncer, external_seed
+from web.syncer import Syncer, external_sync
 
 
 class RegionSyncer(Syncer):
     @classmethod
-    @external_seed
+    @external_sync
     def sync(cls, s: Session) -> None:
         # Call API
         url = "https://restcountries.com/v3.1/all?fields=region"

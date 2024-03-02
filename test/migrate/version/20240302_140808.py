@@ -1,7 +1,7 @@
 import sqlalchemy as sa
 from alembic import op
 
-revision = "e5139f5f2058"
+revision = "ccacba2c9bf6"
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -120,6 +120,17 @@ def upgrade() -> None:
         sa.Column("updated_at", sa.DateTime(), nullable=True),
         sa.PrimaryKeyConstraint("id"),
         sa.UniqueConstraint("code"),
+    )
+    op.create_table(
+        "email_status",
+        sa.Column("name", sa.String(length=16), nullable=False),
+        sa.Column("order", sa.Integer(), nullable=True),
+        sa.Column("id", sa.Integer(), nullable=False),
+        sa.Column(
+            "created_at", sa.DateTime(), server_default=sa.text("now()"), nullable=True
+        ),
+        sa.Column("updated_at", sa.DateTime(), nullable=True),
+        sa.PrimaryKeyConstraint("id"),
     )
     op.create_table(
         "file_type",
@@ -403,7 +414,9 @@ def upgrade() -> None:
         sa.Column("attributes", sa.JSON(), server_default="{}", nullable=False),
         sa.Column("is_deleted", sa.Boolean(), nullable=False),
         sa.Column("is_visible", sa.Boolean(), nullable=False),
+        sa.Column("number", sa.String(length=64), nullable=True),
         sa.Column("slug", sa.String(length=128), nullable=False),
+        sa.Column("stock", sa.Integer(), nullable=False),
         sa.Column(
             "unit_price",
             sa.Numeric(precision=10, scale=4, asdecimal=False),
@@ -417,6 +430,7 @@ def upgrade() -> None:
         sa.Column("updated_at", sa.DateTime(), nullable=True),
         sa.ForeignKeyConstraint(["product_id"], ["product.id"], ondelete="RESTRICT"),
         sa.PrimaryKeyConstraint("id"),
+        sa.UniqueConstraint("number"),
         sa.UniqueConstraint("slug"),
     )
     op.create_table(
@@ -510,6 +524,7 @@ def upgrade() -> None:
         "user",
         sa.Column("api_key", sa.String(length=64), nullable=True),
         sa.Column("attributes", sa.JSON(), server_default="{}", nullable=False),
+        sa.Column("bulk_email", sa.Boolean(), nullable=False),
         sa.Column("email", sa.String(length=64), nullable=True),
         sa.Column("is_active", sa.Boolean(), nullable=False),
         sa.Column("password_hash", sa.String(length=256), nullable=True),
@@ -566,14 +581,18 @@ def upgrade() -> None:
     op.create_table(
         "email",
         sa.Column("data", sa.JSON(), server_default="{}", nullable=False),
-        sa.Column("template_id", sa.String(length=64), nullable=False),
+        sa.Column("event_id", sa.String(length=64), nullable=False),
+        sa.Column("status_id", sa.Integer(), nullable=False),
         sa.Column("user_id", sa.Integer(), nullable=True),
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column(
             "created_at", sa.DateTime(), server_default=sa.text("now()"), nullable=True
         ),
         sa.Column("updated_at", sa.DateTime(), nullable=True),
-        sa.ForeignKeyConstraint(["user_id"], ["user.id"], ondelete="CASCADE"),
+        sa.ForeignKeyConstraint(
+            ["status_id"], ["email_status.id"], ondelete="RESTRICT"
+        ),
+        sa.ForeignKeyConstraint(["user_id"], ["user.id"], ondelete="SET NULL"),
         sa.PrimaryKeyConstraint("id"),
     )
     op.create_table(
@@ -736,6 +755,8 @@ def upgrade() -> None:
     op.create_table(
         "shipment",
         sa.Column("attributes", sa.JSON(), server_default="{}", nullable=False),
+        sa.Column("carrier", sa.String(length=64), nullable=True),
+        sa.Column("code", sa.String(length=64), nullable=True),
         sa.Column("url", sa.String(length=256), nullable=False),
         sa.Column("order_id", sa.Integer(), nullable=False),
         sa.Column("id", sa.Integer(), nullable=False),

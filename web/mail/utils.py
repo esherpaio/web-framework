@@ -1,3 +1,4 @@
+import email.utils
 import os
 from email.mime.application import MIMEApplication
 from email.mime.multipart import MIMEMultipart
@@ -72,15 +73,16 @@ def _send_email_smtp(
 ) -> None:
     # Create message
     msg = MIMEMultipart()
-    msg["from"] = config.EMAIL_FROM
-    msg["reply-to"] = reply_to or config.EMAIL_FROM
-    msg["subject"] = subject
+    msg["From"] = config.EMAIL_FROM
+    msg["Reply-To"] = reply_to or config.EMAIL_FROM
+    msg["Subject"] = subject
+    msg["Date"] = email.utils.localtime()
     if to is not None:
-        msg["to"] = ",".join(to)
+        msg["To"] = ",".join(to)
     if cc is not None:
-        msg["cc"] = ",".join(cc)
+        msg["Cc"] = ",".join(cc)
     if bcc is not None:
-        msg["bcc"] = ",".join(bcc)
+        msg["Bcc"] = ",".join(bcc)
     # Add body
     body = MIMEText(html, "html")
     msg.attach(body)
