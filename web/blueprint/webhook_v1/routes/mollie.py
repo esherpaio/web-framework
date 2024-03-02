@@ -48,8 +48,7 @@ def mollie_payment() -> Response:
                 mail.trigger_events(
                     s,
                     MailEvent.ORDER_PAID,
-                    order=order,
-                    invoice=invoice,
+                    order_id=order.id,
                     billing_email=order.billing.email,
                 )
 

@@ -41,8 +41,8 @@ def create_refund(
     mail.trigger_events(
         s,
         MailEvent.ORDER_REFUNDED,
-        order=order,
-        refund=refund,
+        order_id=order.id,
+        refund_id=refund.id,
         billing_email=order.billing.email,
     )
 

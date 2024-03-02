@@ -1,7 +1,7 @@
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 
 from web.config import config
-from web.database.model import Invoice, Order, Refund
+from web.database.model import Order, Refund
 from web.document.object import gen_invoice, gen_refund
 from web.i18n import _
 from web.libs.utils import remove_file
@@ -30,24 +30,27 @@ def mail_order_received(
 
 def mail_order_paid(
     s: Session,
-    order: Order,
-    invoice: Invoice,
+    order_id: int,
     billing_email: str,
     **kwargs,
 ) -> bool:
+    # Generate invoice
+    order = (
+        s.query(Order).options(joinedload(Order.invoice)).filter_by(id=order_id).one()
+    )
+    pdf_name, pdf_path = gen_invoice(s, order, order.invoice)
+    remove_file(pdf_path, delay_s=20)
+    # Generate and send email
     subject = _(
-        "MAIL_ORDER_SUBJECT", business_name=config.BUSINESS_NAME, order_id=order.id
+        "MAIL_ORDER_SUBJECT", business_name=config.BUSINESS_NAME, order_id=order_id
     )
     html = render_email(
-        title=_("MAIL_ORDER_TITLE", order_id=order.id),
+        title=_("MAIL_ORDER_TITLE", order_id=order_id),
         paragraphs=[_("MAIL_ORDER_PAID_P1"), _("MAIL_ORDER_PAID_P2")],
     )
-    pdf_name, pdf_path = gen_invoice(s, order, invoice)
-    result = send_email(
+    return send_email(
         subject, html, to=[billing_email], blob_path=pdf_path, blob_name=pdf_name
     )
-    remove_file(pdf_path)
-    return result
 
 
 def mail_order_shipped(
@@ -75,21 +78,26 @@ def mail_order_shipped(
 
 def mail_order_refunded(
     s: Session,
-    order: Order,
-    refund: Refund,
+    order_id: int,
+    refund_id: int,
     billing_email: str,
     **kwargs,
 ) -> bool:
+    # Generate refund
+    order = (
+        s.query(Order).options(joinedload(Order.invoice)).filter_by(id=order_id).one()
+    )
+    refund = s.query(Refund).filter_by(id=refund_id).one()
+    pdf_name, pdf_path = gen_refund(s, order, order.invoice, refund)
+    remove_file(pdf_path, delay_s=20)
+    # Generate and send email
     subject = _(
-        "MAIL_ORDER_SUBJECT", business_name=config.BUSINESS_NAME, order_id=order.id
+        "MAIL_ORDER_SUBJECT", business_name=config.BUSINESS_NAME, order_id=order_id
     )
     html = render_email(
-        title=_("MAIL_ORDER_TITLE", order_id=order.id),
+        title=_("MAIL_ORDER_TITLE", order_id=order_id),
         paragraphs=[_("MAIL_ORDER_REFUNDED_P1"), _("MAIL_ORDER_REFUNDED_P2")],
     )
-    pdf_name, pdf_path = gen_refund(s, order, order.invoice, refund)
-    result = send_email(
+    return send_email(
         subject, html, to=[billing_email], blob_path=pdf_path, blob_name=pdf_name
     )
-    remove_file(pdf_path)
-    return result
