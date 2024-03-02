@@ -2,22 +2,18 @@ include .env
 export
 
 ## TESTING
-## ----------
-## test : run testers
+##
+## test: run pytest
 .PHONY: test
 test:
 	pytest .
 
 ## MIGRATIONS
-## ----------
-## migrations : create migrations
-.PHONY: migrations
+##
+## migrations: create migrations
+## migrate: run migrations
+.PHONY: migrations migrate
 migrations:
 	alembic revision --autogenerate -m ""
-
-## MIGRATE
-## ----------
-## migrate : run migrations
-.PHONY: migrate
 migrate:
 	alembic upgrade head
