@@ -1,4 +1,3 @@
-import email.utils
 import logging
 import smtplib
 from email.message import EmailMessage
@@ -58,7 +57,6 @@ class SMTPHandler(_SMTPHandler):
             msg["From"] = self.fromaddr
             msg["To"] = ",".join(self.toaddrs)
             msg["Subject"] = self.getSubject(record)
-            msg["Date"] = email.utils.localtime()
             msg.set_content(self.format(record))
             # Send email
             port = self.mailport or smtplib.SMTP_PORT
