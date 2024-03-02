@@ -71,9 +71,17 @@ class Mail(metaclass=Singleton):
                 result = False
             if _email is None:
                 user_id = current_user.id if current_user else None
-                _email = Email(event_id=event_id, data=kwargs, user_id=user_id)
+                _email = Email(
+                    event_id=event_id,
+                    data=kwargs,
+                    user_id=user_id,
+                    status_id=EmailStatusId.QUEUED,
+                )
                 s.add(_email)
-            _email.status_id = EmailStatusId.SENT if result else EmailStatusId.FAILED
+            if result:
+                _email.status_id = EmailStatusId.SENT
+            else:
+                _email.status_id = EmailStatusId.FAILED
             s.flush()
 
 
