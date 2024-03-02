@@ -6,9 +6,7 @@ from web.api.utils import ApiText, response
 from web.blueprint.webhook_v1 import webhook_v1_bp
 from web.database.client import conn
 from web.database.model import Invoice, Order, OrderStatusId
-from web.document.object import gen_invoice
 from web.ext.mollie import Mollie
-from web.libs.utils import remove_file
 from web.mail import MailEvent, mail
 
 
@@ -47,15 +45,12 @@ def mollie_payment() -> Response:
                 )
                 s.add(invoice)
                 s.flush()
-                _, pdf_path = gen_invoice(s, order, invoice)
                 mail.trigger_events(
                     s,
                     MailEvent.ORDER_PAID,
-                    order_id=order.id,
+                    order=order,
+                    invoice=invoice,
                     billing_email=order.billing.email,
-                    invoice_number=invoice.number,
-                    pdf_path=pdf_path,
                 )
-                remove_file(pdf_path)
 
     return response()

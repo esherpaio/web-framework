@@ -46,9 +46,9 @@ def gen_refund(
             layout = SingleColumnLayout(page, margin, margin)
         layout.add(table)
 
-    pdf_base = _("PDF_REFUND_FILENAME", refund_number=refund.number)
-    pdf_path = save_pdf(pdf, pdf_base)
-    return pdf_base, pdf_path
+    pdf_name = _("PDF_REFUND_FILENAME", refund_number=refund.number)
+    pdf_path = save_pdf(pdf, pdf_name)
+    return pdf_name, pdf_path
 
 
 def _build_refund_info(

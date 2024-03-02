@@ -8,10 +8,9 @@ from sqlalchemy.orm import Session
 from web.api.utils import ApiText, response
 from web.config import config
 from web.database.model import Cart, Order, Refund, User, Verification
-from web.document.object import gen_refund
 from web.ext.mollie import Mollie, mollie_amount
 from web.libs.cart import get_shipment_methods
-from web.libs.utils import none_attrgetter, remove_file
+from web.libs.utils import none_attrgetter
 from web.mail.base import MailEvent, mail
 
 
@@ -39,16 +38,13 @@ def create_refund(
     s.flush()
 
     # Send email
-    _, pdf_path = gen_refund(s, order, order.invoice, refund)
     mail.trigger_events(
         s,
         MailEvent.ORDER_REFUNDED,
-        order_id=order.id,
+        order=order,
+        refund=refund,
         billing_email=order.billing.email,
-        refund_number=refund.number,
-        pdf_path=pdf_path,
     )
-    remove_file(pdf_path)
 
 
 def authorize_cart(s: Session, data: dict) -> Cart:  # type: ignore

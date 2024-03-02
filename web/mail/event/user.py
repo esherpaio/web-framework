@@ -1,9 +1,12 @@
+from sqlalchemy.orm import Session
+
 from web.config import config
 from web.i18n import _
 from web.mail.utils import render_email, send_email
 
 
 def mail_user_verification(
+    s: Session,
     email: str,
     verification_url: str,
     **kwargs,
@@ -21,6 +24,7 @@ def mail_user_verification(
 
 
 def mail_user_password(
+    s: Session,
     email: str,
     reset_url: str,
     **kwargs,

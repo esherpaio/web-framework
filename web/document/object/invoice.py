@@ -45,9 +45,9 @@ def gen_invoice(
             layout = SingleColumnLayout(page, margin, margin)
         layout.add(table)
 
-    pdf_base = _("PDF_INVOICE_FILENAME", invoice_number=invoice.number)
-    pdf_path = save_pdf(pdf, pdf_base)
-    return pdf_base, pdf_path
+    pdf_name = _("PDF_INVOICE_FILENAME", invoice_number=invoice.number)
+    pdf_path = save_pdf(pdf, pdf_name)
+    return pdf_name, pdf_path
 
 
 def _build_order_info(

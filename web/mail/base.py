@@ -65,7 +65,7 @@ class Mail(metaclass=Singleton):
     ) -> None:
         for event in cls.get_events(event_id):
             try:
-                result = event(**kwargs)
+                result = event(s, **kwargs)
             except Exception:
                 log.error(f"Error sending {config.EMAIL_METHOD} email", exc_info=True)
                 result = False
