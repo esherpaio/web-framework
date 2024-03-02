@@ -1,6 +1,6 @@
 from web.database.model import OrderStatus
 from web.database.seed import order_status_seeds
-from web.seeder import Syncer
+from web.syncer import Syncer
 
 
 class OrderStatusSyncer(Syncer):

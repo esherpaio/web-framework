@@ -1,4 +1,3 @@
-from abc import ABCMeta, abstractmethod
 from typing import Any, Type
 
 from sqlalchemy.orm import Session
@@ -13,15 +12,18 @@ class Syncer:
 
     @classmethod
     def sync(cls, s: Session) -> None:
+        cls.sync_model(s)
+
+    @classmethod
+    def sync_model(cls, s: Session) -> None:
         for seed in cls.SEEDS:
             filters = {cls.KEY: getattr(seed, cls.KEY)}
             row = s.query(cls.MODEL).filter_by(**filters).first()
-            if not row:
+            if row:
+                for key, value in seed.__dict__.items():
+                    if key.startswith("_") or key == cls.KEY:
+                        continue
+                    setattr(row, key, value)
+            else:
                 s.add(seed)
-                s.flush()
-
-
-class Seeder(metaclass=ABCMeta):
-    @abstractmethod
-    def seed(self, s: Session, count: int = 1) -> None:
-        pass
+            s.flush()

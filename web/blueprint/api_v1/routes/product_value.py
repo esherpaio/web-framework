@@ -8,8 +8,8 @@ from web.database import conn
 from web.database.model import ProductValue, Sku, SkuDetail, UserRoleLevel
 from web.libs.auth import access_control
 from web.libs.parse import gen_slug
-from web.seeder import sync_after
-from web.seeder.seed import SkuSyncer
+from web.syncer import sync_after
+from web.syncer.object import SkuSyncer
 
 #
 # Configuration

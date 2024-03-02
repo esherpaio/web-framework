@@ -1,6 +1,6 @@
 from web.database.model import ProductType
 from web.database.seed import product_type_seeds
-from web.seeder import Syncer
+from web.syncer import Syncer
 
 
 class ProductTypeSyncer(Syncer):

@@ -1,3 +1,4 @@
+from .app_setting import AppSettingSyncer
 from .country import CountrySyncer
 from .currency import CurrencySyncer
 from .email_status import EmailStatusSyncer
@@ -11,6 +12,7 @@ from .static import StaticSeed, StaticSyncer, StaticType
 from .user_role import UserRoleSyncer
 
 __all__ = [
+    "AppSettingSyncer",
     "CountrySyncer",
     "CurrencySyncer",
     "EmailStatusSyncer",

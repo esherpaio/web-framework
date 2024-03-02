@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 from web.database.model import Currency
 from web.database.seed import currency_seeds
 from web.libs.logger import log
-from web.seeder import Syncer, external_seed
+from web.syncer import Syncer, external_sync
 
 
 class CurrencySyncer(Syncer):
@@ -15,7 +15,7 @@ class CurrencySyncer(Syncer):
     SEEDS = currency_seeds
 
     @classmethod
-    @external_seed
+    @external_sync
     def sync(cls, s: Session) -> None:
         # Insert seeds
         super().sync(s)

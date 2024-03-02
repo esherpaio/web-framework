@@ -56,16 +56,23 @@ class Mail(metaclass=Singleton):
         return events
 
     @classmethod
-    def trigger_events(cls, s: Session, event_id: MailEvent | str, **kwargs) -> None:
+    def trigger_events(
+        cls,
+        s: Session,
+        event_id: MailEvent | str,
+        _email: Email | None = None,
+        **kwargs,
+    ) -> None:
         for event in cls.get_events(event_id):
-            email = Email(event_id=event_id, data=kwargs, user_id=current_user.id)
             try:
                 result = event(**kwargs)
             except Exception:
                 log.error(f"Error sending {config.EMAIL_METHOD} email", exc_info=True)
                 result = False
-            email.status_id = EmailStatusId.SENT if result else EmailStatusId.FAILED
-            s.add(email)
+            if _email is None:
+                _email = Email(event_id=event_id, data=kwargs, user_id=current_user.id)
+                s.add(_email)
+            _email.status_id = EmailStatusId.SENT if result else EmailStatusId.FAILED
             s.flush()
 
 

@@ -4,12 +4,12 @@ from werkzeug import Response
 
 from web.config import config
 from web.database.client import conn
-from web.seeder import Syncer
+from web.syncer import Syncer
 
 
-def external_seed(f: Callable) -> Callable[..., None]:
+def external_sync(f: Callable) -> Callable[..., None]:
     def wrap(*args, **kwargs) -> None:
-        if not config.APP_SEED_EXT:
+        if not config.APP_SYNC_EXT:
             return
         return f(*args, **kwargs)
 
