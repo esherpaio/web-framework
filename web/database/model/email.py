@@ -15,7 +15,7 @@ class Email(Base):
     status_id = MC(
         ForeignKey("email_status.id", ondelete="RESTRICT"),
         nullable=False,
-        server_default=str(EmailStatusId.QUEUED),
+        default=EmailStatusId.QUEUED,
     )
     user_id = MC(ForeignKey("user.id", ondelete="SET NULL"))
 

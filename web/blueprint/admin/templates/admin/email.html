@@ -5,7 +5,7 @@
             event.preventDefault();
             updateButton('test-email', 1);
             await postEmails({
-                event_id: "website.mass",
+                event_id: "website.bulk",
                 data: {
                     emails: [document.getElementById('email-email').value],
                     subject: document.getElementById('email-subject').value,
@@ -19,14 +19,14 @@
             event.preventDefault();
             updateButton('send-email', 1);
             await postEmails({
-                event_id: "website.mass",
+                event_id: "website.bulk",
                 data: {
                     subject: document.getElementById('email-subject').value,
                     html: htmlEditor.root.innerHTML,
                 },
             });
             updateButton('send-email', -1);
-            showMessage("The mass email has been sent.");
+            showMessage("The bulk email has been sent.");
         }
     </script>
 

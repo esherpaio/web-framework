@@ -14,8 +14,8 @@ def email() -> str:
     offset = (limit * page) - limit
 
     with conn.begin() as s:
-        count = s.query(Email).filter(Email.event_id == MailEvent.WEBSITE_MASS).count()
-        emails = s.query(Email).filter(Email.event_id == MailEvent.WEBSITE_MASS).all()
+        count = s.query(Email).filter(Email.event_id == MailEvent.WEBSITE_BULK).count()
+        emails = s.query(Email).filter(Email.event_id == MailEvent.WEBSITE_BULK).all()
 
     pagination = get_pages(offset, limit, count)
     return render_template(

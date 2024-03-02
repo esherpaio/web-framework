@@ -41,6 +41,7 @@ def create_refund(
     # Send email
     _, pdf_path = gen_refund(s, order, order.invoice, refund)
     mail.trigger_events(
+        s,
         MailEvent.ORDER_REFUNDED,
         order_id=order.id,
         billing_email=order.billing.email,
@@ -83,6 +84,7 @@ def recover_user_password(s: Session, user: User) -> None:
         _external=True,
     )
     mail.trigger_events(
+        s,
         MailEvent.USER_REQUEST_PASSWORD,
         email=user.email,
         reset_url=reset_url,

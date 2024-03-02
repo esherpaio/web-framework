@@ -4,6 +4,7 @@ export
 ## RUN
 ## ----------
 ## RUN : run the project
+.PHONY: run run_reload
 run:
 	flask run --debug --port=5000 --no-reload
 run_reload:
@@ -12,11 +13,13 @@ run_reload:
 ## MIGRATIONS
 ## ----------
 ## migrations : create migrations
+.PHONY: migrations
 migrations:
 	alembic revision --autogenerate -m ""
 
 ## MIGRATE
 ## ----------
 ## migrate : run migrations
+.PHONY: migrate
 migrate:
 	alembic upgrade head

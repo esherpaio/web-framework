@@ -46,7 +46,7 @@ def mail_contact_customer(
     return send_email(subject, html, to=[email])
 
 
-def mail_mass(
+def mail_bulk(
     emails: list[str],
     subject: str,
     html: str,

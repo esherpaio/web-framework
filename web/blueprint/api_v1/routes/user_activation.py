@@ -49,6 +49,7 @@ def post_users_id_activation(user_id: int) -> Response:
             _external=True,
         )
         mail.trigger_events(
+            s,
             MailEvent.USER_REQUEST_VERIFICATION,
             email=user.email,
             verification_url=verification_url,

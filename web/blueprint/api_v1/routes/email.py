@@ -1,13 +1,12 @@
 from enum import StrEnum
 
-from flask_login import current_user
 from sqlalchemy import null, true
 from werkzeug import Response
 
 from web.api.utils import json_get, response
 from web.blueprint.api_v1 import api_v1_bp
 from web.database import conn
-from web.database.model import Email, EmailStatusId, User
+from web.database.model import User
 from web.i18n import _
 from web.mail import MailEvent, mail
 
@@ -32,22 +31,20 @@ def post_emails() -> Response:
     data, _ = json_get("data", dict, default={})
 
     with conn.begin() as s:
-        email = Email(event_id=event_id, data=data, user_id=current_user.id)
-        s.add(email)
-        s.flush()
-        if event_id == MailEvent.WEBSITE_MASS and "emails" not in data:
-            data["emails"] = set(
-                user.email
-                for user in s.query(User)
+        # Inject emails for bulk email
+        if event_id == MailEvent.WEBSITE_BULK and "emails" not in data:
+            users = (
+                s.query(User)
                 .filter(
                     User.is_active == true(),
-                    User.allow_mass_email == true(),
+                    User.bulk_email == true(),
                     User.email != null(),
                 )
                 .all()
             )
-        if mail.trigger_events(event_id, **data):
-            email.status_id = EmailStatusId.SENT
+            data["emails"] = set(user.email for user in users)
+        # Trigger email events
+        mail.trigger_events(s, event_id, **data)
 
     return response(200, Text.CONTACT_SUCCESS)
 
