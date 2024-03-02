@@ -250,6 +250,7 @@ class FlaskWeb:
                     Email.created_at > datetime.utcnow() - timedelta(weeks=1),
                     Email.status_id.in_([EmailStatusId.QUEUED, EmailStatusId.FAILED]),
                 )
+                .order_by(Email.id.asc())
                 .all()
             )
             if not emails:
