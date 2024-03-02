@@ -63,6 +63,7 @@ class FlaskWeb:
         accept_request_auth: bool = False,
         mail_events: dict[MailEvent | str, list[Callable]] | None = None,
         syncers: list[Type[Syncer]] | None = None,
+        db_hook: Callable | None = None,
         cache_hook: Callable | None = None,
     ) -> None:
         if jinja_filter_hooks is None:
@@ -82,6 +83,7 @@ class FlaskWeb:
         self._accept_request_auth = accept_request_auth
         self._mail_events = mail_events
         self._syncers = syncers
+        self._db_hook = db_hook
         self._cache_hook = cache_hook
 
         self._cached_at: datetime = datetime.utcnow()
@@ -191,6 +193,11 @@ class FlaskWeb:
                     f"Failed to run startup script {func.__name__}",
                     exc_info=True,
                 )
+
+        # Run database hook
+        if self._db_hook is not None:
+            log.info("Running database hook")
+            self._db_hook()
 
     def setup_redirects(self) -> None:
         # Register Flask hooks
