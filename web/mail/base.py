@@ -70,7 +70,8 @@ class Mail(metaclass=Singleton):
                 log.error(f"Error sending {config.EMAIL_METHOD} email", exc_info=True)
                 result = False
             if _email is None:
-                _email = Email(event_id=event_id, data=kwargs, user_id=current_user.id)
+                user_id = current_user.id if current_user else None
+                _email = Email(event_id=event_id, data=kwargs, user_id=user_id)
                 s.add(_email)
             _email.status_id = EmailStatusId.SENT if result else EmailStatusId.FAILED
             s.flush()
