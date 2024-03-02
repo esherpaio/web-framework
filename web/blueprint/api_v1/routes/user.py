@@ -35,14 +35,14 @@ class UserAPI(API):
         User.email,
         User.billing_id,
         User.shipping_id,
-        User.allow_mass_email,
+        User.bulk_email,
         "password",
         "password_eval",
     }
     patch_columns = {
         User.billing_id,
         User.shipping_id,
-        User.allow_mass_email,
+        User.bulk_email,
     }
     get_filters = {
         User.email,
@@ -54,7 +54,7 @@ class UserAPI(API):
         User.email,
         User.billing_id,
         User.shipping_id,
-        User.allow_mass_email,
+        User.bulk_email,
     }
 
 

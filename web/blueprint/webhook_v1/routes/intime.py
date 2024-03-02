@@ -197,6 +197,7 @@ def intime_orders_id_update_tracking(order_id: str) -> Response:
         # Send emails
         if has_updated:
             mail.trigger_events(
+                s,
                 MailEvent.ORDER_SHIPPED,
                 order_id=order.id,
                 shipment_url=url,

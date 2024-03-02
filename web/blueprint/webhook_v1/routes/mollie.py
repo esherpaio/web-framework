@@ -49,6 +49,7 @@ def mollie_payment() -> Response:
                 s.flush()
                 _, pdf_path = gen_invoice(s, order, invoice)
                 mail.trigger_events(
+                    s,
                     MailEvent.ORDER_PAID,
                     order_id=order.id,
                     billing_email=order.billing.email,

@@ -16,7 +16,7 @@ from web.libs.logger import log
 
 
 class MailMethod(StrEnum):
-    SMTP = "smtp"
+    SMTP = "SMTP"
 
 
 #
@@ -52,19 +52,15 @@ def send_email(
     if bcc is not None:
         bcc = list(set(bcc))
     # Send email
-    if not config.EMAIL_METHOD:
-        log.error("Cannot send email, no valid method configured")
-        return False
-    try:
-        if config.EMAIL_METHOD == MailMethod.SMTP:
-            _send_smtp(subject, html, to, reply_to, cc, bcc, blob_path, blob_name)
-    except Exception:
-        log.error(f"Error sending {config.EMAIL_METHOD} email", exc_info=True)
+    if config.EMAIL_METHOD == MailMethod.SMTP:
+        _send_email_smtp(subject, html, to, reply_to, cc, bcc, blob_path, blob_name)
+    else:
+        log.error(f"Cannot send email, unknown method {config.EMAIL_METHOD}".strip())
         return False
     return True
 
 
-def _send_smtp(
+def _send_email_smtp(
     subject: str,
     html: str,
     to: list[str] | None = None,

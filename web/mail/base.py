@@ -1,12 +1,17 @@
 from enum import StrEnum
 from typing import Callable
 
+from flask_login import current_user
+from sqlalchemy.orm import Session
+
+from web.config import config
+from web.database.model import Email, EmailStatusId
 from web.libs.logger import log
 from web.libs.utils import Singleton
 from web.mail.event import (
+    mail_bulk,
     mail_contact_business,
     mail_contact_customer,
-    mail_mass,
     mail_order_paid,
     mail_order_received,
     mail_order_refunded,
@@ -28,7 +33,7 @@ class MailEvent(StrEnum):
     USER_REQUEST_PASSWORD = "user.request_password"
     USER_REQUEST_VERIFICATION = "user.request_verification"
     WEBSITE_CONTACT = "website.contact"
-    WEBSITE_MASS = "website.mass"
+    WEBSITE_BULK = "website.bulk"
 
 
 class Mail(metaclass=Singleton):
@@ -40,7 +45,7 @@ class Mail(metaclass=Singleton):
         MailEvent.USER_REQUEST_PASSWORD: [mail_user_password],
         MailEvent.USER_REQUEST_VERIFICATION: [mail_user_verification],
         MailEvent.WEBSITE_CONTACT: [mail_contact_business, mail_contact_customer],
-        MailEvent.WEBSITE_MASS: [mail_mass],
+        MailEvent.WEBSITE_BULK: [mail_bulk],
     }
 
     @classmethod
@@ -51,9 +56,17 @@ class Mail(metaclass=Singleton):
         return events
 
     @classmethod
-    def trigger_events(cls, event_id: MailEvent | str, **kwargs) -> bool:
-        results = [event(**kwargs) for event in cls.get_events(event_id)]
-        return all(results)
+    def trigger_events(cls, s: Session, event_id: MailEvent | str, **kwargs) -> None:
+        for event in cls.get_events(event_id):
+            email = Email(event_id=event_id, data=kwargs, user_id=current_user.id)
+            try:
+                result = event(**kwargs)
+            except Exception:
+                log.error(f"Error sending {config.EMAIL_METHOD} email", exc_info=True)
+                result = False
+            email.status_id = EmailStatusId.SENT if result else EmailStatusId.FAILED
+            s.add(email)
+            s.flush()
 
 
 #

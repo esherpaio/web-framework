@@ -180,6 +180,7 @@ def set_order_lines(s: Session, data: dict, model: Order) -> None:
 
 def mail_order(s: Session, data: dict, model: Order) -> None:
     mail.trigger_events(
+        s,
         MailEvent.ORDER_RECEIVED,
         order_id=model.id,
         billing_email=model.billing.email,
