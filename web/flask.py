@@ -251,7 +251,7 @@ class FlaskWeb:
                 return
             log.info(f"Retrying {len(emails)} failed email events")
             for email in emails:
-                mail.trigger_events(s, email.event_id, **email.data)
+                mail.trigger_events(s, email.event_id, _email=email, **email.data)
 
     #
     # Locale
