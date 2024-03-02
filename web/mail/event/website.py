@@ -1,9 +1,12 @@
+from sqlalchemy.orm import Session
+
 from web.config import config
 from web.i18n import _
 from web.mail.utils import render_email, send_email
 
 
 def mail_contact_business(
+    s: Session,
     email: str,
     name: str,
     message: str,
@@ -31,6 +34,7 @@ def mail_contact_business(
 
 
 def mail_contact_customer(
+    s: Session,
     email: str,
     message: str,
     **kwargs,
@@ -47,6 +51,7 @@ def mail_contact_customer(
 
 
 def mail_bulk(
+    s: Session,
     emails: list[str],
     subject: str,
     html: str,
