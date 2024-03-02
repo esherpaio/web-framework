@@ -94,7 +94,8 @@ def _send_email_smtp(
         attachment.add_header("Content-Disposition", "attachment", filename=blob_name)
         msg.attach(attachment)
     # Send email
-    conn = SMTP_SSL(config.SMTP_HOST, port=config.SMTP_PORT, timeout=20)
+    timeout = 30 if config.APP_DEBUG else 10
+    conn = SMTP_SSL(config.SMTP_HOST, port=config.SMTP_PORT, timeout=timeout)
     conn.set_debuglevel(False)
     conn.login(config.SMTP_USERNAME, config.SMTP_PASSWORD)
     conn.send_message(msg)

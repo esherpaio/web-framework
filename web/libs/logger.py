@@ -62,7 +62,8 @@ class SMTPHandler(_SMTPHandler):
             msg.set_content(self.format(record))
             # Send email
             port = self.mailport or smtplib.SMTP_PORT
-            conn = SMTP_SSL(self.mailhost, port)
+            timeout = 30 if config.APP_DEBUG else 10
+            conn = SMTP_SSL(self.mailhost, port=port, timeout=timeout)
             if self.username and self.password:
                 conn.login(self.username, self.password)
             conn.send_message(msg, self.fromaddr, self.toaddrs)
@@ -84,7 +85,7 @@ def _get_logger(name: str) -> logging.Logger:
     stream = logging.StreamHandler()
     stream.setFormatter(AnsiFormatter())
     base.addHandler(stream)
-    if config.EMAIL_METHOD == "SMTP":
+    if config.EMAIL_METHOD == "SMTP" and config.EMAIL_ADMIN:
         smtp = SMTPHandler()
         base.addHandler(smtp)
     return base
