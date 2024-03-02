@@ -1,4 +1,3 @@
-import email.utils
 import os
 from email.mime.application import MIMEApplication
 from email.mime.multipart import MIMEMultipart
@@ -76,7 +75,6 @@ def _send_email_smtp(
     msg["From"] = config.EMAIL_FROM
     msg["Reply-To"] = reply_to or config.EMAIL_FROM
     msg["Subject"] = subject
-    msg["Date"] = email.utils.localtime()
     if to is not None:
         msg["To"] = ",".join(to)
     if cc is not None:
