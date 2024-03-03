@@ -83,7 +83,7 @@ def _get_logger(name: str) -> logging.Logger:
     stream = logging.StreamHandler()
     stream.setFormatter(AnsiFormatter())
     base.addHandler(stream)
-    if config.EMAIL_METHOD == "SMTP" and config.EMAIL_ADMIN:
+    if not config.APP_DEBUG and config.EMAIL_METHOD == "SMTP" and config.EMAIL_ADMIN:
         smtp = SMTPHandler()
         base.addHandler(smtp)
     return base
