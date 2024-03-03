@@ -26,8 +26,7 @@ def is_endpoint(endpoint: str) -> bool:
         current_app.url_map.iter_rules(endpoint)
     except KeyError:
         return False
-    else:
-        return True
+    return True
 
 
 def check_redirects() -> Response | None:
@@ -61,15 +60,13 @@ def handle_frontend_error(error: Exception) -> Response:
     # Parse error information
     if isinstance(error, HTTPException):
         code = error.code
-        if code is None:
-            level = logging.ERROR
-        elif 300 <= code <= 399 or code in [404, 405]:
-            level = logging.WARNING
-        else:
-            level = logging.ERROR
     else:
         code = None
+    # Determine log level
+    if code is None or code >= 500:
         level = logging.ERROR
+    else:
+        level = logging.WARNING
     # Log error and redirect
     info = ["Frontend error", f"HTTP {code} {request.method} {request.full_path}"]
     exc_info = True if level >= logging.ERROR else False
