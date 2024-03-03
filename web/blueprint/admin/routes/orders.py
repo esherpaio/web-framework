@@ -1,7 +1,4 @@
-import csv
-import os
-
-from flask import current_app, render_template, request, send_file
+from flask import render_template, request, send_file
 from sqlalchemy import or_
 from sqlalchemy.orm import contains_eager, joinedload
 from werkzeug import Response
@@ -161,71 +158,4 @@ def download_refund(order_id: int, refund_id: int) -> Response:
         pdf_path,
         as_attachment=True,
         download_name=pdf_name,
-    )
-
-
-@admin_bp.get("/admin/orders/<int:order_id>/export")
-def download_csv(order_id: int) -> Response:
-    with conn.begin() as s:
-        order_ = (
-            s.query(Order)
-            .options(
-                joinedload(Order.lines),
-                joinedload(Order.lines, OrderLine.sku),
-                joinedload(Order.lines, OrderLine.sku, Sku.product),
-                joinedload(Order.billing),
-                joinedload(Order.billing, Billing.country),
-                joinedload(Order.shipping),
-                joinedload(Order.shipping, Shipping.country),
-            )
-            .filter_by(id=order_id)
-            .first()
-        )
-
-    if not order_:
-        return response(404, ApiText.HTTP_404)
-
-    headers = [
-        "Name",
-        "Address",
-        "ZIP code",
-        "City",
-        "State",
-        "Country",
-        "Phone",
-        "Email",
-        "SKU",
-    ]
-
-    if not current_app.static_folder:
-        return response(404, ApiText.HTTP_404)
-    temp_dir = os.path.join(current_app.static_folder, "tmp")
-    csv_name = f"Order ID {order_id}.csv"
-    csv_path = os.path.join(temp_dir, csv_name)
-
-    with open(csv_path, "w") as file_:
-        writer = csv.writer(file_)
-        writer.writerow(headers)
-        order_name = f"{order_.shipping.first_name} {order_.shipping.last_name}"
-        order_products = ", ".join(
-            [f"{x.sku.product.name} ({x.sku.id})" for x in order_.lines]
-        )
-        writer.writerow(
-            [
-                order_name,
-                order_.shipping.address,
-                order_.shipping.zip_code,
-                order_.shipping.city,
-                order_.shipping.state,
-                order_.shipping.country.name,
-                order_.shipping.phone,
-                order_.shipping.email,
-                order_products,
-            ]
-        )
-
-    return send_file(
-        csv_path,
-        as_attachment=True,
-        download_name=csv_name,
     )
