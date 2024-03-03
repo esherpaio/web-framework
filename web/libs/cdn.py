@@ -1,9 +1,20 @@
 import os
 from ftplib import FTP, error_perm
-
-from _typeshed import SupportsRead
+from typing import Protocol, TypeVar
 
 from web.config import config
+
+#
+# Types
+#
+
+
+_T_co = TypeVar("_T_co", covariant=True)
+
+
+class SupportsRead(Protocol[_T_co]):
+    def read(self, __length: int = ...) -> _T_co: ...
+
 
 #
 # Functions
