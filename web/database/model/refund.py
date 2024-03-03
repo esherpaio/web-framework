@@ -5,14 +5,13 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import mapped_column as MC
 from sqlalchemy.orm import relationship, validates
 
-from ._base import Base
-from ._utils import default_price, type_json, val_number
+from ._base import Attribute, Base
+from ._utils import default_price, val_number
 
 
-class Refund(Base):
+class Refund(Base, Attribute):
     __tablename__ = "refund"
 
-    attributes = MC(type_json, nullable=False, server_default="{}")
     mollie_id = MC(String(64), unique=True)
     number = MC(String(16), nullable=False, unique=True)
     total_price = MC(default_price, nullable=False)

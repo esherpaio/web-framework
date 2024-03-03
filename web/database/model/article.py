@@ -7,17 +7,16 @@ from sqlalchemy.orm import relationship, validates
 
 from web.libs.utils import none_attrgetter
 
-from ._base import Base
-from ._utils import get_slug, type_json
+from ._base import Attribute, Base
+from ._utils import get_slug
 from .article_media import ArticleMedia
 
 
-class Article(Base):
+class Article(Base, Attribute):
     __tablename__ = "article"
 
-    attributes = MC(type_json, nullable=False, server_default="{}")
-    is_deleted = MC(Boolean, nullable=False, default=False)
-    is_visible = MC(Boolean, nullable=False, default=False)
+    is_deleted = MC(Boolean, nullable=False, default=False, server_default="false")
+    is_visible = MC(Boolean, nullable=False, default=False, server_default="false")
     name = MC(String(64), nullable=False)
     slug = MC(String(64), unique=True, nullable=False)
     summary = MC(String(64))

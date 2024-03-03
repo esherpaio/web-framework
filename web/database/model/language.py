@@ -12,7 +12,7 @@ class Language(Base):
     __tablename__ = "language"
 
     code = MC(String(2), nullable=False, unique=True)
-    in_sitemap = MC(Boolean, nullable=False, default=False)
+    in_sitemap = MC(Boolean, nullable=False, default=False, server_default="false")
     name = MC(String(64), nullable=False, unique=True)
 
     # Validation

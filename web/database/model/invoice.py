@@ -2,14 +2,12 @@ from sqlalchemy import DateTime, ForeignKey, String
 from sqlalchemy.orm import mapped_column as MC
 from sqlalchemy.orm import relationship
 
-from ._base import Base
-from ._utils import type_json
+from ._base import Attribute, Base
 
 
-class Invoice(Base):
+class Invoice(Base, Attribute):
     __tablename__ = "invoice"
 
-    attributes = MC(type_json, nullable=False, server_default="{}")
     expires_at = MC(DateTime())
     number = MC(String(16), nullable=False, unique=True)
     paid_at = MC(DateTime())

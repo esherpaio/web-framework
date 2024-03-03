@@ -5,19 +5,18 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import mapped_column as MC
 from sqlalchemy.orm import relationship, validates
 
-from ._base import Base
-from ._utils import get_lower, type_json, val_email
+from ._base import Attribute, Base
+from ._utils import get_lower, val_email
 from .user_role import UserRoleId
 
 
-class User(Base):
+class User(Base, Attribute):
     __tablename__ = "user"
 
     api_key = MC(String(64), unique=True)
-    attributes = MC(type_json, nullable=False, server_default="{}")
-    bulk_email = MC(Boolean, nullable=False, default=True)
+    bulk_email = MC(Boolean, nullable=False, default=True, server_default="true")
     email = MC(String(64), unique=True)
-    is_active = MC(Boolean, nullable=False, default=False)
+    is_active = MC(Boolean, nullable=False, default=False, server_default="false")
     password_hash = MC(String(256))
 
     billing_id = MC(ForeignKey("billing.id", ondelete="CASCADE"))

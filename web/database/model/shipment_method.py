@@ -11,10 +11,10 @@ from ._utils import default_price, val_number
 class ShipmentMethod(Base):
     __tablename__ = "shipment_method"
 
-    is_deleted = MC(Boolean, nullable=False, default=False)
+    is_deleted = MC(Boolean, nullable=False, default=False, server_default="false")
     name = MC(String(64), nullable=False)
-    phone_required = MC(Boolean, nullable=False, default=False)
-    unit_price = MC(default_price, nullable=False, default=0)
+    phone_required = MC(Boolean, nullable=False, default=False, server_default="false")
+    unit_price = MC(default_price, nullable=False, default=0, server_default="0")
 
     class_id = MC(ForeignKey("shipment_class.id", ondelete="RESTRICT"), nullable=False)
     zone_id = MC(ForeignKey("shipment_zone.id", ondelete="RESTRICT"), nullable=False)

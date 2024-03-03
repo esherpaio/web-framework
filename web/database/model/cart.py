@@ -12,9 +12,9 @@ from ._utils import default_price, default_vat, val_number
 class Cart(Base):
     __tablename__ = "cart"
 
-    shipment_price = MC(default_price, nullable=False, default=0)
-    vat_rate = MC(default_vat, nullable=False, default=1)
-    vat_reverse = MC(Boolean, nullable=False, default=False)
+    shipment_price = MC(default_price, nullable=False, default=0, server_default="0")
+    vat_rate = MC(default_vat, nullable=False, default=1, server_default="1")
+    vat_reverse = MC(Boolean, nullable=False, default=False, server_default="false")
 
     billing_id = MC(ForeignKey("billing.id", ondelete="RESTRICT"))
     coupon_id = MC(ForeignKey("coupon.id", ondelete="RESTRICT"))

@@ -15,7 +15,7 @@ class Coupon(Base):
 
     amount = MC(default_price)
     code = MC(String(32), nullable=False)
-    is_deleted = MC(Boolean, nullable=False, default=False)
+    is_deleted = MC(Boolean, nullable=False, default=False, server_default="false")
     rate = MC(default_rate)
 
     # Validation
