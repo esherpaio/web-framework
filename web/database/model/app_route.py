@@ -1,14 +1,12 @@
 from sqlalchemy import Boolean, String
 from sqlalchemy.orm import mapped_column as MC
 
-from ._base import Base
-from ._utils import type_json
+from ._base import Attribute, Base
 
 
-class AppRoute(Base):
+class AppRoute(Base, Attribute):
     __tablename__ = "app_route"
 
-    attributes = MC(type_json, nullable=False, server_default="{}")
     css_path = MC(String(128))
     description = MC(String(256))
     endpoint = MC(String(64), unique=True, nullable=False)

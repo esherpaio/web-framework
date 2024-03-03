@@ -7,6 +7,6 @@ from ._base import Base
 class ShipmentClass(Base):
     __tablename__ = "shipment_class"
 
-    is_deleted = MC(Boolean, nullable=False, default=False)
+    is_deleted = MC(Boolean, nullable=False, default=False, server_default="false")
     name = MC(String(64), nullable=False)
     order = MC(Integer)

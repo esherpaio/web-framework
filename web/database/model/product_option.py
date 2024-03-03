@@ -12,7 +12,7 @@ class ProductOption(Base):
     __tablename__ = "product_option"
     __table_args__ = (UniqueConstraint("product_id", "slug"),)
 
-    is_deleted = MC(Boolean, nullable=False, default=False)
+    is_deleted = MC(Boolean, nullable=False, default=False, server_default="false")
     name = MC(String(64), nullable=False)
     order = MC(Integer)
     slug = MC(String(64), nullable=False)

@@ -5,19 +5,18 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import mapped_column as MC
 from sqlalchemy.orm import relationship, validates
 
-from ._base import Base
-from ._utils import default_price, type_json, val_number
+from ._base import Attribute, Base
+from ._utils import default_price, val_number
 
 
-class Sku(Base):
+class Sku(Base, Attribute):
     __tablename__ = "sku"
 
-    attributes = MC(type_json, nullable=False, server_default="{}")
-    is_deleted = MC(Boolean, nullable=False, default=False)
-    is_visible = MC(Boolean, nullable=False, default=False)
+    is_deleted = MC(Boolean, nullable=False, default=False, server_default="false")
+    is_visible = MC(Boolean, nullable=False, default=False, server_default="false")
     number = MC(String(64), unique=True)
     slug = MC(String(128), unique=True, nullable=False)
-    stock = MC(Integer, nullable=False, default=0)
+    stock = MC(Integer, nullable=False, default=0, server_default="0")
     unit_price = MC(default_price, nullable=False)
 
     product_id = MC(ForeignKey("product.id", ondelete="RESTRICT"), nullable=False)

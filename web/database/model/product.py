@@ -7,20 +7,21 @@ from sqlalchemy.orm import relationship, validates
 
 from web.libs.utils import none_attrgetter
 
-from ._base import Base
-from ._utils import default_price, get_slug, type_json, val_number
+from ._base import Attribute, Base
+from ._utils import default_price, get_slug, val_number
 from .product_media import ProductMedia
 from .product_type import ProductTypeId
 
 
-class Product(Base):
+class Product(Base, Attribute):
     __tablename__ = "product"
 
-    attributes = MC(type_json, nullable=False, server_default="{}")
     file_url = MC(String(128))
-    is_deleted = MC(Boolean, nullable=False, default=False)
+    is_deleted = MC(Boolean, nullable=False, default=False, server_default="false")
     name = MC(String(64), nullable=False)
-    consent_required = MC(Boolean, nullable=False, default=False)
+    consent_required = MC(
+        Boolean, nullable=False, default=False, server_default="false"
+    )
     slug = MC(String(64), unique=True, nullable=False)
     summary = MC(String(64))
     unit_price = MC(default_price, nullable=False)

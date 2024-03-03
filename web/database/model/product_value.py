@@ -12,11 +12,11 @@ class ProductValue(Base):
     __tablename__ = "product_value"
     __table_args__ = (UniqueConstraint("option_id", "slug"),)
 
-    is_deleted = MC(Boolean, nullable=False, default=False)
+    is_deleted = MC(Boolean, nullable=False, default=False, server_default="false")
     name = MC(String(64), nullable=False)
     order = MC(Integer)
     slug = MC(String(64), nullable=False)
-    unit_price = MC(default_price, nullable=False, default=0)
+    unit_price = MC(default_price, nullable=False, default=0, server_default="0")
 
     media_id = MC(ForeignKey("product_media.id", ondelete="SET NULL"))
     option_id = MC(ForeignKey("product_option.id", ondelete="CASCADE"), nullable=False)

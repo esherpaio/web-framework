@@ -4,15 +4,14 @@ from sqlalchemy import Boolean, Integer, String
 from sqlalchemy.orm import mapped_column as MC
 from sqlalchemy.orm import relationship, validates
 
-from ._base import Base
-from ._utils import get_slug, type_json
+from ._base import Attribute, Base
+from ._utils import get_slug
 
 
-class Category(Base):
+class Category(Base, Attribute):
     __tablename__ = "category"
 
-    attributes = MC(type_json, nullable=False, server_default="{}")
-    is_deleted = MC(Boolean, nullable=False, default=False)
+    is_deleted = MC(Boolean, nullable=False, default=False, server_default="false")
     name = MC(String(64), nullable=False, unique=True)
     order = MC(Integer)
     slug = MC(String(64), nullable=False, unique=True)
