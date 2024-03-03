@@ -46,12 +46,6 @@
                             Download invoice
                         </a>
                     {% endif %}
-                    {% if order.invoice %}
-                        <a class="btn btn-primary"
-                           href="{{ url_for('admin.download_csv', order_id=order.id) }}">
-                            Download CSV
-                        </a>
-                    {% endif %}
                     {% if order.next_statuses %}
                         <button class="btn btn-primary"
                                 data-bs-toggle="modal"
