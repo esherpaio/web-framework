@@ -63,7 +63,7 @@ def handle_frontend_error(error: Exception) -> Response:
         code = error.code
         if code is None:
             level = logging.ERROR
-        elif 300 <= code <= 399 or code == 404:
+        elif 300 <= code <= 399 or code in [404, 405]:
             level = logging.WARNING
         else:
             level = logging.ERROR
