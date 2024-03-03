@@ -29,9 +29,9 @@ class Packer:
                     file_.write(compiled)
                 log.info(f"Saved bundle to {out_path}")
             if save_cdn:
-                file_ = io.BytesIO(bytes_)  # type: ignore
+                fileb = io.BytesIO(bytes_)
                 cdn_path = os.path.join("static", f"{hash_}{bundle.OUT_EXT}")
-                cdn.upload(file_, cdn_path)
+                cdn.upload(fileb, cdn_path)
                 cdn_url = cdn.url(cdn_path)
                 log.info(f"Uploaded bundle to {cdn_url}")
         return out_path, cdn_path

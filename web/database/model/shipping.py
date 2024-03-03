@@ -56,7 +56,7 @@ class Shipping(Base):
     def full_name(self) -> str:
         return f"{self.first_name} {self.last_name}"
 
-    @full_name.expression  # type: ignore
+    @full_name.expression  # type: ignore[no-redef]
     def full_name(cls):
         return func.concat(cls.first_name, " ", cls.last_name)
 
