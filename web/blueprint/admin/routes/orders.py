@@ -42,7 +42,7 @@ def orders() -> str:
         filters.append(
             or_(
                 Shipment.url.ilike(f"%{search}%"),
-                Billing.full_name.ilike(f"%{search}%"),  # type: ignore
+                Billing.full_name.ilike(f"%{search}%"),  # type: ignore[attr-defined]
             )
         )
 

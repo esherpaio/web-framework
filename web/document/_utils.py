@@ -22,7 +22,7 @@ def save_pdf(pdf: Document, pdf_name: str) -> str:
     # Export PDF
     pdf_path = os.path.join(pdf_dir, pdf_name)
     with open(pdf_path, "wb") as file_:
-        PDF.dumps(file_, pdf)  # noqa
+        PDF.dumps(file_, pdf)
     # Return path
     return pdf_path
 
@@ -40,7 +40,7 @@ def cells_to_tables(
     cell_line_span = 0
     cell_line = []
     for cell in cells:
-        cell_line_span += cell._col_span  # noqa
+        cell_line_span += cell._col_span
         cell_line.append(cell)
         if cell_line_span % column_count == 0:
             cell_lines.append(cell_line)

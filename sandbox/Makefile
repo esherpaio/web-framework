@@ -17,6 +17,6 @@ run_reload:
 ## migrate: run migrations
 .PHONY: migrations migrate
 migrations:
-	alembic revision --autogenerate -m ""
+	alembic-autogen-check || alembic revision --autogenerate -m ""
 migrate:
 	alembic upgrade head

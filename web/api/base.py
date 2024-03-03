@@ -158,7 +158,7 @@ class API(Generic[B]):
         s.flush()
 
     @classmethod
-    def get(  # type: ignore
+    def get(
         cls,
         s: Session,
         id_: int | None,

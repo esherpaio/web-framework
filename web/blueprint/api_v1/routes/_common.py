@@ -47,7 +47,7 @@ def create_refund(
     )
 
 
-def authorize_cart(s: Session, data: dict) -> Cart:  # type: ignore
+def authorize_cart(s: Session, data: dict) -> Cart:
     cart_id = data["cart_id"]
     filters = {Cart.id == cart_id, Cart.user_id == current_user.id}
     cart = s.query(Cart).filter(*filters).first()
