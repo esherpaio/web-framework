@@ -1,4 +1,4 @@
-git+https://REDACTED@github.com/enlarge-online/python-pdf.git@v1.0.5
+git+https://REDACTED@github.com/esherpaio/python-pdf.git@v1.0.5
 alembic-autogen-check~=1.1.1
 alembic~=1.13.1
 djlint~=1.34.1
