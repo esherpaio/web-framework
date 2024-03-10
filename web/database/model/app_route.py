@@ -15,3 +15,4 @@ class AppRoute(Base, Attribute):
     js_path = MC(String(128))
     name = MC(String(64), nullable=False)
     robots = MC(String(256), nullable=False)
+    is_collection = MC(Boolean, nullable=False, default=False, server_default="false")
