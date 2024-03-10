@@ -174,12 +174,13 @@ class FlaskWeb:
             ProductTypeSyncer,
             UserRoleSyncer,
         ]
-        for syncer in default_syncers:
-            self._syncers.insert(0, syncer)
-        syncers = [*dict.fromkeys(self._syncers)]
-        log.info(f"Running {len(syncers)} syncers")
+        log.info(f"Running {len(default_syncers)} default syncers")
         with conn.begin() as s:
-            for syncer in syncers:
+            for syncer in default_syncers:
+                syncer.sync(s)
+        log.info(f"Running {len(self._syncers)} custom syncers")
+        with conn.begin() as s:
+            for syncer in self._syncers:
                 syncer.sync(s)
 
         # Run startup functions
