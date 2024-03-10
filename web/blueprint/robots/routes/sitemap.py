@@ -1,11 +1,12 @@
 import itertools
+from typing import Type
 
 from flask import Response, current_app, make_response, render_template
 from sqlalchemy.orm import joinedload
 
 from web.blueprint.robots import robots_bp
 from web.database import conn
-from web.database.model import Article, Sku
+from web.database.model import Article, Category, Sku
 from web.libs.app import is_endpoint
 from web.libs.cache import cache
 from web.libs.locale import gen_locale
@@ -49,43 +50,26 @@ def sitemap_pages() -> Response:
 
 @robots_bp.route("/sitemap-products.xml")
 def sitemap_products() -> Response:
-    with conn.begin() as s:
-        skus = (
-            s.query(Sku)
-            .options(joinedload(Sku.route))
-            .filter_by(is_deleted=False)
-            .order_by(Sku.slug)
-            .all()
-        )
-
-    iter_args = (
-        [x for x in cache.countries if x.in_sitemap],
-        [x for x in cache.languages if x.in_sitemap],
-    )
-
-    urls = []
-    for sku in skus:
-        if not is_endpoint(sku.route.endpoint):
-            continue
-        for country, language in itertools.product(*iter_args):
-            locale = gen_locale(language.code, country.code)
-            sitemap_ = SitemapUrl(sku.route.endpoint, _locale=locale, slug=sku.slug)
-            urls.append(sitemap_)
-
-    template = render_template("sitemap.xml", urls=urls)
-    response = make_response(str_to_xml(template))
-    response.headers["Content-Type"] = "application/xml"
-    return response
+    return _generate_sitemap(Sku)
 
 
 @robots_bp.route("/sitemap-articles.xml")
 def sitemap_articles() -> Response:
+    return _generate_sitemap(Article)
+
+
+@robots_bp.route("/sitemap-categories.xml")
+def sitemap_categories() -> Response:
+    return _generate_sitemap(Category)
+
+
+def _generate_sitemap(model: Type[Sku | Article | Category]) -> Response:
     with conn.begin() as s:
-        articles = (
-            s.query(Article)
-            .options(joinedload(Article.route))
+        objs = (
+            s.query(model)
+            .options(joinedload(model.route))
             .filter_by(is_deleted=False)
-            .order_by(Article.slug)
+            .order_by(model.slug)
             .all()
         )
 
@@ -95,12 +79,12 @@ def sitemap_articles() -> Response:
     )
 
     urls = []
-    for article in articles:
-        if not is_endpoint(article.route.endpoint):
+    for obj in objs:
+        if not obj.route or not is_endpoint(obj.route.endpoint):
             continue
         for country, language in itertools.product(*iter_args):
             locale = gen_locale(language.code, country.code)
-            sitemap_ = SitemapUrl(article.endpoint, _locale=locale, slug=article.slug)
+            sitemap_ = SitemapUrl(obj.route.endpoint, _locale=locale, slug=obj.slug)
             urls.append(sitemap_)
 
     template = render_template("sitemap.xml", urls=urls)
