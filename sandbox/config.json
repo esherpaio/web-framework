@@ -22,8 +22,6 @@
     "ENDPOINT_ORDER": null,
     "ENDPOINT_PASSWORD": null,
     "ENDPOINT_USER": null,
-    "ROBOT_DEFAULT_TAGS": "noindex, follow",
-    "ROBOT_DISALLOW_URLS": [],
     "SOCIAL_DISCORD": null,
     "SOCIAL_FACEBOOK": null,
     "SOCIAL_INSTAGRAM": null,

@@ -1,6 +1,6 @@
 from typing import Any
 
-from sqlalchemy import Boolean, String
+from sqlalchemy import Boolean, ForeignKey, String
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import mapped_column as MC
 from sqlalchemy.orm import relationship, validates
@@ -21,10 +21,13 @@ class Article(Base, Attribute):
     slug = MC(String(64), unique=True, nullable=False)
     summary = MC(String(64))
 
+    route_id = MC(ForeignKey("app_route.id", ondelete="SET NULL"))
+
     category_items = relationship("CategoryItem", back_populates="article")
     medias = relationship(
         "ArticleMedia", back_populates="article", order_by="ArticleMedia.order"
     )
+    route = relationship("AppRoute")
 
     # Validation
 

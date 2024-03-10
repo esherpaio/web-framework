@@ -3,6 +3,7 @@ from flask import Flask
 
 from web.blueprint.admin import admin_bp
 from web.blueprint.api_v1 import api_v1_bp
+from web.blueprint.robots import robots_bp
 from web.blueprint.webhook_v1 import webhook_v1_bp
 from web.database import conn
 from web.database.model import User, UserRoleId
@@ -29,7 +30,7 @@ def create_app() -> Flask:
     app.add_url_rule("/login", endpoint="login", view_func=view_login)
     FlaskWeb(
         app,
-        blueprints=[admin_bp, api_v1_bp, webhook_v1_bp],
+        blueprints=[robots_bp, admin_bp, api_v1_bp, webhook_v1_bp],
         accept_cookie_auth=True,
         accept_request_auth=True,
         syncers=[CurrencySyncer, RegionSyncer, CountrySyncer, SkuSyncer, UserSyncer],

@@ -20,9 +20,11 @@ class Sku(Base, Attribute):
     unit_price = MC(default_price, nullable=False)
 
     product_id = MC(ForeignKey("product.id", ondelete="RESTRICT"), nullable=False)
+    route_id = MC(ForeignKey("app_route.id", ondelete="SET NULL"))
 
     details = relationship("SkuDetail", back_populates="sku")
     product = relationship("Product")
+    route = relationship("AppRoute")
 
     # Validation
 
