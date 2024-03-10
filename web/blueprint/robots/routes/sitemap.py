@@ -100,7 +100,7 @@ def sitemap_articles() -> Response:
             continue
         for country, language in itertools.product(*iter_args):
             locale = gen_locale(language.code, country.code)
-            sitemap_ = SitemapUrl(article.endpoint, _locale=locale)
+            sitemap_ = SitemapUrl(article.endpoint, _locale=locale, slug=article.slug)
             urls.append(sitemap_)
 
     template = render_template("sitemap.xml", urls=urls)
