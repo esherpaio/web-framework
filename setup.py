@@ -9,6 +9,7 @@ DATA = [
     "blueprint/admin/templates/*",
     "blueprint/admin/templates/admin/*",
     "blueprint/admin/templates/admin/section/*",
+    "blueprint/robots/templates/*"
     "i18n/translation/*",
     "mail/template/*",
 ]
