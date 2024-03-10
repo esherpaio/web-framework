@@ -124,8 +124,6 @@ class Config(metaclass=Singleton):
         "WEBSITE_FAVICON_URL": ConfigVar("WEBSITE_FAVICON_URL"),
         "WEBSITE_LOGO_URL": ConfigVar("WEBSITE_LOGO_URL"),
         "WEBSITE_HEX_COLOR": ConfigVar("WEBSITE_HEX_COLOR"),
-        "ROBOT_DEFAULT_TAGS": ConfigVar("ROBOT_DEFAULT_TAGS"),
-        "ROBOT_DISALLOW_URLS": ConfigVar("ROBOT_DISALLOW_URLS"),
     }
 
     def __init__(self) -> None:

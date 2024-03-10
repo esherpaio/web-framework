@@ -70,8 +70,7 @@ class Meta:
     def title(self) -> str:
         if self._title:
             return f"{self._title} • {config.WEBSITE_NAME}"
-        else:
-            return config.WEBSITE_NAME
+        return config.WEBSITE_NAME
 
     @property
     def description(self) -> str | None:
@@ -81,8 +80,7 @@ class Meta:
     def image_url(self) -> str:
         if self._image_url:
             return self._image_url
-        else:
-            return config.WEBSITE_LOGO_URL
+        return config.WEBSITE_LOGO_URL
 
     @property
     def favicon_url(self) -> str:
@@ -96,8 +94,7 @@ class Meta:
     def robots(self) -> str:
         if isinstance(self._robots, str):
             return self._robots
-        else:
-            return config.ROBOT_DEFAULT_TAGS
+        return "noindex,follow"
 
     @property
     def canonical_url(self) -> str | None:

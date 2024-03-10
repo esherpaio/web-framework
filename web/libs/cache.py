@@ -29,7 +29,6 @@ class Cache(dict):
                     compressed = zlib.compress(response.encode())
                 except AttributeError:
                     log.warning(f"Cache could not compress: {request.full_path}")
-                    pass
                 else:
                     self[request.url] = compressed
                     log.info(f"Cache set: {request.full_path}")
