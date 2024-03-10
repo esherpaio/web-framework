@@ -129,6 +129,7 @@ def val_cart(s: Session, data: dict, model: Order) -> None:
                 abort(response(400, Text.PHONE_REQUIRED))
     # Check VAT required in Europe
     if cart.billing.company is not None:
+        # TODO(Stan): we should add "vat_required" to the country model
         if cart.billing.country.region.is_europe:
             if cart.billing.vat is None:
                 abort(response(400, Text.VAT_REQUIRED))
