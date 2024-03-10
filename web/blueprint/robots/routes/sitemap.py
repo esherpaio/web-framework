@@ -7,7 +7,7 @@ from sqlalchemy.orm import joinedload
 from web.blueprint.robots import robots_bp
 from web.database import conn
 from web.database.model import Article, Category, Sku
-from web.libs.app import is_endpoint
+from web.libs.app import has_argument, is_endpoint
 from web.libs.cache import cache
 from web.libs.locale import gen_locale
 from web.libs.parse import str_to_xml
@@ -37,10 +37,12 @@ def sitemap_pages() -> Response:
     for route in cache.routes:
         if not route.in_sitemap or not is_endpoint(route.endpoint):
             continue
-        for country, language in itertools.product(*iter_args):
-            locale = gen_locale(language.code, country.code)
-            sitemap_ = SitemapUrl(route.endpoint, _locale=locale)
-            urls.append(sitemap_)
+        if has_argument(route.endpoint, "_locale"):
+            for country, language in itertools.product(*iter_args):
+                locale = gen_locale(language.code, country.code)
+                urls.append(SitemapUrl(route.endpoint, _locale=locale))
+        else:
+            urls.append(SitemapUrl(route.endpoint))
 
     template = render_template("sitemap.xml", urls=urls)
     response = make_response(str_to_xml(template))
@@ -82,10 +84,13 @@ def _generate_sitemap(model: Type[Sku | Article | Category]) -> Response:
     for obj in objs:
         if not obj.route or not is_endpoint(obj.route.endpoint):
             continue
-        for country, language in itertools.product(*iter_args):
-            locale = gen_locale(language.code, country.code)
-            sitemap_ = SitemapUrl(obj.route.endpoint, _locale=locale, slug=obj.slug)
-            urls.append(sitemap_)
+        endpoint = obj.route.endpoint
+        if has_argument(endpoint, "_locale"):
+            for country, language in itertools.product(*iter_args):
+                locale = gen_locale(language.code, country.code)
+                urls.append(SitemapUrl(endpoint, _locale=locale, slug=obj.slug))
+        else:
+            urls.append(SitemapUrl(endpoint, slug=obj.slug))
 
     template = render_template("sitemap.xml", urls=urls)
     response = make_response(str_to_xml(template))

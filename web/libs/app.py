@@ -29,6 +29,17 @@ def is_endpoint(endpoint: str) -> bool:
     return True
 
 
+def has_argument(endpoint: str, arg: str) -> bool:
+    """Check if an endpoint has a specific argument."""
+    try:
+        for rule in current_app.url_map.iter_rules(endpoint):
+            if arg in rule.arguments:
+                return True
+    except KeyError:
+        pass
+    return False
+
+
 def check_redirects() -> Response | None:
     """Check if a redirect exists for the current request."""
     for x in cache.redirects:
