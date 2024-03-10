@@ -1,6 +1,6 @@
 from typing import Any
 
-from sqlalchemy import Boolean, Integer, String
+from sqlalchemy import Boolean, ForeignKey, Integer, String
 from sqlalchemy.orm import mapped_column as MC
 from sqlalchemy.orm import relationship, validates
 
@@ -16,9 +16,12 @@ class Category(Base, Attribute):
     order = MC(Integer)
     slug = MC(String(64), nullable=False, unique=True)
 
+    route_id = MC(ForeignKey("app_route.id", ondelete="SET NULL"))
+
     items = relationship(
         "CategoryItem", back_populates="category", order_by="CategoryItem.order"
     )
+    route = relationship("AppRoute")
 
     # Validations
 
