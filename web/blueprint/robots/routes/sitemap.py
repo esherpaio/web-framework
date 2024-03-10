@@ -35,7 +35,11 @@ def sitemap_pages() -> Response:
 
     urls = []
     for route in cache.routes:
-        if not route.in_sitemap or not is_endpoint(route.endpoint):
+        if (
+            route.is_collection
+            or not route.in_sitemap
+            or not is_endpoint(route.endpoint)
+        ):
             continue
         if has_argument(route.endpoint, "_locale"):
             for country, language in itertools.product(*iter_args):
@@ -82,7 +86,11 @@ def _generate_sitemap(model: Type[Sku | Article | Category]) -> Response:
 
     urls = []
     for obj in objs:
-        if not obj.route or not is_endpoint(obj.route.endpoint):
+        if (
+            not obj.route
+            or not obj.route.is_collection
+            or not is_endpoint(obj.route.endpoint)
+        ):
             continue
         endpoint = obj.route.endpoint
         if has_argument(endpoint, "_locale"):
