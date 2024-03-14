@@ -21,6 +21,7 @@ from ._common import authorize_cart, update_cart_shipment_methods
 
 class Text(StrEnum):
     CART_ITEM_ADDED = _("API_CART_ITEM_ADDED")
+    CART_ITEM_QUANTITY_ZERO = _("CART_ITEM_QUANTITY_ZERO")
 
 
 class CartItemAPI(API):
@@ -63,6 +64,7 @@ def patch_cart_id_items_id(cart_id: int, cart_item_id: int) -> Response:
     with conn.begin() as s:
         authorize_cart(s, data)
         model: CartItem = api.get(s, cart_item_id)
+        val_cart_item(s, data, model)
         api.update(s, data, model)
         set_cart(s, data, None)
         resource = api.gen_resource(s, model)
@@ -112,3 +114,8 @@ def set_cart(s: Session, data: dict, model: None) -> None:
     cart = s.query(Cart).filter(Cart.id == cart_id).first()
     if cart is not None:
         update_cart_shipment_methods(s, cart)
+
+
+def val_cart_item(s: Session, data: dict, model: None) -> None:
+    if "quantity" in data and data["quantity"] <= 0:
+        abort(response(400, Text.CART_ITEM_QUANTITY_ZERO))
