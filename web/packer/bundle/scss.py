@@ -11,5 +11,4 @@ class ScssBundle:
 
     def compile(self) -> str:
         scss = sass.compile(filename=self._in_path, output_style="compressed")
-        compiled = CssBundle._compile(scss)
-        return compiled
+        return CssBundle._compile(scss)
