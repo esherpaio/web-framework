@@ -20,7 +20,7 @@ class JsBundle(object):
                     continue
                 path = os.path.join(subdir, fn)
                 content = open(path, "r", encoding=self.ENCODING).read()
-                compiled += jsmin(content)
+                compiled += jsmin(content, keep_bang_comments=False)
                 compiled += "\n"
             if not self._follow_subdirs:
                 break
