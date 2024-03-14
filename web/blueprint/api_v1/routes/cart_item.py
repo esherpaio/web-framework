@@ -116,6 +116,6 @@ def set_cart(s: Session, data: dict, model: None) -> None:
         update_cart_shipment_methods(s, cart)
 
 
-def val_cart_item(s: Session, data: dict, model: None) -> None:
+def val_cart_item(s: Session, data: dict, model: CartItem) -> None:
     if "quantity" in data and data["quantity"] <= 0:
         abort(response(400, Text.CART_ITEM_QUANTITY_ZERO))
