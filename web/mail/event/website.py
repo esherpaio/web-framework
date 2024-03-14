@@ -1,3 +1,6 @@
+from datetime import datetime
+from zoneinfo import ZoneInfo
+
 from sqlalchemy.orm import Session
 
 from web.config import config
@@ -17,6 +20,9 @@ def mail_contact_business(
     subject = _(
         "MAIL_CONTACT_SUBJECT_BUSINESS", business_name=config.BUSINESS_NAME, name=name
     )
+    timestamp = datetime.now(ZoneInfo(config.BUSINESS_TIMEZONE)).strftime(
+        "%Y-%m-%d %H:%M:%S"
+    )
     html = render_email(
         title=_("MAIL_CONTACT_TITLE"),
         paragraphs=[
@@ -26,6 +32,7 @@ def mail_contact_business(
                 company=company,
                 email=email,
                 phone=phone,
+                timestamp=timestamp,
             ),
             _("MAIL_CONTACT_MESSAGE", message=message),
         ],
