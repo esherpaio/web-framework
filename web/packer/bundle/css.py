@@ -40,5 +40,5 @@ class CssBundle:
         # css = re.sub(r":\s*0(\.\d+([cm]m|e[mx]|in|p[ctx]))\s*;", r":\1;", css)
         # # strip css
         # css = css.strip()
-        rcssmin.cssmin(css, keep_bang_comments=False)
+        css = rcssmin.cssmin(css, keep_bang_comments=False)
         return css
