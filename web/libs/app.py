@@ -3,6 +3,7 @@ import logging
 from typing import Any
 
 from flask import current_app, redirect, request, url_for
+from sqlalchemy.orm.exc import NoResultFound
 from werkzeug import Response
 from werkzeug.exceptions import HTTPException
 from werkzeug.local import LocalProxy
@@ -71,6 +72,8 @@ def handle_frontend_error(error: Exception) -> Response:
     # Parse error information
     if isinstance(error, HTTPException):
         code = error.code
+    elif isinstance(error, NoResultFound):
+        code = 404
     else:
         code = None
     # Determine log level
