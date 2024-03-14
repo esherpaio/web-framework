@@ -2,7 +2,7 @@ git+https://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@github.com/esherpaio/python
 alembic-autogen-check~=1.1.1
 alembic~=1.13.1
 djlint~=1.34.1
-mypy==1.8.0
-pytest~=8.0.2
-ruff~=0.3.0
-setuptools~=69.1.1
+mypy==1.9.0
+pytest~=8.1.1
+ruff~=0.3.2
+setuptools~=69.2.0
