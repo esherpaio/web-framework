@@ -30,8 +30,10 @@ class Locale:
         """
         view_locale = get_route_locale()
         cookie_locale = request.cookies.get("locale")
-        locale = view_locale or cookie_locale or config.WEBSITE_LOCALE
-        return locale
+        website_locale = gen_locale(
+            config.WEBSITE_LANGUAGE_CODE, config.WEBSITE_COUNTRY_CODE
+        )
+        return view_locale or cookie_locale or website_locale
 
     @cached_property
     def locale_alt(self) -> str:

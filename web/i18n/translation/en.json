@@ -43,7 +43,7 @@
     "DATABASE_EMAIL_ERROR": "Please check your email address.",
     "DATABASE_PHONE_ERROR": "Please check your phone number.",
     "MAIL_CONTACT_CONFIRMATION": "We have received your message and will get back to you as soon as possible.",
-    "MAIL_CONTACT_DETAILS": "Name: %(name)s<br>Company: %(company)s<br>Email: %(email)s<br>Phone: %(phone)s",
+    "MAIL_CONTACT_DETAILS": "Name: %(name)s<br>Company: %(company)s<br>Email: %(email)s<br>Phone: %(phone)s<br>Date: %(timestamp)s",
     "MAIL_CONTACT_MESSAGE": "Message: %(message)s",
     "MAIL_CONTACT_SUBJECT_BUSINESS": "%(business_name)s Contact %(name)s",
     "MAIL_CONTACT_SUBJECT_CUSTOMER": "%(business_name)s Contact",
@@ -93,5 +93,5 @@
     "PDF_SUBTOTAL": "Subtotal",
     "PDF_TOTAL": "Total",
     "PDF_VAT_NUMBER": "VAT: %(vat)s",
-    "PDF_VAT_PERCENTAGE": "VAT %(vat_percentage)s%%",
+    "PDF_VAT_PERCENTAGE": "VAT %(vat_percentage)s%%"
 }
