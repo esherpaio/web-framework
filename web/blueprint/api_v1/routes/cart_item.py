@@ -21,7 +21,7 @@ from ._common import authorize_cart, update_cart_shipment_methods
 
 class Text(StrEnum):
     CART_ITEM_ADDED = _("API_CART_ITEM_ADDED")
-    CART_ITEM_QUANTITY_ZERO = _("CART_ITEM_QUANTITY_ZERO")
+    CART_ITEM_QUANTITY_ZERO = _("API_CART_ITEM_QUANTITY_ZERO")
 
 
 class CartItemAPI(API):
