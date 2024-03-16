@@ -1,5 +1,6 @@
+import xml.etree.ElementTree as ET
+
 import requests
-from bs4 import BeautifulSoup
 from requests import RequestException
 from sqlalchemy.orm import Session
 
@@ -31,18 +32,21 @@ class CurrencySyncer(Syncer):
         # Load currencies
         currencies = s.query(Currency).all()
 
-        # Get resource details
-        soup = BeautifulSoup(resource.text, features="xml")
-        elements = soup.find_all("Cube", currency=True, rate=True)
-        for element in elements:
-            try:
-                code = element["currency"]
-                rate = element["rate"]
-            except KeyError as error:
-                log.critical(error)
-                return
+        # Get resources data
+        data = []
+        tree = ET.ElementTree(ET.fromstring(resource.text))
+        for el in tree.iter():
+            if (
+                el.tag.endswith("Cube")
+                and "currency" in el.attrib
+                and "rate" in el.attrib
+            ):
+                code = el.attrib["currency"]
+                rate = el.attrib["rate"]
+                data.append((code, rate))
 
-            # Update currency
+        # Update currencies
+        for code, rate in data:
             currency = next((x for x in currencies if x.code == code), None)
             if currency:
                 currency.rate = rate
