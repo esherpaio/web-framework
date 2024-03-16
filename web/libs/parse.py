@@ -3,6 +3,8 @@ import urllib.parse
 from xml.dom import minidom
 from xml.dom.minidom import Node
 
+from phonenumbers.phonenumberutil import _is_viable_phone_number
+
 #
 # Validation
 #
@@ -13,7 +15,7 @@ def is_email(text: str) -> bool:
 
 
 def is_phone(text: str) -> bool:
-    return bool(re.match(r"(\+\d{1,2}\s?)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}", text))
+    return _is_viable_phone_number(text)
 
 
 def gen_slug(name: str) -> str:
