@@ -17,6 +17,8 @@ class OrderLine(Base):
     total_price = MC(default_price, nullable=False)
 
     order_id = MC(ForeignKey("order.id", ondelete="CASCADE"), nullable=False)
+    # TODO(Stan): remove fk and replace with columns: sku_number, sku_name,
+    #  sku_options (list of option with value names), file_url
     sku_id = MC(ForeignKey("sku.id", ondelete="RESTRICT"), nullable=False)
 
     order = relationship("Order", back_populates="lines", lazy="joined")
