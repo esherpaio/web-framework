@@ -34,6 +34,7 @@ class Order(Base):
     vat_reverse = MC(Boolean, nullable=False)
 
     billing_id = MC(ForeignKey("billing.id", ondelete="RESTRICT"), nullable=False)
+    # TODO(Stan): remove fk and replace with columns: currency_code, currency_symbol, currency_rate
     currency_id = MC(ForeignKey("currency.id", ondelete="RESTRICT"), nullable=False)
     shipping_id = MC(ForeignKey("shipping.id", ondelete="RESTRICT"), nullable=False)
     status_id = MC(ForeignKey("order_status.id", ondelete="RESTRICT"), nullable=False)
