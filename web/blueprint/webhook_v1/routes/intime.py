@@ -42,7 +42,7 @@ def response(code: int = 200, data: list | dict | None = None) -> Response:
 
 @webhook_v1_bp.get("/intime/products/count")
 @access_control(UserRoleLevel.EXTERNAL)
-def intime_skus_count() -> Response:
+def intime_products_count() -> Response:
     with conn.begin() as s:
         count = s.query(Sku).filter(*SKU_FILTERS).count()
     return response(data={"count": count})
@@ -50,7 +50,7 @@ def intime_skus_count() -> Response:
 
 @webhook_v1_bp.get("/intime/products/list")
 @access_control(UserRoleLevel.EXTERNAL)
-def intime_skus_list() -> Response:
+def intime_products_list() -> Response:
     products = []
     with conn.begin() as s:
         # Fetch skus
@@ -59,7 +59,7 @@ def intime_skus_list() -> Response:
         for sku in skus:
             products.append(
                 {
-                    "id": str(sku.product.id),
+                    "id": str(sku.product_id),
                     "variantId": str(sku.id),
                     "sku": sku.number,
                     "name": sku.name,
@@ -73,9 +73,9 @@ def intime_skus_list() -> Response:
     return response(data={"products": products})
 
 
-@webhook_v1_bp.get("/intime/skus/<string:sku_number>/stock")
+@webhook_v1_bp.get("/intime/products/<string:sku_number>/stock")
 @access_control(UserRoleLevel.EXTERNAL)
-def intime_skus_id_stock(sku_number: str) -> Response:
+def intime_products_id_stock(sku_number: str) -> Response:
     with conn.begin() as s:
         sku = s.query(Sku).filter(Sku.number == sku_number, *SKU_FILTERS).first()
         if sku is None:
@@ -83,9 +83,9 @@ def intime_skus_id_stock(sku_number: str) -> Response:
     return response(data={"count": sku.stock})
 
 
-@webhook_v1_bp.post("/intime/skus/<string:sku_number>/update-stock")
+@webhook_v1_bp.post("/intime/products/<string:sku_number>/update-stock")
 @access_control(UserRoleLevel.EXTERNAL)
-def intime_skus_id(sku_number: str) -> Response:
+def intime_products_id(sku_number: str) -> Response:
     stock, _ = json_get("count", type_=int, nullable=False)
     with conn.begin() as s:
         sku = s.query(Sku).filter(Sku.number == sku_number, *SKU_FILTERS).first()
