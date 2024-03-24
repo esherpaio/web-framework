@@ -31,7 +31,7 @@ def post_orders_id_payments(order_id: int) -> Response:
 
         # Create Mollie payment
         order_price_vat = order.total_price * order.vat_rate
-        amount = mollie_amount(order_price_vat, order.currency.code)
+        amount = mollie_amount(order_price_vat, order.currency_code)
         description = f"Order {order.id}"
         redirect = url_for(config.ENDPOINT_ORDER, order_id=order.id, _external=True)
         is_test = config.MOLLIE_KEY.startswith("test")

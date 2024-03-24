@@ -184,7 +184,7 @@ def _build_refund_lines(
     quantity_text = "1"
     quantity_p = Paragraph(quantity_text)
     cells.append(TableCell(quantity_p, background_color))
-    price_text = f"{num_to_str(refund.total_price, 2)} {order.currency.code}"
+    price_text = f"{num_to_str(refund.total_price, 2)} {order.currency_code}"
     price_p = Paragraph(price_text)
     cells.append(TableCell(price_p, background_color))
 
@@ -201,7 +201,7 @@ def _build_refund_lines(
         horizontal_alignment=Alignment.RIGHT,
     )
     subtotal_value_text = (
-        f"{num_to_str(refund.subtotal_price, 2)} {order.currency.code}"
+        f"{num_to_str(refund.subtotal_price, 2)} {order.currency_code}"
     )
     subtotal_value_p = Paragraph(subtotal_value_text)
     cells.append(TableCell(subtotal_head_p, col_span=h_count - 1))
@@ -213,7 +213,7 @@ def _build_refund_lines(
         font=FONT_BOLD,
         horizontal_alignment=Alignment.RIGHT,
     )
-    vat_value_text = f"{num_to_str(refund.vat_amount, 2)} {order.currency.code}"
+    vat_value_text = f"{num_to_str(refund.vat_amount, 2)} {order.currency_code}"
     vat_p = Paragraph(vat_value_text)
     cells.append(TableCell(vat_head_p, col_span=h_count - 1))
     cells.append(TableCell(vat_p, col_span=1))
@@ -224,7 +224,7 @@ def _build_refund_lines(
         font=FONT_BOLD,
         horizontal_alignment=Alignment.RIGHT,
     )
-    total_value_text = f"{num_to_str(refund.total_price_vat, 2)} {order.currency.code}"
+    total_value_text = f"{num_to_str(refund.total_price_vat, 2)} {order.currency_code}"
     total_value_p = Paragraph(total_value_text)
     cells.append(TableCell(total_head_p, col_span=h_count - 1))
     cells.append(TableCell(total_value_p, col_span=1))
