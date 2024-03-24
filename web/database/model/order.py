@@ -23,9 +23,10 @@ class Order(Base):
     __tablename__ = "order"
     __table_args__ = (CheckConstraint("coupon_amount IS NULL OR coupon_rate IS NULL"),)
 
-    coupon_code = MC(String(32))
     coupon_amount = MC(default_price)
+    coupon_code = MC(String(32))
     coupon_rate = MC(default_rate)
+    currency_code = MC(String(3), nullable=False)
     mollie_id = MC(String(64), unique=True)
     shipment_name = MC(String(64))
     shipment_price = MC(default_price, nullable=False)
@@ -33,15 +34,16 @@ class Order(Base):
     vat_rate = MC(default_vat, nullable=False)
     vat_reverse = MC(Boolean, nullable=False)
 
-    billing_id = MC(ForeignKey("billing.id", ondelete="RESTRICT"), nullable=False)
-    # TODO(Stan): remove fk and replace with columns: currency_code, currency_symbol, currency_rate
+    # TODO(Stan): remove after migrations
     currency_id = MC(ForeignKey("currency.id", ondelete="RESTRICT"), nullable=False)
+    currency = relationship("Currency", lazy="joined")
+
+    billing_id = MC(ForeignKey("billing.id", ondelete="RESTRICT"), nullable=False)
     shipping_id = MC(ForeignKey("shipping.id", ondelete="RESTRICT"), nullable=False)
     status_id = MC(ForeignKey("order_status.id", ondelete="RESTRICT"), nullable=False)
     user_id = MC(ForeignKey("user.id", ondelete="RESTRICT"), nullable=False)
-
     billing = relationship("Billing")
-    currency = relationship("Currency", lazy="joined")
+
     invoice = relationship("Invoice", uselist=False, back_populates="order")
     lines = relationship("OrderLine", back_populates="order", lazy="joined")
     refunds = relationship("Refund", back_populates="order")
