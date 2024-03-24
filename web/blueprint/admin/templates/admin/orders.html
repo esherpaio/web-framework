@@ -102,7 +102,7 @@
                                     {{ order.status.name }}
                                 </td>
                                 <td>
-                                    {{ order.total_price|price }} {{ order.currency.code }}
+                                    {{ order.total_price|price }} {{ order.currency_code }}
                                 </td>
                                 <td>
                                     {{ order.refunds|length > 0 }}

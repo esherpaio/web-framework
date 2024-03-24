@@ -166,7 +166,7 @@ def _build_order_lines(
         quantity_text = f"{order_line.quantity}"
         quantity_p = Paragraph(quantity_text)
         cells.append(TableCell(quantity_p, background_color))
-        price_text = f"{num_to_str(order_line.total_price, 2)} {order.currency.code}"
+        price_text = f"{num_to_str(order_line.total_price, 2)} {order.currency_code}"
         price_p = Paragraph(price_text)
         cells.append(TableCell(price_p, background_color))
 
@@ -182,7 +182,7 @@ def _build_order_lines(
         font=FONT_BOLD,
         horizontal_alignment=Alignment.RIGHT,
     )
-    subtotal_value_text = f"{num_to_str(order.subtotal_price, 2)} {order.currency.code}"
+    subtotal_value_text = f"{num_to_str(order.subtotal_price, 2)} {order.currency_code}"
     subtotal_value_p = Paragraph(subtotal_value_text)
     cells.append(TableCell(subtotal_head_p, col_span=h_count - 1))
     cells.append(TableCell(subtotal_value_p, col_span=1))
@@ -193,7 +193,7 @@ def _build_order_lines(
         font=FONT_BOLD,
         horizontal_alignment=Alignment.RIGHT,
     )
-    subtotal_value_text = f"{num_to_str(order.discount_price, 2)} {order.currency.code}"
+    subtotal_value_text = f"{num_to_str(order.discount_price, 2)} {order.currency_code}"
     subtotal_value_p = Paragraph(subtotal_value_text)
     cells.append(TableCell(subtotal_head_p, col_span=h_count - 1))
     cells.append(TableCell(subtotal_value_p, col_span=1))
@@ -204,7 +204,7 @@ def _build_order_lines(
         font=FONT_BOLD,
         horizontal_alignment=Alignment.RIGHT,
     )
-    subtotal_value_text = f"{num_to_str(order.shipment_price, 2)} {order.currency.code}"
+    subtotal_value_text = f"{num_to_str(order.shipment_price, 2)} {order.currency_code}"
     subtotal_value_p = Paragraph(subtotal_value_text)
     cells.append(TableCell(subtotal_head_p, col_span=h_count - 1))
     cells.append(TableCell(subtotal_value_p, col_span=1))
@@ -215,7 +215,7 @@ def _build_order_lines(
         font=FONT_BOLD,
         horizontal_alignment=Alignment.RIGHT,
     )
-    vat_value_text = f"{num_to_str(order.vat_amount, 2)} {order.currency.code}"
+    vat_value_text = f"{num_to_str(order.vat_amount, 2)} {order.currency_code}"
     vat_p = Paragraph(vat_value_text)
     cells.append(TableCell(vat_head_p, col_span=h_count - 1))
     cells.append(TableCell(vat_p, col_span=1))
@@ -226,7 +226,7 @@ def _build_order_lines(
         font=FONT_BOLD,
         horizontal_alignment=Alignment.RIGHT,
     )
-    total_value_text = f"{num_to_str(order.total_price_vat, 2)} {order.currency.code}"
+    total_value_text = f"{num_to_str(order.total_price_vat, 2)} {order.currency_code}"
     total_value_p = Paragraph(total_value_text)
     cells.append(TableCell(total_head_p, col_span=h_count - 1))
     cells.append(TableCell(total_value_p, col_span=1))

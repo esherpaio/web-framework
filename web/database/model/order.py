@@ -34,10 +34,6 @@ class Order(Base):
     vat_rate = MC(default_vat, nullable=False)
     vat_reverse = MC(Boolean, nullable=False)
 
-    # TODO(Stan): remove after migrations
-    currency_id = MC(ForeignKey("currency.id", ondelete="RESTRICT"), nullable=False)
-    currency = relationship("Currency", lazy="joined")
-
     billing_id = MC(ForeignKey("billing.id", ondelete="RESTRICT"), nullable=False)
     shipping_id = MC(ForeignKey("shipping.id", ondelete="RESTRICT"), nullable=False)
     status_id = MC(ForeignKey("order_status.id", ondelete="RESTRICT"), nullable=False)

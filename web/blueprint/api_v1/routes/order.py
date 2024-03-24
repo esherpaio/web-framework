@@ -154,7 +154,7 @@ def set_order(s: Session, data: dict, model: Order) -> None:
     if cart.shipment_method is not None:
         model.shipment_name = cart.shipment_method.name
     model.billing_id = cart.billing_id
-    model.currency_id = cart.currency_id
+    model.currency_code = cart.currency.code
     model.shipment_price = cart.shipment_price
     model.shipping_id = cart.shipping_id
     model.total_price = cart.total_price

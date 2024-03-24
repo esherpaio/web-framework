@@ -59,11 +59,9 @@ def orders() -> str:
             s.query(Order)
             .join(Order.billing)
             .join(Order.status)
-            .join(Order.currency)
             .join(Order.refunds, isouter=True)
             .join(Order.shipments, isouter=True)
             .options(
-                contains_eager(Order.currency),
                 contains_eager(Order.status),
                 contains_eager(Order.refunds),
                 contains_eager(Order.billing),
@@ -94,7 +92,6 @@ def order(order_id: int) -> str:
             .options(
                 joinedload(Order.billing),
                 joinedload(Order.billing, Billing.country),
-                joinedload(Order.currency),
                 joinedload(Order.invoice),
                 joinedload(Order.lines),
                 joinedload(Order.refunds),

@@ -99,11 +99,11 @@
                         <span class="d-block">{{ order.created_at|datetime("%x") }}</span>
                         <span class="d-block mb-2">{{ order.status.name }}</span>
                         <span class="d-block">{{ order.shipment_name }}</span>
-                        <span class="d-block mb-2">{{ order.shipment_price|price }} {{ order.currency.code }}</span>
+                        <span class="d-block mb-2">{{ order.shipment_price|price }} {{ order.currency_code }}</span>
                         <span class="d-block">{{ order.coupon_code }}</span>
-                        <span class="d-block mb-2">{{ order.discount_price|price }} {{ order.currency.code }}</span>
+                        <span class="d-block mb-2">{{ order.discount_price|price }} {{ order.currency_code }}</span>
                         <span class="d-block">{{ order.vat_percentage }} %</span>
-                        <span class="d-block">{{ order.total_price|price }} {{ order.currency.code }}</span>
+                        <span class="d-block">{{ order.total_price|price }} {{ order.currency_code }}</span>
                     </div>
                 </div>
             </div>
@@ -202,7 +202,7 @@
                                     {{ line.quantity }}x
                                 </td>
                                 <td>
-                                    {{ line.total_price|price }} {{ order.currency.code }}
+                                    {{ line.total_price|price }} {{ order.currency_code }}
                                 </td>
                                 <td class="text-end">
                                     <div class="btn-group">
@@ -297,7 +297,7 @@
                                         {{ refund.number }}
                                     </td>
                                     <td>
-                                        {{ refund.total_price|price }} {{ order.currency.code }}
+                                        {{ refund.total_price|price }} {{ order.currency_code }}
                                     </td>
                                     <td class="text-end">
                                         <div class="btn-group">
@@ -463,7 +463,7 @@
                         The default value is the maximum refundable amount.
                     </p>
                     <div class="input-group">
-                        <span class="input-group-text">{{ order.currency.code }}</span>
+                        <span class="input-group-text">{{ order.currency_code }}</span>
                         <input required
                                id="refund-total-price"
                                class="form-control"
