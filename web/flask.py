@@ -226,9 +226,10 @@ class FlaskWeb:
             log.info(f"Updating {len(self._mail_events)} mail events")
             mail.EVENTS.update(self._mail_events)
 
+        # TODO(Stan): sends way too much emails, needs investigation
         # Retry failed email events
-        if config.EMAIL_METHOD:
-            self.retry_emails()
+        # if config.EMAIL_METHOD:
+        #     self.retry_emails()
 
     def setup_cache(self) -> None:
         # Start cache reloading
