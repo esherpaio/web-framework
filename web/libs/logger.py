@@ -60,8 +60,7 @@ class SMTPHandler(_SMTPHandler):
             msg.set_content(self.format(record))
             # Send email
             port = self.mailport or smtplib.SMTP_PORT
-            timeout = 30 if config.APP_DEBUG else 10
-            conn = SMTP_SSL(self.mailhost, port=port, timeout=timeout)
+            conn = SMTP_SSL(self.mailhost, port=port, timeout=25)
             if self.username and self.password:
                 conn.login(self.username, self.password)
             conn.send_message(msg, self.fromaddr, self.toaddrs)
