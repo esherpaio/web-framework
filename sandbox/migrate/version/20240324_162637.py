@@ -17,8 +17,8 @@ def upgrade() -> None:
     # Add currency_code column
     op.add_column("order", sa.Column("currency_code", sa.String(length=3)))
     # Set currency_code on all orders
-    for order in s.query(Order).join(Order.currency).all():
-        order.currency_code = order.currency.code
+    for order in s.query(Order).join(Order.currency).all():  # type: ignore[attr-defined]
+        order.currency_code = order.currency.code  # type: ignore[attr-defined]
     # Make curency_code not nullable
     op.alter_column(
         "order", "currency_code", existing_type=sa.String(length=3), nullable=False
