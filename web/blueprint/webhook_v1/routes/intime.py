@@ -150,10 +150,7 @@ def intime_open_orders_list() -> Response:
                             "name": line.sku.name,
                             "quantity": line.quantity,
                             "weightInGrams": 0,
-                            # TODO(Stan): should be total_price divided by quantity
-                            "unitPrice": line.sku.unit_price,
-                            # TODO(Stan): remove stock, doesn't make sense
-                            "stock": line.sku.stock,
+                            "unitPrice": round(line.total_price / line.quantity, 2),
                         }
                         for line in order.lines
                     ],
