@@ -14,5 +14,5 @@ class SkuDetail(Base):
     value_id = MC(ForeignKey("product_value.id", ondelete="RESTRICT"), nullable=False)
 
     sku = relationship("Sku", back_populates="details")
-    option = relationship("ProductOption")
-    value = relationship("ProductValue")
+    option = relationship("ProductOption", viewonly=True)
+    value = relationship("ProductValue", viewonly=True)
