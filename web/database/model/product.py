@@ -51,13 +51,6 @@ class Product(Base, Attribute):
         val_number(value, min_=0)
         return value
 
-    # Properties - joins
-
-    @hybrid_property
-    def shipment_class_name(self) -> str | None:
-        if self.shipment_class is not None:
-            return getattr(self.shipment_class, "name", None)
-
     # Properties - statuses
 
     @hybrid_property

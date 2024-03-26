@@ -38,8 +38,8 @@ class Order(Base):
     shipping_id = MC(ForeignKey("shipping.id", ondelete="RESTRICT"), nullable=False)
     status_id = MC(ForeignKey("order_status.id", ondelete="RESTRICT"), nullable=False)
     user_id = MC(ForeignKey("user.id", ondelete="RESTRICT"), nullable=False)
-    billing = relationship("Billing")
 
+    billing = relationship("Billing")
     invoice = relationship("Invoice", uselist=False, back_populates="order")
     lines = relationship("OrderLine", back_populates="order", lazy="joined")
     refunds = relationship("Refund", back_populates="order")
