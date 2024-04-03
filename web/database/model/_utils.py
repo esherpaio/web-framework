@@ -73,6 +73,8 @@ def get_upper(value: str | None) -> str | None:
         return value.upper()
 
 
-def del_emoji(value: str | None) -> str | None:
+def parse_text(value: str | None) -> str | None:
+    if value in ["-", " "]:
+        return None
     if isinstance(value, str):
         return emoji.replace_emoji(value, replace="")
