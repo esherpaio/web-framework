@@ -81,6 +81,7 @@ def _send_email_smtp(
         msg["Cc"] = ",".join(cc)
     if bcc is not None:
         msg["Bcc"] = ",".join(bcc)
+    all_ = list(set((to or []) + (cc or []) + (bcc or [])))
     # Add body
     body = MIMEText(html, "html")
     msg.attach(body)
@@ -93,7 +94,7 @@ def _send_email_smtp(
         msg.attach(attachment)
     # Send email
     conn = SMTP_SSL(config.SMTP_HOST, port=config.SMTP_PORT, timeout=25)
-    conn.set_debuglevel(False)
+    conn.set_debuglevel(True)
     conn.login(config.SMTP_USERNAME, config.SMTP_PASSWORD)
-    conn.send_message(msg)
+    conn.send_message(msg, from_addr=config.EMAIL_FROM, to_addrs=all_)
     conn.quit()
