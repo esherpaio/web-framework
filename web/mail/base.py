@@ -11,7 +11,6 @@ from web.libs.utils import Singleton
 from web.mail.event import (
     mail_bulk,
     mail_contact_business,
-    mail_contact_customer,
     mail_order_paid,
     mail_order_received,
     mail_order_refunded,
@@ -44,7 +43,8 @@ class Mail(metaclass=Singleton):
         MailEvent.ORDER_SHIPPED: [mail_order_shipped],
         MailEvent.USER_REQUEST_PASSWORD: [mail_user_password],
         MailEvent.USER_REQUEST_VERIFICATION: [mail_user_verification],
-        MailEvent.WEBSITE_CONTACT: [mail_contact_business, mail_contact_customer],
+        # NOTE(Stan): temporarily remove mail_contact_customer until we have worker queue
+        MailEvent.WEBSITE_CONTACT: [mail_contact_business],
         MailEvent.WEBSITE_BULK: [mail_bulk],
     }
 
@@ -82,6 +82,9 @@ class Mail(metaclass=Singleton):
                     status_id=status_id,
                 )
                 s.add(_email)
+            else:
+                _email.status_id = status_id
+                s.flush()
 
 
 #
