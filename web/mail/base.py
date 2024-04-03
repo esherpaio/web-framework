@@ -69,20 +69,19 @@ class Mail(metaclass=Singleton):
             except Exception:
                 log.error(f"Error sending {config.EMAIL_METHOD} email", exc_info=True)
                 result = False
+            if result:
+                status_id = EmailStatusId.SENT
+            else:
+                status_id = EmailStatusId.FAILED
             if _email is None:
                 user_id = current_user.id if current_user else None
                 _email = Email(
                     event_id=event_id,
                     data=kwargs,
                     user_id=user_id,
-                    status_id=EmailStatusId.QUEUED,
+                    status_id=status_id,
                 )
                 s.add(_email)
-            if result:
-                _email.status_id = EmailStatusId.SENT
-            else:
-                _email.status_id = EmailStatusId.FAILED
-            s.flush()
 
 
 #
