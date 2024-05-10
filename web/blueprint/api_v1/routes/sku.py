@@ -51,6 +51,7 @@ def delete_skus_id(sku_id: int) -> Response:
         sku = s.query(Sku).filter_by(id=sku_id).first()
         if not sku:
             return response(404, ApiText.HTTP_404)
+        sku.number = None
         sku.is_deleted = True
 
         # Delete category items
