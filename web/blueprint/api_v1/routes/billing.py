@@ -122,4 +122,4 @@ def val_order(s: Session, data: dict, model: Billing) -> None:
     filters = {Order.billing_id == model.id}
     order = s.query(Order).filter(*filters).first()
     if order is not None:
-        abort(response(404, ApiText.HTTP_404))
+        abort(response(403, ApiText.HTTP_403))
