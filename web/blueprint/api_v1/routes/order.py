@@ -10,7 +10,16 @@ from web.api import API
 from web.api.utils import ApiText, response
 from web.blueprint.api_v1 import api_v1_bp
 from web.database import conn
-from web.database.model import Cart, Order, OrderLine, OrderStatusId, UserRoleLevel
+from web.database.model import (
+    Billing,
+    Cart,
+    Order,
+    OrderLine,
+    OrderStatusId,
+    Shipping,
+    UserRoleLevel,
+)
+from web.database.utils import copy_row
 from web.ext.mollie import Mollie
 from web.i18n import _
 from web.libs.auth import access_control
@@ -146,13 +155,19 @@ def val_cart(s: Session, data: dict, model: Order) -> None:
 
 
 def set_order(s: Session, data: dict, model: Order) -> None:
+    # get cart from g object
     cart = g.cart
+    # set detached values
     if cart.coupon is not None:
         model.coupon_amount = cart.coupon.amount
         model.coupon_code = cart.coupon.code
         model.coupon_rate = cart.coupon.rate
     if cart.shipment_method is not None:
         model.shipment_name = cart.shipment_method.name
+    # copy billing and shipping
+    model.billing = copy_row(s, Billing(), cart.billing)
+    model.shipping = copy_row(s, Shipping(), cart.shipping)
+    # set values
     model.billing_id = cart.billing_id
     model.currency_code = cart.currency.code
     model.shipment_price = cart.shipment_price
