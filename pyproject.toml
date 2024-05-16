@@ -17,7 +17,7 @@ line-ending = "auto"
 [tool.mypy]
 ignore_missing_imports=true
 cache_dir=".cache/mypy"
-exclude = ["web.document.base"]
+exclude = ["^web/document/base/"]
 
 [tool.djlint]
 profile="jinja"
