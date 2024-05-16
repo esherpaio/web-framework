@@ -30,6 +30,6 @@ lint: lint_py lint_html
 lint_py:
 	ruff check .
 	ruff format . --check
-	mypy --install-types --non-interactive --exclude '^web/document/base/'' .
+	mypy --install-types --non-interactive --exclude '^web/document/base/' .
 lint_html:
 	djlint . --check
