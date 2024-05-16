@@ -3,21 +3,22 @@ import random
 import typing
 import zlib
 
-from doc.io.read.types import Decimal as bDecimal
-from doc.io.read.types import Name
-from doc.io.write.font.character_set_listener import CharacterSetListener
-from doc.io.write.font.copy_command_operator import CopyCommandOperator
-from doc.io.write.font.subset_show_text_with_glyph_positioning import (
-    SubSetShowTextWithGlyphPositioning,
-)
-from doc.pdf.canvas.canvas import Canvas
-from doc.pdf.canvas.canvas_stream_processor import CanvasStreamProcessor
-from doc.pdf.canvas.font.composite_font.font_type_0 import Type0Font
-from doc.pdf.canvas.font.font import Font
-from doc.pdf.canvas.font.simple_font.true_type_font import TrueTypeFont
-from doc.pdf.page.page import Page
 from fontTools.subset import Subsetter as fSubsetter
 from fontTools.ttLib import TTFont
+
+from web.document.base.io.read.types import Decimal as bDecimal
+from web.document.base.io.read.types import Name
+from web.document.base.io.write.font.character_set_listener import CharacterSetListener
+from web.document.base.io.write.font.copy_command_operator import CopyCommandOperator
+from web.document.base.io.write.font.subset_show_text_with_glyph_positioning import (
+    SubSetShowTextWithGlyphPositioning,
+)
+from web.document.base.pdf.canvas.canvas import Canvas
+from web.document.base.pdf.canvas.canvas_stream_processor import CanvasStreamProcessor
+from web.document.base.pdf.canvas.font.composite_font.font_type_0 import Type0Font
+from web.document.base.pdf.canvas.font.font import Font
+from web.document.base.pdf.canvas.font.simple_font.true_type_font import TrueTypeFont
+from web.document.base.pdf.page.page import Page
 
 
 class Subsetter:
@@ -39,9 +40,9 @@ class Subsetter:
     @staticmethod
     def _extract_text_per_font(page: "Page") -> typing.Dict[Font, typing.Set[str]]:
         csp = CanvasStreamProcessor(page, Canvas(), [])
-        x: CharacterSetListener = CharacterSetListener()
-        csp.read(io.BytesIO(page["Contents"]["DecodedBytes"]), [x])
-        return x.get_character_set_per_font()
+        obj: CharacterSetListener = CharacterSetListener()
+        csp.read(io.BytesIO(page["Contents"]["DecodedBytes"]), [obj])
+        return obj.get_character_set_per_font()
 
     @staticmethod
     def _modify_page_content_stream(

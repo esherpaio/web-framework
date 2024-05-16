@@ -1,9 +1,10 @@
 import typing
 
 from _decimal import Decimal
-from doc.pdf import Alignment, Color, HexColor, Image
-from doc.pdf.canvas.geometry.rectangle import Rectangle
 from PIL import ImageGrab
+
+from web.document.base.pdf import Alignment, Color, HexColor, Image
+from web.document.base.pdf.canvas.geometry.rectangle import Rectangle
 
 
 class ScreenShot(Image):

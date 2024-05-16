@@ -1,8 +1,11 @@
 import re
 from typing import Optional
 
-from doc.io.read.tokenize.low_level_tokenizer import LowLevelTokenizer, TokenType
-from doc.io.read.types import (
+from web.document.base.io.read.tokenize.low_level_tokenizer import (
+    LowLevelTokenizer,
+    TokenType,
+)
+from web.document.base.io.read.types import (
     AnyPDFType,
     Boolean,
     CanvasOperatorName,
@@ -15,8 +18,6 @@ from doc.io.read.types import (
     Stream,
     String,
 )
-
-from web.document.base.pdf.xref.xref import XREF
 
 
 class HighLevelTokenizer(LowLevelTokenizer):

@@ -2,12 +2,10 @@ import copy
 import typing
 from decimal import Decimal
 
-from doc.io.read.types import Name
-from doc.pdf.canvas.color.color import RGBColor
-from doc.pdf.canvas.font.font import Font
-from doc.pdf.canvas.geometry.matrix import Matrix
-
-from web.document.base.pdf.canvas.geometry.line_segment import LineSegment
+from web.document.base.io.read.types import Name
+from web.document.base.pdf.canvas.color.color import RGBColor
+from web.document.base.pdf.canvas.font.font import Font
+from web.document.base.pdf.canvas.geometry.matrix import Matrix
 
 
 class CanvasGraphicsState:

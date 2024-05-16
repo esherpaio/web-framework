@@ -4,86 +4,114 @@ import os
 import time
 import typing
 
-from doc.io.read.tokenize.high_level_tokenizer import HighLevelTokenizer
-from doc.io.read.types import AnyPDFType, CanvasOperatorName, Dictionary
-from doc.pdf.canvas.operator.canvas_operator import CanvasOperator
-from doc.pdf.canvas.operator.color.set_cmyk_non_stroking import SetCMYKNonStroking
-from doc.pdf.canvas.operator.color.set_cmyk_stroking import SetCMYKStroking
-from doc.pdf.canvas.operator.color.set_color_non_stroking import SetColorNonStroking
-from doc.pdf.canvas.operator.color.set_color_space_non_stroking import (
+from web.document.base.io.read.tokenize.high_level_tokenizer import HighLevelTokenizer
+from web.document.base.io.read.types import AnyPDFType, CanvasOperatorName, Dictionary
+from web.document.base.pdf.canvas.operator.canvas_operator import CanvasOperator
+from web.document.base.pdf.canvas.operator.color.set_cmyk_non_stroking import (
+    SetCMYKNonStroking,
+)
+from web.document.base.pdf.canvas.operator.color.set_cmyk_stroking import (
+    SetCMYKStroking,
+)
+from web.document.base.pdf.canvas.operator.color.set_color_non_stroking import (
+    SetColorNonStroking,
+)
+from web.document.base.pdf.canvas.operator.color.set_color_space_non_stroking import (
     SetColorSpaceNonStroking,
 )
-from doc.pdf.canvas.operator.color.set_color_space_stroking import SetColorSpaceStroking
-from doc.pdf.canvas.operator.color.set_color_stroking import SetColorStroking
-from doc.pdf.canvas.operator.color.set_gray_non_stroking import SetGrayNonStroking
-from doc.pdf.canvas.operator.color.set_gray_stroking import SetGrayStroking
-from doc.pdf.canvas.operator.color.set_rgb_non_stroking import SetRGBNonStroking
-from doc.pdf.canvas.operator.color.set_rgb_stroking import SetRGBStroking
-from doc.pdf.canvas.operator.compatibility.begin_compatibility_section import (
+from web.document.base.pdf.canvas.operator.color.set_color_space_stroking import (
+    SetColorSpaceStroking,
+)
+from web.document.base.pdf.canvas.operator.color.set_color_stroking import (
+    SetColorStroking,
+)
+from web.document.base.pdf.canvas.operator.color.set_gray_non_stroking import (
+    SetGrayNonStroking,
+)
+from web.document.base.pdf.canvas.operator.color.set_gray_stroking import (
+    SetGrayStroking,
+)
+from web.document.base.pdf.canvas.operator.color.set_rgb_non_stroking import (
+    SetRGBNonStroking,
+)
+from web.document.base.pdf.canvas.operator.color.set_rgb_stroking import SetRGBStroking
+from web.document.base.pdf.canvas.operator.compatibility.begin_compatibility_section import (
     BeginCompatibilitySection,
 )
-from doc.pdf.canvas.operator.compatibility.end_compatibility_section import (
+from web.document.base.pdf.canvas.operator.compatibility.end_compatibility_section import (
     EndCompatibilitySection,
 )
-from doc.pdf.canvas.operator.marked_content.begin_marked_content import (
+from web.document.base.pdf.canvas.operator.marked_content.begin_marked_content import (
     BeginMarkedContent,
 )
-from doc.pdf.canvas.operator.marked_content.begin_marked_content_with_property_list import (
+from web.document.base.pdf.canvas.operator.marked_content.begin_marked_content_with_property_list import (
     BeginMarkedContentWithPropertyList,
 )
-from doc.pdf.canvas.operator.marked_content.end_marked_content import EndMarkedContent
-from doc.pdf.canvas.operator.path_construction.append_cubic_bezier import (
+from web.document.base.pdf.canvas.operator.marked_content.end_marked_content import (
+    EndMarkedContent,
+)
+from web.document.base.pdf.canvas.operator.path_construction.append_cubic_bezier import (
     AppendCubicBezierCurve1,
     AppendCubicBezierCurve2,
     AppendCubicBezierCurve3,
 )
-from doc.pdf.canvas.operator.path_construction.append_line_segment import (
+from web.document.base.pdf.canvas.operator.path_construction.append_line_segment import (
     AppendLineSegment,
 )
-from doc.pdf.canvas.operator.path_construction.begin_subpath import BeginSubpath
-from doc.pdf.canvas.operator.path_construction.close_subpath import CloseSubpath
-from doc.pdf.canvas.operator.path_painting.close_and_stroke_path import (
+from web.document.base.pdf.canvas.operator.path_construction.begin_subpath import (
+    BeginSubpath,
+)
+from web.document.base.pdf.canvas.operator.path_construction.close_subpath import (
+    CloseSubpath,
+)
+from web.document.base.pdf.canvas.operator.path_painting.close_and_stroke_path import (
     CloseAndStrokePath,
 )
-from doc.pdf.canvas.operator.path_painting.stroke_path import StrokePath
-from doc.pdf.canvas.operator.state.modify_transformation_matrix import (
+from web.document.base.pdf.canvas.operator.path_painting.stroke_path import StrokePath
+from web.document.base.pdf.canvas.operator.state.modify_transformation_matrix import (
     ModifyTransformationMatrix,
 )
-from doc.pdf.canvas.operator.state.pop_graphics_state import PopGraphicsState
-from doc.pdf.canvas.operator.state.push_graphics_state import PushGraphicsState
-from doc.pdf.canvas.operator.state.set_line_width import SetLineWidth
-from doc.pdf.canvas.operator.text.begin_text import BeginTextObject
-from doc.pdf.canvas.operator.text.end_text import EndTextObject
-from doc.pdf.canvas.operator.text.move_text_position import MoveTextPosition
-from doc.pdf.canvas.operator.text.move_text_position_set_leading import (
+from web.document.base.pdf.canvas.operator.state.pop_graphics_state import (
+    PopGraphicsState,
+)
+from web.document.base.pdf.canvas.operator.state.push_graphics_state import (
+    PushGraphicsState,
+)
+from web.document.base.pdf.canvas.operator.state.set_line_width import SetLineWidth
+from web.document.base.pdf.canvas.operator.text.begin_text import BeginTextObject
+from web.document.base.pdf.canvas.operator.text.end_text import EndTextObject
+from web.document.base.pdf.canvas.operator.text.move_text_position import (
+    MoveTextPosition,
+)
+from web.document.base.pdf.canvas.operator.text.move_text_position_set_leading import (
     MoveTextPositionSetLeading,
 )
-from doc.pdf.canvas.operator.text.move_to_next_line import MoveToNextLine
-from doc.pdf.canvas.operator.text.move_to_next_line_show_text import (
+from web.document.base.pdf.canvas.operator.text.move_to_next_line import MoveToNextLine
+from web.document.base.pdf.canvas.operator.text.move_to_next_line_show_text import (
     MoveToNextLineShowText,
 )
-from doc.pdf.canvas.operator.text.set_character_spacing import SetCharacterSpacing
-from doc.pdf.canvas.operator.text.set_font_and_size import SetFontAndSize
-from doc.pdf.canvas.operator.text.set_horizontal_text_scaling import (
+from web.document.base.pdf.canvas.operator.text.set_character_spacing import (
+    SetCharacterSpacing,
+)
+from web.document.base.pdf.canvas.operator.text.set_font_and_size import SetFontAndSize
+from web.document.base.pdf.canvas.operator.text.set_horizontal_text_scaling import (
     SetHorizontalScaling,
 )
-from doc.pdf.canvas.operator.text.set_spacing_move_to_next_line_show_text import (
+from web.document.base.pdf.canvas.operator.text.set_spacing_move_to_next_line_show_text import (
     SetSpacingMoveToNextLineShowText,
 )
-from doc.pdf.canvas.operator.text.set_text_leading import SetTextLeading
-from doc.pdf.canvas.operator.text.set_text_matrix import SetTextMatrix
-from doc.pdf.canvas.operator.text.set_text_rendering_mode import SetTextRenderingMode
-from doc.pdf.canvas.operator.text.set_text_rise import SetTextRise
-from doc.pdf.canvas.operator.text.set_word_spacing import SetWordSpacing
-from doc.pdf.canvas.operator.text.show_text import ShowText
-from doc.pdf.canvas.operator.text.show_text_with_glyph_positioning import (
+from web.document.base.pdf.canvas.operator.text.set_text_leading import SetTextLeading
+from web.document.base.pdf.canvas.operator.text.set_text_matrix import SetTextMatrix
+from web.document.base.pdf.canvas.operator.text.set_text_rendering_mode import (
+    SetTextRenderingMode,
+)
+from web.document.base.pdf.canvas.operator.text.set_text_rise import SetTextRise
+from web.document.base.pdf.canvas.operator.text.set_word_spacing import SetWordSpacing
+from web.document.base.pdf.canvas.operator.text.show_text import ShowText
+from web.document.base.pdf.canvas.operator.text.show_text_with_glyph_positioning import (
     ShowTextWithGlyphPositioning,
 )
-from doc.pdf.canvas.operator.xobject.do import Do
-
-from web.document.base.pdf.canvas.canvas import Canvas
-from web.document.base.pdf.canvas.event.event_listener import EventListener
-from web.document.base.pdf.page.page import Page
+from web.document.base.pdf.canvas.operator.xobject.do import Do
 
 logger = logging.getLogger(__name__)
 

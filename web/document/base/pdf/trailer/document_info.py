@@ -2,10 +2,8 @@ import typing
 from decimal import Decimal
 from typing import List, Optional
 
-from doc.io.read.types import Name
-from doc.io.write.conformance_level import ConformanceLevel
-
-from web.document.base.pdf.document.document import Document
+from web.document.base.io.read.types import Name
+from web.document.base.io.write.conformance_level import ConformanceLevel
 
 
 class DocumentInfo:

@@ -3,10 +3,10 @@ import logging
 import typing
 from typing import Any, Optional, Union
 
-from doc.io.read.transformer import ReadTransformerState, Transformer
-from doc.io.read.types import AnyPDFType, Reference
-from doc.pdf.canvas.event.event_listener import EventListener
-from doc.pdf.xref.xref import XREF
+from web.document.base.io.read.transformer import ReadTransformerState, Transformer
+from web.document.base.io.read.types import AnyPDFType, Reference
+from web.document.base.pdf.canvas.event.event_listener import EventListener
+from web.document.base.pdf.xref.xref import XREF
 
 logger = logging.getLogger(__name__)
 

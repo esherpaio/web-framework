@@ -1,10 +1,10 @@
 import typing
 from decimal import Decimal
 
-from doc.pdf.canvas.color.color import Color, HexColor, RGBColor
-from doc.pdf.canvas.geometry.rectangle import Rectangle
-from doc.pdf.canvas.layout.layout_element import LayoutElement
-from doc.pdf.page.page import Page
+from web.document.base.pdf.canvas.color.color import Color, HexColor, RGBColor
+from web.document.base.pdf.canvas.geometry.rectangle import Rectangle
+from web.document.base.pdf.canvas.layout.layout_element import LayoutElement
+from web.document.base.pdf.page.page import Page
 
 
 class HorizontalRule(LayoutElement):

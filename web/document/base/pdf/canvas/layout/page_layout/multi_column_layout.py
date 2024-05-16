@@ -1,12 +1,12 @@
 import typing
 from decimal import Decimal
 
-from doc.pdf.canvas.geometry.rectangle import Rectangle
-from doc.pdf.canvas.layout.layout_element import LayoutElement
-from doc.pdf.canvas.layout.page_layout.page_layout import PageLayout
-from doc.pdf.canvas.layout.text.chunk_of_text import ChunkOfText
-from doc.pdf.document.document import Document
-from doc.pdf.page.page import Page
+from web.document.base.pdf.canvas.geometry.rectangle import Rectangle
+from web.document.base.pdf.canvas.layout.layout_element import LayoutElement
+from web.document.base.pdf.canvas.layout.page_layout.page_layout import PageLayout
+from web.document.base.pdf.canvas.layout.text.chunk_of_text import ChunkOfText
+from web.document.base.pdf.document.document import Document
+from web.document.base.pdf.page.page import Page
 
 
 class MultiColumnLayout(PageLayout):

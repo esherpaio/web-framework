@@ -1,9 +1,9 @@
 import typing
 
-from doc.io.read.types import Decimal
-from doc.pdf.canvas.color.color import Color, HexColor
-from doc.pdf.canvas.layout.forms.drop_down_list import DropDownList
-from doc.pdf.canvas.layout.layout_element import Alignment
+from web.document.base.io.read.types import Decimal
+from web.document.base.pdf.canvas.color.color import Color, HexColor
+from web.document.base.pdf.canvas.layout.forms.drop_down_list import DropDownList
+from web.document.base.pdf.canvas.layout.layout_element import Alignment
 
 
 class CountryDropDownList(DropDownList):

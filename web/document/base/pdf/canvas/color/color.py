@@ -2,7 +2,7 @@ import logging
 import typing
 from decimal import Decimal
 
-from doc.io.read.types import Function, List, Name
+from web.document.base.io.read.types import Function, List, Name
 
 logger = logging.getLogger(__name__)
 

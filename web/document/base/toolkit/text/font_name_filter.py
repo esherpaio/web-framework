@@ -1,7 +1,9 @@
 import typing
 
-from doc.pdf.canvas.event.chunk_of_text_render_event import ChunkOfTextRenderEvent
-from doc.pdf.canvas.event.event_listener import Event, EventListener
+from web.document.base.pdf.canvas.event.chunk_of_text_render_event import (
+    ChunkOfTextRenderEvent,
+)
+from web.document.base.pdf.canvas.event.event_listener import Event, EventListener
 
 
 class FontNameFilter(EventListener):

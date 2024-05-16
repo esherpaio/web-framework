@@ -1,16 +1,19 @@
 import typing
 from decimal import Decimal
 
-from doc.io.read.types import AnyPDFType, HexadecimalString, List, Name, String
-from doc.pdf.canvas.canvas_stream_processor import CanvasStreamProcessor
-from doc.pdf.canvas.event.chunk_of_text_render_event import ChunkOfTextRenderEvent
-from doc.pdf.canvas.geometry.rectangle import Rectangle
-from doc.pdf.canvas.operator.canvas_operator import CanvasOperator
-
-from web.document.base.pdf.canvas.canvas import Canvas
-from web.document.base.pdf.canvas.event.event_listener import EventListener
-from web.document.base.pdf.canvas.font.font import Font
-from web.document.base.pdf.page.page import Page
+from web.document.base.io.read.types import (
+    AnyPDFType,
+    HexadecimalString,
+    List,
+    Name,
+    String,
+)
+from web.document.base.pdf.canvas.canvas_stream_processor import CanvasStreamProcessor
+from web.document.base.pdf.canvas.event.chunk_of_text_render_event import (
+    ChunkOfTextRenderEvent,
+)
+from web.document.base.pdf.canvas.geometry.rectangle import Rectangle
+from web.document.base.pdf.canvas.operator.canvas_operator import CanvasOperator
 
 
 class CopyCommandOperator(CanvasOperator):
@@ -106,7 +109,7 @@ class ShowTextMod(CanvasOperator):
     def _write_chunk_of_text(
         canvas_stream_processor: "CanvasStreamProcessor", s: str, f: "Font"
     ):
-        from doc.pdf.canvas.layout.text.chunk_of_text import ChunkOfText
+        from web.document.base.pdf.canvas.layout.text.chunk_of_text import ChunkOfText
 
         canvas_stream_processor._redacted_content += "\n"
         canvas_stream_processor._redacted_content += ChunkOfText(
@@ -215,7 +218,7 @@ class ShowTextWithGlyphPositioningMod(CanvasOperator):
     def _write_chunk_of_text(
         canvas_stream_processor: "CanvasStreamProcessor", s: str, f: "Font"
     ):
-        from doc.pdf.canvas.layout.text.chunk_of_text import ChunkOfText
+        from web.document.base.pdf.canvas.layout.text.chunk_of_text import ChunkOfText
 
         canvas_stream_processor._redacted_content += "\n"
         canvas_stream_processor._redacted_content += ChunkOfText(

@@ -3,15 +3,15 @@ import typing
 import zlib
 from typing import Any, Dict, Optional, Union
 
-from doc.io.read.transformer import ReadTransformerState, Transformer
-from doc.io.read.types import AnyPDFType, Dictionary, List, Name, Stream
-from doc.io.read.types import Decimal as bDecimal
-from doc.pdf.canvas.canvas import Canvas
-from doc.pdf.canvas.canvas_stream_processor import CanvasStreamProcessor
-from doc.pdf.canvas.event.begin_page_event import BeginPageEvent
-from doc.pdf.canvas.event.end_page_event import EndPageEvent
-from doc.pdf.canvas.event.event_listener import EventListener
-from doc.pdf.page.page import Page
+from web.document.base.io.read.transformer import ReadTransformerState, Transformer
+from web.document.base.io.read.types import AnyPDFType, Dictionary, List, Name, Stream
+from web.document.base.io.read.types import Decimal as bDecimal
+from web.document.base.pdf.canvas.canvas import Canvas
+from web.document.base.pdf.canvas.canvas_stream_processor import CanvasStreamProcessor
+from web.document.base.pdf.canvas.event.begin_page_event import BeginPageEvent
+from web.document.base.pdf.canvas.event.end_page_event import EndPageEvent
+from web.document.base.pdf.canvas.event.event_listener import EventListener
+from web.document.base.pdf.page.page import Page
 
 
 class PageDictionaryTransformer(Transformer):

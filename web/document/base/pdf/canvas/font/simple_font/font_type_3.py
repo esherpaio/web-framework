@@ -1,9 +1,9 @@
 import logging
 
-from doc.io.read.types import Decimal as bDecimal
-from doc.io.read.types import Name
-from doc.pdf.canvas.font.font import Font
-from doc.pdf.canvas.font.simple_font.font_type_1 import Type1Font
+from web.document.base.io.read.types import Decimal as bDecimal
+from web.document.base.io.read.types import Name
+from web.document.base.pdf.canvas.font.font import Font
+from web.document.base.pdf.canvas.font.simple_font.font_type_1 import Type1Font
 
 logger = logging.getLogger(__name__)
 

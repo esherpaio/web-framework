@@ -5,6 +5,9 @@ line-length = 88
 target-version = "py311"
 cache-dir = ".cache/ruff"
 
+[tool.ruff.lint.per-file-ignores]
+"web/document/base/*" = ["F821"]
+
 [tool.ruff.format]
 quote-style = "double"
 indent-style = "space"
@@ -13,7 +16,6 @@ line-ending = "auto"
 
 [tool.mypy]
 ignore_missing_imports=true
-no_warn_no_return=true
 cache_dir=".cache/mypy"
 exclude = ["web.document.base"]
 

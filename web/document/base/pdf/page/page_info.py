@@ -2,10 +2,8 @@ import typing
 from decimal import Decimal
 from typing import Optional, Tuple
 
-from doc.io.read.types import Dictionary
-from doc.pdf.page.page_size import PageSize
-
-from web.document.base.pdf.page.page import Page
+from web.document.base.io.read.types import Dictionary
+from web.document.base.pdf.page.page_size import PageSize
 
 
 class PageInfo(Dictionary):

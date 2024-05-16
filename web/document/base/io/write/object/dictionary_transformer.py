@@ -2,9 +2,17 @@ import logging
 import typing
 from typing import Optional
 
-from doc.io.read.types import AnyPDFType, Dictionary, Element, List, Reference, Stream
-from doc.io.write.transformer import Transformer, WriteTransformerState
 from PIL.Image import Image
+
+from web.document.base.io.read.types import (
+    AnyPDFType,
+    Dictionary,
+    Element,
+    List,
+    Reference,
+    Stream,
+)
+from web.document.base.io.write.transformer import Transformer, WriteTransformerState
 
 logger = logging.getLogger(__name__)
 

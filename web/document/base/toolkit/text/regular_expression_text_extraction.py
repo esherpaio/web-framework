@@ -4,19 +4,19 @@ import typing
 from decimal import Decimal
 from functools import cmp_to_key
 
-from doc.pdf.canvas.canvas import Canvas
-from doc.pdf.canvas.canvas_stream_processor import CanvasStreamProcessor
-from doc.pdf.canvas.color.color import Color
-from doc.pdf.canvas.event.begin_page_event import BeginPageEvent
-from doc.pdf.canvas.event.chunk_of_text_render_event import (
+from web.document.base.pdf.canvas.canvas import Canvas
+from web.document.base.pdf.canvas.canvas_stream_processor import CanvasStreamProcessor
+from web.document.base.pdf.canvas.color.color import Color
+from web.document.base.pdf.canvas.event.begin_page_event import BeginPageEvent
+from web.document.base.pdf.canvas.event.chunk_of_text_render_event import (
     ChunkOfTextRenderEvent,
     LeftToRightComparator,
 )
-from doc.pdf.canvas.event.end_page_event import EndPageEvent
-from doc.pdf.canvas.event.event_listener import Event, EventListener
-from doc.pdf.canvas.geometry.rectangle import Rectangle
-from doc.pdf.document.document import Document
-from doc.pdf.page.page import Page
+from web.document.base.pdf.canvas.event.end_page_event import EndPageEvent
+from web.document.base.pdf.canvas.event.event_listener import Event, EventListener
+from web.document.base.pdf.canvas.geometry.rectangle import Rectangle
+from web.document.base.pdf.document.document import Document
+from web.document.base.pdf.page.page import Page
 
 
 class PDFMatch:

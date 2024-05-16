@@ -2,12 +2,11 @@ import copy
 import typing
 from decimal import Decimal
 
-from doc.pdf.canvas.geometry.rectangle import Rectangle
-from doc.pdf.canvas.layout.layout_element import LayoutElement
-from doc.pdf.canvas.layout.page_layout.multi_column_layout import SingleColumnLayout
-
-from web.document.base.pdf.canvas.layout.page_layout.page_layout import PageLayout
-from web.document.base.pdf.page.page import Page
+from web.document.base.pdf.canvas.geometry.rectangle import Rectangle
+from web.document.base.pdf.canvas.layout.layout_element import LayoutElement
+from web.document.base.pdf.canvas.layout.page_layout.multi_column_layout import (
+    SingleColumnLayout,
+)
 
 
 class SingleColumnLayoutWithOverflow(SingleColumnLayout):
@@ -38,7 +37,7 @@ class SingleColumnLayoutWithOverflow(SingleColumnLayout):
 
     @staticmethod
     def _prepare_table_for_relayout(layout_element: LayoutElement):
-        from doc.pdf import Table
+        from web.document.base.pdf import Table
 
         assert isinstance(layout_element, Table)
         layout_element._previous_layout_box = None
@@ -55,7 +54,7 @@ class SingleColumnLayoutWithOverflow(SingleColumnLayout):
         layout_element: LayoutElement, available_height: Decimal
     ) -> typing.List[LayoutElement]:
         # find out at which row we ought to split the Table
-        from doc.pdf import Table
+        from web.document.base.pdf import Table
 
         assert isinstance(layout_element, Table)
         best_row_for_split: typing.Optional[int] = None
@@ -108,7 +107,7 @@ class SingleColumnLayoutWithOverflow(SingleColumnLayout):
 
     @staticmethod
     def _split_blockflow(layout_element: LayoutElement) -> typing.List[LayoutElement]:
-        from doc.pdf import BlockFlow
+        from web.document.base.pdf import BlockFlow
 
         assert isinstance(layout_element, BlockFlow)
         return layout_element._content

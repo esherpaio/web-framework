@@ -1,12 +1,14 @@
 import logging
 from typing import Optional
 
-from doc.io.read.types import AnyPDFType, Dictionary, Name
-from doc.io.write.font.subsetter import Subsetter
-from doc.io.write.object.dictionary_transformer import DictionaryTransformer
-from doc.io.write.transformer import WriteTransformerState
-from doc.pdf import Page
-from doc.pdf.document.document import Document
+from web.document.base.io.read.types import AnyPDFType, Dictionary, Name
+from web.document.base.io.write.font.subsetter import Subsetter
+from web.document.base.io.write.object.dictionary_transformer import (
+    DictionaryTransformer,
+)
+from web.document.base.io.write.transformer import WriteTransformerState
+from web.document.base.pdf import Page
+from web.document.base.pdf.document.document import Document
 
 logger = logging.getLogger(__name__)
 

@@ -3,12 +3,14 @@ import zlib
 from pathlib import Path
 from typing import Optional
 
-from doc.io.read.types import AnyPDFType, Dictionary, Name, Stream, String
-from doc.io.read.types import Decimal as bDecimal
-from doc.io.read.types import List as bList
-from doc.io.write.object.dictionary_transformer import DictionaryTransformer
-from doc.io.write.transformer import WriteTransformerState
-from doc.pdf.document.document import Document
+from web.document.base.io.read.types import AnyPDFType, Dictionary, Name, Stream, String
+from web.document.base.io.read.types import Decimal as bDecimal
+from web.document.base.io.read.types import List as bList
+from web.document.base.io.write.object.dictionary_transformer import (
+    DictionaryTransformer,
+)
+from web.document.base.io.write.transformer import WriteTransformerState
+from web.document.base.pdf.document.document import Document
 
 logger = logging.getLogger(__name__)
 

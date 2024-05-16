@@ -2,10 +2,10 @@ import io
 import logging
 import typing
 
-from doc.io.read.tokenize.high_level_tokenizer import HighLevelTokenizer
-from doc.io.read.types import Name, Reference
-from doc.pdf.xref.plaintext_xref import PlainTextXREF
-from doc.pdf.xref.xref import XREF
+from web.document.base.io.read.tokenize.high_level_tokenizer import HighLevelTokenizer
+from web.document.base.io.read.types import Name, Reference
+from web.document.base.pdf.xref.plaintext_xref import PlainTextXREF
+from web.document.base.pdf.xref.xref import XREF
 
 logger = logging.getLogger(__name__)
 

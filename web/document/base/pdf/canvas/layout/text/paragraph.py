@@ -2,14 +2,14 @@ import typing
 from decimal import Decimal
 from typing import Union
 
-from doc.pdf.canvas.color.color import Color, HexColor
-from doc.pdf.canvas.font.font import Font
-from doc.pdf.canvas.font.glyph_line import GlyphLine
-from doc.pdf.canvas.geometry.rectangle import Rectangle
-from doc.pdf.canvas.layout.hyphenation.hyphenation import Hyphenation
-from doc.pdf.canvas.layout.layout_element import Alignment
-from doc.pdf.canvas.layout.text.line_of_text import LineOfText
-from doc.pdf.page.page import Page
+from web.document.base.pdf.canvas.color.color import Color, HexColor
+from web.document.base.pdf.canvas.font.font import Font
+from web.document.base.pdf.canvas.font.glyph_line import GlyphLine
+from web.document.base.pdf.canvas.geometry.rectangle import Rectangle
+from web.document.base.pdf.canvas.layout.hyphenation.hyphenation import Hyphenation
+from web.document.base.pdf.canvas.layout.layout_element import Alignment
+from web.document.base.pdf.canvas.layout.text.line_of_text import LineOfText
+from web.document.base.pdf.page.page import Page
 
 
 class Paragraph(LineOfText):
@@ -199,8 +199,8 @@ class Paragraph(LineOfText):
 
         # determine content box width
         w: Decimal = Decimal(0)
-        for i, line in enumerate(self._previous_lines_of_text):
-            lbox: Rectangle = line._get_content_box(
+        for i, obj in enumerate(self._previous_lines_of_text):
+            lbox: Rectangle = obj._get_content_box(
                 Rectangle(
                     available_space.get_x(),
                     available_space.get_y()
@@ -242,8 +242,8 @@ class Paragraph(LineOfText):
 
         # call paint on all LineOfText objects
         assert self._previous_lines_of_text is not None
-        for i, line in enumerate(self._previous_lines_of_text):
-            line.paint(
+        for i, obj in enumerate(self._previous_lines_of_text):
+            obj.paint(
                 page,
                 Rectangle(
                     available_space.get_x(),

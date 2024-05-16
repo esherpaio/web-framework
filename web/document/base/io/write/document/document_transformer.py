@@ -3,9 +3,15 @@ import random
 import typing
 from typing import Any, Optional
 
-from doc.io.read.types import AnyPDFType, Dictionary, HexadecimalString, List, Name
-from doc.io.write.transformer import Transformer, WriteTransformerState
-from doc.pdf.document.document import Document
+from web.document.base.io.read.types import (
+    AnyPDFType,
+    Dictionary,
+    HexadecimalString,
+    List,
+    Name,
+)
+from web.document.base.io.write.transformer import Transformer, WriteTransformerState
+from web.document.base.pdf.document.document import Document
 
 logger = logging.getLogger(__name__)
 

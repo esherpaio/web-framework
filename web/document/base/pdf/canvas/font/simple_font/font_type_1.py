@@ -4,19 +4,23 @@ import logging
 import typing
 from pathlib import Path
 
-from doc.io.read.types import Decimal as bDecimal
-from doc.io.read.types import Dictionary, Name
-from doc.pdf.canvas.font.adobe_glyph_list import AdobeGlyphList
-from doc.pdf.canvas.font.adobe_standard_encoding import (
-    adobe_standard_decode,
-    adobe_standard_encode,
-)
-from doc.pdf.canvas.font.font import Font
-from doc.pdf.canvas.font.simple_font.simple_font import SimpleFont
-from doc.pdf.canvas.font.symbol_encoding import symbol_decode, zapfdingbats_decode
 from fontTools.afmLib import AFM
 from fontTools.agl import toUnicode
 from fontTools.cffLib import CFFFontSet
+
+from web.document.base.io.read.types import Decimal as bDecimal
+from web.document.base.io.read.types import Dictionary, Name
+from web.document.base.pdf.canvas.font.adobe_glyph_list import AdobeGlyphList
+from web.document.base.pdf.canvas.font.adobe_standard_encoding import (
+    adobe_standard_decode,
+    adobe_standard_encode,
+)
+from web.document.base.pdf.canvas.font.font import Font
+from web.document.base.pdf.canvas.font.simple_font.simple_font import SimpleFont
+from web.document.base.pdf.canvas.font.symbol_encoding import (
+    symbol_decode,
+    zapfdingbats_decode,
+)
 
 logger = logging.getLogger(__name__)
 

@@ -2,7 +2,7 @@ import json
 import typing
 from pathlib import Path
 
-from doc.datastructure.str_trie import Trie
+from web.document.base.datastructure.str_trie import Trie
 
 
 class Hyphenation:

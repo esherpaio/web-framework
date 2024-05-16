@@ -1,7 +1,7 @@
 import typing
 from decimal import Decimal
 
-from doc.pdf.canvas.color.color import Color, HexColor, RGBColor
+from web.document.base.pdf.canvas.color.color import Color, HexColor, RGBColor
 
 
 class Pantone(HexColor):

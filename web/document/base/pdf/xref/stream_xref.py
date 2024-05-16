@@ -2,10 +2,10 @@ import io
 from decimal import Decimal
 from typing import Optional, Union
 
-from doc.io.filter.stream_decode_util import decode_stream
-from doc.io.read.tokenize.high_level_tokenizer import HighLevelTokenizer
-from doc.io.read.types import Dictionary, List, Name, Reference, Stream
-from doc.pdf.xref.xref import XREF
+from web.document.base.io.filter.stream_decode_util import decode_stream
+from web.document.base.io.read.tokenize.high_level_tokenizer import HighLevelTokenizer
+from web.document.base.io.read.types import Dictionary, List, Name, Reference, Stream
+from web.document.base.pdf.xref.xref import XREF
 
 
 class StreamXREF(XREF):

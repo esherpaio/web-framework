@@ -1,7 +1,7 @@
 import random
 from pathlib import Path
 
-from doc.pdf.canvas.lipsum.text_generator import TextGenerator
+from web.document.base.pdf.canvas.lipsum.text_generator import TextGenerator
 
 
 class Lipsum:

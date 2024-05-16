@@ -1,14 +1,16 @@
 import numbers
 import typing
 
-from doc.io.read.types import Decimal
-from doc.pdf.canvas.color.color import HexColor
-from doc.pdf.canvas.layout.table.fixed_column_width_table import FixedColumnWidthTable
-from doc.pdf.canvas.layout.table.flexible_column_width_table import (
+from web.document.base.io.read.types import Decimal
+from web.document.base.pdf.canvas.color.color import HexColor
+from web.document.base.pdf.canvas.layout.table.fixed_column_width_table import (
+    FixedColumnWidthTable,
+)
+from web.document.base.pdf.canvas.layout.table.flexible_column_width_table import (
     FlexibleColumnWidthTable,
 )
-from doc.pdf.canvas.layout.table.table import Table, TableCell
-from doc.pdf.canvas.layout.text.paragraph import Paragraph
+from web.document.base.pdf.canvas.layout.table.table import Table, TableCell
+from web.document.base.pdf.canvas.layout.text.paragraph import Paragraph
 
 
 class TableUtil:

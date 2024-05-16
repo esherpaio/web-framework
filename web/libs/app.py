@@ -46,6 +46,7 @@ def check_redirects() -> Response | None:
     for x in cache.redirects:
         if fnmatch.fnmatch(request.url, x.url_from):
             return redirect(x.url_to, code=301)
+    return None
 
 
 def get_route() -> AppRoute | None:
@@ -53,6 +54,7 @@ def get_route() -> AppRoute | None:
     for route in cache.routes:
         if route.endpoint == request.endpoint:
             return route
+    return None
 
 
 def get_blueprint() -> AppBlueprint | None:
@@ -60,6 +62,7 @@ def get_blueprint() -> AppBlueprint | None:
     for blueprint in cache.blueprints:
         if blueprint.name == request.blueprint:
             return blueprint
+    return None
 
 
 #

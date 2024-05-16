@@ -1,9 +1,11 @@
 import typing
 from decimal import Decimal
 
-from doc.pdf.canvas.color.color import Color, RGBColor
-from doc.pdf.canvas.event.chunk_of_text_render_event import ChunkOfTextRenderEvent
-from doc.pdf.canvas.event.event_listener import Event, EventListener
+from web.document.base.pdf.canvas.color.color import Color, RGBColor
+from web.document.base.pdf.canvas.event.chunk_of_text_render_event import (
+    ChunkOfTextRenderEvent,
+)
+from web.document.base.pdf.canvas.event.event_listener import Event, EventListener
 
 
 class FontColorFilter(EventListener):

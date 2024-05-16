@@ -2,18 +2,21 @@ import io
 import typing
 from decimal import Decimal
 
-from doc.pdf.canvas.canvas import Canvas
-from doc.pdf.canvas.canvas_stream_processor import CanvasStreamProcessor
-from doc.pdf.canvas.color.color import Color, HSVColor, RGBColor
-from doc.pdf.canvas.event.begin_page_event import BeginPageEvent
-from doc.pdf.canvas.event.chunk_of_text_render_event import ChunkOfTextRenderEvent
-from doc.pdf.canvas.event.end_page_event import EndPageEvent
-from doc.pdf.canvas.event.event_listener import Event, EventListener
-from doc.pdf.canvas.event.image_render_event import ImageRenderEvent
-from doc.pdf.canvas.geometry.rectangle import Rectangle
-from doc.pdf.document.document import Document
-from doc.pdf.page.page import Page
 from PIL.Image import Image
+
+from web.document.base.pdf.canvas.canvas import Canvas
+from web.document.base.pdf.canvas.canvas_stream_processor import CanvasStreamProcessor
+from web.document.base.pdf.canvas.color.color import Color, HSVColor, RGBColor
+from web.document.base.pdf.canvas.event.begin_page_event import BeginPageEvent
+from web.document.base.pdf.canvas.event.chunk_of_text_render_event import (
+    ChunkOfTextRenderEvent,
+)
+from web.document.base.pdf.canvas.event.end_page_event import EndPageEvent
+from web.document.base.pdf.canvas.event.event_listener import Event, EventListener
+from web.document.base.pdf.canvas.event.image_render_event import ImageRenderEvent
+from web.document.base.pdf.canvas.geometry.rectangle import Rectangle
+from web.document.base.pdf.document.document import Document
+from web.document.base.pdf.page.page import Page
 
 
 class ColorExtraction(EventListener):

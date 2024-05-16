@@ -2,16 +2,16 @@ import io
 import typing
 from typing import List, Union
 
-from doc.io.read.any_object_transformer import (
+from web.document.base.io.read.any_object_transformer import (
     AnyObjectTransformer as ReadAnyObjectTransformer,
 )
-from doc.io.read.transformer import ReadTransformerState
-from doc.io.write.any_object_transformer import (
+from web.document.base.io.read.transformer import ReadTransformerState
+from web.document.base.io.write.any_object_transformer import (
     AnyObjectTransformer as WriteAnyObjectTransformer,
 )
-from doc.io.write.transformer import WriteTransformerState
-from doc.pdf.canvas.event.event_listener import EventListener
-from doc.pdf.document.document import Document
+from web.document.base.io.write.transformer import WriteTransformerState
+from web.document.base.pdf.canvas.event.event_listener import EventListener
+from web.document.base.pdf.document.document import Document
 
 
 class PDF:

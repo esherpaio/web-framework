@@ -1,15 +1,17 @@
 import typing
 from decimal import Decimal
 
-from doc.pdf.canvas.color.color import Color
-from doc.pdf.canvas.font.font import Font
-from doc.pdf.canvas.font.simple_font.font_type_1 import StandardType1Font
-from doc.pdf.canvas.geometry.rectangle import Rectangle
-from doc.pdf.canvas.layout.annotation.redact_annotation import RedactAnnotation
-from doc.pdf.canvas.layout.layout_element import Alignment
-from doc.pdf.canvas.layout.text.paragraph import Paragraph
-from doc.pdf.document.document import Document
-from doc.pdf.page.page import Page
+from web.document.base.pdf.canvas.color.color import Color
+from web.document.base.pdf.canvas.font.font import Font
+from web.document.base.pdf.canvas.font.simple_font.font_type_1 import StandardType1Font
+from web.document.base.pdf.canvas.geometry.rectangle import Rectangle
+from web.document.base.pdf.canvas.layout.annotation.redact_annotation import (
+    RedactAnnotation,
+)
+from web.document.base.pdf.canvas.layout.layout_element import Alignment
+from web.document.base.pdf.canvas.layout.text.paragraph import Paragraph
+from web.document.base.pdf.document.document import Document
+from web.document.base.pdf.page.page import Page
 
 
 class SimpleFindReplace:
@@ -44,7 +46,7 @@ class SimpleFindReplace:
         :return:                                the PDF Document
         """
 
-        from doc.toolkit import PDFMatch, RegularExpressionTextExtraction
+        from web.document.base.toolkit import PDFMatch, RegularExpressionTextExtraction
 
         number_of_pages: int = int(
             doc.get_document_info().get_number_of_pages() or Decimal(0)

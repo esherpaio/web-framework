@@ -4,20 +4,20 @@ import types
 import typing
 from decimal import Decimal
 
-from doc.pdf.canvas.color.color import Color, HexColor
-from doc.pdf.canvas.geometry.rectangle import Rectangle
-from doc.pdf.canvas.layout.image.image import Image
-from doc.pdf.canvas.layout.layout_element import Alignment, LayoutElement
-from doc.pdf.canvas.layout.list.unordered_list import UnorderedList
-from doc.pdf.canvas.layout.page_layout.inline_flow import InlineFlow
-from doc.pdf.canvas.layout.shape.connected_shape import ConnectedShape
-from doc.pdf.canvas.layout.table.flexible_column_width_table import (
+from web.document.base.pdf.canvas.color.color import Color, HexColor
+from web.document.base.pdf.canvas.geometry.rectangle import Rectangle
+from web.document.base.pdf.canvas.layout.image.image import Image
+from web.document.base.pdf.canvas.layout.layout_element import Alignment, LayoutElement
+from web.document.base.pdf.canvas.layout.list.unordered_list import UnorderedList
+from web.document.base.pdf.canvas.layout.page_layout.inline_flow import InlineFlow
+from web.document.base.pdf.canvas.layout.shape.connected_shape import ConnectedShape
+from web.document.base.pdf.canvas.layout.table.flexible_column_width_table import (
     FlexibleColumnWidthTable,
 )
-from doc.pdf.canvas.layout.table.table import TableCell
-from doc.pdf.canvas.layout.text.paragraph import Paragraph
-from doc.pdf.canvas.line_art.line_art_factory import LineArtFactory
-from doc.pdf.page.page import Page
+from web.document.base.pdf.canvas.layout.table.table import TableCell
+from web.document.base.pdf.canvas.layout.text.paragraph import Paragraph
+from web.document.base.pdf.canvas.line_art.line_art_factory import LineArtFactory
+from web.document.base.pdf.page.page import Page
 
 
 class SmartArt:

@@ -1,5 +1,5 @@
-from doc.pdf.canvas.event.event_listener import Event
-from doc.pdf.page.page import Page
+from web.document.base.pdf.canvas.event.event_listener import Event
+from web.document.base.pdf.page.page import Page
 
 
 class BeginPageEvent(Event):

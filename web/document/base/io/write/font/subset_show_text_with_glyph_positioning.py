@@ -1,16 +1,13 @@
 import typing
 from typing import List
 
-from doc.io.read.types import AnyPDFType, HexadecimalString, Name, String
-from doc.io.read.types import Decimal as bDecimal
-from doc.io.write.font.copy_command_operator import CopyCommandOperator
-from doc.pdf.canvas.font.font import Font
-from doc.pdf.canvas.operator.text.show_text_with_glyph_positioning import (
+from web.document.base.io.read.types import AnyPDFType, HexadecimalString, Name, String
+from web.document.base.io.read.types import Decimal as bDecimal
+from web.document.base.io.write.font.copy_command_operator import CopyCommandOperator
+from web.document.base.pdf.canvas.font.font import Font
+from web.document.base.pdf.canvas.operator.text.show_text_with_glyph_positioning import (
     ShowTextWithGlyphPositioning,
 )
-
-from web.document.base.pdf.canvas.canvas_stream_processor import CanvasStreamProcessor
-from web.document.base.pdf.canvas.event.event_listener import EventListener
 
 
 class SubSetShowTextWithGlyphPositioning(CopyCommandOperator):

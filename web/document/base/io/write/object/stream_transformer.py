@@ -3,9 +3,16 @@ import typing
 import zlib
 from typing import Optional
 
-from doc.io.read.types import AnyPDFType, Dictionary, List, Name, Reference, Stream
-from doc.io.read.types import Decimal as bDecimal
-from doc.io.write.transformer import Transformer, WriteTransformerState
+from web.document.base.io.read.types import (
+    AnyPDFType,
+    Dictionary,
+    List,
+    Name,
+    Reference,
+    Stream,
+)
+from web.document.base.io.read.types import Decimal as bDecimal
+from web.document.base.io.write.transformer import Transformer, WriteTransformerState
 
 logger = logging.getLogger(__name__)
 

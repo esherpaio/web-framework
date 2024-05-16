@@ -2,9 +2,9 @@ import logging
 import typing
 from pathlib import Path
 
-from doc.io.read.types import Decimal as bDecimal
-from doc.io.read.types import List, Name, Stream
-from doc.pdf.canvas.font.font import Font
+from web.document.base.io.read.types import Decimal as bDecimal
+from web.document.base.io.read.types import List, Name, Stream
+from web.document.base.pdf.canvas.font.font import Font
 
 logger = logging.getLogger(__name__)
 

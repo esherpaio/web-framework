@@ -4,8 +4,6 @@ from types import MethodType
 
 import PIL
 
-from web.document.base.io.read.types import Reference
-
 
 class PDFObject:
     """This object represents the base class for everything related to IO.
@@ -35,19 +33,19 @@ class PDFObject:
             return self
 
         # Boolean
-        from doc.io.read.types import Boolean
+        from web.document.base.io.read.types import Boolean
 
         if isinstance(self, Boolean):
             return bool(self)
 
         # CanvasOperatorName
-        from doc.io.read.types import CanvasOperatorName
+        from web.document.base.io.read.types import CanvasOperatorName
 
         if isinstance(self, CanvasOperatorName):
             return str(self)
 
         # Decimal
-        from doc.io.read.types import Decimal
+        from web.document.base.io.read.types import Decimal
 
         if isinstance(self, Decimal):
             return float(self)
@@ -67,7 +65,7 @@ class PDFObject:
             return str(self)
 
         # Dictionary
-        from doc.io.read.types import Dictionary
+        from web.document.base.io.read.types import Dictionary
 
         if isinstance(self, Dictionary):
             out: typing.Dict[str, typing.Any] = {}
@@ -85,15 +83,15 @@ class PDFObject:
             return dict_out
 
         # Element
-        from doc.io.read.types import Element
+        from web.document.base.io.read.types import Element
 
         if isinstance(self, Element):
-            from doc.io.read.types import ET
+            from web.document.base.io.read.types import ET
 
             return str(ET.tostring(self))
 
         # Name
-        from doc.io.read.types import Name
+        from web.document.base.io.read.types import Name
 
         if isinstance(self, Name):
             return str(self)
@@ -105,7 +103,7 @@ class PDFObject:
         # DUPLICATE: Dictionary
 
         # String
-        from doc.io.read.types import String
+        from web.document.base.io.read.types import String
 
         if isinstance(self, String):
             return str(self)
@@ -114,7 +112,7 @@ class PDFObject:
         # DUPLICATE: String
 
         # List
-        from doc.io.read.types import List
+        from web.document.base.io.read.types import List
 
         if isinstance(self, List):
             list_out: typing.List[typing.Any] = []
@@ -124,7 +122,7 @@ class PDFObject:
             return list_out
 
         # Reference
-        from doc.io.read.types import Reference
+        from web.document.base.io.read.types import Reference
 
         if isinstance(self, Reference):
             return "%d %d R" % (self.generation_number or 0, self.object_number or 0)

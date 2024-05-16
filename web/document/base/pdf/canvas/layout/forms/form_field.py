@@ -1,11 +1,11 @@
 import typing
 
-from doc.io.read.pdf_object import PDFObject
-from doc.io.read.types import Dictionary, Name
-from doc.io.read.types import List as bList
-from doc.pdf.canvas.font.font import Font
-from doc.pdf.canvas.layout.layout_element import LayoutElement
-from doc.pdf.page.page import Page
+from web.document.base.io.read.pdf_object import PDFObject
+from web.document.base.io.read.types import Dictionary, Name
+from web.document.base.io.read.types import List as bList
+from web.document.base.pdf.canvas.font.font import Font
+from web.document.base.pdf.canvas.layout.layout_element import LayoutElement
+from web.document.base.pdf.page.page import Page
 
 
 class FormField(LayoutElement):

@@ -3,10 +3,10 @@ import io
 import typing
 from decimal import Decimal
 
-from doc.io.read.tokenize.high_level_tokenizer import HighLevelTokenizer
-from doc.io.read.tokenize.low_level_tokenizer import Token, TokenType
-from doc.io.read.types import Decimal as bDecimal
-from doc.io.read.types import Dictionary, List, Name
+from web.document.base.io.read.tokenize.high_level_tokenizer import HighLevelTokenizer
+from web.document.base.io.read.tokenize.low_level_tokenizer import Token, TokenType
+from web.document.base.io.read.types import Decimal as bDecimal
+from web.document.base.io.read.types import Dictionary, List, Name
 
 
 class Font(Dictionary):

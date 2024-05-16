@@ -1,10 +1,8 @@
 import typing
 from decimal import Decimal
 
-from doc.pdf.canvas.geometry.rectangle import Rectangle
-from doc.pdf.canvas.layout.layout_element import LayoutElement
-
-from web.document.base.pdf.page.page import Page
+from web.document.base.pdf.canvas.geometry.rectangle import Rectangle
+from web.document.base.pdf.canvas.layout.layout_element import LayoutElement
 
 
 class InlineFlow(LayoutElement):
@@ -81,7 +79,7 @@ class InlineFlow(LayoutElement):
 
     @staticmethod
     def _get_min_content_box(e: LayoutElement) -> Rectangle:
-        from doc.pdf.canvas.layout.table.table import TableCell
+        from web.document.base.pdf.canvas.layout.table.table import TableCell
 
         c: TableCell = TableCell(e)
         c._calculate_min_and_max_layout_box()

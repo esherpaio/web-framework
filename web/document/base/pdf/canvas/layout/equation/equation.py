@@ -1,18 +1,18 @@
 import typing
 from decimal import Decimal
 
-from doc.pdf.canvas.color.color import Color, HexColor
-from doc.pdf.canvas.font.font import Font
-from doc.pdf.canvas.layout.equation.parser import Parser
-from doc.pdf.canvas.layout.equation.token import Token, TokenType
-from doc.pdf.canvas.layout.layout_element import Alignment, LayoutElement
-from doc.pdf.canvas.layout.page_layout.inline_flow import InlineFlow
-from doc.pdf.canvas.layout.table.flexible_column_width_table import (
+from web.document.base.pdf.canvas.color.color import Color, HexColor
+from web.document.base.pdf.canvas.font.font import Font
+from web.document.base.pdf.canvas.layout.equation.parser import Parser
+from web.document.base.pdf.canvas.layout.equation.token import Token, TokenType
+from web.document.base.pdf.canvas.layout.layout_element import Alignment, LayoutElement
+from web.document.base.pdf.canvas.layout.page_layout.inline_flow import InlineFlow
+from web.document.base.pdf.canvas.layout.table.flexible_column_width_table import (
     FlexibleColumnWidthTable,
 )
-from doc.pdf.canvas.layout.table.table import Table, TableCell
-from doc.pdf.canvas.layout.text.chunk_of_text import ChunkOfText
-from doc.pdf.canvas.layout.text.paragraph import Paragraph
+from web.document.base.pdf.canvas.layout.table.table import Table, TableCell
+from web.document.base.pdf.canvas.layout.text.chunk_of_text import ChunkOfText
+from web.document.base.pdf.canvas.layout.text.paragraph import Paragraph
 
 
 class Equation(InlineFlow):

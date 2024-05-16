@@ -1,6 +1,6 @@
-from doc.pdf.canvas.canvas_graphics_state import CanvasGraphicsState
-from doc.pdf.canvas.event.event_listener import Event
-from doc.pdf.canvas.geometry.line_segment import LineSegment
+from web.document.base.pdf.canvas.canvas_graphics_state import CanvasGraphicsState
+from web.document.base.pdf.canvas.event.event_listener import Event
+from web.document.base.pdf.canvas.geometry.line_segment import LineSegment
 
 
 class LineRenderEvent(Event):

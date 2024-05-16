@@ -37,3 +37,4 @@ class Coupon(Base):
     def percentage(self) -> int | None:
         if self.rate:
             return round(abs((self.rate * 100) - 100))
+        return None

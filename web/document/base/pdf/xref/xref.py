@@ -4,10 +4,16 @@ import typing
 from decimal import Decimal
 from typing import Optional, Union
 
-from doc.io.filter.stream_decode_util import decode_stream
-from doc.io.read.tokenize.high_level_tokenizer import HighLevelTokenizer
-from doc.io.read.tokenize.low_level_tokenizer import TokenType
-from doc.io.read.types import AnyPDFType, Dictionary, Name, Reference, Stream
+from web.document.base.io.filter.stream_decode_util import decode_stream
+from web.document.base.io.read.tokenize.high_level_tokenizer import HighLevelTokenizer
+from web.document.base.io.read.tokenize.low_level_tokenizer import TokenType
+from web.document.base.io.read.types import (
+    AnyPDFType,
+    Dictionary,
+    Name,
+    Reference,
+    Stream,
+)
 
 logger = logging.getLogger(__name__)
 

@@ -1,4 +1,4 @@
-from doc.pdf.canvas.event.event_listener import Event
+from web.document.base.pdf.canvas.event.event_listener import Event
 
 
 class EndTextEvent(Event):

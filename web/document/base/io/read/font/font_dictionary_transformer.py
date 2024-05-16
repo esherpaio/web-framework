@@ -2,16 +2,23 @@ import io
 import typing
 from typing import Any, Optional, Union
 
-from doc.io.read.transformer import ReadTransformerState, Transformer
-from doc.io.read.types import AnyPDFType, Dictionary, Stream
-from doc.pdf.canvas.event.event_listener import EventListener
-from doc.pdf.canvas.font.composite_font.cid_font_type_0 import CIDType0Font
-from doc.pdf.canvas.font.composite_font.cid_font_type_2 import CIDType2Font
-from doc.pdf.canvas.font.composite_font.font_type_0 import Type0Font
-from doc.pdf.canvas.font.font import Font
-from doc.pdf.canvas.font.simple_font.font_type_1 import StandardType1Font, Type1Font
-from doc.pdf.canvas.font.simple_font.font_type_3 import Type3Font
-from doc.pdf.canvas.font.simple_font.true_type_font import TrueTypeFont
+from web.document.base.io.read.transformer import ReadTransformerState, Transformer
+from web.document.base.io.read.types import AnyPDFType, Dictionary, Stream
+from web.document.base.pdf.canvas.event.event_listener import EventListener
+from web.document.base.pdf.canvas.font.composite_font.cid_font_type_0 import (
+    CIDType0Font,
+)
+from web.document.base.pdf.canvas.font.composite_font.cid_font_type_2 import (
+    CIDType2Font,
+)
+from web.document.base.pdf.canvas.font.composite_font.font_type_0 import Type0Font
+from web.document.base.pdf.canvas.font.font import Font
+from web.document.base.pdf.canvas.font.simple_font.font_type_1 import (
+    StandardType1Font,
+    Type1Font,
+)
+from web.document.base.pdf.canvas.font.simple_font.font_type_3 import Type3Font
+from web.document.base.pdf.canvas.font.simple_font.true_type_font import TrueTypeFont
 
 
 class FontDictionaryTransformer(Transformer):
