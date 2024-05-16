@@ -1,7 +1,13 @@
 from decimal import Decimal
 from itertools import zip_longest
 
-from doc.pdf import (
+from sqlalchemy.orm import Session
+
+from web.config import config
+from web.database.model import Invoice, Order
+from web.document._defaults import FONT_BOLD, FONT_SIZE_TITLE, Paragraph, TableCell
+from web.document._utils import cells_to_tables, num_to_str, save_pdf
+from web.document.base.pdf import (
     Alignment,
     Document,
     FixedColumnWidthTable,
@@ -10,12 +16,6 @@ from doc.pdf import (
     Page,
     SingleColumnLayout,
 )
-from sqlalchemy.orm import Session
-
-from web.config import config
-from web.database.model import Invoice, Order
-from web.document._base import FONT_BOLD, FONT_SIZE_TITLE, Paragraph, TableCell
-from web.document._utils import cells_to_tables, num_to_str, save_pdf
 from web.i18n import _
 
 
