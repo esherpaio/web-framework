@@ -1,0 +1,12 @@
+from sqlalchemy.orm import Session
+
+from web.database.model import Base
+
+
+def copy_row(s: Session, new: Base, row: Base) -> Base:
+    for k, v in row.__dict__.items():
+        if k == "id" or k.startswith("_"):
+            continue
+        setattr(new, k, v)
+    s.add(new)
+    return new
