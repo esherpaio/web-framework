@@ -1,8 +1,8 @@
 import typing
 from decimal import Decimal
 
-from doc.io.read.types import Decimal as bDecimal
-from doc.pdf.canvas.font.font import Font
+from web.document.base.io.read.types import Decimal as bDecimal
+from web.document.base.pdf.canvas.font.font import Font
 
 
 class Glyph:

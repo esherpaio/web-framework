@@ -2,10 +2,12 @@ import enum
 import math
 from decimal import Decimal
 
-from doc.pdf.canvas.color.color import Color, HSVColor, RGBColor
-from doc.pdf.canvas.geometry.rectangle import Rectangle
-from doc.pdf.canvas.layout.shape.disconnected_shape import DisconnectedShape
-from doc.pdf.page.page import Page
+from web.document.base.pdf.canvas.color.color import Color, HSVColor, RGBColor
+from web.document.base.pdf.canvas.geometry.rectangle import Rectangle
+from web.document.base.pdf.canvas.layout.shape.disconnected_shape import (
+    DisconnectedShape,
+)
+from web.document.base.pdf.page.page import Page
 
 
 class GradientColoredDisconnectedShape(DisconnectedShape):

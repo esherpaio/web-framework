@@ -2,10 +2,10 @@ import datetime
 import typing
 from decimal import Decimal
 
-from doc.io.read.types import Decimal as bDecimal
-from doc.io.read.types import Dictionary, List, Name, String
-from doc.pdf.canvas.color.color import Color
-from doc.pdf.canvas.geometry.rectangle import Rectangle
+from web.document.base.io.read.types import Decimal as bDecimal
+from web.document.base.io.read.types import Dictionary, List, Name, String
+from web.document.base.pdf.canvas.color.color import Color
+from web.document.base.pdf.canvas.geometry.rectangle import Rectangle
 
 
 class Annotation(Dictionary):

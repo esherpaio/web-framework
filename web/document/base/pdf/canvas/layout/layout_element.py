@@ -2,13 +2,9 @@ import typing
 from decimal import Decimal
 from enum import Enum
 
-from doc.pdf.canvas.color.color import Color, HexColor
-from doc.pdf.canvas.geometry.rectangle import Rectangle
-from doc.pdf.canvas.line_art.blob_factory import BlobFactory
-
-from web.document.base.io.write.conformance_level import ConformanceLevel
-from web.document.base.pdf.document.document import Document
-from web.document.base.pdf.page.page import Page
+from web.document.base.pdf.canvas.color.color import Color, HexColor
+from web.document.base.pdf.canvas.geometry.rectangle import Rectangle
+from web.document.base.pdf.canvas.line_art.blob_factory import BlobFactory
 
 
 class Alignment(Enum):

@@ -1,5 +1,5 @@
-from doc.io.read.types import Dictionary
-from doc.pdf.canvas.canvas_graphics_state import CanvasGraphicsState
+from web.document.base.io.read.types import Dictionary
+from web.document.base.pdf.canvas.canvas_graphics_state import CanvasGraphicsState
 
 
 class Canvas(Dictionary):

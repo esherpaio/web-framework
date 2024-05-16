@@ -1,12 +1,12 @@
 import typing
 from decimal import Decimal
 
-from doc.pdf.canvas.color.color import Color, HexColor
-from doc.pdf.canvas.geometry.rectangle import Rectangle
-from doc.pdf.canvas.layout.layout_element import Alignment
-from doc.pdf.canvas.layout.table.table import Table
-from doc.pdf.canvas.layout.text.paragraph import Paragraph
-from doc.pdf.page.page import Page
+from web.document.base.pdf.canvas.color.color import Color, HexColor
+from web.document.base.pdf.canvas.geometry.rectangle import Rectangle
+from web.document.base.pdf.canvas.layout.layout_element import Alignment
+from web.document.base.pdf.canvas.layout.table.table import Table
+from web.document.base.pdf.canvas.layout.text.paragraph import Paragraph
+from web.document.base.pdf.page.page import Page
 
 
 class FixedColumnWidthTable(Table):

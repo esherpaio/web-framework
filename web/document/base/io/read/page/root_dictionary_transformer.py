@@ -2,12 +2,14 @@ import io
 import typing
 from typing import Any, Dict, List, Optional, Union
 
-from doc.io.read.object.dictionary_transformer import DictionaryTransformer
-from doc.io.read.transformer import ReadTransformerState, Transformer
-from doc.io.read.types import AnyPDFType, Decimal, Dictionary, Name
-from doc.io.read.types import List as bList
-from doc.pdf.canvas.event.event_listener import EventListener
-from doc.pdf.page.page import Page
+from web.document.base.io.read.object.dictionary_transformer import (
+    DictionaryTransformer,
+)
+from web.document.base.io.read.transformer import ReadTransformerState, Transformer
+from web.document.base.io.read.types import AnyPDFType, Decimal, Dictionary, Name
+from web.document.base.io.read.types import List as bList
+from web.document.base.pdf.canvas.event.event_listener import EventListener
+from web.document.base.pdf.page.page import Page
 
 
 class RootDictionaryTransformer(Transformer):

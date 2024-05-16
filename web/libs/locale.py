@@ -66,6 +66,7 @@ class Locale:
         for country in cache.countries:
             if country.code == country_code:
                 return country
+        return None
 
     @cached_property
     def currency(self) -> Currency | None:
@@ -75,6 +76,7 @@ class Locale:
         for currency in cache.currencies:
             if currency.id == currency_id:
                 return currency
+        return None
 
     @cached_property
     def language(self) -> Language | None:
@@ -82,6 +84,7 @@ class Locale:
         for language in cache.languages:
             if language.code == language_code:
                 return language
+        return None
 
 
 #
@@ -94,6 +97,7 @@ def get_route_locale() -> str | None:
     if has_request_context() and request.endpoint:
         if request.view_args is not None and "_locale" in request.view_args:
             return request.view_args["_locale"]
+    return None
 
 
 def expects_locale(endpoint: str | None) -> bool:
@@ -141,6 +145,7 @@ def _get_proxy_locale() -> Locale | None:
         if "_locale" not in g:
             g._locale = Locale()
         return g._locale
+    return None
 
 
 #

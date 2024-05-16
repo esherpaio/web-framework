@@ -1,11 +1,11 @@
 import os
 from decimal import Decimal
 
+from web.document._defaults import TableCell
 from web.document.base.pdf import Document
 from web.document.base.pdf.canvas.layout.table.fixed_column_width_table import (
     FixedColumnWidthTable,
 )
-from web.document.base.pdf.canvas.layout.table.table import TableCell
 from web.document.base.pdf.pdf import PDF
 
 DIR = os.path.dirname(os.path.realpath(__file__))

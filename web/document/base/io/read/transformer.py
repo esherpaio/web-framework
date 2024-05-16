@@ -2,9 +2,9 @@ import io
 import typing
 from typing import Any, Optional, Union
 
-from doc.io.read.tokenize.high_level_tokenizer import HighLevelTokenizer
-from doc.io.read.types import AnyPDFType, Reference
-from doc.pdf.canvas.event.event_listener import EventListener
+from web.document.base.io.read.tokenize.high_level_tokenizer import HighLevelTokenizer
+from web.document.base.io.read.types import AnyPDFType, Reference
+from web.document.base.pdf.canvas.event.event_listener import EventListener
 
 
 class ReadTransformerState:

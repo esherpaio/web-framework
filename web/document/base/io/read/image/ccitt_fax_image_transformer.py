@@ -3,11 +3,12 @@ import logging
 import typing
 from typing import Any, Optional, Union
 
-from doc.io.read.pdf_object import PDFObject
-from doc.io.read.transformer import ReadTransformerState, Transformer
-from doc.io.read.types import AnyPDFType, Stream
-from doc.pdf.canvas.event.event_listener import EventListener
 from PIL import Image
+
+from web.document.base.io.read.pdf_object import PDFObject
+from web.document.base.io.read.transformer import ReadTransformerState, Transformer
+from web.document.base.io.read.types import AnyPDFType, Stream
+from web.document.base.pdf.canvas.event.event_listener import EventListener
 
 logger = logging.getLogger(__name__)
 

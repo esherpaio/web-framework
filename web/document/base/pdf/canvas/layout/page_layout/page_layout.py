@@ -1,5 +1,5 @@
-from doc.pdf.canvas.layout.layout_element import LayoutElement
-from doc.pdf.page.page import Page
+from web.document.base.pdf.canvas.layout.layout_element import LayoutElement
+from web.document.base.pdf.page.page import Page
 
 
 class PageLayout:

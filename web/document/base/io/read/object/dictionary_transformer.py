@@ -2,9 +2,9 @@ import io
 import typing
 from typing import Any, Optional, Union
 
-from doc.io.read.transformer import ReadTransformerState, Transformer
-from doc.io.read.types import AnyPDFType, Dictionary
-from doc.pdf.canvas.event.event_listener import EventListener
+from web.document.base.io.read.transformer import ReadTransformerState, Transformer
+from web.document.base.io.read.types import AnyPDFType, Dictionary
+from web.document.base.pdf.canvas.event.event_listener import EventListener
 
 
 class DictionaryTransformer(Transformer):

@@ -1,8 +1,10 @@
 import typing
 
-from doc.io.read.types import Name
-from doc.pdf.canvas.font.composite_font.cid_font_type_0 import CIDType0Font
-from doc.pdf.canvas.font.font import Font
+from web.document.base.io.read.types import Name
+from web.document.base.pdf.canvas.font.composite_font.cid_font_type_0 import (
+    CIDType0Font,
+)
+from web.document.base.pdf.canvas.font.font import Font
 
 
 class CIDType2Font(CIDType0Font):

@@ -2,9 +2,9 @@ import hashlib
 import typing
 import zlib
 
-from doc.io.read.encryption.rc4 import RC4
-from doc.io.read.pdf_object import PDFObject
-from doc.io.read.types import (
+from web.document.base.io.read.encryption.rc4 import RC4
+from web.document.base.io.read.pdf_object import PDFObject
+from web.document.base.io.read.types import (
     AnyPDFType,
     Boolean,
     Decimal,

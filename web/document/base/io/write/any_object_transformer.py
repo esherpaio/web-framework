@@ -1,26 +1,30 @@
 import io
 from typing import Optional, Union
 
-from doc.io.read.types import AnyPDFType
-from doc.io.write.document.catalog_transformer import CatalogTransformer
-from doc.io.write.document.document_transformer import DocumentTransformer
-from doc.io.write.document.information_dictionary_transformer import (
+from web.document.base.io.read.types import AnyPDFType
+from web.document.base.io.write.document.catalog_transformer import CatalogTransformer
+from web.document.base.io.write.document.document_transformer import DocumentTransformer
+from web.document.base.io.write.document.information_dictionary_transformer import (
     InformationDictionaryTransformer,
 )
-from doc.io.write.image.image_transformer import ImageTransformer
-from doc.io.write.object.array_transformer import ArrayTransformer
-from doc.io.write.object.dictionary_transformer import DictionaryTransformer
-from doc.io.write.object.stream_transformer import StreamTransformer
-from doc.io.write.page.page_transformer import PageTransformer
-from doc.io.write.page.pages_transformer import PagesTransformer
-from doc.io.write.primitive.boolean_transformer import BooleanTransformer
-from doc.io.write.primitive.name_transformer import NameTransformer
-from doc.io.write.primitive.number_transformer import NumberTransformer
-from doc.io.write.primitive.string_transformer import StringTransformer
-from doc.io.write.reference.reference_transformer import ReferenceTransform
-from doc.io.write.reference.xref_transformer import XREFTransformer
-from doc.io.write.transformer import Transformer, WriteTransformerState
-from doc.io.write.xmp.xmp_transformer import XMPTransformer
+from web.document.base.io.write.image.image_transformer import ImageTransformer
+from web.document.base.io.write.object.array_transformer import ArrayTransformer
+from web.document.base.io.write.object.dictionary_transformer import (
+    DictionaryTransformer,
+)
+from web.document.base.io.write.object.stream_transformer import StreamTransformer
+from web.document.base.io.write.page.page_transformer import PageTransformer
+from web.document.base.io.write.page.pages_transformer import PagesTransformer
+from web.document.base.io.write.primitive.boolean_transformer import BooleanTransformer
+from web.document.base.io.write.primitive.name_transformer import NameTransformer
+from web.document.base.io.write.primitive.number_transformer import NumberTransformer
+from web.document.base.io.write.primitive.string_transformer import StringTransformer
+from web.document.base.io.write.reference.reference_transformer import (
+    ReferenceTransform,
+)
+from web.document.base.io.write.reference.xref_transformer import XREFTransformer
+from web.document.base.io.write.transformer import Transformer, WriteTransformerState
+from web.document.base.io.write.xmp.xmp_transformer import XMPTransformer
 
 
 class AnyObjectTransformer(Transformer):

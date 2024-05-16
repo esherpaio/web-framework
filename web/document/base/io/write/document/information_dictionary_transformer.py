@@ -5,14 +5,16 @@ import typing
 import xml.etree.ElementTree as ET
 from typing import Any, Optional
 
-from doc.io.read.types import AnyPDFType, Dictionary, Name, Stream, String
-from doc.io.read.types import Decimal as bDecimal
-from doc.io.write.conformance_level import ConformanceLevel
-from doc.io.write.object.dictionary_transformer import DictionaryTransformer
-from doc.io.write.object.stream_transformer import StreamTransformer
-from doc.io.write.transformer import Transformer, WriteTransformerState
-from doc.pdf.document.document import Document
-from doc.pdf.trailer.document_info import XMPDocumentInfo
+from web.document.base.io.read.types import AnyPDFType, Dictionary, Name, Stream, String
+from web.document.base.io.read.types import Decimal as bDecimal
+from web.document.base.io.write.conformance_level import ConformanceLevel
+from web.document.base.io.write.object.dictionary_transformer import (
+    DictionaryTransformer,
+)
+from web.document.base.io.write.object.stream_transformer import StreamTransformer
+from web.document.base.io.write.transformer import Transformer, WriteTransformerState
+from web.document.base.pdf.document.document import Document
+from web.document.base.pdf.trailer.document_info import XMPDocumentInfo
 
 logger = logging.getLogger(__name__)
 

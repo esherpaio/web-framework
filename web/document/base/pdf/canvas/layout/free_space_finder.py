@@ -3,12 +3,14 @@ from decimal import Decimal
 from math import ceil
 from pathlib import Path
 
-from doc.pdf.canvas.event.begin_page_event import BeginPageEvent
-from doc.pdf.canvas.event.chunk_of_text_render_event import ChunkOfTextRenderEvent
-from doc.pdf.canvas.event.event_listener import Event, EventListener
-from doc.pdf.canvas.event.image_render_event import ImageRenderEvent
-from doc.pdf.canvas.geometry.rectangle import Rectangle
-from doc.pdf.pdf import PDF
+from web.document.base.pdf.canvas.event.begin_page_event import BeginPageEvent
+from web.document.base.pdf.canvas.event.chunk_of_text_render_event import (
+    ChunkOfTextRenderEvent,
+)
+from web.document.base.pdf.canvas.event.event_listener import Event, EventListener
+from web.document.base.pdf.canvas.event.image_render_event import ImageRenderEvent
+from web.document.base.pdf.canvas.geometry.rectangle import Rectangle
+from web.document.base.pdf.pdf import PDF
 
 
 class FreeSpaceFinder(EventListener):

@@ -1,15 +1,15 @@
 import typing
 from decimal import Decimal
 
-from doc.io.read.types import Dictionary, Name
-from doc.pdf.canvas.color.color import Color, HexColor
-from doc.pdf.canvas.font.font import Font
-from doc.pdf.canvas.font.glyph_line import GlyphLine
-from doc.pdf.canvas.font.simple_font.font_type_1 import StandardType1Font
-from doc.pdf.canvas.font.simple_font.true_type_font import TrueTypeFont
-from doc.pdf.canvas.geometry.rectangle import Rectangle
-from doc.pdf.canvas.layout.layout_element import Alignment, LayoutElement
-from doc.pdf.page.page import Page
+from web.document.base.io.read.types import Dictionary, Name
+from web.document.base.pdf.canvas.color.color import Color, HexColor
+from web.document.base.pdf.canvas.font.font import Font
+from web.document.base.pdf.canvas.font.glyph_line import GlyphLine
+from web.document.base.pdf.canvas.font.simple_font.font_type_1 import StandardType1Font
+from web.document.base.pdf.canvas.font.simple_font.true_type_font import TrueTypeFont
+from web.document.base.pdf.canvas.geometry.rectangle import Rectangle
+from web.document.base.pdf.canvas.layout.layout_element import Alignment, LayoutElement
+from web.document.base.pdf.page.page import Page
 
 
 class ChunkOfText(LayoutElement):

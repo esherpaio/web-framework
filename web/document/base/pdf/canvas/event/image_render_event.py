@@ -1,8 +1,9 @@
 from decimal import Decimal
 
-from doc.pdf.canvas.canvas_graphics_state import CanvasGraphicsState
-from doc.pdf.canvas.event.event_listener import Event
 from PIL import Image as PILImage
+
+from web.document.base.pdf.canvas.canvas_graphics_state import CanvasGraphicsState
+from web.document.base.pdf.canvas.event.event_listener import Event
 
 
 class ImageRenderEvent(Event):

@@ -1,10 +1,8 @@
 import typing
 from decimal import Decimal
 
-from doc.pdf.canvas.geometry.rectangle import Rectangle
-from doc.pdf.canvas.layout.layout_element import LayoutElement
-
-from web.document.base.pdf.page.page import Page
+from web.document.base.pdf.canvas.geometry.rectangle import Rectangle
+from web.document.base.pdf.canvas.layout.layout_element import LayoutElement
 
 
 class BlockFlow(LayoutElement):

@@ -4,16 +4,18 @@ import typing
 from decimal import Decimal
 from typing import Any, Optional, Union
 
-from doc.io.read.encryption.standard_security_handler import StandardSecurityHandler
-from doc.io.read.tokenize.high_level_tokenizer import HighLevelTokenizer
-from doc.io.read.transformer import ReadTransformerState, Transformer
-from doc.io.read.types import AnyPDFType, Dictionary, Name
-from doc.pdf.canvas.event.event_listener import Event, EventListener
-from doc.pdf.document.document import Document
-from doc.pdf.xref.plaintext_xref import PlainTextXREF
-from doc.pdf.xref.rebuilt_xref import RebuiltXREF
-from doc.pdf.xref.stream_xref import StreamXREF
-from doc.pdf.xref.xref import XREF
+from web.document.base.io.read.encryption.standard_security_handler import (
+    StandardSecurityHandler,
+)
+from web.document.base.io.read.tokenize.high_level_tokenizer import HighLevelTokenizer
+from web.document.base.io.read.transformer import ReadTransformerState, Transformer
+from web.document.base.io.read.types import AnyPDFType, Dictionary, Name
+from web.document.base.pdf.canvas.event.event_listener import Event, EventListener
+from web.document.base.pdf.document.document import Document
+from web.document.base.pdf.xref.plaintext_xref import PlainTextXREF
+from web.document.base.pdf.xref.rebuilt_xref import RebuiltXREF
+from web.document.base.pdf.xref.stream_xref import StreamXREF
+from web.document.base.pdf.xref.xref import XREF
 
 
 class BeginDocumentEvent(Event):
@@ -113,7 +115,7 @@ class XREFTransformer(Transformer):
                 most_recent_xref = None
                 exceptions_to_rethrow.append(ex0)
 
-        # attempt to rebuild XREF from document
+        # attempt to rebuild XREF from web.document.baseument
         if most_recent_xref is None:
             try:
                 most_recent_xref = RebuiltXREF()

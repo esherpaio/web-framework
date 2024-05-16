@@ -1,7 +1,7 @@
 from typing import Optional
 
-from doc.io.read.types import AnyPDFType, Reference
-from doc.io.write.transformer import Transformer, WriteTransformerState
+from web.document.base.io.read.types import AnyPDFType, Reference
+from web.document.base.io.write.transformer import Transformer, WriteTransformerState
 
 
 class ReferenceTransform(Transformer):

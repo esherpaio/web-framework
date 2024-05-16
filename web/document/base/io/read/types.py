@@ -4,10 +4,9 @@ import xml.etree.ElementTree as ET
 from decimal import Decimal as oDecimal
 from math import ceil, floor
 from typing import Optional, Union
-from xml.dom.minidom import Document
 
-from doc.io.read.pdf_object import PDFObject
-from doc.io.read.postfix.postfix_eval import PostScriptEval
+from web.document.base.io.read.pdf_object import PDFObject
+from web.document.base.io.read.postfix.postfix_eval import PostScriptEval
 
 
 class Boolean(PDFObject):
@@ -772,9 +771,10 @@ class HexadecimalString(String):
     (using LESS-THAN SIGN (3Ch) and GREATER- THAN SIGN (3Eh)).
     """
 
-    def __init__(self, text: str):
+    def __init__(self, text: str, encoding: Optional["Encoding"] = None):
         if len(text) % 2 == 1:
             text += "0"
+        self.encoding = encoding
         super(HexadecimalString, self).__init__(text)
 
     def get_content_bytes(self) -> bytearray:

@@ -1,12 +1,14 @@
 import typing
 from decimal import Decimal
 
-from doc.io.read.types import Decimal as bDecimal
-from doc.io.read.types import List, Name
-from doc.pdf.canvas.color.color import Color, HexColor
-from doc.pdf.canvas.geometry.rectangle import Rectangle
-from doc.pdf.canvas.layout.annotation.annotation import Annotation
-from doc.pdf.canvas.layout.annotation.polyline_annotation import LineEndStyleType
+from web.document.base.io.read.types import Decimal as bDecimal
+from web.document.base.io.read.types import List, Name
+from web.document.base.pdf.canvas.color.color import Color, HexColor
+from web.document.base.pdf.canvas.geometry.rectangle import Rectangle
+from web.document.base.pdf.canvas.layout.annotation.annotation import Annotation
+from web.document.base.pdf.canvas.layout.annotation.polyline_annotation import (
+    LineEndStyleType,
+)
 
 
 class LineAnnotation(Annotation):

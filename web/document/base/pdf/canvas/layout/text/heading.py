@@ -1,15 +1,17 @@
 import typing
 from decimal import Decimal
 
-from doc.pdf.canvas.color.color import Color, HexColor
-from doc.pdf.canvas.font.font import Font
-from doc.pdf.canvas.geometry.rectangle import Rectangle
-from doc.pdf.canvas.layout.annotation.link_annotation import DestinationType
-from doc.pdf.canvas.layout.hyphenation.hyphenation import Hyphenation
-from doc.pdf.canvas.layout.layout_element import Alignment
-from doc.pdf.canvas.layout.text.paragraph import Paragraph
-from doc.pdf.document.document import Document
-from doc.pdf.page.page import Page
+from web.document.base.pdf.canvas.color.color import Color, HexColor
+from web.document.base.pdf.canvas.font.font import Font
+from web.document.base.pdf.canvas.geometry.rectangle import Rectangle
+from web.document.base.pdf.canvas.layout.annotation.link_annotation import (
+    DestinationType,
+)
+from web.document.base.pdf.canvas.layout.hyphenation.hyphenation import Hyphenation
+from web.document.base.pdf.canvas.layout.layout_element import Alignment
+from web.document.base.pdf.canvas.layout.text.paragraph import Paragraph
+from web.document.base.pdf.document.document import Document
+from web.document.base.pdf.page.page import Page
 
 
 class Heading(Paragraph):

@@ -1,16 +1,13 @@
 import typing
 from decimal import Decimal
 
-from doc.io.read.types import Decimal as bDecimal
-from doc.io.read.types import Dictionary, Name, String
-from doc.pdf.canvas.color.color import Color, HexColor
-from doc.pdf.canvas.font.font import Font
-from doc.pdf.canvas.font.simple_font.font_type_1 import StandardType1Font
-from doc.pdf.canvas.geometry.rectangle import Rectangle
-from doc.pdf.canvas.layout.annotation.annotation import Annotation
-
-from web.document.base.pdf.canvas.color.color import RGBColor
-from web.document.base.pdf.page.page import Page
+from web.document.base.io.read.types import Decimal as bDecimal
+from web.document.base.io.read.types import Dictionary, Name, String
+from web.document.base.pdf.canvas.color.color import Color, HexColor
+from web.document.base.pdf.canvas.font.font import Font
+from web.document.base.pdf.canvas.font.simple_font.font_type_1 import StandardType1Font
+from web.document.base.pdf.canvas.geometry.rectangle import Rectangle
+from web.document.base.pdf.canvas.layout.annotation.annotation import Annotation
 
 
 class FreeTextAnnotation(Annotation):

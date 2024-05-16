@@ -1,10 +1,10 @@
 import typing
 from decimal import Decimal
 
-from doc.pdf.canvas.color.color import Color, HexColor, X11Color
-from doc.pdf.canvas.layout.layout_element import Alignment, LayoutElement
-from doc.pdf.canvas.layout.list.list import List
-from doc.pdf.canvas.layout.text.chunk_of_text import ChunkOfText
+from web.document.base.pdf.canvas.color.color import Color, HexColor, X11Color
+from web.document.base.pdf.canvas.layout.layout_element import Alignment, LayoutElement
+from web.document.base.pdf.canvas.layout.list.list import List
+from web.document.base.pdf.canvas.layout.text.chunk_of_text import ChunkOfText
 
 
 class OrderedList(List):

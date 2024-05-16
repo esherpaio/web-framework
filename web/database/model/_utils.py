@@ -61,16 +61,19 @@ def val_number(
 def get_slug(value: str | None) -> str | None:
     if isinstance(value, str):
         return gen_slug(value)
+    return None
 
 
 def get_lower(value: str | None) -> str | None:
     if isinstance(value, str):
         return value.lower()
+    return None
 
 
 def get_upper(value: str | None) -> str | None:
     if isinstance(value, str):
         return value.upper()
+    return None
 
 
 def parse_text(value: str | None) -> str | None:
@@ -78,3 +81,4 @@ def parse_text(value: str | None) -> str | None:
         return None
     if isinstance(value, str):
         return emoji.replace_emoji(value, replace="")
+    return None

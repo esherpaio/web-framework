@@ -1,10 +1,10 @@
 import io
 from typing import List, Optional, Union
 
-from doc.io.read.tokenize.high_level_tokenizer import HighLevelTokenizer
-from doc.io.read.tokenize.low_level_tokenizer import TokenType
-from doc.io.read.types import Dictionary, Name, Reference
-from doc.pdf.xref.xref import XREF
+from web.document.base.io.read.tokenize.high_level_tokenizer import HighLevelTokenizer
+from web.document.base.io.read.tokenize.low_level_tokenizer import TokenType
+from web.document.base.io.read.types import Dictionary, Name, Reference
+from web.document.base.pdf.xref.xref import XREF
 
 
 class PlainTextXREF(XREF):

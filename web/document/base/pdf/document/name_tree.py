@@ -1,6 +1,6 @@
 import typing
 
-from doc.io.read.types import Dictionary, List, Name, String
+from web.document.base.io.read.types import Dictionary, List, Name, String
 
 
 class NameTree:

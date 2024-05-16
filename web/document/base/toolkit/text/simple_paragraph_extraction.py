@@ -2,17 +2,19 @@ import io
 import typing
 from decimal import Decimal
 
-from doc.datastructure.disjoint_set import DisjointSet
-from doc.pdf.canvas.canvas import Canvas
-from doc.pdf.canvas.canvas_stream_processor import CanvasStreamProcessor
-from doc.pdf.canvas.event.begin_page_event import BeginPageEvent
-from doc.pdf.canvas.event.end_page_event import EndPageEvent
-from doc.pdf.canvas.geometry.rectangle import Rectangle
-from doc.pdf.canvas.layout.layout_element import LayoutElement
-from doc.pdf.canvas.layout.text.paragraph import Paragraph
-from doc.pdf.document.document import Document
-from doc.pdf.page.page import Page
-from doc.toolkit.text.simple_line_of_text_extraction import SimpleLineOfTextExtraction
+from web.document.base.datastructure.disjoint_set import DisjointSet
+from web.document.base.pdf.canvas.canvas import Canvas
+from web.document.base.pdf.canvas.canvas_stream_processor import CanvasStreamProcessor
+from web.document.base.pdf.canvas.event.begin_page_event import BeginPageEvent
+from web.document.base.pdf.canvas.event.end_page_event import EndPageEvent
+from web.document.base.pdf.canvas.geometry.rectangle import Rectangle
+from web.document.base.pdf.canvas.layout.layout_element import LayoutElement
+from web.document.base.pdf.canvas.layout.text.paragraph import Paragraph
+from web.document.base.pdf.document.document import Document
+from web.document.base.pdf.page.page import Page
+from web.document.base.toolkit.text.simple_line_of_text_extraction import (
+    SimpleLineOfTextExtraction,
+)
 
 
 class SimpleParagraphExtraction(SimpleLineOfTextExtraction):

@@ -3,8 +3,8 @@ import typing
 from decimal import Decimal
 from typing import Tuple
 
-from doc.pdf.canvas.geometry.rectangle import Rectangle
-from doc.pdf.canvas.line_art.blob_factory import BlobFactory
+from web.document.base.pdf.canvas.geometry.rectangle import Rectangle
+from web.document.base.pdf.canvas.line_art.blob_factory import BlobFactory
 
 HALF: Decimal = Decimal(0.5)
 
@@ -83,10 +83,10 @@ class LineArtFactory:
         h_scale = bounding_box.get_height() / h
         line_segments = [
             (
-                (seg[0][0] * w_scale, seg[0][1] * h_scale),
-                (seg[1][0] * w_scale, seg[1][1] * h_scale),
+                (obj[0][0] * w_scale, obj[0][1] * h_scale),
+                (obj[1][0] * w_scale, obj[1][1] * h_scale),
             )
-            for seg in line_segments
+            for obj in line_segments
         ]
 
         # return

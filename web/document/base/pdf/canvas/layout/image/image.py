@@ -4,13 +4,14 @@ from pathlib import Path
 from typing import Optional
 
 import requests
-from doc.io.read.pdf_object import PDFObject
-from doc.io.read.types import Dictionary, Name
-from doc.pdf.canvas.color.color import Color, HexColor
-from doc.pdf.canvas.geometry.rectangle import Rectangle
-from doc.pdf.canvas.layout.layout_element import Alignment, LayoutElement
-from doc.pdf.page.page import Page
 from PIL import Image as PILImage
+
+from web.document.base.io.read.pdf_object import PDFObject
+from web.document.base.io.read.types import Dictionary, Name
+from web.document.base.pdf.canvas.color.color import Color, HexColor
+from web.document.base.pdf.canvas.geometry.rectangle import Rectangle
+from web.document.base.pdf.canvas.layout.layout_element import Alignment, LayoutElement
+from web.document.base.pdf.page.page import Page
 
 
 class Image(LayoutElement):

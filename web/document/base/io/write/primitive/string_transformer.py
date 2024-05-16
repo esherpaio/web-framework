@@ -1,7 +1,7 @@
 from typing import Optional
 
-from doc.io.read.types import AnyPDFType, HexadecimalString, String
-from doc.io.write.transformer import Transformer, WriteTransformerState
+from web.document.base.io.read.types import AnyPDFType, HexadecimalString, String
+from web.document.base.io.write.transformer import Transformer, WriteTransformerState
 
 
 class StringTransformer(Transformer):

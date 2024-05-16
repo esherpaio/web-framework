@@ -3,17 +3,17 @@ import typing
 import zlib
 from decimal import Decimal
 
-from doc.io.read.pdf_object import PDFObject
-from doc.io.read.types import Boolean, Dictionary, Name, Stream, String
-from doc.io.read.types import Decimal as bDecimal
-from doc.io.read.types import List as bList
-from doc.io.read.types import String as bString
-from doc.pdf.canvas.color.color import Color, HexColor, RGBColor
-from doc.pdf.canvas.font.simple_font.font_type_1 import StandardType1Font
-from doc.pdf.canvas.geometry.rectangle import Rectangle
-from doc.pdf.canvas.layout.forms.form_field import FormField
-from doc.pdf.canvas.layout.layout_element import Alignment
-from doc.pdf.page.page import Page
+from web.document.base.io.read.pdf_object import PDFObject
+from web.document.base.io.read.types import Boolean, Dictionary, Name, Stream, String
+from web.document.base.io.read.types import Decimal as bDecimal
+from web.document.base.io.read.types import List as bList
+from web.document.base.io.read.types import String as bString
+from web.document.base.pdf.canvas.color.color import Color, HexColor, RGBColor
+from web.document.base.pdf.canvas.font.simple_font.font_type_1 import StandardType1Font
+from web.document.base.pdf.canvas.geometry.rectangle import Rectangle
+from web.document.base.pdf.canvas.layout.forms.form_field import FormField
+from web.document.base.pdf.canvas.layout.layout_element import Alignment
+from web.document.base.pdf.page.page import Page
 
 
 class CheckBox(FormField):

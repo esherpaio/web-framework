@@ -1,12 +1,13 @@
 import typing
 
-from doc.io.read.pdf_object import PDFObject
-from doc.io.read.types import Name
-from doc.pdf.canvas.event.begin_page_event import BeginPageEvent
-from doc.pdf.canvas.event.event_listener import Event, EventListener
-from doc.pdf.canvas.event.image_render_event import ImageRenderEvent
-from doc.pdf.page.page import Page
 from PIL import Image as PILImage
+
+from web.document.base.io.read.pdf_object import PDFObject
+from web.document.base.io.read.types import Name
+from web.document.base.pdf.canvas.event.begin_page_event import BeginPageEvent
+from web.document.base.pdf.canvas.event.event_listener import Event, EventListener
+from web.document.base.pdf.canvas.event.image_render_event import ImageRenderEvent
+from web.document.base.pdf.page.page import Page
 
 
 class ImageFormatOptimization(EventListener):

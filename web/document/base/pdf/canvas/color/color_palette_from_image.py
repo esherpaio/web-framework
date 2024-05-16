@@ -3,9 +3,10 @@ import typing
 from decimal import Decimal
 from pathlib import Path
 
-from doc.pdf import HexColor, RGBColor
-from doc.pdf import Image as bImage
 from PIL.Image import Image as pImage
+
+from web.document.base.pdf import HexColor, RGBColor
+from web.document.base.pdf import Image as bImage
 
 
 class ColorPaletteFromImage:

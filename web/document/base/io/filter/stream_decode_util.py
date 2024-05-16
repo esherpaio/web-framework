@@ -1,10 +1,10 @@
 import typing
 
-from doc.io.filter.ascii85_decode import ASCII85Decode
-from doc.io.filter.flate_decode import FlateDecode
-from doc.io.filter.lzw_decode import LZWDecode
-from doc.io.filter.run_length_decode import RunLengthDecode
-from doc.io.read.types import Decimal, Dictionary, List, Name, Stream
+from web.document.base.io.filter.ascii85_decode import ASCII85Decode
+from web.document.base.io.filter.flate_decode import FlateDecode
+from web.document.base.io.filter.lzw_decode import LZWDecode
+from web.document.base.io.filter.run_length_decode import RunLengthDecode
+from web.document.base.io.read.types import Decimal, Dictionary, List, Name, Stream
 
 
 def decode_stream(s: Stream) -> Stream:

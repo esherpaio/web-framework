@@ -3,14 +3,12 @@ import typing
 import zlib
 from decimal import Decimal
 
-from doc.io.read.types import Decimal as bDecimal
-from doc.io.read.types import Dictionary, List, Name, Stream, String
-from doc.pdf.canvas.canvas import Canvas
-from doc.pdf.canvas.geometry.rectangle import Rectangle
-from doc.pdf.canvas.layout.annotation.annotation import Annotation
-from doc.pdf.page.page_info import PageInfo
-
-from web.document.base.pdf.document.document import Document
+from web.document.base.io.read.types import Decimal as bDecimal
+from web.document.base.io.read.types import Dictionary, List, Name, Stream, String
+from web.document.base.pdf.canvas.canvas import Canvas
+from web.document.base.pdf.canvas.geometry.rectangle import Rectangle
+from web.document.base.pdf.canvas.layout.annotation.annotation import Annotation
+from web.document.base.pdf.page.page_info import PageInfo
 
 
 class Page(Dictionary):
@@ -128,7 +126,7 @@ class Page(Dictionary):
     def apply_redact_annotations(self):
         """This function applies the redaction annotations on this Page."""
 
-        from doc.pdf.canvas.redacted_canvas_stream_processor import (
+        from web.document.base.pdf.canvas.redacted_canvas_stream_processor import (
             RedactedCanvasStreamProcessor,
         )
 

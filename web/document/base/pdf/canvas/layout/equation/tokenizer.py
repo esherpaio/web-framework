@@ -1,6 +1,6 @@
 import typing
 
-from doc.pdf.canvas.layout.equation.token import Token, TokenType
+from web.document.base.pdf.canvas.layout.equation.token import Token, TokenType
 
 
 class Tokenizer:

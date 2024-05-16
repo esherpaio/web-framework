@@ -1,9 +1,15 @@
 import typing
 from typing import Optional
 
-from doc.io.read.types import AnyPDFType, Decimal, Dictionary, Name, Reference
-from doc.io.write.transformer import Transformer, WriteTransformerState
-from doc.pdf.xref.xref import XREF
+from web.document.base.io.read.types import (
+    AnyPDFType,
+    Decimal,
+    Dictionary,
+    Name,
+    Reference,
+)
+from web.document.base.io.write.transformer import Transformer, WriteTransformerState
+from web.document.base.pdf.xref.xref import XREF
 
 
 class XREFTransformer(Transformer):

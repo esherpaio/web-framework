@@ -2,14 +2,16 @@ import typing
 import zlib
 from decimal import Decimal
 
-from doc.io.read.types import Decimal as bDecimal
-from doc.io.read.types import Dictionary, List, Name, Stream, String
-from doc.io.write.conformance_level import ConformanceLevel
-from doc.pdf.canvas.layout.annotation.link_annotation import DestinationType
-from doc.pdf.document.name_tree import NameTree
-from doc.pdf.page.page import Page
-from doc.pdf.trailer.document_info import DocumentInfo, XMPDocumentInfo
-from doc.pdf.xref.plaintext_xref import PlainTextXREF
+from web.document.base.io.read.types import Decimal as bDecimal
+from web.document.base.io.read.types import Dictionary, List, Name, Stream, String
+from web.document.base.io.write.conformance_level import ConformanceLevel
+from web.document.base.pdf.canvas.layout.annotation.link_annotation import (
+    DestinationType,
+)
+from web.document.base.pdf.document.name_tree import NameTree
+from web.document.base.pdf.page.page import Page
+from web.document.base.pdf.trailer.document_info import DocumentInfo, XMPDocumentInfo
+from web.document.base.pdf.xref.plaintext_xref import PlainTextXREF
 
 
 class Document(Dictionary):

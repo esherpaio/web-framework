@@ -3,19 +3,21 @@ import math
 import typing
 from decimal import Decimal
 
-from doc.datastructure.disjoint_set import DisjointSet
-from doc.pdf.canvas.event.begin_page_event import BeginPageEvent
-from doc.pdf.canvas.event.chunk_of_text_render_event import ChunkOfTextRenderEvent
-from doc.pdf.canvas.event.end_page_event import EndPageEvent
-from doc.pdf.canvas.event.event_listener import Event, EventListener
-from doc.pdf.canvas.event.line_render_event import LineRenderEvent
-from doc.pdf.canvas.geometry.line_segment import LineSegment
-from doc.pdf.canvas.geometry.rectangle import Rectangle
-from doc.pdf.canvas.layout.table.flexible_column_width_table import (
+from web.document.base.datastructure.disjoint_set import DisjointSet
+from web.document.base.pdf.canvas.event.begin_page_event import BeginPageEvent
+from web.document.base.pdf.canvas.event.chunk_of_text_render_event import (
+    ChunkOfTextRenderEvent,
+)
+from web.document.base.pdf.canvas.event.end_page_event import EndPageEvent
+from web.document.base.pdf.canvas.event.event_listener import Event, EventListener
+from web.document.base.pdf.canvas.event.line_render_event import LineRenderEvent
+from web.document.base.pdf.canvas.geometry.line_segment import LineSegment
+from web.document.base.pdf.canvas.geometry.rectangle import Rectangle
+from web.document.base.pdf.canvas.layout.table.flexible_column_width_table import (
     FlexibleColumnWidthTable,
 )
-from doc.pdf.canvas.layout.table.table import Table, TableCell
-from doc.pdf.canvas.layout.text.paragraph import Paragraph
+from web.document.base.pdf.canvas.layout.table.table import Table, TableCell
+from web.document.base.pdf.canvas.layout.text.paragraph import Paragraph
 
 logger = logging.getLogger(__name__)
 
@@ -76,11 +78,11 @@ class TableDetectionByLines(EventListener):
         max_x: Decimal = lines_in_table[0].x0
         min_y: Decimal = lines_in_table[0].y0
         max_y: Decimal = lines_in_table[0].y0
-        for line in lines_in_table:
-            min_x = min([min_x, line.x0, line.x1])
-            max_x = max([max_x, line.x0, line.x1])
-            min_y = min([min_y, line.y0, line.y1])
-            max_y = max([max_y, line.y0, line.y1])
+        for obj in lines_in_table:
+            min_x = min([min_x, obj.x0, obj.x1])
+            max_x = max([max_x, obj.x0, obj.x1])
+            min_y = min([min_y, obj.y0, obj.y1])
+            max_y = max([max_y, obj.y0, obj.y1])
 
         # return
         return Rectangle(min_x, min_y, max_x - min_x, max_y - min_y)
@@ -92,11 +94,11 @@ class TableDetectionByLines(EventListener):
         unique_xs: typing.Set[int] = set()
         unique_ys: typing.Set[int] = set()
 
-        for line in lines_in_table:
-            unique_xs.add(int(line.x0))
-            unique_xs.add(int(line.x1))
-            unique_ys.add(int(line.y0))
-            unique_ys.add(int(line.y1))
+        for obj in lines_in_table:
+            unique_xs.add(int(obj.x0))
+            unique_xs.add(int(obj.x1))
+            unique_ys.add(int(obj.y0))
+            unique_ys.add(int(obj.y1))
 
         # determine number of rows and cols
         number_of_rows: int = len(unique_ys) - 1
@@ -220,8 +222,8 @@ class TableDetectionByLines(EventListener):
         # EndPageEvent
         if isinstance(event, EndPageEvent):
             ds = DisjointSet()
-            for line in self._lines_per_page[self._current_page_number]:
-                ds.add(line)
+            for obj in self._lines_per_page[self._current_page_number]:
+                ds.add(obj)
             for l0 in self._lines_per_page[self._current_page_number]:
                 for l1 in self._lines_per_page[self._current_page_number]:
                     if l0 == l1:
@@ -277,10 +279,10 @@ class TableDetectionByLines(EventListener):
 
             # extract clusters
             clusters_of_lines: typing.Dict[LineSegment, typing.List[LineSegment]] = {}
-            for line in ds:
-                if ds.find(line) not in clusters_of_lines:
-                    clusters_of_lines[ds.find(line)] = []
-                clusters_of_lines[ds.find(line)].append(line)
+            for obj in ds:
+                if ds.find(obj) not in clusters_of_lines:
+                    clusters_of_lines[ds.find(obj)] = []
+                clusters_of_lines[ds.find(obj)].append(obj)
 
             # process all lines per table individually
             for _, v in clusters_of_lines.items():
@@ -297,27 +299,27 @@ class TableDetectionByLines(EventListener):
     def _is_unbroken(self, r: Rectangle) -> bool:
         r0: Rectangle = r.shrink(Decimal(1))
         r1: Rectangle = r.grow(Decimal(1))
-        for line in self._lines_per_page[self._current_page_number]:
+        for obj in self._lines_per_page[self._current_page_number]:
             # one of the points of the line lies outside the outer rectangle, one of the points lies inside the inner rectangle
-            if r0.contains(line.x0, line.y0) and not r1.contains(line.x1, line.y1):
+            if r0.contains(obj.x0, obj.y0) and not r1.contains(obj.x1, obj.y1):
                 return False
-            if r0.contains(line.x1, line.y1) and not r1.contains(line.x0, line.y0):
+            if r0.contains(obj.x1, obj.y1) and not r1.contains(obj.x0, obj.y0):
                 return False
 
             # both points of the line lie outside the inner rectangle
-            if not r0.contains(line.x0, line.y0) and not r0.contains(line.x1, line.y1):
+            if not r0.contains(obj.x0, obj.y0) and not r0.contains(obj.x1, obj.y1):
                 if (
-                    abs(line.x0 - line.x1) <= Decimal(1)
-                    and r0.get_x() <= line.x0 <= r0.get_x() + r0.get_width()
-                    and min(line.y0, line.y1) <= r.get_y()
-                    and max(line.y0, line.y1) >= r.get_y() + r.get_height()
+                    abs(obj.x0 - obj.x1) <= Decimal(1)
+                    and r0.get_x() <= obj.x0 <= r0.get_x() + r0.get_width()
+                    and min(obj.y0, obj.y1) <= r.get_y()
+                    and max(obj.y0, obj.y1) >= r.get_y() + r.get_height()
                 ):
                     return False
                 if (
-                    abs(line.y0 - line.y1) <= Decimal(1)
-                    and r0.get_y() <= line.y0 <= r0.get_y() + r0.get_height()
-                    and min(line.x0, line.x1) <= r.get_x()
-                    and max(line.x0, line.x1) >= r.get_x() + r.get_width()
+                    abs(obj.y0 - obj.y1) <= Decimal(1)
+                    and r0.get_y() <= obj.y0 <= r0.get_y() + r0.get_height()
+                    and min(obj.x0, obj.x1) <= r.get_x()
+                    and max(obj.x0, obj.x1) >= r.get_x() + r.get_width()
                 ):
                     return False
 

@@ -268,6 +268,7 @@ class FlaskWeb:
             request.view_args["_locale"] = current_locale.locale
             url = url_for(request.endpoint, **request.view_args)
             return redirect(url, code=301)
+        return None
 
     @staticmethod
     def set_locale_urls(endpoint: str, values: dict) -> None:

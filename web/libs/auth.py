@@ -46,6 +46,7 @@ def _get_api_session() -> User | None:
         if user is not None:
             return user
         abort(response(401, ApiText.HTTP_401))
+    return None
 
 
 def _get_user_session(user_id: int) -> User | None:
@@ -56,8 +57,7 @@ def _get_user_session(user_id: int) -> User | None:
             .filter_by(id=user_id, is_active=True)
             .first()
         )
-    if user is not None:
-        return user
+    return user
 
 
 def _set_guest_session(persistent: bool = False) -> User:

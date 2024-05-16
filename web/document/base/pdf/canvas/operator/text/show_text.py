@@ -1,11 +1,10 @@
 import typing
 
-from doc.io.read.types import AnyPDFType, Name, String
-from doc.pdf.canvas.event.chunk_of_text_render_event import ChunkOfTextRenderEvent
-from doc.pdf.canvas.operator.canvas_operator import CanvasOperator
-
-from web.document.base.pdf.canvas.canvas_stream_processor import CanvasStreamProcessor
-from web.document.base.pdf.canvas.event.event_listener import EventListener
+from web.document.base.io.read.types import AnyPDFType, Name, String
+from web.document.base.pdf.canvas.event.chunk_of_text_render_event import (
+    ChunkOfTextRenderEvent,
+)
+from web.document.base.pdf.canvas.operator.canvas_operator import CanvasOperator
 
 
 class ShowText(CanvasOperator):

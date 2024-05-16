@@ -3,9 +3,9 @@ import typing
 from decimal import Decimal
 from pathlib import Path
 
-from doc.pdf.canvas.geometry.rectangle import Rectangle
-from doc.pdf.canvas.layout.image.image import Image
-from doc.pdf.page.page import Page
+from web.document.base.pdf.canvas.geometry.rectangle import Rectangle
+from web.document.base.pdf.canvas.layout.image.image import Image
+from web.document.base.pdf.page.page import Page
 
 
 class Emoji(Image):

@@ -4,10 +4,10 @@ import typing
 import xml.etree.ElementTree as ET
 from typing import Any, Optional, Union
 
-from doc.io.read.object.stream_transformer import StreamTransformer
-from doc.io.read.transformer import ReadTransformerState
-from doc.io.read.types import AnyPDFType, Element, Stream
-from doc.pdf.canvas.event.event_listener import EventListener
+from web.document.base.io.read.object.stream_transformer import StreamTransformer
+from web.document.base.io.read.transformer import ReadTransformerState
+from web.document.base.io.read.types import AnyPDFType, Element, Stream
+from web.document.base.pdf.canvas.event.event_listener import EventListener
 
 logger = logging.getLogger(__name__)
 

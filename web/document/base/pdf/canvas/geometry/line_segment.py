@@ -2,7 +2,7 @@ from decimal import Decimal
 from math import sqrt
 from typing import Tuple
 
-from doc.pdf.canvas.geometry.matrix import Matrix
+from web.document.base.pdf.canvas.geometry.matrix import Matrix
 
 
 class LineSegment:

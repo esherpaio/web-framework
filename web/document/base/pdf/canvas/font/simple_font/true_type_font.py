@@ -4,16 +4,17 @@ import zlib
 from decimal import Decimal
 from pathlib import Path
 
-from doc.io.read.types import Decimal as bDecimal
-from doc.io.read.types import Dictionary, List, Name, Stream, String
-from doc.pdf.canvas.font.composite_font.cid_font_type_2 import CIDType2Font
-from doc.pdf.canvas.font.composite_font.font_type_0 import Type0Font
-from doc.pdf.canvas.font.simple_font.font_type_1 import Type1Font
 from fontTools.agl import toUnicode
 from fontTools.pens.boundsPen import BoundsPen
 from fontTools.ttLib import TTFont
 
-from web.document.base.pdf.canvas.font.font import Font
+from web.document.base.io.read.types import Decimal as bDecimal
+from web.document.base.io.read.types import Dictionary, List, Name, Stream, String
+from web.document.base.pdf.canvas.font.composite_font.cid_font_type_2 import (
+    CIDType2Font,
+)
+from web.document.base.pdf.canvas.font.composite_font.font_type_0 import Type0Font
+from web.document.base.pdf.canvas.font.simple_font.font_type_1 import Type1Font
 
 
 class TrueTypeFont(Type1Font):

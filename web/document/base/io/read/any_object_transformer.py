@@ -2,31 +2,51 @@ import io
 import typing
 from typing import Any, Optional, Union
 
-from doc.io.read.font.font_dictionary_transformer import FontDictionaryTransformer
-from doc.io.read.function.function_dictionary_transformer import (
+from web.document.base.io.read.font.font_dictionary_transformer import (
+    FontDictionaryTransformer,
+)
+from web.document.base.io.read.function.function_dictionary_transformer import (
     FunctionDictionaryTransformer,
 )
-from doc.io.read.image.ccitt_fax_image_transformer import CCITTFaxImageTransformer
-from doc.io.read.image.compressed_jpeg_image_transformer import (
+from web.document.base.io.read.image.ccitt_fax_image_transformer import (
+    CCITTFaxImageTransformer,
+)
+from web.document.base.io.read.image.compressed_jpeg_image_transformer import (
     CompressedJPEGImageTransformer,
 )
-from doc.io.read.image.grayscale_image_transformer import GrayscaleImageTransformer
-from doc.io.read.image.jbig2_image_transformer import JBIG2ImageTransformer
-from doc.io.read.image.jpeg_2000_image_transformer import JPEG2000ImageTransformer
-from doc.io.read.image.jpeg_image_transformer import JPEGImageTransformer
-from doc.io.read.metadata.xmp_metadata_transformer import XMPMetadataTransformer
-from doc.io.read.object.array_transformer import ArrayTransformer
-from doc.io.read.object.dictionary_transformer import DictionaryTransformer
-from doc.io.read.object.stream_transformer import StreamTransformer
-from doc.io.read.page.page_dictionary_transformer import PageDictionaryTransformer
-from doc.io.read.page.root_dictionary_transformer import RootDictionaryTransformer
-from doc.io.read.primitive.number_transformer import NumberTransformer
-from doc.io.read.primitive.string_transformer import StringTransformer
-from doc.io.read.reference.reference_transformer import ReferenceTransformer
-from doc.io.read.reference.xref_transformer import XREFTransformer
-from doc.io.read.transformer import ReadTransformerState, Transformer
-from doc.io.read.types import AnyPDFType
-from doc.pdf.canvas.event.event_listener import EventListener
+from web.document.base.io.read.image.grayscale_image_transformer import (
+    GrayscaleImageTransformer,
+)
+from web.document.base.io.read.image.jbig2_image_transformer import (
+    JBIG2ImageTransformer,
+)
+from web.document.base.io.read.image.jpeg_2000_image_transformer import (
+    JPEG2000ImageTransformer,
+)
+from web.document.base.io.read.image.jpeg_image_transformer import JPEGImageTransformer
+from web.document.base.io.read.metadata.xmp_metadata_transformer import (
+    XMPMetadataTransformer,
+)
+from web.document.base.io.read.object.array_transformer import ArrayTransformer
+from web.document.base.io.read.object.dictionary_transformer import (
+    DictionaryTransformer,
+)
+from web.document.base.io.read.object.stream_transformer import StreamTransformer
+from web.document.base.io.read.page.page_dictionary_transformer import (
+    PageDictionaryTransformer,
+)
+from web.document.base.io.read.page.root_dictionary_transformer import (
+    RootDictionaryTransformer,
+)
+from web.document.base.io.read.primitive.number_transformer import NumberTransformer
+from web.document.base.io.read.primitive.string_transformer import StringTransformer
+from web.document.base.io.read.reference.reference_transformer import (
+    ReferenceTransformer,
+)
+from web.document.base.io.read.reference.xref_transformer import XREFTransformer
+from web.document.base.io.read.transformer import ReadTransformerState, Transformer
+from web.document.base.io.read.types import AnyPDFType
+from web.document.base.pdf.canvas.event.event_listener import EventListener
 
 
 class AnyObjectTransformer(Transformer):

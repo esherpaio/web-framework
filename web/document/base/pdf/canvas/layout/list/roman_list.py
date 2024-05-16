@@ -1,7 +1,7 @@
-from doc.pdf.canvas.color.color import X11Color
-from doc.pdf.canvas.layout.layout_element import LayoutElement
-from doc.pdf.canvas.layout.list.ordered_list import OrderedList
-from doc.pdf.canvas.layout.text.chunk_of_text import ChunkOfText
+from web.document.base.pdf.canvas.color.color import X11Color
+from web.document.base.pdf.canvas.layout.layout_element import LayoutElement
+from web.document.base.pdf.canvas.layout.list.ordered_list import OrderedList
+from web.document.base.pdf.canvas.layout.text.chunk_of_text import ChunkOfText
 
 
 class RomanNumeralOrderedList(OrderedList):

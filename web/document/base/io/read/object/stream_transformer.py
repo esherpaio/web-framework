@@ -2,10 +2,10 @@ import io
 import typing
 from typing import Any, Optional, Union
 
-from doc.io.filter.stream_decode_util import decode_stream
-from doc.io.read.transformer import ReadTransformerState, Transformer
-from doc.io.read.types import AnyPDFType, Reference, Stream
-from doc.pdf.canvas.event.event_listener import EventListener
+from web.document.base.io.filter.stream_decode_util import decode_stream
+from web.document.base.io.read.transformer import ReadTransformerState, Transformer
+from web.document.base.io.read.types import AnyPDFType, Reference, Stream
+from web.document.base.pdf.canvas.event.event_listener import EventListener
 
 
 class StreamTransformer(Transformer):
