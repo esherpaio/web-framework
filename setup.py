@@ -3,15 +3,21 @@ from setuptools import find_packages, setup
 from version import __version__
 
 DATA = [
-    "blueprint/admin/static/css/*",
-    "blueprint/admin/static/js/*",
-    "blueprint/admin/static/js/ext/*",
-    "blueprint/admin/templates/*",
-    "blueprint/admin/templates/admin/*",
-    "blueprint/admin/templates/admin/section/*",
-    "blueprint/robots/templates/*",
-    "i18n/translation/*",
-    "mail/template/*",
+    "blueprint/admin/static/css/*.css",
+    "blueprint/admin/static/js/*.js",
+    "blueprint/admin/templates/*.html",
+    "blueprint/admin/templates/admin/*.html",
+    "blueprint/admin/templates/admin/section/*.html",
+    "blueprint/robots/templates/*.txt",
+    "blueprint/robots/templates/*.xml",
+    "document/base/io/write/document/resources/*.icm",
+    "document/base/pdf/canvas/font/composite_font/cmaps/*",
+    "document/base/pdf/canvas/font/simple_font/afm/*.afm",
+    "document/base/pdf/canvas/layout/emoji/resources/*.png",
+    "document/base/pdf/canvas/layout/hyphenation/resources/*.json",
+    "document/base/pdf/canvas/lipsum/resources/*.json",
+    "i18n/translation/*.json",
+    "mail/template/*.html",
 ]
 
 

@@ -1,0 +1,33 @@
+import typing
+from decimal import Decimal
+
+from doc.io.read.types import AnyPDFType
+from doc.pdf.canvas.color.color import GrayColor
+from doc.pdf.canvas.operator.canvas_operator import CanvasOperator
+
+from web.document.base.pdf.canvas.canvas_stream_processor import CanvasStreamProcessor
+from web.document.base.pdf.canvas.event.event_listener import EventListener
+
+
+class SetGrayStroking(CanvasOperator):
+    """Set the stroking colour space to DeviceGray (or the DefaultGray colour space; see
+    8.6.5.6, "Default Colour Spaces") and set the gray level to use for stroking
+    operations.
+
+    gray shall be a number between 0.0 (black) and
+    1.0 (white).
+    """
+
+    def __init__(self):
+        super().__init__("G", 1)
+
+    def invoke(
+        self,
+        canvas_stream_processor: "CanvasStreamProcessor",
+        operands: typing.List[AnyPDFType] = [],
+        event_listeners: typing.List["EventListener"] = [],
+    ) -> None:
+        """Invoke the G operator."""
+        assert isinstance(operands[0], Decimal), "Operand 0 of G must be a Decimal"
+        canvas = canvas_stream_processor.get_canvas()
+        canvas.graphics_state.stroke_color = GrayColor(operands[0])
