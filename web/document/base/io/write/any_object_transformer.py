@@ -2,7 +2,6 @@ import io
 from typing import Optional, Union
 
 from web.document.base.io.read.types import AnyPDFType
-from web.document.base.io.write.document.catalog_transformer import CatalogTransformer
 from web.document.base.io.write.document.document_transformer import DocumentTransformer
 from web.document.base.io.write.document.information_dictionary_transformer import (
     InformationDictionaryTransformer,
@@ -39,7 +38,6 @@ class AnyObjectTransformer(Transformer):
         super().__init__()
         # special object types
         self.add_child_transformer(DocumentTransformer())
-        self.add_child_transformer(CatalogTransformer())
         self.add_child_transformer(XREFTransformer())
         self.add_child_transformer(PagesTransformer())
         self.add_child_transformer(PageTransformer())
