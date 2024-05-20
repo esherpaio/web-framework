@@ -5,10 +5,9 @@ from typing import TYPE_CHECKING
 
 import PIL
 
-from web.document.base.pdf.document.document import Document
-
 if TYPE_CHECKING:
     from web.document.base.io.read.types import Reference
+    from web.document.base.pdf.document.document import Document
 
 
 class PDFObject:
@@ -326,7 +325,7 @@ class PDFObject:
         self._parent = parent
         return self
 
-    def set_reference(self, reference: "Reference" | None) -> typing.Self:
+    def set_reference(self, reference: typing.Union["Reference", None]) -> typing.Self:
         """
         This function sets the Reference to be used for this PDFObject
         :param reference:   the Reference to be used for this PDFObject
