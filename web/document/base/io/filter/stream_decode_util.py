@@ -24,6 +24,7 @@ def decode_stream(s: Stream) -> Stream:
         else:
             filters = [s["Filter"]]
 
+    decode_params: list
     if "DecodeParms" in s:
         if isinstance(s["DecodeParms"], List):
             decode_params = s["DecodeParms"]

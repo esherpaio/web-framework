@@ -83,8 +83,7 @@ class ImageTransformer(Transformer):
         try:
             with io.BytesIO() as output:
                 assert isinstance(object_to_transform, ImageType)
-                object_to_transform = self._convert_to_rgb_mode(object_to_transform)
-                assert isinstance(object_to_transform, ImageType)
+                object_to_transform = self._convert_to_rgb_mode(object_to_transform)  # type: ignore[assignment]
                 object_to_transform.save(output, format="JPEG")
                 contents = output.getvalue()
             filter_name = Name("DCTDecode")

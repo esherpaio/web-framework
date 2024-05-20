@@ -9,7 +9,6 @@ from web.document.base.io.read.pdf_object import PDFObject
 from web.document.base.io.read.postfix.postfix_eval import PostScriptEval
 
 if TYPE_CHECKING:
-    from web.document.base.io.read.types import Reference
     from web.document.base.pdf.document.document import Document
 
 
@@ -558,7 +557,7 @@ class Reference(PDFObject):
         self.byte_offset = byte_offset
         self.is_in_use = is_in_use
         self.document = document
-        super(PDFObject).__init__()
+        super().__init__()
 
     #
     # PRIVATE
@@ -646,7 +645,7 @@ class String(PDFObject):
         if isinstance(bts, str):
             self._text: str = bts
         if isinstance(bts, bytes):
-            self._text = [(b & 0xFF) for b in bts]
+            self._text = [(b & 0xFF) for b in bts]  # type: ignore[assignment]
 
     #
     # PRIVATE
@@ -794,7 +793,7 @@ class HexadecimalString(String):
         return arr
 
 
-AnyPDFType = Union[
+AnyPDFType = Union[  # type: ignore[misc]
     Boolean,
     CanvasOperatorName,
     Decimal,

@@ -115,5 +115,7 @@ class SubSetShowTextWithGlyphPositioning(CopyCommandOperator):
 
         # delegate
         return super(SubSetShowTextWithGlyphPositioning, self).invoke(
-            canvas_stream_processor, [operands_out], event_listeners
+            canvas_stream_processor,
+            [operands_out],  # type: ignore[list-item]
+            event_listeners,
         )

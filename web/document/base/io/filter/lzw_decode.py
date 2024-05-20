@@ -72,7 +72,7 @@ class LZWDecode:
             self._bits_to_read = 12
 
     def _init_lookup_table(self):
-        self._lookup_table = {i: i.to_bytes(1, "big") for i in range(0, 256)}
+        self._lookup_table = {i: bytearray(i.to_bytes(1, "big")) for i in range(0, 256)}
         self._table_index = 258
         self._bits_to_read = 9
 

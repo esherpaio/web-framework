@@ -42,8 +42,14 @@ class PageInfo(Dictionary):
     def get_page_number(self) -> Optional[Decimal]:
         """This function returns the page number."""
 
-        kids = self._page.get_parent().get_parent().get("Kids")
-        c = int(self._page.get_parent().get_parent().get("Count"))
+        obj = self._page.get_parent().get_parent()  # type: ignore[union-attr]
+        if obj is None:
+            return None
+
+        kids = obj.get("Kids")  # type: ignore[union-attr]
+        assert kids is not None
+        c: int = int(obj.get("Count"))  # type: ignore[arg-type,union-attr]
+
         for i in range(0, c):
             if kids[i] == self._page:
                 return Decimal(i)

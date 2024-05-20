@@ -92,8 +92,9 @@ class StandardSecurityHandler:
 
         # (Required) A set of flags specifying which operations shall be permitted
         # when the document is opened with user access (see Table 22).
-        assert "P" in encryption_dictionary
-        self._permissions: int = int(encryption_dictionary.get("P"))
+        p = encryption_dictionary.get("P")
+        assert p is not None
+        self._permissions: int = int(p)
 
         # (Optional; PDF 1.4; only if V is 2 or 3) The length of the encryption key,
         # in bits. The value shall be a multiple of 8, in the range 40 to 128. Default

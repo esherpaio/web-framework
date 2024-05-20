@@ -27,7 +27,7 @@ class Color(object):
     def to_rgb(self) -> "RGBColor":
         """This method returns the RGB representation of this Color."""
 
-        pass
+        return RGBColor(Decimal(0), Decimal(0), Decimal(0))
 
 
 class CMYKColor(Color):
