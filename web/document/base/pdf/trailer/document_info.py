@@ -1,6 +1,9 @@
 import typing
 from decimal import Decimal
-from typing import List, Optional
+from typing import TYPE_CHECKING, List, Optional
+
+if TYPE_CHECKING:
+    from web.document.base.pdf import Document
 
 from web.document.base.io.read.types import Name
 from web.document.base.io.write.conformance_level import ConformanceLevel

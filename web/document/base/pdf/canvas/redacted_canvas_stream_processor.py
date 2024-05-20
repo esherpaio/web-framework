@@ -1,5 +1,12 @@
 import typing
 from decimal import Decimal
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from web.document.base.pdf.canvas.canvas import Canvas
+    from web.document.base.pdf.canvas.event.event_listener import EventListener
+    from web.document.base.pdf.canvas.font.font import Font
+    from web.document.base.pdf.page.page import Page
 
 from web.document.base.io.read.types import (
     AnyPDFType,

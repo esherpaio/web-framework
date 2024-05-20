@@ -1,8 +1,12 @@
 import typing
 from decimal import Decimal
+from typing import TYPE_CHECKING
 
 from web.document.base.pdf.canvas.geometry.rectangle import Rectangle
 from web.document.base.pdf.canvas.layout.layout_element import LayoutElement
+
+if TYPE_CHECKING:
+    from web.document.base.pdf.page.page import Page
 
 
 class InlineFlow(LayoutElement):

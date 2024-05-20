@@ -1,6 +1,6 @@
 import typing
 
-from PIL import Image as PILImage
+from PIL.Image import Image
 
 from web.document.base.io.read.pdf_object import PDFObject
 from web.document.base.io.read.types import Name
@@ -33,7 +33,7 @@ class ImageFormatOptimization(EventListener):
             self._render_image(event)
 
     def _render_image(self, image_render_event: "ImageRenderEvent"):
-        source_image: PILImage = image_render_event.get_image()
+        source_image: Image = image_render_event.get_image()
 
         # get desired width/height
         w0: int = int(image_render_event.get_width())
@@ -59,10 +59,10 @@ class ImageFormatOptimization(EventListener):
 
         # resize
         if (w0 * h0) < (w1 * h1):
-            resized_image: PILImage = source_image.resize((w0, h0))
+            resized_image: Image = source_image.resize((w0, h0))
             PDFObject.add_pdf_object_methods(resized_image)
             self._current_page["Resources"]["XObject"][resource_name] = resized_image
-            resized_image.set_parent(
+            resized_image.set_parent(  # type: ignore[attr-defined]
                 self._current_page["Resources"]["XObject"][resource_name]
             )
 

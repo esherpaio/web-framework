@@ -1,8 +1,12 @@
 import copy
 import typing
 from types import MethodType
+from typing import TYPE_CHECKING
 
 import PIL
+
+if TYPE_CHECKING:
+    from web.document.base.io.read.types import Reference
 
 
 class PDFObject:

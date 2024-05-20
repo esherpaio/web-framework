@@ -1,6 +1,9 @@
 import typing
 from decimal import Decimal
-from typing import Optional, Tuple
+from typing import TYPE_CHECKING, Optional, Tuple
+
+if TYPE_CHECKING:
+    from web.document.base.pdf import Page
 
 from web.document.base.io.read.types import Dictionary
 from web.document.base.pdf.page.page_size import PageSize

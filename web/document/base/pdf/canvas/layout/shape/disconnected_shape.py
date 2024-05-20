@@ -1,11 +1,15 @@
 import math
 import typing
 from decimal import Decimal
+from typing import TYPE_CHECKING
 
 from web.document.base.pdf.canvas.color.color import Color, HexColor, X11Color
 from web.document.base.pdf.canvas.geometry.rectangle import Rectangle
 from web.document.base.pdf.canvas.layout.layout_element import Alignment, LayoutElement
 from web.document.base.pdf.page.page import Page
+
+if TYPE_CHECKING:
+    from web.document.base.pdf.page.page import Page
 
 
 class DisconnectedShape(LayoutElement):
@@ -154,11 +158,11 @@ class DisconnectedShape(LayoutElement):
         ]
         return self
 
-    def rotate(self, angle_in_radians: float) -> "Shape":
+    def rotate(self, angle_in_radians: float) -> "DisconnectedShape":
         """
-        This function rotates the DisjointShape for a given angle
+        This function rotates the DisconnectedShape for a given angle
         :param angle_in_radians:    the angle
-        :return:                    this DisjointShape
+        :return:                    this DisconnectedShape
         """
 
         a: Decimal = Decimal(math.cos(angle_in_radians))
