@@ -3,7 +3,7 @@ import logging
 import typing
 from typing import Any, Optional, Union
 
-from PIL import Image
+from PIL import Image as PILImage
 
 from web.document.base.io.read.transformer import ReadTransformerState, Transformer
 from web.document.base.io.read.types import AnyPDFType, PDFObject, Stream
@@ -71,12 +71,12 @@ class JPEGImageTransformer(Transformer):
 
         # read a pixel
         try:
-            tmp = Image.open(io.BytesIO(object_to_transform["Bytes"]))
+            tmp = PILImage.open(io.BytesIO(object_to_transform["Bytes"]))
             tmp.getpixel((0, 0))
         except:  # noqa: E722
             w = int(object_to_transform["Width"])
             h = int(object_to_transform["Height"])
-            tmp = Image.new("RGB", (w, h), (128, 128, 128))
+            tmp = PILImage.new("RGB", (w, h), (128, 128, 128))
 
         # add base methods
         PDFObject.add_pdf_object_methods(tmp)

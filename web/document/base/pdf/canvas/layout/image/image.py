@@ -5,6 +5,7 @@ from typing import Optional
 
 import requests
 from PIL import Image as PILImage
+from PIL.Image import Image as ImageType
 
 from web.document.base.io.read.pdf_object import PDFObject
 from web.document.base.io.read.types import Dictionary, Name
@@ -23,7 +24,7 @@ class Image(LayoutElement):
 
     def __init__(
         self,
-        image: typing.Union[str, Path, PILImage.Image],
+        image: typing.Union[str, Path, ImageType],
         border_bottom: bool = False,
         border_color: Color = HexColor("000000"),
         border_left: bool = False,
@@ -71,7 +72,7 @@ class Image(LayoutElement):
             padding_top=padding_top,
             vertical_alignment=vertical_alignment,
         )
-        self._image: typing.Union[str, Path, PILImage.Image] = image
+        self._image: typing.Union[str, Path, ImageType] = image
         self._width: typing.Optional[Decimal] = width
         self._height: typing.Optional[Decimal] = height
 
@@ -90,7 +91,7 @@ class Image(LayoutElement):
             self._height,
         )
 
-    def _get_image_resource_name(self, image: PILImage, page: Page):
+    def _get_image_resource_name(self, image: ImageType, page: Page):
         # create resources if needed
         if "Resources" not in page:
             page[Name("Resources")] = Dictionary().set_parent(page)
@@ -113,6 +114,7 @@ class Image(LayoutElement):
     def _paint_content_box(self, page: Page, bounding_box: Rectangle):
         # add image to resources
         self.force_load_image()
+        assert isinstance(self._image, ImageType)
         image_resource_name = self._get_image_resource_name(self._image, page)
 
         assert self._width is not None
@@ -155,7 +157,7 @@ class Image(LayoutElement):
             self._image = PILImage.open(self._image)
 
         # self._image should be a PIL Image by now
-        assert isinstance(self._image, PILImage.Image)
+        assert isinstance(self._image, ImageType)
         PDFObject.add_pdf_object_methods(self._image)
 
         # set width / height
@@ -169,6 +171,9 @@ class Image(LayoutElement):
 
         :return:    None
         """
+        assert self._height is not None
+        assert isinstance(self._image, ImageType)
         ratio = self._height / self._image.height
         width = self._image.width * ratio
-        self._width = width
+        if isinstance(width, Decimal):
+            self._width = width

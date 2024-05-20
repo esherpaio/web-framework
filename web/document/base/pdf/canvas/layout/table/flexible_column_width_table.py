@@ -238,7 +238,7 @@ class FlexibleColumnWidthTable(Table):
             # do a second pass, this time with the right vertical alignment
             # now that we know the tallest element (and thus the row height)
             for e in [x for x in self._get_cells_at_row(r) if x._row_span == 1]:
-                grid_x: int = min([p[1] for p in e._table_coordinates])
+                grid_x = min([p[1] for p in e._table_coordinates])
                 if e._layout_element._vertical_alignment == Alignment.TOP:
                     continue
                 e.get_layout_box(

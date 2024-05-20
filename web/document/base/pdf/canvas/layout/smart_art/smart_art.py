@@ -1,6 +1,5 @@
 import math
 import random
-import types
 import typing
 from decimal import Decimal
 
@@ -252,7 +251,8 @@ class SmartArt:
         filling_left_to_right: bool = True
         elements_to_add: typing.List[str] = text
         while len(elements_to_add) > 0:
-            next_row: typing.List[typing.Optional[str]] = elements_to_add[0:ncols]
+            next_row: typing.List[str | None] = []
+            next_row.extend(elements_to_add[0:ncols])
             elements_to_add = elements_to_add[ncols:]
             while len(next_row) != ncols:
                 next_row.append(None)
@@ -831,9 +831,6 @@ class SmartArt:
                 fill_color=background_color,
             ).paint(page, lbox)
             prev_paint(page, available_space)
-
-        # assign
-        modified_table.paint = types.MethodType(_modified_paint_method, modified_table)
 
         # return
         output_element: LayoutElement = InlineFlow().add(modified_table)

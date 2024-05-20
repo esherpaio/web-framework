@@ -58,6 +58,7 @@ class TableUtil:
         ), "All rows must contain the same number of columns"
 
         # instantiate Table
+        t: FlexibleColumnWidthTable | FixedColumnWidthTable
         if flexible_column_width:
             t = FlexibleColumnWidthTable(
                 number_of_rows=row_count, number_of_columns=col_count

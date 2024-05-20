@@ -100,7 +100,7 @@ class PageDictionaryTransformer(Transformer):
             contents.set_parent(page_out)
 
         # create Canvas
-        canvas = Canvas().set_parent(page_out)
+        canvas: Canvas = Canvas().set_parent(page_out)
 
         # If there are no event listeners, processing the page has no effect we may as
         # well skip it (because it is very labour-intensive).

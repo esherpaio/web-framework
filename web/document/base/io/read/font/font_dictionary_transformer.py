@@ -66,6 +66,7 @@ class FontDictionaryTransformer(Transformer):
         # convert dictionary like structure
         assert isinstance(object_to_transform, Dictionary)
         subtype_name = object_to_transform["Subtype"]
+        font_obj: Optional[Font]
 
         # TrueType Font
         if subtype_name == "TrueType":

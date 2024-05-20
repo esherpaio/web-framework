@@ -4,7 +4,6 @@ from decimal import Decimal
 
 from web.document.base.pdf.canvas.color.color import Color, HexColor
 from web.document.base.pdf.canvas.geometry.rectangle import Rectangle
-from web.document.base.pdf.canvas.layout.emoji.emoji import Emoji
 from web.document.base.pdf.canvas.layout.image.image import Image
 from web.document.base.pdf.canvas.layout.layout_element import Alignment, LayoutElement
 from web.document.base.pdf.canvas.layout.text.chunk_of_text import ChunkOfText
@@ -52,7 +51,7 @@ class HeterogeneousParagraph(Paragraph):
     def __init__(
         self,
         chunks_of_text: typing.List[
-            typing.Union[ChunkOfText, LineOfText, Emoji, Image, str]
+            typing.Union[ChunkOfText, LineOfText, Image, str]
         ] = [],
         vertical_alignment: Alignment = Alignment.TOP,
         horizontal_alignment: Alignment = Alignment.LEFT,
@@ -108,7 +107,7 @@ class HeterogeneousParagraph(Paragraph):
         )
 
         self._chunks_of_text: typing.List[
-            typing.Union[ChunkOfText, LineOfText, Emoji, Image, str]
+            typing.Union[ChunkOfText, LineOfText, Image, str]
         ] = chunks_of_text
 
     #
@@ -199,9 +198,6 @@ class HeterogeneousParagraph(Paragraph):
                         font=self._font,
                     )
                 )
-                continue
-            if isinstance(c0, Emoji):
-                initial_chunks_of_text.append(c0)
                 continue
             if isinstance(c0, Image):
                 initial_chunks_of_text.append(c0)

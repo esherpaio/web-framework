@@ -3,7 +3,7 @@ import logging
 import typing
 from typing import Any, Optional, Union
 
-from PIL import Image
+from PIL import Image as PILImage
 
 from web.document.base.io.filter.stream_decode_util import decode_stream
 from web.document.base.io.read.pdf_object import PDFObject
@@ -78,7 +78,7 @@ class CompressedJPEGImageTransformer(Transformer):
         raw_byte_array = object_to_transform["Bytes"]
 
         try:
-            tmp = Image.open(io.BytesIO(raw_byte_array))
+            tmp = PILImage.open(io.BytesIO(raw_byte_array))
             tmp.getpixel((0, 0))
         except:  # noqa: E722
             logger.debug(
@@ -86,7 +86,7 @@ class CompressedJPEGImageTransformer(Transformer):
             )
             w = int(object_to_transform["Width"])
             h = int(object_to_transform["Height"])
-            tmp = Image.new("RGB", (w, h), (128, 128, 128))
+            tmp = PILImage.new("RGB", (w, h), (128, 128, 128))
 
         # add base methods
         PDFObject.add_pdf_object_methods(tmp)

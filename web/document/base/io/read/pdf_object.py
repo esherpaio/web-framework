@@ -243,7 +243,7 @@ class PDFObject:
         # return
         return object_
 
-    def get_parent(self) -> typing.Optional["PDFObject"]:
+    def get_parent(self) -> typing.Self:
         """
         This function returns the parent of this PDFObject, or None if no such
         PDFObject exists
@@ -260,14 +260,14 @@ class PDFObject:
 
         return self._reference
 
-    def get_root(self) -> typing.Optional["PDFObject"]:
+    def get_root(self) -> typing.Self:
         """
         This function returns the root (of the parent hierarchy) of this PDFObject, or
         None if no such PDFObject exists
         :return:    the root of this PDFObject
         """
 
-        p: typing.Optional["PDFObject"] = self
+        p: typing.Self = self
         while p is not None and p.get_parent() is not None:
             p = p.get_parent()
         return p
@@ -290,7 +290,7 @@ class PDFObject:
 
         return self._is_unique
 
-    def set_is_inline(self, is_inline: bool) -> "PDFObject":
+    def set_is_inline(self, is_inline: bool) -> typing.Self:
         """This function sets the is_inline flag of this PDFObject.
 
         An inline object is always persisted immediately when needed, it is never
@@ -302,7 +302,7 @@ class PDFObject:
         self._is_inline = is_inline
         return self
 
-    def set_is_unique(self, is_unique: bool) -> "PDFObject":
+    def set_is_unique(self, is_unique: bool) -> typing.Self:
         """This function sets the is_unique flag of this PDFObject.
 
         A unique object is always persisted as itself,
@@ -314,7 +314,7 @@ class PDFObject:
         self._is_unique = is_unique
         return self
 
-    def set_parent(self, parent: "PDFObject") -> "PDFObject":
+    def set_parent(self, parent: "PDFObject") -> typing.Self:
         """
         This function sets the parent (PDFObject) of this PDFObject
         :param parent:  the parent (PDFObject)
@@ -324,7 +324,7 @@ class PDFObject:
         self._parent = parent
         return self
 
-    def set_reference(self, reference: "Reference") -> "PDFObject":
+    def set_reference(self, reference: "Reference") -> typing.Self:
         """
         This function sets the Reference to be used for this PDFObject
         :param reference:   the Reference to be used for this PDFObject

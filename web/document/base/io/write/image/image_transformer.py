@@ -3,6 +3,7 @@ import typing
 from typing import Optional
 
 from PIL import Image as PILImage
+from PIL.Image import Image as ImageType
 
 from web.document.base.io.read.pdf_object import PDFObject
 from web.document.base.io.read.types import AnyPDFType, Name, Reference, Stream
@@ -23,9 +24,9 @@ class ImageTransformer(Transformer):
     #
 
     @staticmethod
-    def _convert_to_rgb_mode(image: PILImage.Image) -> PILImage.Image:
+    def _convert_to_rgb_mode(image: ImageType) -> ImageType:
         # build image_out
-        image_out: PILImage.Image = image
+        image_out: ImageType = image
 
         # omit transparency
         if image_out.mode == "P":
@@ -57,7 +58,7 @@ class ImageTransformer(Transformer):
         """This function returns True if the object to be converted represents an Image
         object."""
 
-        return isinstance(any_, PILImage.Image)
+        return isinstance(any_, ImageType)
 
     def transform(
         self,
@@ -73,7 +74,7 @@ class ImageTransformer(Transformer):
             context.destination is not None
         ), "context.destination must be defined in order to write Image objects."
         assert isinstance(
-            object_to_transform, PILImage.Image
+            object_to_transform, ImageType
         ), "object_to_transform must be of type PILImage.Image"
 
         # get image bytes
@@ -81,9 +82,9 @@ class ImageTransformer(Transformer):
         filter_name: Optional[Name] = None
         try:
             with io.BytesIO() as output:
-                assert isinstance(object_to_transform, PILImage.Image)
+                assert isinstance(object_to_transform, ImageType)
                 object_to_transform = self._convert_to_rgb_mode(object_to_transform)
-                assert isinstance(object_to_transform, PILImage.Image)
+                assert isinstance(object_to_transform, ImageType)
                 object_to_transform.save(output, format="JPEG")
                 contents = output.getvalue()
             filter_name = Name("DCTDecode")
