@@ -3,6 +3,7 @@ import logging
 import os
 import time
 import typing
+from typing import TYPE_CHECKING
 
 from web.document.base.io.read.tokenize.high_level_tokenizer import HighLevelTokenizer
 from web.document.base.io.read.types import AnyPDFType, CanvasOperatorName, Dictionary
@@ -113,6 +114,13 @@ from web.document.base.pdf.canvas.operator.text.show_text_with_glyph_positioning
 )
 from web.document.base.pdf.canvas.operator.xobject.do import Do
 
+if TYPE_CHECKING:
+    from web.document.base.pdf.canvas.canvas import Canvas
+    from web.document.base.pdf.canvas.canvas_stream_processor import (
+        CanvasStreamProcessor,
+    )
+    from web.document.base.pdf.canvas.event.event_listener import EventListener
+    from web.document.base.pdf.page.page import Page
 logger = logging.getLogger(__name__)
 
 

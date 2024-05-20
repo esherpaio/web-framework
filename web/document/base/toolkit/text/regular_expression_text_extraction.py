@@ -145,7 +145,7 @@ class PDFMatch:
 
         return self._font_size
 
-    def group(self, __group: typing.Union[str, int] = 0) -> typing.AnyStr:
+    def group(self, __group: typing.Union[str, int] = 0) -> bytes | str:
         """Return the string obtained by doing backslash substitution on the template
         string template, as done by the sub() method.
 
@@ -156,9 +156,7 @@ class PDFMatch:
 
         return self._re_match.group(__group)
 
-    def groupdict(
-        self, default: typing.AnyStr = None
-    ) -> typing.Dict[str, typing.AnyStr]:
+    def groupdict(self, default: typing.AnyStr) -> typing.Dict[str, typing.AnyStr]:
         """Return a dictionary containing all the named subgroups of the match, keyed
         by the subgroup name.
 
@@ -168,7 +166,7 @@ class PDFMatch:
 
         return self._re_match.groupdict(default)
 
-    def groups(self, default: typing.AnyStr = None) -> typing.Sequence[typing.AnyStr]:
+    def groups(self, default: typing.AnyStr) -> typing.Sequence[typing.AnyStr]:
         """Return a tuple containing all the subgroups of the match, from 1 up to
         however many groups are in the pattern.
 
@@ -300,14 +298,18 @@ class RegularExpressionTextExtraction(EventListener):
             if self._current_page not in self._matches_per_page:
                 self._matches_per_page[self._current_page] = []
 
+            # get glyph bounding boxes
+            glyph_bounding_boxes = []
+            for x in tris[tri_start_index : (tri_stop_index + 1)]:
+                gbb = x.get_previous_layout_box()
+                if gbb is not None:
+                    glyph_bounding_boxes.append(gbb)
+
             # extend collection
             self._matches_per_page[self._current_page].append(
                 PDFMatch(
                     m,
-                    [
-                        x.get_previous_layout_box()
-                        for x in tris[tri_start_index : (tri_stop_index + 1)]
-                    ],
+                    glyph_bounding_boxes,
                     tris[tri_start_index].get_font_color(),
                     tris[tri_start_index].get_font_size(),
                     self._current_page,

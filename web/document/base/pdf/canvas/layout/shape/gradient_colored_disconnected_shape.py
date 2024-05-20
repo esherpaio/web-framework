@@ -122,8 +122,8 @@ class GradientColoredDisconnectedShape(DisconnectedShape):
                 )
             )
         else:
-            mid_x = 1
-            mid_y = 1
+            mid_x = Decimal(1)
+            mid_y = Decimal(1)
 
         # VERTICAL
         if (

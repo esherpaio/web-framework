@@ -3,10 +3,14 @@ import typing
 import xml.etree.ElementTree as ET
 from decimal import Decimal as oDecimal
 from math import ceil, floor
-from typing import Optional, Union
+from typing import TYPE_CHECKING, Optional, Union
 
 from web.document.base.io.read.pdf_object import PDFObject
 from web.document.base.io.read.postfix.postfix_eval import PostScriptEval
+
+if TYPE_CHECKING:
+    from web.document.base.io.read.types import Reference
+    from web.document.base.pdf.document.document import Document
 
 
 class Boolean(PDFObject):
@@ -771,10 +775,9 @@ class HexadecimalString(String):
     (using LESS-THAN SIGN (3Ch) and GREATER- THAN SIGN (3Eh)).
     """
 
-    def __init__(self, text: str, encoding: Optional["Encoding"] = None):
+    def __init__(self, text: str):
         if len(text) % 2 == 1:
             text += "0"
-        self.encoding = encoding
         super(HexadecimalString, self).__init__(text)
 
     def get_content_bytes(self) -> bytearray:

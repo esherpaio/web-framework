@@ -1,10 +1,16 @@
 import typing
 from decimal import Decimal
 from enum import Enum
+from typing import TYPE_CHECKING
 
 from web.document.base.pdf.canvas.color.color import Color, HexColor
 from web.document.base.pdf.canvas.geometry.rectangle import Rectangle
 from web.document.base.pdf.canvas.line_art.blob_factory import BlobFactory
+
+if TYPE_CHECKING:
+    from web.document.base.io.write.conformance_level import ConformanceLevel
+    from web.document.base.pdf.document.document import Document
+    from web.document.base.pdf.page.page import Page
 
 
 class Alignment(Enum):

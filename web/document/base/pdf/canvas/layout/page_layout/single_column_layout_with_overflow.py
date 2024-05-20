@@ -1,12 +1,17 @@
 import copy
 import typing
 from decimal import Decimal
+from typing import TYPE_CHECKING
 
 from web.document.base.pdf.canvas.geometry.rectangle import Rectangle
 from web.document.base.pdf.canvas.layout.layout_element import LayoutElement
 from web.document.base.pdf.canvas.layout.page_layout.multi_column_layout import (
     SingleColumnLayout,
 )
+
+if TYPE_CHECKING:
+    from web.document.base.pdf.canvas.layout.page_layout.page_layout import PageLayout
+    from web.document.base.pdf.page.page import Page
 
 
 class SingleColumnLayoutWithOverflow(SingleColumnLayout):
@@ -133,10 +138,12 @@ class SingleColumnLayoutWithOverflow(SingleColumnLayout):
         previous_element_margin_bottom: Decimal = Decimal(0)
         previous_element_y = self._page_height - self._vertical_margin_top
         if self._previous_element is not None:
-            previous_element_y = (
-                self._previous_element.get_previous_layout_box().get_y()
-            )
-            previous_element_margin_bottom = self._previous_element.get_margin_bottom()
+            previous_element = self._previous_element.get_previous_layout_box()
+            if previous_element is not None:
+                previous_element_y = previous_element.get_y()
+                previous_element_margin_bottom = (
+                    self._previous_element.get_margin_bottom()
+                )
 
         # calculate next available height
         available_height: Decimal = (

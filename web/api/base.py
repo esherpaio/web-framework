@@ -1,7 +1,9 @@
 from typing import Any, Callable, Generic, TypeVar
 
 from flask import abort, has_request_context, request
+from psycopg2.errors import UniqueViolation
 from sqlalchemy import ColumnExpressionArgument
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.attributes import InstrumentedAttribute
 from sqlalchemy.orm.session import Session
 
@@ -154,7 +156,12 @@ class API(Generic[B]):
         for k, v in data.items():
             if hasattr(model, k):
                 setattr(model, k, v)
-        s.add(model)
+        try:
+            s.add(model)
+        except IntegrityError as e:
+            if isinstance(e.orig, UniqueViolation):
+                abort(response(409, ApiText.HTTP_409))
+            raise e
         s.flush()
 
     @classmethod

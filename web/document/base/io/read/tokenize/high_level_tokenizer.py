@@ -1,5 +1,5 @@
 import re
-from typing import Optional
+from typing import TYPE_CHECKING, Optional
 
 from web.document.base.io.read.tokenize.low_level_tokenizer import (
     LowLevelTokenizer,
@@ -18,6 +18,10 @@ from web.document.base.io.read.types import (
     Stream,
     String,
 )
+
+if TYPE_CHECKING:
+    from web.document.base.io.read.types import Reference
+    from web.document.base.pdf.xref.xref import XREF
 
 
 class HighLevelTokenizer(LowLevelTokenizer):

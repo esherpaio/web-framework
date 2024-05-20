@@ -1,5 +1,6 @@
 import typing
 from decimal import Decimal
+from typing import TYPE_CHECKING
 
 from web.document.base.io.read.types import Decimal as bDecimal
 from web.document.base.io.read.types import Dictionary, Name, String
@@ -8,6 +9,11 @@ from web.document.base.pdf.canvas.font.font import Font
 from web.document.base.pdf.canvas.font.simple_font.font_type_1 import StandardType1Font
 from web.document.base.pdf.canvas.geometry.rectangle import Rectangle
 from web.document.base.pdf.canvas.layout.annotation.annotation import Annotation
+
+if TYPE_CHECKING:
+    from web.document.base.pdf.canvas.color.color import RGBColor
+    from web.document.base.pdf.canvas.font.font import Font
+    from web.document.base.pdf.page.page import Page
 
 
 class FreeTextAnnotation(Annotation):

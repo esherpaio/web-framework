@@ -1,5 +1,6 @@
 import typing
 from decimal import Decimal
+from typing import TYPE_CHECKING
 
 from web.document.base.pdf.canvas.geometry.rectangle import Rectangle
 from web.document.base.pdf.canvas.layout.page_layout.multi_column_layout import (
@@ -7,6 +8,10 @@ from web.document.base.pdf.canvas.layout.page_layout.multi_column_layout import 
 )
 from web.document.base.pdf.canvas.layout.text.chunk_of_text import ChunkOfText
 from web.document.base.pdf.page.page import Page
+
+if TYPE_CHECKING:
+    from web.document.base.pdf.canvas.layout.page_layout.page_layout import PageLayout
+    from web.document.base.pdf.page.page import Page
 
 
 class HeaderFooterMultiColumnLayout(MultiColumnLayout):

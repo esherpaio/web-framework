@@ -1,11 +1,17 @@
 import copy
 import typing
 from decimal import Decimal
+from typing import TYPE_CHECKING
 
 from web.document.base.io.read.types import Name
 from web.document.base.pdf.canvas.color.color import RGBColor
 from web.document.base.pdf.canvas.font.font import Font
 from web.document.base.pdf.canvas.geometry.matrix import Matrix
+
+if TYPE_CHECKING:
+    from web.document.base.pdf.canvas.color.color import RGBColor
+    from web.document.base.pdf.canvas.font.font import Font
+    from web.document.base.pdf.canvas.geometry.line_segment import LineSegment
 
 
 class CanvasGraphicsState:

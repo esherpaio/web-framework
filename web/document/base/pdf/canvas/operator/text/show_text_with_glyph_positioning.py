@@ -1,12 +1,18 @@
 import typing
 from decimal import Decimal
-from typing import List
+from typing import TYPE_CHECKING, List
 
 from web.document.base.io.read.types import AnyPDFType, Name, String
 from web.document.base.pdf.canvas.event.chunk_of_text_render_event import (
     ChunkOfTextRenderEvent,
 )
 from web.document.base.pdf.canvas.operator.canvas_operator import CanvasOperator
+
+if TYPE_CHECKING:
+    from web.document.base.pdf.canvas.canvas_stream_processor import (
+        CanvasStreamProcessor,
+    )
+    from web.document.base.pdf.canvas.event.event_listener import EventListener
 
 
 class ShowTextWithGlyphPositioning(CanvasOperator):

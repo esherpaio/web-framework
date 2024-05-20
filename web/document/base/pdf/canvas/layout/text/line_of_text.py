@@ -1,5 +1,6 @@
 import typing
 from decimal import Decimal
+from typing import TYPE_CHECKING
 
 from web.document.base.pdf.canvas.color.color import Color, HexColor
 from web.document.base.pdf.canvas.font.font import Font
@@ -7,6 +8,10 @@ from web.document.base.pdf.canvas.font.glyph_line import GlyphLine
 from web.document.base.pdf.canvas.geometry.rectangle import Rectangle
 from web.document.base.pdf.canvas.layout.layout_element import Alignment
 from web.document.base.pdf.canvas.layout.text.chunk_of_text import ChunkOfText
+
+if TYPE_CHECKING:
+    from web.document.base.pdf.canvas.font.font import Font
+    from web.document.base.pdf.page.page import Page
 
 
 class LineOfText(ChunkOfText):

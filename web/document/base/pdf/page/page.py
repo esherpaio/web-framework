@@ -1,6 +1,11 @@
 import io
 import typing
 import zlib
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from web.document.base.pdf import Document
+
 from decimal import Decimal
 
 from web.document.base.io.read.types import Decimal as bDecimal

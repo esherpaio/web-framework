@@ -3,6 +3,7 @@ import typing
 import zlib
 from decimal import Decimal
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 from fontTools.agl import toUnicode
 from fontTools.pens.boundsPen import BoundsPen
@@ -15,6 +16,9 @@ from web.document.base.pdf.canvas.font.composite_font.cid_font_type_2 import (
 )
 from web.document.base.pdf.canvas.font.composite_font.font_type_0 import Type0Font
 from web.document.base.pdf.canvas.font.simple_font.font_type_1 import Type1Font
+
+if TYPE_CHECKING:
+    from web.document.base.pdf.canvas.font.font import Font
 
 
 class TrueTypeFont(Type1Font):
