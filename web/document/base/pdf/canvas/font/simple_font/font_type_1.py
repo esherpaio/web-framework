@@ -50,7 +50,7 @@ class Type1Font(SimpleFont):
     #
 
     def __deepcopy__(self, memodict={}):
-        f_out: Font = super(Type1Font, self).__deepcopy__(memodict)
+        f_out: Type1Font = super(Type1Font, self).__deepcopy__(memodict)  # type: ignore[assignment]
         f_out[Name("Subtype")] = Name("Type1")
         f_out._character_identifier_to_unicode_lookup = {
             k: v for k, v in self._character_identifier_to_unicode_lookup.items()
@@ -218,7 +218,7 @@ class Type1Font(SimpleFont):
 
         cmap_bytes: bytes = self["ToUnicode"]["DecodedBytes"]
         self._character_identifier_to_unicode_lookup = self._read_cmap(cmap_bytes)
-        self._unicode_lookup_to_character_identifier: typing.Dict[str, int] = {
+        self._unicode_lookup_to_character_identifier = {
             v: k for k, v in self._character_identifier_to_unicode_lookup.items()
         }
 
@@ -482,7 +482,7 @@ class StandardType1Font(Type1Font):
     #
 
     def __deepcopy__(self, memodict={}):
-        f_out: Font = super(StandardType1Font, self).__deepcopy__(memodict)
+        f_out: StandardType1Font = super(StandardType1Font, self).__deepcopy__(memodict)
         f_out[Name("Subtype")] = Name("Type1")
         f_out._character_identifier_to_unicode_lookup = {
             k: v for k, v in self._character_identifier_to_unicode_lookup.items()

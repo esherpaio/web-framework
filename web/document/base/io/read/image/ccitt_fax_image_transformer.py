@@ -77,8 +77,5 @@ class CCITTFaxImageTransformer(Transformer):
         # add base methods
         PDFObject.add_pdf_object_methods(tmp)
 
-        # set parent
-        tmp.set_parent(parent_object)
-
         # return
         return tmp

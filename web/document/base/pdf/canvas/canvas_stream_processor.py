@@ -250,7 +250,7 @@ class CanvasStreamProcessor:
         return self._page
 
     def get_resource(
-        self, resource_type_name: str, name: "Name" | str
+        self, resource_type_name: str, name: typing.Union["Name", str]
     ) -> typing.Optional[typing.Any]:
         """This functions looks up a resource (e.g. Font, Image, XObject) in the given
         resource hierarchy.
