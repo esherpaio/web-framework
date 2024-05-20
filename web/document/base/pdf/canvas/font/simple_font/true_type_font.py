@@ -283,6 +283,8 @@ class TrueTypeFont(Type1Font):
             with open(font_file, "rb") as ffh:
                 font_file_bytes = ffh.read()
             assert font_file_bytes
+        elif isinstance(font_file, io.BytesIO):
+            font_file_bytes = font_file.read()
         else:
             font_file_bytes = font_file
 
