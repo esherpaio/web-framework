@@ -5,12 +5,6 @@ from .color.color_extraction import ColorExtraction
 from .image.image_extraction import ImageExtraction
 from .image.image_format_optimization import ImageFormatOptimization
 
-# location
-from .location.location_filter import LocationFilter
-
-# table
-from .table.table_detection_by_lines import TableDetectionByLines
-
 # text (filter)
 from .text.font_color_filter import FontColorFilter
 from .text.font_extraction import FontExtraction
@@ -38,8 +32,6 @@ __all__ = [
     "ColorExtraction",
     "ImageExtraction",
     "ImageFormatOptimization",
-    "LocationFilter",
-    "TableDetectionByLines",
     "FontColorFilter",
     "FontExtraction",
     "FontNameFilter",

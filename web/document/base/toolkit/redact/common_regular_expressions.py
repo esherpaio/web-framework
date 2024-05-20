@@ -6,16 +6,17 @@ from re import Pattern
 class CommonRegularExpression(Enum):
     """This class contains some useful (common) regular expressions."""
 
-    # fmt: off
     BITCOIN_ADDRESS = re.compile(
-        "(?<![a-km-zA-HJ-NP-Z0-9])[13][a-km-zA-HJ-NP-Z0-9]{26,33}(?![a-km-zA-HJ-NP-Z0-9])")
+        "(?<![a-km-zA-HJ-NP-Z0-9])[13][a-km-zA-HJ-NP-Z0-9]{26,33}(?![a-km-zA-HJ-NP-Z0-9])"
+    )
     CREDIT_CARD = re.compile("((?:(?:\\d{4}[- ]?){3}\\d{4}|\\d{15,16}))(?![\\d])")
     DATE = re.compile(
         r"(?:(?<!\:)(?<!\:\d)[0-3]?\d(?:st|nd|rd|th)?\s+(?:of\s+)?(?:jan\.?|january|feb\.?|february|mar\.?|march|apr\.?|april|may|jun\.?|june|jul\.?|july|aug\.?|august|sep\.?|september|oct\.?|october|nov\.?|november|dec\.?|december)|(?:jan\.?|january|feb\.?|february|mar\.?|march|apr\.?|april|may|jun\.?|june|jul\.?|july|aug\.?|august|sep\.?|september|oct\.?|october|nov\.?|november|dec\.?|december)\s+(?<!\:)(?<!\:\d)[0-3]?\d(?:st|nd|rd|th)?)(?:\,)?\s*(?:\d{4})?|[0-3]?\d[-\./][0-3]?\d[-\./]\d{2,4}",
         re.IGNORECASE,
     )
     DOLLAR_PRICE = re.compile(
-        r"[$]\s?[+-]?[0-9]{1,3}(?:(?:,?[0-9]{3}))*(?:\.[0-9]{1,2})?")
+        r"[$]\s?[+-]?[0-9]{1,3}(?:(?:,?[0-9]{3}))*(?:\.[0-9]{1,2})?"
+    )
     EMAIL = re.compile(
         r"([a-z0-9!#$%&'*+\/=?^_`{|.}~-]+@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?)",
         re.IGNORECASE,
@@ -38,7 +39,8 @@ class CommonRegularExpression(Enum):
     )
     PO_BOX = re.compile(r"P\.? ?O\.? Box \d+", re.IGNORECASE)
     ROMAN_NUMERAL: Pattern = re.compile(
-        "M{0,4}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})")
+        "M{0,4}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})"
+    )
     SOCIAL_SECURITY_NUMBER = re.compile(
         "(?!000|666|333)0*(?:[0-6][0-9][0-9]|[0-7][0-6][0-9]|[0-7][0-7][0-2])[- ](?!00)[0-9]{2}[- ](?!0000)[0-9]{4}"
     )
@@ -52,4 +54,3 @@ class CommonRegularExpression(Enum):
         re.IGNORECASE,
     )
     ZIP_CODE = re.compile(r"\b\d{5}(?:[-\s]\d{4})?\b")
-    # fmt: on
