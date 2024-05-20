@@ -45,7 +45,6 @@ class ImageTransformer(Transformer):
 
         # add methods
         PDFObject.add_pdf_object_methods(image_out)
-        image_out.set_reference(image.get_reference())
 
         # return
         return image_out
@@ -107,7 +106,8 @@ class ImageTransformer(Transformer):
         out_value[Name("Bytes")] = contents
 
         # copy reference
-        out_value.set_reference(object_to_transform.get_reference())
+        if not isinstance(object_to_transform, ImageType):
+            out_value.set_reference(object_to_transform.get_reference())
 
         # start object if needed
         started_object = False

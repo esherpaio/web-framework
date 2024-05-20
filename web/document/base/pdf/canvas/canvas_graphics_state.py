@@ -4,7 +4,7 @@ from decimal import Decimal
 from typing import TYPE_CHECKING
 
 from web.document.base.io.read.types import Name
-from web.document.base.pdf.canvas.color.color import RGBColor
+from web.document.base.pdf.canvas.color.color import Color, RGBColor
 from web.document.base.pdf.canvas.font.font import Font
 from web.document.base.pdf.canvas.geometry.matrix import Matrix
 
@@ -50,9 +50,9 @@ class CanvasGraphicsState:
         self.path: typing.List["LineSegment"] = []
         self.clipping_path: typing.List["LineSegment"] = []
         self.non_stroke_color_space = None
-        self.non_stroke_color = RGBColor(Decimal(0), Decimal(0), Decimal(0))
+        self.non_stroke_color: Color = RGBColor(Decimal(0), Decimal(0), Decimal(0))
         self.stroke_color_space = None
-        self.stroke_color = RGBColor(Decimal(0), Decimal(0), Decimal(0))
+        self.stroke_color: Color = RGBColor(Decimal(0), Decimal(0), Decimal(0))
         self.line_width = Decimal(1)
         self.line_cap = None
         self.line_join = None

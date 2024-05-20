@@ -21,7 +21,7 @@ class CIDType0Font(Font):
     #
 
     def __deepcopy__(self, memodict={}):
-        f_out: CIDType0Font = super(CIDType0Font, self).__deepcopy__(memodict)
+        f_out: CIDType0Font = super(CIDType0Font, self).__deepcopy__(memodict)  # type: ignore[assignment]
         f_out[Name("Subtype")] = Name("CIDFontType0")
         f_out._width_cache = {k: v for k, v in self._width_cache.items()}
         return f_out

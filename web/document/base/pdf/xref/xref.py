@@ -46,8 +46,6 @@ class XREF(Dictionary):
 
     def __str__(self):
         out = "xref\n"
-        for s in self.sections:
-            out += str(s)
         out += "startxref"
         return out
 
