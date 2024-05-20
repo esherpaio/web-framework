@@ -117,7 +117,7 @@ class Equation(InlineFlow):
             #
             # any other FUNCTION
             #
-            c0: LayoutElement = self._build(
+            c0 = self._build(
                 t.get_children()[0], font_size=font_size, font_color=font_color
             )
             c0._vertical_alignment = Alignment.MIDDLE
@@ -158,9 +158,7 @@ class Equation(InlineFlow):
             # unary minus
             #
             if t.get_text() == "-" and t.get_number_of_arguments() == 1:
-                out: Table = FlexibleColumnWidthTable(
-                    number_of_columns=2, number_of_rows=1
-                )
+                out = FlexibleColumnWidthTable(number_of_columns=2, number_of_rows=1)
                 out.add(
                     ChunkOfText(
                         "-",
@@ -188,9 +186,7 @@ class Equation(InlineFlow):
                     t.get_children()[1], font_size=font_size, font_color=font_color
                 )
                 e1._horizontal_alignment = Alignment.CENTERED
-                out: Table = FlexibleColumnWidthTable(
-                    number_of_columns=1, number_of_rows=2
-                )
+                out = FlexibleColumnWidthTable(number_of_columns=1, number_of_rows=2)
                 out.add(
                     TableCell(
                         e1,
@@ -217,19 +213,17 @@ class Equation(InlineFlow):
             # power
             #
             if t.get_text() == "^":
-                e0: LayoutElement = self._build(
+                e0 = self._build(
                     t.get_children()[0],
                     font_size=font_size * Decimal(0.5),
                     font_color=font_color,
                 )
                 e0._horizontal_alignment = Alignment.BOTTOM
-                e1: LayoutElement = self._build(
+                e1 = self._build(
                     t.get_children()[1], font_size=font_size, font_color=font_color
                 )
                 e1._horizontal_alignment = Alignment.CENTERED
-                out: Table = FlexibleColumnWidthTable(
-                    number_of_columns=2, number_of_rows=2
-                )
+                out = FlexibleColumnWidthTable(number_of_columns=2, number_of_rows=2)
                 out.add(Paragraph(" ", font_size=font_size * Decimal(0.5)))
                 out.add(e0)
                 out.add(e1)
@@ -243,7 +237,7 @@ class Equation(InlineFlow):
             op_text: str = t.get_text()
             if op_text == "*":
                 op_text = "·"
-            c0: LayoutElement = self._build(
+            c0 = self._build(
                 t.get_children()[0], font_size=font_size, font_color=font_color
             )
             c0._vertical_alignment = Alignment.MIDDLE
@@ -251,7 +245,7 @@ class Equation(InlineFlow):
                 t.get_children()[1], font_size=font_size, font_color=font_color
             )
             c1._vertical_alignment = Alignment.MIDDLE
-            out: Table = FlexibleColumnWidthTable(number_of_columns=3, number_of_rows=1)
+            out = FlexibleColumnWidthTable(number_of_columns=3, number_of_rows=1)
             out.add(c1)
             out.add(
                 ChunkOfText(
@@ -271,6 +265,9 @@ class Equation(InlineFlow):
             return ChunkOfText(")", font_size=font_size, font_color=font_color)
         if t.get_type() == TokenType.VARIABLE:
             return ChunkOfText(t.get_text(), font_size=font_size, font_color=font_color)
+
+        # fallback value
+        return ChunkOfText("", font_size=font_size, font_color=font_color)
 
     #
     # PUBLIC
