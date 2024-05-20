@@ -200,7 +200,7 @@ def _build_refund_lines(
     cells.append(TableCell(total_value_p, col_span=1))
 
     return cells_to_tables(
-        cells,
+        cells,  # type: ignore[arg-type]
         h_count,
         h_widths,
         first_row_count=30,

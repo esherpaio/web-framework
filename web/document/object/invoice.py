@@ -86,7 +86,7 @@ def _build_order_info(
     # Right 2 columns
     right_groups = [
         [
-            BoldPG(_("PDF_ORDER_ID", horizontal_alignment=Alignment.RIGHT)),
+            BoldPG(_("PDF_ORDER_ID"), horizontal_alignment=Alignment.RIGHT),
             TextPG(str(order.id)),
         ],
         [
@@ -212,7 +212,7 @@ def _build_order_lines(
     cells.append(TableCell(note_1_p, col_span=h_count))
 
     return cells_to_tables(
-        cells,
+        cells,  # type: ignore[arg-type]
         h_count,
         h_widths,
         first_row_count=30,
