@@ -3,6 +3,10 @@ import typing
 import zlib
 from typing import TYPE_CHECKING
 
+from web.document.base.pdf.canvas.layout.annotation.free_text_annotation import (
+    FreeTextAnnotation,
+)
+
 if TYPE_CHECKING:
     from web.document.base.pdf import Document
 
@@ -93,7 +97,7 @@ class Page(Dictionary):
         self["Annots"].append(annotation)
 
         # FreeTextAnnotation needs to embed resources in the Page
-        if "Subtype" in annotation and annotation["Subtype"] == "FreeText":
+        if "Subtype" in annotation and isinstance(annotation, FreeTextAnnotation):
             annotation._embed_font_in_page(self)
 
         # return
@@ -147,11 +151,11 @@ class Page(Dictionary):
         ]
 
         # apply redaction
-        redacted_canvas_content: bytes = (
-            RedactedCanvasStreamProcessor(self, Canvas(), rectangles_to_redact)
-            .read(io.BytesIO(self["Contents"]["DecodedBytes"]), [])
-            .get_redacted_content()
-        )
+        canvas_stream_processor = RedactedCanvasStreamProcessor(
+            self, Canvas(), rectangles_to_redact
+        ).read(io.BytesIO(self["Contents"]["DecodedBytes"]), [])
+        assert isinstance(canvas_stream_processor, RedactedCanvasStreamProcessor)
+        redacted_canvas_content: bytes = canvas_stream_processor.get_redacted_content()
 
         # update Page Contents (Stream)
         self["Contents"][Name("DecodedBytes")] = redacted_canvas_content

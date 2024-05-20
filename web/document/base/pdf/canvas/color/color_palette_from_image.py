@@ -3,7 +3,7 @@ import typing
 from decimal import Decimal
 from pathlib import Path
 
-from PIL.Image import Image as pImage
+from PIL.Image import Image as ImageType
 
 from web.document.base.pdf import HexColor, RGBColor
 from web.document.base.pdf import Image as bImage
@@ -22,7 +22,7 @@ class ColorPaletteFromImage:
 
     @staticmethod
     def color_palette_from_image(
-        img: typing.Union[str, Path, bImage, pImage], limit: int = 4
+        img: typing.Union[str, Path, bImage, ImageType], limit: int = 4
     ):
         """
         This function calculates the color palette from an Image
@@ -36,14 +36,14 @@ class ColorPaletteFromImage:
             img = bImage(img)
         if isinstance(img, Path):
             img = bImage(img)
-        if isinstance(img, pImage):
+        if isinstance(img, ImageType):
             img = bImage(img)
         assert isinstance(img, bImage)
         img.force_load_image()
 
         # resize
-        assert isinstance(img._image, pImage)
-        img_in: pImage = img._image
+        assert isinstance(img._image, ImageType)
+        img_in: ImageType = img._image
         while img_in.width > 128 and img_in.height > 128:
             img_in = img_in.resize((img_in.width // 2, img_in.height // 2))
 

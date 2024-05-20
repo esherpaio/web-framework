@@ -61,6 +61,7 @@ class CopyCommandOperator(CanvasOperator):
     ) -> None:
         """Invokes this CanvasOperator."""
 
+        assert isinstance(canvas_stream_processor, RedactedCanvasStreamProcessor)
         # execute command
         self._operator_to_copy.invoke(canvas_stream_processor, operands)
 
@@ -104,7 +105,7 @@ class ShowTextMod(CanvasOperator):
 
     @staticmethod
     def _show_text_unmodified(
-        canvas_stream_processor: "CanvasStreamProcessor", s: String
+        canvas_stream_processor: "RedactedCanvasStreamProcessor", s: String
     ) -> None:
         if isinstance(s, HexadecimalString):
             canvas_stream_processor._redacted_content += "\n<" + str(s) + "> Tj"
@@ -114,7 +115,7 @@ class ShowTextMod(CanvasOperator):
 
     @staticmethod
     def _write_chunk_of_text(
-        canvas_stream_processor: "CanvasStreamProcessor", s: str, f: "Font"
+        canvas_stream_processor: "RedactedCanvasStreamProcessor", s: str, f: "Font"
     ):
         from web.document.base.pdf.canvas.layout.text.chunk_of_text import ChunkOfText
 
@@ -135,6 +136,7 @@ class ShowTextMod(CanvasOperator):
     ) -> None:
         """Invokes this CanvasOperator."""
 
+        assert isinstance(canvas_stream_processor, RedactedCanvasStreamProcessor)
         assert isinstance(operands[0], String)
 
         # handle Font being a Name (optimization)
@@ -158,12 +160,16 @@ class ShowTextMod(CanvasOperator):
         for evt in ChunkOfTextRenderEvent(
             canvas.graphics_state, operands[0]
         ).split_on_glyphs():
-            letter_should_be_redacted: bool = any(
-                [
-                    x.intersects(evt.get_previous_layout_box())
-                    for x in canvas_stream_processor._redacted_rectangles
-                ]
-            )
+            previous_layout_box = evt.get_previous_layout_box()
+            if previous_layout_box is not None:
+                letter_should_be_redacted: bool = any(
+                    [
+                        x.intersects(previous_layout_box)
+                        for x in canvas_stream_processor._redacted_rectangles
+                    ]
+                )
+            else:
+                letter_should_be_redacted = False
             graphics_state = canvas_stream_processor.get_canvas().graphics_state
             event_bounding_box: typing.Optional[Rectangle] = (
                 evt.get_previous_layout_box()
@@ -223,7 +229,7 @@ class ShowTextWithGlyphPositioningMod(CanvasOperator):
 
     @staticmethod
     def _write_chunk_of_text(
-        canvas_stream_processor: "CanvasStreamProcessor", s: str, f: "Font"
+        canvas_stream_processor: "RedactedCanvasStreamProcessor", s: str, f: "Font"
     ):
         from web.document.base.pdf.canvas.layout.text.chunk_of_text import ChunkOfText
 
@@ -243,6 +249,7 @@ class ShowTextWithGlyphPositioningMod(CanvasOperator):
         event_listeners: typing.List["EventListener"] = [],
     ) -> None:
         """Invoke the TJ operator."""
+        assert isinstance(canvas_stream_processor, RedactedCanvasStreamProcessor)
 
         # handle Font being a Name (optimization)
         canvas = canvas_stream_processor.get_canvas()
@@ -267,12 +274,16 @@ class ShowTextWithGlyphPositioningMod(CanvasOperator):
                 for evt in ChunkOfTextRenderEvent(
                     canvas.graphics_state, obj
                 ).split_on_glyphs():
-                    letter_should_be_redacted: bool = any(
-                        [
-                            x.intersects(evt.get_previous_layout_box())
-                            for x in canvas_stream_processor._redacted_rectangles
-                        ]
-                    )
+                    previous_layout_box = evt.get_previous_layout_box()
+                    if previous_layout_box is not None:
+                        letter_should_be_redacted: bool = any(
+                            [
+                                x.intersects(previous_layout_box)
+                                for x in canvas_stream_processor._redacted_rectangles
+                            ]
+                        )
+                    else:
+                        letter_should_be_redacted = False
                     graphics_state = canvas_stream_processor.get_canvas().graphics_state
                     event_bounding_box: typing.Optional[Rectangle] = (
                         evt.get_previous_layout_box()

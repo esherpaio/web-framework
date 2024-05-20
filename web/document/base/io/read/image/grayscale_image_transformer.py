@@ -3,7 +3,7 @@ import logging
 import typing
 from typing import Any, Optional, Union
 
-from PIL import Image
+from PIL import Image as PILImage
 
 from web.document.base.io.filter.stream_decode_util import decode_stream
 from web.document.base.io.read.pdf_object import PDFObject
@@ -88,7 +88,7 @@ class GrayscaleImageTransformer(Transformer):
         # use PIL to process image bytes
         w = int(object_to_transform["Width"])
         h = int(object_to_transform["Height"])
-        tmp = Image.new("RGB", (w, h))
+        tmp = PILImage.new("RGB", (w, h))
         for i in range(0, w):
             for j in range(0, h):
                 k = i * h + j

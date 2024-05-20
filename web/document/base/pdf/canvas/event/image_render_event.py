@@ -1,6 +1,6 @@
 from decimal import Decimal
 
-from PIL.Image import Image
+from PIL.Image import Image as ImageType
 
 from web.document.base.pdf.canvas.canvas_graphics_state import CanvasGraphicsState
 from web.document.base.pdf.canvas.event.event_listener import Event
@@ -14,8 +14,8 @@ class ImageRenderEvent(Event):
     # CONSTRUCTOR
     #
 
-    def __init__(self, graphics_state: CanvasGraphicsState, image: Image):
-        self._image: Image = image
+    def __init__(self, graphics_state: CanvasGraphicsState, image: ImageType):
+        self._image: ImageType = image
 
         # calculate position
         v = graphics_state.ctm.cross(Decimal(0), Decimal(0), Decimal(1))
@@ -39,7 +39,7 @@ class ImageRenderEvent(Event):
         """Get the height of the (scaled) Image."""
         return self._height
 
-    def get_image(self) -> Image:
+    def get_image(self) -> ImageType:
         """Get the (source) Image This Image may have different dimensions than how it
         is displayed in the PDF."""
         return self._image

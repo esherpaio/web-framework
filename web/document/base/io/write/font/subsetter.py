@@ -131,12 +131,12 @@ class Subsetter:
             subsetter.subset(ttfont)
 
             # determine (modified) DecodedBytes
+            font_file_bytes_002: bytes | io.BytesIO
             with io.BytesIO() as font_file_bytes_002:
                 ttfont.save(font_file_bytes_002)
                 font_file_bytes_002 = font_file_bytes_002.getvalue()
 
             # build TrueTypeFont
-
             new_font: Font = TrueTypeFont.true_type_font_from_file(font_file_bytes_002)
             basefont_prefix: str = "".join(
                 [random.choice("ABCDEFGHIJKLMNOPQRSTUVWXYZ") for _ in range(0, 6)]

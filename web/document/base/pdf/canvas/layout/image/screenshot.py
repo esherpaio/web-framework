@@ -1,7 +1,7 @@
 import typing
 
 from _decimal import Decimal
-from PIL import ImageGrab
+from PIL import ImageGrab as PILImageGrab
 
 from web.document.base.pdf import Alignment, Color, HexColor, Image
 from web.document.base.pdf.canvas.geometry.rectangle import Rectangle
@@ -49,7 +49,7 @@ class ScreenShot(Image):
         x_display: typing.Optional[str] = None,
     ):
         super().__init__(
-            image=ImageGrab.grab(
+            image=PILImageGrab.grab(
                 bbox=None
                 if bounding_box is None
                 else (

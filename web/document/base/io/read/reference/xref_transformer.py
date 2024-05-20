@@ -85,6 +85,7 @@ class XREFTransformer(Transformer):
         tok = context.tokenizer
 
         exceptions_to_rethrow = []
+        most_recent_xref: PlainTextXREF | StreamXREF | RebuiltXREF | None
 
         # attempt to read plaintext XREF
         try:

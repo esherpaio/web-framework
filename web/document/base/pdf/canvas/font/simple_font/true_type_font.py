@@ -270,7 +270,7 @@ class TrueTypeFont(Type1Font):
 
     @staticmethod
     def true_type_font_from_file(
-        font_file: typing.Union[Path, bytes],
+        font_file: typing.Union[Path, bytes | io.BytesIO],
     ) -> typing.Union["TrueTypeFont", "Type0Font"]:
         """This function returns the PDF TrueTypeFont object for a given TTF file."""
 
