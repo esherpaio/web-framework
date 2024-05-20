@@ -52,22 +52,22 @@ class Token:
 
         return self._is_left_associative
 
-    def get_number_of_arguments(self) -> typing.Optional[int]:
+    def get_number_of_arguments(self) -> int:
         """
         This function returns the number of arguments the operator (represented by this Token)
         accepts, and None if this Token does not represent an operator
         :return:    the number of arguments this operator accepts
         """
-
+        assert self._number_of_arguments is not None
         return self._number_of_arguments
 
-    def get_precedence(self) -> typing.Optional[int]:
+    def get_precedence(self) -> int:
         """
         This function returns the precedence of the operator (represented by this Token)
         and None if this Token does not represent an operator
         :return:    the precedence of this operator
         """
-
+        assert self._precedence is not None
         return self._precedence
 
     def get_text(self) -> str:

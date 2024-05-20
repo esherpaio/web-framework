@@ -77,9 +77,9 @@ class ArrayTransformer(Transformer):
                 or isinstance(v, List)
                 or isinstance(v, Stream)
                 or isinstance(v, ImageType)
-            ) and not v.is_inline():
-                out_value.append(self.get_reference(v, context))
-                queue.append(v)
+            ) and not v.is_inline():  # type: ignore[union-attr]
+                out_value.append(self.get_reference(v, context))  # type: ignore[arg-type]
+                queue.append(v)  # type: ignore[arg-type]
             else:
                 out_value.append(v)
 

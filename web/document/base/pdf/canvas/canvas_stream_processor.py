@@ -315,7 +315,7 @@ class CanvasStreamProcessor:
                 assert len(operand_stk) >= operator.get_number_of_operands()
             operands: typing.List[AnyPDFType] = []
             for _ in range(0, operator.get_number_of_operands()):
-                operands.insert(0, operand_stk.pop(-1))
+                operands.insert(0, operand_stk.pop(-1))  # type: ignore[arg-type]
 
             # invoke
             try:

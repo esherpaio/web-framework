@@ -5,6 +5,7 @@ from typing import Optional, Union
 from web.document.base.io.filter.stream_decode_util import decode_stream
 from web.document.base.io.read.tokenize.high_level_tokenizer import HighLevelTokenizer
 from web.document.base.io.read.types import Dictionary, List, Name, Reference, Stream
+from web.document.base.pdf.document.document import Document
 from web.document.base.pdf.xref.xref import XREF
 
 
@@ -69,7 +70,7 @@ class StreamXREF(XREF):
         widths = [int(xref_stream["W"][x]) for x in range(0, len(xref_stream["W"]))]
 
         # parent
-        document = self.get_root()
+        document: Document = self.get_root()
 
         # list of references
         indirect_references = [

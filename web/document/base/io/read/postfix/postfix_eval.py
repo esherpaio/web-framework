@@ -104,6 +104,8 @@ class PostScriptEval:
                 continue
 
             # operator
+            arg0: Decimal | bool
+            arg1: Decimal | bool
             if any([x.startswith(s[i]) for x in known_operators]):
                 operator: str = ""
                 while i < len(s) and s[i] in "abcdefghijklmnopqrstuvwxyz":

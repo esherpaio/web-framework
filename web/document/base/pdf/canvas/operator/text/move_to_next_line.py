@@ -41,6 +41,6 @@ class MoveToNextLine(CanvasOperator):
         canvas = canvas_stream_processor.get_canvas()
         move_text_position_op.invoke(
             canvas_stream_processor,
-            [bDecimal(0), -canvas.graphics_state.leading],
+            [bDecimal(0), -canvas.graphics_state.leading],  # type: ignore[list-item]
             event_listeners,
         )

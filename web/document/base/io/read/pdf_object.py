@@ -5,6 +5,8 @@ from typing import TYPE_CHECKING
 
 import PIL
 
+from web.document.base.pdf.document.document import Document
+
 if TYPE_CHECKING:
     from web.document.base.io.read.types import Reference
 
@@ -194,7 +196,7 @@ class PDFObject:
             ]
             hashcode = 1
             for p in pixels:
-                if isinstance(p, typing.List) or isinstance(p, typing.Tuple):
+                if isinstance(p, list) or isinstance(p, tuple):
                     hashcode += 32 * hashcode + sum(p)
                 else:
                     hashcode += 32 * hashcode + p
@@ -238,12 +240,12 @@ class PDFObject:
 
         # add a __hash__ method for PIL.Image.Image
         if isinstance(object_, PIL.Image.Image):
-            object_.__hash__ = MethodType(_pil_image_hash, object_)
+            object_.__hash__ = MethodType(_pil_image_hash, object_)  # type: ignore[method-assign]
 
         # return
         return object_
 
-    def get_parent(self) -> typing.Self:
+    def get_parent(self) -> typing.Optional["PDFObject"]:
         """
         This function returns the parent of this PDFObject, or None if no such
         PDFObject exists
@@ -260,17 +262,17 @@ class PDFObject:
 
         return self._reference
 
-    def get_root(self) -> typing.Self:
+    def get_root(self) -> "Document":
         """
         This function returns the root (of the parent hierarchy) of this PDFObject, or
         None if no such PDFObject exists
         :return:    the root of this PDFObject
         """
 
-        p: typing.Self = self
+        p: typing.Optional["PDFObject"] = self
         while p is not None and p.get_parent() is not None:
             p = p.get_parent()
-        return p
+        return p  # type: ignore[return-value]
 
     def is_inline(self) -> bool:
         """
@@ -324,7 +326,7 @@ class PDFObject:
         self._parent = parent
         return self
 
-    def set_reference(self, reference: "Reference") -> typing.Self:
+    def set_reference(self, reference: "Reference" | None) -> typing.Self:
         """
         This function sets the Reference to be used for this PDFObject
         :param reference:   the Reference to be used for this PDFObject

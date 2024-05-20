@@ -308,9 +308,8 @@ class HighLevelTokenizer(LowLevelTokenizer):
                     "unable to process reference /Length when no XREF is given"
                 )
             pos_before = self.tell()
-            length_of_stream = int(
-                xref.get_object(length_of_stream, src=self._io_source, tok=self)
-            )
+            obj = xref.get_object(length_of_stream, src=self._io_source, tok=self)
+            length_of_stream = int(obj)  # type: ignore[arg-type]
             self.seek(pos_before)
 
         # process newline

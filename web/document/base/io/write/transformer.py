@@ -201,13 +201,12 @@ class Transformer:
                     return ref
 
         # generate new object number
-        existing_obj_numbers = set(
-            [
-                item.get_reference().object_number
-                for sublist in [v for k, v in context.indirect_objects_by_hash.items()]
-                for item in sublist
-            ]
-        )
+        existing_obj_numbers = set()
+        for sublist in [v for k, v in context.indirect_objects_by_hash.items()]:
+            for item in sublist:
+                item_ref = item.get_reference()
+                if item_ref is not None:
+                    existing_obj_numbers.add(item_ref.object_number)
         obj_number = len(existing_obj_numbers) + 1
         while obj_number in existing_obj_numbers:
             obj_number += 1

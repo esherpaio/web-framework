@@ -81,7 +81,7 @@ class DictionaryTransformer(Transformer):
                 or isinstance(v, Stream)
                 or isinstance(v, Element)
                 or isinstance(v, ImageType)
-            ) and not v.is_inline():
+            ) and not v.is_inline():  # type: ignore[union-attr]
                 out_value[k] = self.get_reference(v, context)
                 queue.append(v)
             else:
