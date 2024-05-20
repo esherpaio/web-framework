@@ -2,6 +2,8 @@ import logging
 import typing
 from typing import Optional
 
+from PIL.Image import Image as ImageType
+
 from web.document.base.io.read.types import (
     AnyPDFType,
     Dictionary,
@@ -78,6 +80,7 @@ class DictionaryTransformer(Transformer):
                 or isinstance(v, List)
                 or isinstance(v, Stream)
                 or isinstance(v, Element)
+                or isinstance(v, ImageType)
             ) and not v.is_inline():
                 out_value[k] = self.get_reference(v, context)
                 queue.append(v)
