@@ -48,16 +48,14 @@ class SetColorSpaceNonStroking(CanvasOperator):
             "Pattern",
             "Separation",
         ]:
-            color_space_name = canvas_stream_processor.get_resource(
+            color_space_obj = canvas_stream_processor.get_resource(
                 "ColorSpace", color_space_name
             )
-
-        if not isinstance(color_space_name, Name) and isinstance(
-            color_space_name, List
-        ):
-            assert isinstance(color_space_name[0], Name)
-            color_space = color_space_name
-            color_space_name = color_space_name[0]
+            if not isinstance(color_space_name, Name) and isinstance(
+                color_space_obj, List
+            ):
+                color_space = color_space_obj
+                color_space_name = color_space_obj[0]
 
         #
         # Device

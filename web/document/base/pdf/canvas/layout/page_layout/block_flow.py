@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING
 
 from web.document.base.pdf.canvas.geometry.rectangle import Rectangle
 from web.document.base.pdf.canvas.layout.layout_element import LayoutElement
+from web.document.base.pdf.canvas.layout.page_layout.inline_flow import InlineFlow
 
 if TYPE_CHECKING:
     from web.document.base.pdf.page.page import Page
@@ -98,8 +99,8 @@ class BlockFlow(LayoutElement):
         # and the new element is also an InlineFlow, just add the two together
         if (
             len(self._content) > 0
-            and self._content[-1].__class__.__name__ == "InlineFlow"
-            and e.__class__.__name__ == "InlineFlow"
+            and isinstance(self._content[-1], InlineFlow)
+            and isinstance(e, InlineFlow)
         ):
             self._content[-1].add(e)
             return self

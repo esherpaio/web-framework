@@ -7,7 +7,6 @@ from web.document.base.pdf.canvas.color.color import (
     CMYKColor,
     GrayColor,
     RGBColor,
-    Separation,
 )
 from web.document.base.pdf.canvas.operator.canvas_operator import CanvasOperator
 
@@ -94,18 +93,5 @@ class SetColorNonStroking(CanvasOperator):
             ), "Operand 2 of scn must be a Decimal"
             canvas.graphics_state.non_stroke_color = RGBColor(
                 operands[0], operands[1], operands[2]
-            )
-            return
-
-        # separation
-        if (
-            isinstance(non_stroke_color_space, List)
-            and non_stroke_color_space[0] == "Separation"
-        ):
-            assert isinstance(
-                operands[0], Decimal
-            ), "Operand 0 of scn must be a Decimal"
-            canvas.graphics_state.non_stroke_color = Separation(
-                canvas.graphics_state.non_stroke_color_space, [operands[0]]
             )
             return

@@ -239,7 +239,7 @@ class GlyphLine:
         for g in self._glyphs:
             out.append(
                 GlyphLine(
-                    b"",
+                    [],
                     self._font,
                     self._font_size,
                     self._character_spacing,

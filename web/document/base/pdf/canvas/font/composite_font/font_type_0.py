@@ -35,7 +35,7 @@ class Type0Font(Font):
     #
 
     def __deepcopy__(self, memodict={}):
-        f_out: Type0Font = super(Type0Font, self).__deepcopy__(memodict)
+        f_out: Type0Font = super(Type0Font, self).__deepcopy__(memodict)  # type: ignore[assignment]
         f_out[Name("Subtype")] = Name("Type0")
         f_out._character_identifier_to_unicode_lookup = {
             k: v for k, v in self._character_identifier_to_unicode_lookup.items()
@@ -113,7 +113,7 @@ class Type0Font(Font):
 
         cmap_bytes: bytes = self["Encoding"]["DecodedBytes"]
         self._byte_to_char_identifier = {
-            k: v for k, v in self._read_cmap(cmap_bytes).items()
+            k: int(v) for k, v in self._read_cmap(cmap_bytes).items()
         }
         self._char_to_byte_identifier = {
             v: k for k, v in self._byte_to_char_identifier.items()
@@ -130,7 +130,7 @@ class Type0Font(Font):
 
         cmap_bytes: bytes = self["ToUnicode"]["DecodedBytes"]
         self._character_identifier_to_unicode_lookup = self._read_cmap(cmap_bytes)
-        self._unicode_lookup_to_character_identifier: typing.Dict[str, int] = {}
+        self._unicode_lookup_to_character_identifier = {}
         for k, v in self._character_identifier_to_unicode_lookup.items():
             if v not in self._unicode_lookup_to_character_identifier:
                 self._unicode_lookup_to_character_identifier[v] = k

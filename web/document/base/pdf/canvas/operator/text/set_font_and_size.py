@@ -1,7 +1,7 @@
 import typing
 from typing import TYPE_CHECKING
 
-from web.document.base.io.read.types import AnyPDFType, Decimal
+from web.document.base.io.read.types import AnyPDFType, Decimal, Name
 from web.document.base.pdf.canvas.font.font import Font
 
 if TYPE_CHECKING:
@@ -34,15 +34,17 @@ class SetFontAndSize(CanvasOperator):
         """Invoke the Tf operator."""
 
         # lookup font dictionary
+        assert isinstance(operands[0], (Name, str))
         font_ref = canvas_stream_processor.get_resource("Font", operands[0])
         assert font_ref is not None
         assert isinstance(font_ref, Font)
 
         # font size
+        assert isinstance(operands[1], Decimal)
         font_size = operands[1]
-        assert isinstance(font_size, Decimal)
 
         # set state
         canvas = canvas_stream_processor.get_canvas()
         canvas.graphics_state.font_size = font_size
+        assert isinstance(operands[0], (Name, Font))
         canvas.graphics_state.font = operands[0]

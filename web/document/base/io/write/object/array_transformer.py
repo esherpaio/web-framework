@@ -2,8 +2,6 @@ import logging
 import typing
 from typing import Optional
 
-from PIL.Image import Image as ImageType
-
 from web.document.base.io.read.types import (
     AnyPDFType,
     Dictionary,
@@ -76,7 +74,6 @@ class ArrayTransformer(Transformer):
                 isinstance(v, Dictionary)
                 or isinstance(v, List)
                 or isinstance(v, Stream)
-                or isinstance(v, ImageType)
             ) and not v.is_inline():
                 out_value.append(self.get_reference(v, context))
                 queue.append(v)
@@ -108,7 +105,7 @@ class ArrayTransformer(Transformer):
 
         # end object if needed
         if started_object:
-            self._end_object(object_to_transform, context)
+            self._end_object(context)
 
         for e in queue:
             self.get_root_transformer().transform(e, context)

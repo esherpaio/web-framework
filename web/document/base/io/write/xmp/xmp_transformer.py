@@ -58,9 +58,6 @@ class XMPTransformer(Transformer):
         out_value[Name("Bytes")] = bts
         out_value[Name("Length")] = bDecimal(len(bts))
 
-        # copy reference
-        out_value.set_reference(object_to_transform.get_reference())
-
         # start object if needed
         started_object = False
         ref = out_value.get_reference()
@@ -75,4 +72,4 @@ class XMPTransformer(Transformer):
 
         # end object if needed
         if started_object:
-            self._end_object(out_value, context)
+            self._end_object(context)
