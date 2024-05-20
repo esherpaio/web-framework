@@ -5,16 +5,24 @@ from sqlalchemy.orm import Session
 
 from web.config import config
 from web.database.model import Invoice, Order
-from web.document._defaults import FONT_BOLD, FONT_SIZE_TITLE, Paragraph, TableCell
-from web.document._utils import cells_to_tables, num_to_str, save_pdf
+from web.document._utils import parse_price, save_pdf
 from web.document.base.pdf import (
     Alignment,
     Document,
     FixedColumnWidthTable,
-    HexColor,
     Image,
     Page,
     SingleColumnLayout,
+)
+from web.document.base.toolkit.table.parsing import cells_to_tables
+from web.document.object._style import (
+    COLOR_DARKGREY,
+    COLOR_LIGHTGREY,
+    BoldPG,
+    HeadPG,
+    TableCell,
+    TextPG,
+    TitlePG,
 )
 from web.i18n import _
 
@@ -34,11 +42,10 @@ def gen_invoice(
     image.force_load_image()
     image.set_width_from_height()
     layout.add(image)
-    layout.add(Paragraph(_("PDF_INVOICE"), font=FONT_BOLD, font_size=FONT_SIZE_TITLE))
+    layout.add(TitlePG(_("PDF_INVOICE")))
     layout.add(_build_order_info(order, invoice))
 
-    tables = _build_order_lines(order)
-    for num, table in enumerate(tables):
+    for num, table in enumerate(_build_order_lines(order)):
         if num > 0:
             page = Page()
             pdf.add_page(page)
@@ -57,58 +64,42 @@ def _build_order_info(
     # Left 1 column
     left_items = []
     if order.billing.company:
-        left_items.append(Paragraph(order.billing.company))
-    left_items.append(Paragraph(order.billing.full_name))
-    left_items.append(Paragraph(order.billing.address))
-    left_items.append(Paragraph(f"{order.billing.zip_code} {order.billing.city}"))
+        left_items.append(TextPG(order.billing.company))
+    left_items.append(TextPG(order.billing.full_name))
+    left_items.append(TextPG(order.billing.address))
+    left_items.append(TextPG(f"{order.billing.zip_code} {order.billing.city}"))
     if order.billing.state:
-        left_items.append(Paragraph(order.billing.state))
-    left_items.append(Paragraph(order.billing.country.name))
-    left_items.append(Paragraph(order.billing.email))
+        left_items.append(TextPG(order.billing.state))
+    left_items.append(TextPG(order.billing.country.name))
+    left_items.append(TextPG(order.billing.email))
 
     # Middle 1 column
     middle_items = [
-        Paragraph(config.BUSINESS_NAME),
-        Paragraph(config.BUSINESS_STREET),
-        Paragraph(f"{config.BUSINESS_ZIP_CODE} {config.BUSINESS_CITY}"),
-        Paragraph(config.BUSINESS_COUNTRY),
-        Paragraph(_("PDF_CC_NUMBER", cc=config.BUSINESS_CC)),
-        Paragraph(_("PDF_VAT_NUMBER", vat=config.BUSINESS_VAT)),
+        TextPG(config.BUSINESS_NAME),
+        TextPG(config.BUSINESS_STREET),
+        TextPG(f"{config.BUSINESS_ZIP_CODE} {config.BUSINESS_CITY}"),
+        TextPG(config.BUSINESS_COUNTRY),
+        TextPG(_("PDF_CC_NUMBER", cc=config.BUSINESS_CC)),
+        TextPG(_("PDF_VAT_NUMBER", vat=config.BUSINESS_VAT)),
     ]
 
     # Right 2 columns
     right_groups = [
         [
-            Paragraph(
-                _("PDF_ORDER_ID"),
-                font=FONT_BOLD,
-                horizontal_alignment=Alignment.RIGHT,
-            ),
-            Paragraph(str(order.id)),
+            BoldPG(_("PDF_ORDER_ID", horizontal_alignment=Alignment.RIGHT)),
+            TextPG(str(order.id)),
         ],
         [
-            Paragraph(
-                _("PDF_ORDER_DATE"),
-                font=FONT_BOLD,
-                horizontal_alignment=Alignment.RIGHT,
-            ),
-            Paragraph(order.created_at.strftime("%Y-%m-%d")),
+            BoldPG(_("PDF_ORDER_DATE"), horizontal_alignment=Alignment.RIGHT),
+            TextPG(order.created_at.strftime("%Y-%m-%d")),
         ],
         [
-            Paragraph(
-                _("PDF_INVOICE_NUMBER"),
-                font=FONT_BOLD,
-                horizontal_alignment=Alignment.RIGHT,
-            ),
-            Paragraph(invoice.number),
+            BoldPG(_("PDF_INVOICE_NUMBER"), horizontal_alignment=Alignment.RIGHT),
+            TextPG(invoice.number),
         ],
         [
-            Paragraph(
-                _("PDF_INVOICE_DATE"),
-                font=FONT_BOLD,
-                horizontal_alignment=Alignment.RIGHT,
-            ),
-            Paragraph(invoice.created_at.strftime("%Y-%m-%d")),
+            BoldPG(_("PDF_INVOICE_DATE"), horizontal_alignment=Alignment.RIGHT),
+            TextPG(invoice.created_at.strftime("%Y-%m-%d")),
         ],
     ]
 
@@ -125,17 +116,17 @@ def _build_order_info(
         if le is not None:
             table.add(le)
         else:
-            table.add(Paragraph(" "))
+            table.add(TextPG(" "))
         if mi is not None:
             table.add(mi)
         else:
-            table.add(Paragraph(" "))
+            table.add(TextPG(" "))
         if ri is not None:
             for r_item in ri:
                 table.add(r_item)
         else:
-            table.add(Paragraph(" "))
-            table.add(Paragraph(" "))
+            table.add(TextPG(" "))
+            table.add(TextPG(" "))
 
     # Finish the table
     table.set_padding_on_all_cells(Decimal(0), Decimal(2), Decimal(2), Decimal(2))
@@ -153,93 +144,71 @@ def _build_order_lines(
 
     # Headers
     for h_text in h_texts:
-        h_paragraph = Paragraph(h_text, color=HexColor("ffffff"))
-        h_cell = TableCell(h_paragraph, HexColor("646464"))
+        h_paragraph = HeadPG(h_text)
+        h_cell = TableCell(h_paragraph, background_color=COLOR_DARKGREY)
         cells.append(h_cell)
 
     # Order lines
     for num, order_line in enumerate(order.lines):
-        background_color = HexColor("f0f0f0") if num % 2 else HexColor("ffffff")
+        background_color = COLOR_LIGHTGREY if num % 2 else None
         name_text = f"{order_line.sku.name}"
-        name_p = Paragraph(name_text)
-        cells.append(TableCell(name_p, background_color))
+        name_p = TextPG(name_text)
+        cells.append(TableCell(name_p, background_color=background_color))
         quantity_text = f"{order_line.quantity}"
-        quantity_p = Paragraph(quantity_text)
-        cells.append(TableCell(quantity_p, background_color))
-        price_text = f"{num_to_str(order_line.total_price, 2)} {order.currency_code}"
-        price_p = Paragraph(price_text)
-        cells.append(TableCell(price_p, background_color))
+        quantity_p = TextPG(quantity_text)
+        cells.append(TableCell(quantity_p, background_color=background_color))
+        price_text = f"{parse_price(order_line.total_price)} {order.currency_code}"
+        price_p = TextPG(price_text)
+        cells.append(TableCell(price_p, background_color=background_color))
 
     # Empty line
-    empty_p = Paragraph(" ")
-    cells.append(
-        TableCell(empty_p, col_span=h_count, background_color=HexColor("ffffff"))
-    )
+    empty_p = TextPG(" ")
+    cells.append(TableCell(empty_p, col_span=h_count))
 
     # Subtotal
-    subtotal_head_p = Paragraph(
-        _("PDF_ITEMS"),
-        font=FONT_BOLD,
-        horizontal_alignment=Alignment.RIGHT,
-    )
-    subtotal_value_text = f"{num_to_str(order.subtotal_price, 2)} {order.currency_code}"
-    subtotal_value_p = Paragraph(subtotal_value_text)
+    subtotal_head_p = BoldPG(_("PDF_ITEMS"))
+    subtotal_value_text = f"{parse_price(order.subtotal_price)} {order.currency_code}"
+    subtotal_value_p = TextPG(subtotal_value_text)
     cells.append(TableCell(subtotal_head_p, col_span=h_count - 1))
     cells.append(TableCell(subtotal_value_p, col_span=1))
 
     # Discount
-    subtotal_head_p = Paragraph(
-        _("PDF_DISCOUNT"),
-        font=FONT_BOLD,
-        horizontal_alignment=Alignment.RIGHT,
-    )
-    subtotal_value_text = f"{num_to_str(order.discount_price, 2)} {order.currency_code}"
-    subtotal_value_p = Paragraph(subtotal_value_text)
+    subtotal_head_p = BoldPG(_("PDF_DISCOUNT"))
+    subtotal_value_text = f"{parse_price(order.discount_price)} {order.currency_code}"
+    subtotal_value_p = TextPG(subtotal_value_text)
     cells.append(TableCell(subtotal_head_p, col_span=h_count - 1))
     cells.append(TableCell(subtotal_value_p, col_span=1))
 
     # Shipment
-    subtotal_head_p = Paragraph(
-        _("PDF_SHIPMENT"),
-        font=FONT_BOLD,
-        horizontal_alignment=Alignment.RIGHT,
-    )
-    subtotal_value_text = f"{num_to_str(order.shipment_price, 2)} {order.currency_code}"
-    subtotal_value_p = Paragraph(subtotal_value_text)
+    subtotal_head_p = BoldPG(_("PDF_SHIPMENT"))
+    subtotal_value_text = f"{parse_price(order.shipment_price)} {order.currency_code}"
+    subtotal_value_p = TextPG(subtotal_value_text)
     cells.append(TableCell(subtotal_head_p, col_span=h_count - 1))
     cells.append(TableCell(subtotal_value_p, col_span=1))
 
     # VAT
-    vat_head_p = Paragraph(
-        _("PDF_VAT_PERCENTAGE", vat_percentage=str(order.vat_percentage)),
-        font=FONT_BOLD,
-        horizontal_alignment=Alignment.RIGHT,
+    vat_head_p = BoldPG(
+        _("PDF_VAT_PERCENTAGE", vat_percentage=str(order.vat_percentage))
     )
-    vat_value_text = f"{num_to_str(order.vat_amount, 2)} {order.currency_code}"
-    vat_p = Paragraph(vat_value_text)
+    vat_value_text = f"{parse_price(order.vat_amount)} {order.currency_code}"
+    vat_p = TextPG(vat_value_text)
     cells.append(TableCell(vat_head_p, col_span=h_count - 1))
     cells.append(TableCell(vat_p, col_span=1))
 
     # Total
-    total_head_p = Paragraph(
-        _("PDF_TOTAL"),
-        font=FONT_BOLD,
-        horizontal_alignment=Alignment.RIGHT,
-    )
-    total_value_text = f"{num_to_str(order.total_price_vat, 2)} {order.currency_code}"
-    total_value_p = Paragraph(total_value_text)
+    total_head_p = BoldPG(_("PDF_TOTAL"))
+    total_value_text = f"{parse_price(order.total_price_vat)} {order.currency_code}"
+    total_value_p = TextPG(total_value_text)
     cells.append(TableCell(total_head_p, col_span=h_count - 1))
     cells.append(TableCell(total_value_p, col_span=1))
 
     # Empty line
-    empty_p = Paragraph(" ")
-    cells.append(
-        TableCell(empty_p, col_span=h_count, background_color=HexColor("ffffff"))
-    )
+    empty_p = TextPG(" ")
+    cells.append(TableCell(empty_p, col_span=h_count))
 
     # Note
     note_1_text = _("PDF_NOTE")
-    note_1_p = Paragraph(note_1_text, horizontal_alignment=Alignment.RIGHT)
+    note_1_p = TextPG(note_1_text, horizontal_alignment=Alignment.RIGHT)
     cells.append(TableCell(note_1_p, col_span=h_count))
 
     return cells_to_tables(
