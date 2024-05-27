@@ -23,6 +23,7 @@ class CountryAPI(API):
     }
     patch_columns = {
         Country.state_required,
+        Country.vat_required,
     }
     get_columns = {
         Country.code,
