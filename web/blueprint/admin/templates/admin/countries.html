@@ -7,7 +7,7 @@
             updateButton(`update-country-${countryId}`, 1);
             await patchCountriesId(countryId, {
                 state_required: document.getElementById(`country-state-required-${countryId}`).checked,
-                vat_required: document.getElementById(`country-state-required-${countryId}`).checked,
+                vat_required: document.getElementById(`country-vat-required-${countryId}`).checked,
             });
             await patchSetting({ cached_at: null });
             window.location.reload();
