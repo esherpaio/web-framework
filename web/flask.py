@@ -1,5 +1,5 @@
 import time
-from datetime import datetime, timedelta
+from datetime import datetime
 from threading import Thread
 from typing import Callable, Type
 
@@ -17,8 +17,6 @@ from web.database.model import (
     AppSetting,
     Country,
     Currency,
-    Email,
-    EmailStatusId,
     FileType,
     Language,
     OrderStatus,
@@ -230,29 +228,6 @@ class FlaskWeb:
         # Start cache reloading
         self._cache_active = True
         self.update_cache(force=True)
-
-    #
-    # Emails
-    #
-
-    @staticmethod
-    def retry_emails() -> None:
-        with conn.begin() as s:
-            emails = (
-                s.query(Email)
-                .filter(
-                    Email.created_at > datetime.utcnow() - timedelta(weeks=1),
-                    Email.status_id.in_([EmailStatusId.QUEUED, EmailStatusId.FAILED]),
-                )
-                .order_by(Email.id.asc())
-                .with_for_update(skip_locked=True)
-                .all()
-            )
-            if not emails:
-                return
-            log.info(f"Retrying {len(emails)} failed email events")
-            for email in emails:
-                mail.trigger_events(s, email.event_id, _email=email, **email.data)
 
     #
     # Locale
