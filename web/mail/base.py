@@ -1,3 +1,4 @@
+from datetime import datetime
 from enum import StrEnum
 from typing import Callable
 
@@ -43,7 +44,6 @@ class Mail(metaclass=Singleton):
         MailEvent.ORDER_SHIPPED: [mail_order_shipped],
         MailEvent.USER_REQUEST_PASSWORD: [mail_user_password],
         MailEvent.USER_REQUEST_VERIFICATION: [mail_user_verification],
-        # NOTE(Stan): temporarily remove mail_contact_customer until we have worker queue
         MailEvent.WEBSITE_CONTACT: [mail_contact_business],
         MailEvent.WEBSITE_BULK: [mail_bulk],
     }
@@ -64,25 +64,27 @@ class Mail(metaclass=Singleton):
         **kwargs,
     ) -> None:
         for event in cls.get_events(event_id):
-            try:
-                result = event(s, **kwargs)
-            except Exception:
-                log.error(f"Error sending {config.EMAIL_METHOD} email", exc_info=True)
-                result = False
-            if result:
-                status_id = EmailStatusId.SENT
-            else:
-                status_id = EmailStatusId.FAILED
+            status_id = EmailStatusId.QUEUED
+            if not config.EMAIL_WORKER:
+                try:
+                    result = event(s, **kwargs)
+                except Exception:
+                    log.error(
+                        f"Error sending {config.EMAIL_METHOD} email", exc_info=True
+                    )
+                    result = False
+                status_id = EmailStatusId.SENT if result else EmailStatusId.FAILED
             if _email is None:
-                user_id = current_user.id if current_user else None
                 _email = Email(
+                    updated_at=datetime.utcnow(),
                     event_id=event_id,
                     data=kwargs,
-                    user_id=user_id,
+                    user_id=current_user.id if current_user else None,
                     status_id=status_id,
                 )
                 s.add(_email)
             else:
+                _email.updated_at = datetime.utcnow()
                 _email.status_id = status_id
                 s.flush()
 
