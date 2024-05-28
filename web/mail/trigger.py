@@ -31,7 +31,9 @@ def send_emails() -> None:
             )
             if not email:
                 break
-            log.info(f"Triggering email event {email.event_id}")
+            log.info(
+                f"Triggering email event {email.event_id} for user {email.user_id}"
+            )
             mail.trigger_events(s, email.event_id, _email=email, **email.data)
 
 
