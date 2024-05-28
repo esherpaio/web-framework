@@ -93,6 +93,7 @@ class Config(metaclass=Singleton):
         "EMAIL_FROM": EnvVar("EMAIL_FROM", str),
         "EMAIL_METHOD": EnvVar("EMAIL_METHOD", str),
         "EMAIL_TO": EnvVar("EMAIL_TO", str),
+        "EMAIL_WORKER": EnvVar("EMAIL_WORKER", bool, False),
         "ENDPOINT_ERROR": ConfigVar("ENDPOINT_ERROR"),
         "ENDPOINT_HOME": ConfigVar("ENDPOINT_HOME"),
         "ENDPOINT_LOGIN": ConfigVar("ENDPOINT_LOGIN"),
