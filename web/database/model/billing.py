@@ -13,7 +13,7 @@ from ._utils import get_lower, parse_text, val_email, val_length, val_phone
 class Billing(Base):
     __tablename__ = "billing"
 
-    address = MC(String(64), nullable=False)
+    address = MC(String(128), nullable=False)
     city = MC(String(64), nullable=False)
     company = MC(String(64))
     email = MC(String(64), nullable=False)
