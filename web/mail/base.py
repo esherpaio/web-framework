@@ -76,7 +76,6 @@ class Mail(metaclass=Singleton):
                 status_id = EmailStatusId.SENT if result else EmailStatusId.FAILED
             if _email is None:
                 _email = Email(
-                    updated_at=datetime.utcnow(),
                     event_id=event_id,
                     data=kwargs,
                     user_id=current_user.id if current_user else None,
