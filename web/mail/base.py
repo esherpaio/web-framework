@@ -65,7 +65,7 @@ class Mail(metaclass=Singleton):
     ) -> None:
         for event in cls.get_events(event_id):
             status_id = EmailStatusId.QUEUED
-            if not config.EMAIL_WORKER:
+            if not _email and not config.EMAIL_WORKER:
                 try:
                     result = event(s, **kwargs)
                 except Exception:
