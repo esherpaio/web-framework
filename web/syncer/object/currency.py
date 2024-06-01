@@ -4,6 +4,7 @@ import requests
 from requests import RequestException
 from sqlalchemy.orm import Session
 
+from web.config import config
 from web.database.model import Currency
 from web.database.seed import currency_seeds
 from web.libs.logger import log
@@ -24,7 +25,7 @@ class CurrencySyncer(Syncer):
         # Call API
         url = "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml"
         try:
-            resource = requests.request("GET", url, timeout=2)
+            resource = requests.request("GET", url, timeout=config.APP_SYNC_TIMEOUT)
         except RequestException as error:
             log.critical(error)
             return

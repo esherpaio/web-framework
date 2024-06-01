@@ -23,6 +23,7 @@
     "ENDPOINT_ORDER": null,
     "ENDPOINT_PASSWORD": null,
     "ENDPOINT_USER": null,
+    "INTIME": false,
     "SOCIAL_DISCORD": null,
     "SOCIAL_FACEBOOK": null,
     "SOCIAL_INSTAGRAM": null,
