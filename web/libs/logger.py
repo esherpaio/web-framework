@@ -77,8 +77,9 @@ class SMTPHandler(_SMTPHandler):
 
 
 def _get_logger(name: str) -> logging.Logger:
+    level = logging.DEBUG if config.APP_DEBUG else logging.INFO
     base = logging.getLogger(name)
-    base.setLevel(logging.DEBUG)
+    base.setLevel(level)
     stream = logging.StreamHandler()
     stream.setFormatter(AnsiFormatter())
     base.addHandler(stream)

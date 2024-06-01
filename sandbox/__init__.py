@@ -8,6 +8,7 @@ from web.blueprint.webhook_v1 import webhook_v1_bp
 from web.database import conn
 from web.database.model import User, UserRoleId
 from web.flask import FlaskWeb
+from web.optimizer import optimizer
 from web.syncer import Syncer
 from web.syncer.object import CountrySyncer, CurrencySyncer, RegionSyncer, SkuSyncer
 
@@ -38,6 +39,7 @@ def create_app() -> Flask:
     return app
 
 
+@optimizer.cache
 def view_login() -> str:
     api_key = "admin"
     with conn.begin() as s:

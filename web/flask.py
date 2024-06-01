@@ -34,6 +34,7 @@ from web.libs.cache import cache
 from web.libs.locale import current_locale, expects_locale, gen_locale, lacks_locale
 from web.libs.logger import log
 from web.mail import MailEvent, mail
+from web.optimizer import optimizer
 from web.syncer import Syncer
 from web.syncer.object import (
     AppSettingSyncer,
@@ -95,6 +96,7 @@ class FlaskWeb:
         self.setup_flask()
         self.setup_jinja()
         self.setup_database()
+        self.setup_optimizer()
         self.setup_auth()
         self.setup_mail()
         self.setup_cache()
@@ -194,6 +196,11 @@ class FlaskWeb:
         if self._db_hook is not None:
             log.info("Running database hook")
             self._db_hook()
+
+    def setup_optimizer(self) -> None:
+        if config.APP_OPTIMIZE:
+            log.info("Enabling optimizer")
+            optimizer.init(self._app)
 
     def setup_redirects(self) -> None:
         # Register Flask hooks
@@ -304,7 +311,7 @@ class FlaskWeb:
             # fmt: on
         if self._cache_hook is not None:
             self._cache_hook(self._app)
-        cache.delete_urls()
+        optimizer.del_cache()
 
     @property
     def _cache_expired(self) -> bool:
