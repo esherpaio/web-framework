@@ -69,6 +69,7 @@ class Config(metaclass=Singleton):
         "APP_SECRET": EnvVar("APP_SECRET", str),
         "APP_STATIC": EnvVar("APP_STATIC", bool, True),
         "APP_SYNC_EXT": EnvVar("APP_SYNC_EXT", bool),
+        "APP_OPTIMIZE": EnvVar("APP_OPTIMIZE", bool),
         "BUSINESS_CC": ConfigVar("BUSINESS_CC"),
         "BUSINESS_CITY": ConfigVar("BUSINESS_CITY"),
         "BUSINESS_COUNTRY_CODE": ConfigVar("BUSINESS_COUNTRY_CODE"),
