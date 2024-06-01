@@ -44,8 +44,9 @@ class EnvVar:
 
 
 class ConfigVar:
-    def __init__(self, key: str) -> None:
+    def __init__(self, key: str, default: Any = None) -> None:
         self.key = key
+        self.default = default
 
     @cached_property
     def value(self) -> Any:
@@ -54,7 +55,7 @@ class ConfigVar:
             raise EnvironmentError
         with open(path, "r") as file_:
             data = json.loads(file_.read())
-        return data.get(self.key)
+        return data.get(self.key, self.default)
 
 
 #
@@ -64,12 +65,12 @@ class ConfigVar:
 
 class Config(metaclass=Singleton):
     VARS: dict[str, StaticVar | EnvVar | ConfigVar] = {
-        "APP_CACHE": EnvVar("APP_CACHE", bool, True),
         "APP_DEBUG": EnvVar("APP_DEBUG", bool, False),
         "APP_SECRET": EnvVar("APP_SECRET", str),
         "APP_STATIC": EnvVar("APP_STATIC", bool, True),
-        "APP_SYNC_EXT": EnvVar("APP_SYNC_EXT", bool),
-        "APP_OPTIMIZE": EnvVar("APP_OPTIMIZE", bool),
+        "APP_SYNC_EXT": EnvVar("APP_SYNC_EXT", bool, False),
+        "APP_SYNC_TIMEOUT": EnvVar("APP_SYNC_TIMEOUT", int, 10),
+        "APP_OPTIMIZE": EnvVar("APP_OPTIMIZE", bool, True),
         "BUSINESS_CC": ConfigVar("BUSINESS_CC"),
         "BUSINESS_CITY": ConfigVar("BUSINESS_CITY"),
         "BUSINESS_COUNTRY_CODE": ConfigVar("BUSINESS_COUNTRY_CODE"),
@@ -94,6 +95,7 @@ class Config(metaclass=Singleton):
         "EMAIL_FROM": EnvVar("EMAIL_FROM", str),
         "EMAIL_METHOD": EnvVar("EMAIL_METHOD", str),
         "EMAIL_TO": EnvVar("EMAIL_TO", str),
+        "EMAIL_TIMEOUT": EnvVar("EMAIL_TIMEOUT", int, 10),
         "EMAIL_WORKER": EnvVar("EMAIL_WORKER", bool, False),
         "ENDPOINT_ERROR": ConfigVar("ENDPOINT_ERROR"),
         "ENDPOINT_HOME": ConfigVar("ENDPOINT_HOME"),
@@ -107,7 +109,7 @@ class Config(metaclass=Singleton):
         "GOOGLE_KEY": EnvVar("GOOGLE_KEY", str),
         "GOOGLE_PLACE_ID": EnvVar("GOOGLE_PLACE_ID", str),
         "LOCALHOST": EnvVar("LOCALHOST", str),
-        "INTIME": EnvVar("INTIME", bool, False),
+        "INTIME": ConfigVar("INTIME", False),
         "MOLLIE_KEY": EnvVar("MOLLIE_KEY", str),
         "SMTP_HOST": EnvVar("SMTP_HOST", str),
         "SMTP_PASSWORD": EnvVar("SMTP_PASSWORD", str),
@@ -138,5 +140,9 @@ class Config(metaclass=Singleton):
     def __setattr__(self, key: str, value: Any) -> None:
         self.VARS[key] = value
 
+
+#
+# Variables
+#
 
 config = Config()

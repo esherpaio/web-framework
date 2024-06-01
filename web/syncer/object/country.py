@@ -2,6 +2,7 @@ import requests
 from requests import RequestException
 from sqlalchemy.orm import Session
 
+from web.config import config
 from web.database.model import Country, Currency, CurrencyId, Region
 from web.libs.logger import log
 from web.syncer import Syncer, external_sync
@@ -14,7 +15,7 @@ class CountrySyncer(Syncer):
         # Call API
         url = "https://restcountries.com/v3.1/all?fields=name,cca2,region,currencies"
         try:
-            response = requests.request("GET", url, timeout=2)
+            response = requests.request("GET", url, timeout=config.APP_SYNC_TIMEOUT)
             resources = response.json()
         except RequestException as error:
             log.critical(f"Country seeder failed: {error}")
