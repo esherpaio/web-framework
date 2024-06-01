@@ -22,10 +22,9 @@ class Optimizer(metaclass=Singleton):
     ENCODING = "utf-8"
 
     def init(self, app: Flask) -> None:
-        if app is not None:
-            self.app = app
-            self.cached_endpoints: set[str] = set()
-            app.after_request(self.after_request)
+        self.app = app
+        self.cached_endpoints: set[str] = set()
+        app.after_request(self.after_request)
 
     #
     # Minification
@@ -146,11 +145,12 @@ class Optimizer(metaclass=Singleton):
 
     def cache(self, f: Callable) -> Callable[..., Response]:
         def wrap(*args, **kwargs) -> Response:
-            encoding = choose_encoding(request.headers)
-            response = self.get_cache(encoding)
-            if response is not None:
-                self.set_headers(response, encoding)
-                return response
+            if config.APP_OPTIMIZE:
+                encoding = choose_encoding(request.headers)
+                response = self.get_cache(encoding)
+                if response is not None:
+                    self.set_headers(response, encoding)
+                    return response
             return f(*args, **kwargs)
 
         wrap.__name__ = f.__name__
