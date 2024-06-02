@@ -1,5 +1,4 @@
 from .base import API
-from .client import Client
 from .utils import (
     ApiText,
     args_get,
@@ -11,7 +10,6 @@ from .utils import (
 
 __all__ = [
     "API",
-    "Client",
     "ApiText",
     "response",
     "json_get",

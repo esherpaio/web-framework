@@ -49,7 +49,7 @@
     "MAIL_CONTACT_SUBJECT_CUSTOMER": "%(business_name)s Contact",
     "MAIL_CONTACT_TITLE": "Contact Form",
     "MAIL_CUSTOM_1_MESSAGE": "Message: %(message)s",
-    "MAIL_CUSTOM_1_P1": "Name: %(name)s<br>Email: %(email)s<br>Phone: %(phone)s<br>Found by: %(found_by)s<br>Date: %(timestamp)s",
+    "MAIL_CUSTOM_1_P1": "Name: %(name)s<br>Email: %(email)s<br>Phone: %(phone)s<br>Found by: %(found_by)s",
     "MAIL_CUSTOM_1_SUBJECT": "%(business_name)s Contact",
     "MAIL_CUSTOM_1_TITLE": "Contact Form",
     "MAIL_ORDER_PAID_P1": "We have succesfully processed your payment.",

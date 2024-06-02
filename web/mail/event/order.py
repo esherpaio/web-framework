@@ -5,7 +5,7 @@ from web.database.model import Invoice, Order, Refund
 from web.document.object import gen_invoice, gen_refund
 from web.i18n import _
 from web.libs.utils import remove_file
-from web.mail.utils import render_email, send_email
+from web.mail.io import render_email, send_email
 
 
 def mail_order_received(

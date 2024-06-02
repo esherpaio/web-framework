@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 
 from web.config import config
 from web.database.model import Invoice, Order
-from web.document._utils import parse_price, save_pdf
+from web.document._utils import float_to_str, save_pdf
 from web.document.base.pdf import (
     Alignment,
     Document,
@@ -157,7 +157,7 @@ def _build_order_lines(
         quantity_text = f"{order_line.quantity}"
         quantity_p = TextPG(quantity_text)
         cells.append(TableCell(quantity_p, background_color=background_color))
-        price_text = f"{parse_price(order_line.total_price)} {order.currency_code}"
+        price_text = f"{float_to_str(order_line.total_price)} {order.currency_code}"
         price_p = TextPG(price_text)
         cells.append(TableCell(price_p, background_color=background_color))
 
@@ -167,21 +167,21 @@ def _build_order_lines(
 
     # Subtotal
     subtotal_head_p = BoldPG(_("PDF_ITEMS"))
-    subtotal_value_text = f"{parse_price(order.subtotal_price)} {order.currency_code}"
+    subtotal_value_text = f"{float_to_str(order.subtotal_price)} {order.currency_code}"
     subtotal_value_p = TextPG(subtotal_value_text)
     cells.append(TableCell(subtotal_head_p, col_span=h_count - 1))
     cells.append(TableCell(subtotal_value_p, col_span=1))
 
     # Discount
     subtotal_head_p = BoldPG(_("PDF_DISCOUNT"))
-    subtotal_value_text = f"{parse_price(order.discount_price)} {order.currency_code}"
+    subtotal_value_text = f"{float_to_str(order.discount_price)} {order.currency_code}"
     subtotal_value_p = TextPG(subtotal_value_text)
     cells.append(TableCell(subtotal_head_p, col_span=h_count - 1))
     cells.append(TableCell(subtotal_value_p, col_span=1))
 
     # Shipment
     subtotal_head_p = BoldPG(_("PDF_SHIPMENT"))
-    subtotal_value_text = f"{parse_price(order.shipment_price)} {order.currency_code}"
+    subtotal_value_text = f"{float_to_str(order.shipment_price)} {order.currency_code}"
     subtotal_value_p = TextPG(subtotal_value_text)
     cells.append(TableCell(subtotal_head_p, col_span=h_count - 1))
     cells.append(TableCell(subtotal_value_p, col_span=1))
@@ -190,14 +190,14 @@ def _build_order_lines(
     vat_head_p = BoldPG(
         _("PDF_VAT_PERCENTAGE", vat_percentage=str(order.vat_percentage))
     )
-    vat_value_text = f"{parse_price(order.vat_amount)} {order.currency_code}"
+    vat_value_text = f"{float_to_str(order.vat_amount)} {order.currency_code}"
     vat_p = TextPG(vat_value_text)
     cells.append(TableCell(vat_head_p, col_span=h_count - 1))
     cells.append(TableCell(vat_p, col_span=1))
 
     # Total
     total_head_p = BoldPG(_("PDF_TOTAL"))
-    total_value_text = f"{parse_price(order.total_price_vat)} {order.currency_code}"
+    total_value_text = f"{float_to_str(order.total_price_vat)} {order.currency_code}"
     total_value_p = TextPG(total_value_text)
     cells.append(TableCell(total_head_p, col_span=h_count - 1))
     cells.append(TableCell(total_value_p, col_span=1))

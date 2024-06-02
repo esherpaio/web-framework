@@ -5,7 +5,7 @@ from web.document.base.pdf import PDF, Document
 DIR = os.path.dirname(os.path.realpath(__file__))
 
 
-def parse_price(x: float) -> str:
+def float_to_str(x: float) -> str:
     return f"{x:.2f}"
 
 

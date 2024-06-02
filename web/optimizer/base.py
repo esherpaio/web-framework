@@ -9,7 +9,7 @@ from web.config import config
 from web.libs.cache import cache
 from web.libs.logger import log
 from web.libs.utils import Singleton
-from web.optimizer.models import (
+from web.optimizer.io import (
     Encoding,
     Minification,
     choose_encoding,
