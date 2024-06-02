@@ -58,7 +58,7 @@ class StaticSeed:
 class StaticSyncer(Syncer):
     @classmethod
     def sync(cls, s: Session) -> None:
-        if not config.APP_STATIC:
+        if not config.APP_SYNC_STATIC:
             log.warning("Static syncer is disabled")
             return
         for seed in cls.SEEDS:
