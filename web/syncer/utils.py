@@ -9,7 +9,7 @@ from web.syncer import Syncer
 
 def external_sync(f: Callable) -> Callable[..., None]:
     def wrap(*args, **kwargs) -> None:
-        if not config.APP_SYNC_EXT:
+        if not config.APP_SYNC_EXTERNAL:
             return
         return f(*args, **kwargs)
 

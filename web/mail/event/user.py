@@ -2,7 +2,7 @@ from sqlalchemy.orm import Session
 
 from web.config import config
 from web.i18n import _
-from web.mail.utils import render_email, send_email
+from web.mail.io import render_email, send_email
 
 
 def mail_user_verification(
