@@ -55,7 +55,7 @@ def send_email(
     if config.EMAIL_METHOD == MailMethod.SMTP:
         _send_email_smtp(subject, html, to, reply_to, cc, bcc, blob_path, blob_name)
     else:
-        log.error(f"Cannot send email, unknown method {config.EMAIL_METHOD}".strip())
+        log.error(f"Cannot send email, unknown method {config.EMAIL_METHOD}")
         return False
     return True
 
