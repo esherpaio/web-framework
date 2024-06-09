@@ -17,7 +17,6 @@ from flask import (
     request,
     url_for,
 )
-from sqlalchemy.orm import joinedload
 from werkzeug.local import LocalProxy
 
 from web.api.utils import ApiText, response
@@ -64,19 +63,11 @@ class JWTException(Exception):
     pass
 
 
-class ApiKeyError(JWTException):
-    pass
-
-
 class NoAuthorizationError(JWTException):
     pass
 
 
 class CSRFError(JWTException):
-    pass
-
-
-class ExpiredSignatureError(JWTException):
     pass
 
 
@@ -122,6 +113,7 @@ def check_access(
     redirect_: bool = False,
     create: bool = False,
     locations: LocationType | None = None,
+    level: UserRoleLevel | None = None,
 ) -> Any:
     def decorate(f):
         def wrap(*args, **kwargs):
@@ -130,6 +122,7 @@ def check_access(
                 redirect_=redirect_,
                 create=create,
                 locations=locations,
+                level=level,
             )
             return current_app.ensure_sync(f)(*args, **kwargs)
 
@@ -204,13 +197,9 @@ def get_api_key() -> str:
 
 def decode_api_key(api_key: str) -> User:
     with conn.begin() as s:
-        user = (
-            s.query(User)
-            .filter_by(api_key=api_key, is_active=True)
-            .first()
-        )
+        user = s.query(User).filter_by(api_key=api_key, is_active=True).first()
         if user is None:
-            raise ApiKeyError
+            raise JWTDecodeError
     return user
 
 
@@ -272,14 +261,17 @@ def get_encoded_jwt(refresh: bool) -> tuple[str, str | None]:
 
 
 def decode_jwt(encoded_token: str, csrf_value=None) -> dict:
-    decoded_token = jwt.decode(
-        encoded_token,
-        JWT_SECRET,
-        algorithms=JWT_DECODE_ALGORITHMS,
-        audience=JWT_DECODE_AUDIENCE,
-        issuer=JWT_DECODE_ISSUER,
-        leeway=timedelta(seconds=JWT_DECODE_LEEWAY_S),
-    )
+    try:
+        decoded_token = jwt.decode(
+            encoded_token,
+            JWT_SECRET,
+            algorithms=JWT_DECODE_ALGORITHMS,
+            audience=JWT_DECODE_AUDIENCE,
+            issuer=JWT_DECODE_ISSUER,
+            leeway=timedelta(seconds=JWT_DECODE_LEEWAY_S),
+        )
+    except Exception:
+        raise JWTDecodeError
 
     if csrf_value:
         if "csrf" not in decoded_token:
