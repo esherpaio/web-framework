@@ -107,9 +107,9 @@ class FlaskWeb:
 
     def setup_flask(self) -> None:
         # Setup Flask
-        if config.APP_DEBUG:
+        if config.APP_DEVELOP:
             log.info("Enabling debug mode")
-        self._app.debug = config.APP_DEBUG
+            self._app.debug = True
         self._app.secret_key = config.APP_SECRET
 
         # Register blueprints
