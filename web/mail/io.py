@@ -3,7 +3,7 @@ from email.mime.application import MIMEApplication
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from enum import StrEnum
-from smtplib import SMTP_SSL
+from smtplib import SMTP
 
 import jinja2
 
@@ -93,7 +93,8 @@ def _send_email_smtp(
         attachment.add_header("Content-Disposition", "attachment", filename=blob_name)
         msg.attach(attachment)
     # Send email
-    with SMTP_SSL(config.SMTP_HOST, port=config.SMTP_PORT, timeout=25) as smtp:
+    with SMTP(config.SMTP_HOST, port=config.SMTP_PORT, timeout=25) as smtp:
         smtp.set_debuglevel(False)
+        smtp.starttls()
         smtp.login(config.SMTP_USERNAME, config.SMTP_PASSWORD)
         smtp.send_message(msg, from_addr=config.EMAIL_FROM, to_addrs=all_)
