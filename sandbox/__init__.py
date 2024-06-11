@@ -9,6 +9,7 @@ from web.database import conn
 from web.database.model import User, UserRoleId
 from web.flask import FlaskWeb
 from web.optimizer import optimizer
+from web.security import Security
 from web.syncer import Syncer
 from web.syncer.object import CountrySyncer, CurrencySyncer, RegionSyncer, SkuSyncer
 
@@ -36,6 +37,7 @@ def create_app() -> Flask:
         accept_request_auth=True,
         syncers=[CurrencySyncer, RegionSyncer, CountrySyncer, SkuSyncer, UserSyncer],
     ).setup()
+    Security(app)
     return app
 
 
