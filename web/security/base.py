@@ -6,43 +6,30 @@ from json import JSONEncoder
 from typing import Any, Literal
 
 import jwt
-from flask import (
-    Flask,
-    Response,
-    abort,
-    current_app,
-    g,
-    has_request_context,
-    redirect,
-    request,
-    url_for,
-)
+from flask import Flask, Response, current_app, g, has_request_context, request, url_for
+from sqlalchemy.orm import joinedload
 from werkzeug.local import LocalProxy
 
 from web.api.utils import ApiText, response
 from web.config import config
 from web.database import conn
-from web.database.model import User, UserRoleId, UserRoleLevel
+from web.database.model import User, UserRoleLevel
+from web.libs.logger import log
 
 #
 # Constants
 #
 
+JWT_SECRET = "secret"
+
+CSRF_ENABLED = False
+CSRF_HEADER_NAME = "X-CSRF-TOKEN"
+CSRF_METHODS = ["POST", "PUT", "PATCH", "DELETE"]
+CSRF_COOKIE_NAME = "csrf_token"
+
 JWT_COOKIE_DOMAIN = "esherpa.io"
 JWT_COOKIE_MAX_AGE = 31540000
-JWT_EXPIRES_GUEST = False
-JWT_EXPIRES_USER = 3600
-
-JWT_ACCESS_COOKIE_NAME = "access_token_cookie"
-JWT_ACCESS_CSRF_HEADER_NAME = "X-CSRF-TOKEN"
-JWT_ACCESS_CSRF_FIELD_NAME = "csrf_token"
-
-JWT_REFRESH_COOKIE_NAME = "refresh_token_cookie"
-JWT_REFRESH_CSRF_HEADER_NAME = "X-CSRF-TOKEN"
-JWT_REFRESH_CSRF_FIELD_NAME = "csrf_token"
-
-JWT_SECRET = "secret"
-JWT_CSRF_METHODS = ["POST", "PUT", "PATCH", "DELETE"]
+JWT_COOKIE_NAME = "access_token"
 
 JWT_ENCODE_ALGORITHM = "HS256"
 JWT_ENCODE_ISSUER = "https://esherpa.io/"
@@ -51,7 +38,7 @@ JWT_ENCODE_AUDIENCE = "https://esherpa.io/"
 JWT_DECODE_ALGORITHMS = ["HS256"]
 JWT_DECODE_ISSUER = "https://esherpa.io/"
 JWT_DECODE_AUDIENCE = "https://esherpa.io/"
-JWT_DECODE_LEEWAY_S = 0
+JWT_DECODE_LEEWAY_S = 60
 
 
 #
@@ -59,19 +46,23 @@ JWT_DECODE_LEEWAY_S = 0
 #
 
 
-class JWTException(Exception):
+class SecurityError(Exception):
     pass
 
 
-class NoAuthorizationError(JWTException):
+class JWTError(SecurityError):
     pass
 
 
-class CSRFError(JWTException):
+class CSRFError(SecurityError):
     pass
 
 
-class JWTDecodeError(JWTException):
+class NoAuthorizationError(SecurityError):
+    pass
+
+
+class Forbidden(SecurityError):
     pass
 
 
@@ -90,60 +81,27 @@ class LocationType(StrEnum):
 #
 
 
-class JWT:
-    def __init__(self, app: Flask, blueprints: dict[str, dict | None]) -> None:
+class Security:
+    def __init__(self, app: Flask) -> None:
         self.app = app
+        self.app.register_error_handler(SecurityError, self.on_error)
+        self.app.before_request(self.before_request)
         self.app.after_request(self.after_request)
-        for name, bp in self.app.blueprints.items():
-            if name in blueprints:
-                kwargs = blueprints[name] or {}
-                bp.before_request(lambda: check_access(**kwargs))
 
     @staticmethod
-    def after_request(response):
-        if "_user" in g:
-            user = g._user
-            access_token = encode_jwt(user.id, expires_delta=False)
-            set_jwt(response, access_token)
-        return response
+    def on_error(error: SecurityError) -> Response:
+        log.info(f"JWT error: {error}")
+        if isinstance(error, Forbidden):
+            code, message = 403, ApiText.HTTP_403
+        else:
+            code, message = 401, ApiText.HTTP_401
+        links = {"login": url_for(config.ENDPOINT_LOGIN)}
+        return response(code, message, links=links)
 
-
-def check_access(
-    optional: bool = False,
-    redirect_: bool = False,
-    create: bool = False,
-    locations: LocationType | None = None,
-    level: UserRoleLevel | None = None,
-) -> Any:
-    def decorate(f):
-        def wrap(*args, **kwargs):
-            _check_access(
-                optional=optional,
-                redirect_=redirect_,
-                create=create,
-                locations=locations,
-                level=level,
-            )
-            return current_app.ensure_sync(f)(*args, **kwargs)
-
-        wrap.__name__ = f.__name__
-        return wrap
-
-    return decorate
-
-
-def _check_access(
-    optional: bool = False,
-    redirect_: bool = False,
-    create: bool = False,
-    locations: LocationType | None = None,
-    level: UserRoleLevel | None = None,
-) -> None:
-    if locations is None:
-        locations = [LocationType.COOKIE]
-
-    # Authenticate user
-    try:
+    @staticmethod
+    def get_user_id(locations: list[LocationType] | None) -> int | None:
+        if locations is None:
+            locations = []
         user_id = None
         for location in locations:
             if location == LocationType.HEADER:
@@ -152,29 +110,40 @@ def _check_access(
                 user_id = authenticate_cookie()
             if user_id is not None:
                 break
-    except Exception:
-        if not optional:
-            if redirect_:
-                abort(redirect(url_for(config.ENDPOINT_LOGIN)))
-            abort(response(401, ApiText.HTTP_401))
+        return user_id
 
-    # Create new user
-    if create:
-        with conn.begin() as s:
-            user = User(is_active=True, role_id=UserRoleId.GUEST)
-            s.add(user)
-        g._user = user
+    def before_request(self) -> None:
+        try:
+            user_id = self.get_user_id(
+                locations=[LocationType.HEADER, LocationType.COOKIE]
+            )
+        except NoAuthorizationError:
+            user_id = None
+        g._user_id = user_id
 
-    # Authorize user
-    if level is not None:
-        if (
-            current_user is None
-            or not current_user.is_active
-            or current_user.role.level < level
-        ):
-            if redirect_:
-                abort(redirect(url_for(config.ENDPOINT_LOGIN)))
-            abort(response(403, ApiText.HTTP_403))
+    @staticmethod
+    def after_request(response: Response) -> Response:
+        if "_user_id" in g:
+            access_token = encode_jwt(g._user_id, expires_delta=False)
+            set_jwt(response, access_token)
+        return response
+
+
+def authorize(level: UserRoleLevel | None = None, redirect_: bool = False) -> Any:
+    def decorate(f):
+        def wrap(*args, **kwargs):
+            if (
+                current_user is None
+                or not current_user.is_active
+                or current_user.role.level < level
+            ):
+                raise Forbidden
+            return current_app.ensure_sync(f)(*args, **kwargs)
+
+        wrap.__name__ = f.__name__
+        return wrap
+
+    return decorate
 
 
 #
@@ -182,7 +151,7 @@ def _check_access(
 #
 
 
-def authenticate_header(self) -> int:
+def authenticate_header() -> int:
     api_key = get_api_key()
     user = decode_api_key(api_key)
     return user.id
@@ -199,7 +168,7 @@ def decode_api_key(api_key: str) -> User:
     with conn.begin() as s:
         user = s.query(User).filter_by(api_key=api_key, is_active=True).first()
         if user is None:
-            raise JWTDecodeError
+            raise JWTError
     return user
 
 
@@ -208,7 +177,7 @@ def decode_api_key(api_key: str) -> User:
 #
 
 
-def authenticate_cookie(self) -> int:
+def authenticate_cookie() -> int:
     encoded_token, csrf_token = get_encoded_jwt()
     token = decode_jwt(encoded_token, csrf_token)
     return token["sub"]
@@ -238,20 +207,13 @@ def encode_jwt(identity: int, expires_delta: timedelta | Literal[False]) -> str:
     )
 
 
-def get_encoded_jwt(refresh: bool) -> tuple[str, str | None]:
-    if refresh:
-        cookie_key = JWT_REFRESH_COOKIE_NAME
-        csrf_header_key = JWT_REFRESH_CSRF_HEADER_NAME
-    else:
-        cookie_key = JWT_ACCESS_COOKIE_NAME
-        csrf_header_key = JWT_ACCESS_CSRF_HEADER_NAME
-
-    encoded_token = request.cookies.get(cookie_key)
+def get_encoded_jwt() -> tuple[str, str | None]:
+    encoded_token = request.cookies.get(JWT_COOKIE_NAME)
     if not encoded_token:
-        raise NoAuthorizationError('Missing cookie "{}"'.format(cookie_key))
+        raise NoAuthorizationError('Missing cookie "{}"'.format(JWT_COOKIE_NAME))
 
-    if request.method in JWT_CSRF_METHODS:
-        csrf_value = request.headers.get(csrf_header_key, None)
+    if request.method in CSRF_METHODS:
+        csrf_value = request.headers.get(CSRF_HEADER_NAME, None)
         if not csrf_value:
             raise CSRFError("Missing CSRF token")
     else:
@@ -271,11 +233,11 @@ def decode_jwt(encoded_token: str, csrf_value=None) -> dict:
             leeway=timedelta(seconds=JWT_DECODE_LEEWAY_S),
         )
     except Exception:
-        raise JWTDecodeError
+        raise JWTError
 
     if csrf_value:
         if "csrf" not in decoded_token:
-            raise JWTDecodeError("Missing claim: csrf")
+            raise JWTError("Missing claim: csrf")
         if not compare_digest(decoded_token["csrf"], csrf_value):
             raise CSRFError("CSRF double submit tokens do not match")
 
@@ -291,7 +253,7 @@ def set_jwt(response: Response, access_token: str, max_age=None, domain=None) ->
         domain = None
 
     response.set_cookie(
-        JWT_ACCESS_COOKIE_NAME,
+        JWT_COOKIE_NAME,
         value=access_token,
         max_age=JWT_COOKIE_MAX_AGE,
         secure=secure,
@@ -301,10 +263,10 @@ def set_jwt(response: Response, access_token: str, max_age=None, domain=None) ->
         samesite=None,
     )
 
-    if config.cookie_csrf_protect and config.csrf_in_cookies:
+    if CSRF_ENABLED:
         csrf_token = decode_jwt(access_token)["csrf"]
         response.set_cookie(
-            config.access_csrf_cookie_name,
+            CSRF_COOKIE_NAME,
             value=csrf_token,
             max_age=max_age or config.cookie_max_age,
             secure=config.cookie_secure,
@@ -324,7 +286,17 @@ def _get_proxy_user() -> User | None:
     if has_request_context():
         if "_user" in g:
             return g._user
-    return None
+        if "_user" not in g and "_user_id" in g:
+            with conn.begin() as s:
+                user = (
+                    s.query(User)
+                    .options(joinedload(User.role))
+                    .filter_by(id=g._user_id, is_active=True)
+                    .first()
+                )
+            if user is not None:
+                g._user = user
+        return g._user
 
 
 current_user: Any = LocalProxy(lambda: _get_proxy_user())
