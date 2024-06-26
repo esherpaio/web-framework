@@ -15,7 +15,7 @@ class User(Base, Attribute):
 
     api_key = MC(String(64), unique=True)
     bulk_email = MC(Boolean, nullable=False, default=True, server_default="true")
-    email = MC(String(64), unique=True)
+    email = MC(String(128), unique=True)
     is_active = MC(Boolean, nullable=False, default=False, server_default="false")
     password_hash = MC(String(256))
 

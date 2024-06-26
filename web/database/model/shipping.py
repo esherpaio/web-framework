@@ -13,11 +13,11 @@ class Shipping(Base):
     __tablename__ = "shipping"
 
     address = MC(String(128), nullable=False)
-    city = MC(String(64), nullable=False)
-    company = MC(String(64))
-    email = MC(String(64), nullable=False)
-    first_name = MC(String(64), nullable=False)
-    last_name = MC(String(64), nullable=False)
+    city = MC(String(128), nullable=False)
+    company = MC(String(128))
+    email = MC(String(128), nullable=False)
+    first_name = MC(String(128), nullable=False)
+    last_name = MC(String(128), nullable=False)
     phone = MC(String(64))
     state = MC(String(64))
     zip_code = MC(String(64), nullable=False)
