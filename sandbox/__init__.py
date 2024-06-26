@@ -41,6 +41,7 @@ def create_app() -> Flask:
 
 @optimizer.cache
 def view_login() -> str:
+    raise ValueError
     api_key = "admin"
     with conn.begin() as s:
         user = s.query(User).filter(User.api_key == api_key).first()
