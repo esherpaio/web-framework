@@ -1,9 +1,8 @@
 import logging
-import smtplib
 from email.message import EmailMessage
 from enum import StrEnum
 from logging.handlers import SMTPHandler as _SMTPHandler
-from smtplib import SMTP_SSL
+from smtplib import SMTP
 
 from web.config import config
 
@@ -59,12 +58,11 @@ class SMTPHandler(_SMTPHandler):
             msg["Subject"] = self.getSubject(record)
             msg.set_content(self.format(record))
             # Send email
-            port = self.mailport or smtplib.SMTP_PORT
-            conn = SMTP_SSL(self.mailhost, port=port, timeout=25)
-            if self.username and self.password:
-                conn.login(self.username, self.password)
-            conn.send_message(msg, self.fromaddr, self.toaddrs)
-            conn.quit()
+            with SMTP(config.SMTP_HOST, port=config.SMTP_PORT, timeout=25) as smtp:
+                smtp.set_debuglevel(False)
+                smtp.starttls()
+                smtp.login(config.SMTP_USERNAME, config.SMTP_PASSWORD)
+                smtp.send_message(msg)
         except (KeyboardInterrupt, SystemExit):
             raise
         except Exception:
