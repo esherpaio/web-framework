@@ -26,5 +26,5 @@ class ShipmentMethod(Base):
 
     @validates("unit_price")
     def validate_unit_price(self, key: str, value: Any) -> Any:
-        val_number(value, min_=0)
+        val_number(key, value, min_=0)
         return value

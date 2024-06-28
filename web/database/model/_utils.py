@@ -1,7 +1,14 @@
 import emoji
 from sqlalchemy import Numeric
 
-from web.database.errors import DbEmailError, DbLengthError, DbNumberError, DbPhoneError
+from web.database.errors import (
+    DbEmailError,
+    DbLengthMaxError,
+    DbLengthMinError,
+    DbNumberMaxError,
+    DbNumberMinError,
+    DbPhoneError,
+)
 from web.libs.parse import gen_slug, is_email, is_phone
 
 #
@@ -19,23 +26,16 @@ default_rate = Numeric(10, 4, asdecimal=False)
 
 
 def val_length(
+    key: str,
     value: str | None,
     min_: int | None = None,
     max_: int | None = None,
 ) -> None:
     if isinstance(value, str):
-        if min_ is not None:
-            if not min_ <= len(value):
-                raise DbLengthError
-        if max_ is not None:
-            if not max_ >= len(value):
-                raise DbLengthError
-
-
-def val_email(value: str | None) -> None:
-    if isinstance(value, str):
-        if not is_email(value):
-            raise DbEmailError
+        if min_ is not None and not min_ <= len(value):
+            raise DbLengthMinError(key)
+        if max_ is not None and not max_ >= len(value):
+            raise DbLengthMaxError(key)
 
 
 def val_phone(value: str | None) -> None:
@@ -44,18 +44,36 @@ def val_phone(value: str | None) -> None:
             raise DbPhoneError
 
 
+def val_email(value: str | None) -> None:
+    if isinstance(value, str):
+        if not is_email(value):
+            raise DbEmailError
+
+
 def val_number(
+    key: str,
     value: int | float | None,
     min_: int | None = None,
     max_: int | None = None,
 ) -> None:
     if isinstance(value, (int, float)):
-        if min_ is not None:
-            if not value >= min_:
-                raise DbNumberError
-        if max_ is not None:
-            if not value <= max_:
-                raise DbNumberError
+        if min_ is not None and not value >= min_:
+            raise DbNumberMinError(key)
+        if max_ is not None and not value <= max_:
+            raise DbNumberMaxError(key)
+
+
+#
+# Conversion
+#
+
+
+def get_text(value: str | None) -> str | None:
+    if value in ["-", " "]:
+        return None
+    if isinstance(value, str):
+        return emoji.replace_emoji(value, replace="")
+    return None
 
 
 def get_slug(value: str | None) -> str | None:
@@ -73,12 +91,4 @@ def get_lower(value: str | None) -> str | None:
 def get_upper(value: str | None) -> str | None:
     if isinstance(value, str):
         return value.upper()
-    return None
-
-
-def parse_text(value: str | None) -> str | None:
-    if value in ["-", " "]:
-        return None
-    if isinstance(value, str):
-        return emoji.replace_emoji(value, replace="")
     return None

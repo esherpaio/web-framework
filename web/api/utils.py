@@ -5,8 +5,8 @@ from typing import Any, Callable
 from flask import request
 from werkzeug import Response
 
+from web.api.errors import APINullError, APITypeError
 from web.i18n import _
-from web.libs.errors import APINullError, APITypeError
 
 #
 # Enumerators

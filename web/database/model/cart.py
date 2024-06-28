@@ -37,12 +37,12 @@ class Cart(Base):
 
     @validates("shipment_price")
     def validate_shipment_price(self, key: str, value: Any) -> Any:
-        val_number(value, min_=0)
+        val_number(key, value, min_=0)
         return value
 
     @validates("vat_rate")
     def validate_vat_rate(self, key: str, value: Any) -> Any:
-        val_number(value, min_=1, max_=2)
+        val_number(key, value, min_=1, max_=2)
         return value
 
     # Properties - general

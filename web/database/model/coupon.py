@@ -22,13 +22,13 @@ class Coupon(Base):
 
     @validates("code")
     def validate_code(self, key: str, value: Any) -> Any:
-        val_length(value, min_=2)
+        val_length(key, value, min_=2)
         value = get_upper(value)
         return value
 
     @validates("rate")
     def validate_rate(self, key: str, value: Any) -> Any:
-        val_number(value, min_=0, max_=1)
+        val_number(key, value, min_=0, max_=1)
         return value
 
     # Properties - general

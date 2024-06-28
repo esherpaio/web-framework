@@ -97,7 +97,7 @@ def handle_backend_error(error: Exception) -> Response:
     if isinstance(error, WebError):
         code = error.code
         if error.translation_key is not None:
-            message = _(error.translation_key)
+            message = _(error.translation_key, **error.translation_kwargs)
         else:
             message = ApiText.HTTP_500
     else:

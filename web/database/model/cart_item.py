@@ -27,7 +27,7 @@ class CartItem(Base):
 
     @validates("quantity")
     def validate_quantity(self, key: str, value: Any) -> Any:
-        val_number(value, min_=1)
+        val_number(key, value, min_=1)
         return value
 
     # Properties - pricing

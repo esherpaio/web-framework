@@ -20,13 +20,13 @@ class Currency(Base):
 
     @validates("code")
     def validate_code(self, key: str, value: Any) -> Any:
-        val_length(value, min_=3, max_=3)
+        val_length(key, value, min_=3, max_=3)
         value = get_upper(value)
         return value
 
     @validates("rate")
     def validate_rate(self, key: str, value: Any) -> Any:
-        val_number(value, min_=0)
+        val_number(key, value, min_=0)
         return value
 
 

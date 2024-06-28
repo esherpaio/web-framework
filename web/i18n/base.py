@@ -13,9 +13,9 @@ class Translator(metaclass=Singleton):
 
     def __init__(self) -> None:
         self.translations: dict = {}
-        self._load()
+        self.load_translations()
 
-    def _load(self) -> None:
+    def load_translations(self) -> None:
         translations_dir = os.path.join(
             os.path.dirname(os.path.realpath(__file__)),
             "translation",
@@ -23,14 +23,21 @@ class Translator(metaclass=Singleton):
         for dir_, _, filenames in os.walk(translations_dir):
             for filename in filenames:
                 path = os.path.abspath(os.path.join(dir_, filename))
-                self.add(path)
+                self.add_translations(path)
 
-    def add(self, path: str) -> None:
+    def add_translations(self, path: str) -> None:
         with open(path, "r") as file:
             name, _ = os.path.splitext(os.path.basename(path))
             if name not in self.translations:
                 self.translations[name] = {}
             self.translations[name].update(json.loads(file.read()))
+
+    def get_translations(self, language_code: str) -> dict:
+        try:
+            return self.translations[language_code]
+        except KeyError:
+            log.error(f"Translations for {language_code} not found")
+            raise
 
     @property
     def language_code(self) -> str:
@@ -41,28 +48,21 @@ class Translator(metaclass=Singleton):
         else:
             return self.fallback_language_code
 
-    def translate(self, key: str, **kwargs) -> str:
-        # Try to find translations for language codes
-        for language_code in [self.language_code, self.fallback_language_code]:
-            try:
-                translations = self.translations[language_code]
-                break
-            except KeyError:
-                log.error(f"Translations for {language_code} not found")
+    def translate_strict(self, key: str, **kwargs) -> str | None:
+        try:
+            translations = self.get_translations(self.language_code)
+            text = translations[key] % kwargs
+        except KeyError:
+            log.error(f"Translation for {key}:{kwargs} has failed")
+            return None
         else:
-            return self.fallback_translation
-        # Try to find translation for key
-        try:
-            text = translations[key]
-        except KeyError:
-            log.error(f"Translation for {key} not found")
-            return self.fallback_translation
-        # Try to fill in keyword arguments
-        try:
-            return text % kwargs
-        except KeyError:
-            log.error(f"Translation for {key} is missing arguments")
-            return self.fallback_translation
+            return text
+
+    def translate(self, key: str, **kwargs) -> str:
+        text = self.translate_strict(key, **kwargs)
+        if text is not None:
+            return text
+        return self.fallback_translation
 
 
 translator = Translator()
