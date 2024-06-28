@@ -34,22 +34,6 @@ class _DbFieldMixin:
 #
 
 
-class DbLengthMinError(DbError, _DbFieldMixin):
-    """String length minimum cannot be validated.."""
-
-    code = 400
-    translation_key = "DATABASE_LENGTH_MIN_ERROR"
-    translation_field_key = "DATABASE_LENGTH_MIN_FIELD_ERROR"
-
-
-class DbLengthMaxError(DbError, _DbFieldMixin):
-    """String length maximum cannot be validated.."""
-
-    code = 400
-    translation_key = "DATABASE_LENGTH_MAX_ERROR"
-    translation_field_key = "DATABASE_LENGTH_MAX_FIELD_ERROR"
-
-
 class DbPhoneError(DbError):
     """Phone number cannot be validated."""
 
@@ -64,7 +48,23 @@ class DbEmailError(DbError):
     translation_key = "DATABASE_EMAIL_ERROR"
 
 
-class DbNumberMinError(DbError, _DbFieldMixin):
+class DbLengthMinError(_DbFieldMixin, DbError):
+    """String length minimum cannot be validated.."""
+
+    code = 400
+    translation_key = "DATABASE_LENGTH_MIN_ERROR"
+    translation_field_key = "DATABASE_LENGTH_MIN_FIELD_ERROR"
+
+
+class DbLengthMaxError(_DbFieldMixin, DbError):
+    """String length maximum cannot be validated.."""
+
+    code = 400
+    translation_key = "DATABASE_LENGTH_MAX_ERROR"
+    translation_field_key = "DATABASE_LENGTH_MAX_FIELD_ERROR"
+
+
+class DbNumberMinError(_DbFieldMixin, DbError):
     """Number minimum cannot be validated ."""
 
     code = 400
@@ -72,7 +72,7 @@ class DbNumberMinError(DbError, _DbFieldMixin):
     translation_field_key = "DATABASE_NUMBER_MIN_FIELD_ERROR"
 
 
-class DbNumberMaxError(DbError, _DbFieldMixin):
+class DbNumberMaxError(_DbFieldMixin, DbError):
     """Number maximum cannot be validated ."""
 
     code = 400
