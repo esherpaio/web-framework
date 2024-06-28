@@ -25,6 +25,18 @@ default_rate = Numeric(10, 4, asdecimal=False)
 #
 
 
+def val_phone(value: str | None) -> None:
+    if isinstance(value, str):
+        if not is_phone(value):
+            raise DbPhoneError
+
+
+def val_email(value: str | None) -> None:
+    if isinstance(value, str):
+        if not is_email(value):
+            raise DbEmailError
+
+
 def val_length(
     key: str,
     value: str | None,
@@ -36,18 +48,6 @@ def val_length(
             raise DbLengthMinError(key)
         if max_ is not None and not max_ >= len(value):
             raise DbLengthMaxError(key)
-
-
-def val_phone(value: str | None) -> None:
-    if isinstance(value, str):
-        if not is_phone(value):
-            raise DbPhoneError
-
-
-def val_email(value: str | None) -> None:
-    if isinstance(value, str):
-        if not is_email(value):
-            raise DbEmailError
 
 
 def val_number(
