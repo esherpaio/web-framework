@@ -1,9 +1,5 @@
 from flask import url_for
 
-#
-# Classes
-#
-
 
 class Sitemap:
     def __init__(self, endpoint: str) -> None:
