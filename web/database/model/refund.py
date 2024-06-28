@@ -24,7 +24,7 @@ class Refund(Base, Attribute):
 
     @validates("total_price")
     def validate_total_price(self, key: str, value: Any) -> Any:
-        val_number(value, max_=0)
+        val_number(key, value, max_=0)
         return value
 
     # Properties - pricing

@@ -52,33 +52,33 @@ class Order(Base):
 
     @validates("coupon_code")
     def validate_coupon_code(self, key: str, value: Any) -> Any:
-        val_length(value, min_=2)
+        val_length(key, value, min_=2)
         value = get_upper(value)
         return value
 
     @validates("coupon_amount")
     def validate_coupon_amount(self, key: str, value: Any) -> Any:
-        val_number(value, min_=0)
+        val_number(key, value, min_=0)
         return value
 
     @validates("coupon_rate")
     def validate_coupon_rate(self, key: str, value: Any) -> Any:
-        val_number(value, min_=0, max_=1)
+        val_number(key, value, min_=0, max_=1)
         return value
 
     @validates("shipment_price")
     def validate_shipment_price(self, key: str, value: Any) -> Any:
-        val_number(value, min_=0)
+        val_number(key, value, min_=0)
         return value
 
     @validates("total_price")
     def validate_total_price(self, key: str, value: Any) -> Any:
-        val_number(value, min_=0)
+        val_number(key, value, min_=0)
         return value
 
     @validates("vat_rate")
     def validate_vat_rate(self, key: str, value: Any) -> Any:
-        val_number(value, min_=1, max_=2)
+        val_number(key, value, min_=1, max_=2)
         return value
 
     # Properties - statuses

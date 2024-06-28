@@ -26,12 +26,12 @@ class OrderLine(Base):
 
     @validates("quantity")
     def validate_quantity(self, key: str, value: Any) -> Any:
-        val_number(value, min_=1)
+        val_number(key, value, min_=1)
         return value
 
     @validates("total_price")
     def validate_total_price(self, key: str, value: Any) -> Any:
-        val_number(value, min_=0)
+        val_number(key, value, min_=0)
         return value
 
     # Properties - pricing

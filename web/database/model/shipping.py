@@ -6,7 +6,7 @@ from sqlalchemy.orm import mapped_column as MC
 from sqlalchemy.orm import relationship, validates
 
 from ._base import Base
-from ._utils import get_lower, parse_text, val_email, val_length, val_phone
+from ._utils import get_lower, get_text, val_email, val_length, val_phone
 
 
 class Shipping(Base):
@@ -35,8 +35,8 @@ class Shipping(Base):
         "address", "city", "state", "zip_code", "company", "first_name", "last_name"
     )
     def validate_address(self, key: str, value: Any) -> Any:
-        value = parse_text(value)
-        val_length(value, min_=2)
+        value = get_text(value)
+        val_length(key, value, min_=2)
         return value
 
     @validates("email")

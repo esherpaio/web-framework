@@ -19,6 +19,6 @@ class Language(Base):
 
     @validates("code")
     def validate_code(self, key: str, value: Any) -> Any:
-        val_length(value, min_=2, max_=2)
+        val_length(key, value, min_=2, max_=2)
         value = get_lower(value)
         return value
