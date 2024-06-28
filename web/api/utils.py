@@ -3,9 +3,12 @@ from enum import StrEnum
 from typing import Any, Callable
 
 from flask import request
+from sqlalchemy import String
+from sqlalchemy.orm.attributes import InstrumentedAttribute
 from werkzeug import Response
 
 from web.api.errors import APINullError, APITypeError
+from web.database.model._utils import val_length
 from web.i18n import _
 
 #
@@ -62,7 +65,11 @@ def response(
 
 
 def json_get(
-    key: str, type_: Any, nullable: bool = True, default: Any = None
+    key: str,
+    type_: Any,
+    nullable: bool = True,
+    default: Any = None,
+    column: InstrumentedAttribute | None = None,
 ) -> tuple[Any, bool]:
     """Get a value from the request json."""
     if request.is_json and request.json is not None:
@@ -72,6 +79,30 @@ def json_get(
         value = None
         data = {}
     has_key = key in data
+    validate_get(value, type_, nullable, column)
+    return value, has_key
+
+
+def args_get(
+    key: str,
+    type_: Any,
+    nullable: bool = True,
+    default: Any = None,
+    column: InstrumentedAttribute | None = None,
+) -> tuple[Any, bool]:
+    """Get a value from the request args."""
+    value = request.args.get(key, default)
+    has_key = key in request.args
+    validate_get(value, type_, nullable, column)
+    return value, has_key
+
+
+def validate_get(
+    value: Any,
+    type_: Any,
+    nullable: bool,
+    column: InstrumentedAttribute | None = None,
+) -> None:
     if type_ in (float, int):
         type_ = (float, int)
     if nullable and value is None:
@@ -80,20 +111,8 @@ def json_get(
         raise APITypeError
     elif not nullable and value is None:
         raise APINullError
-    return value, has_key
-
-
-def args_get(
-    key: str, type_: Any, nullable: bool = True, default: Any = None
-) -> tuple[Any, bool]:
-    """Get a value from the request args."""
-    value = request.args.get(key, default, type_)
-    has_key = key in request.args
-    if nullable and value is None:
-        pass
-    elif not nullable and value is None:
-        raise APINullError
-    return value, has_key
+    elif isinstance(column.type, String) and column.type.length is not None:
+        val_length(column.name, value, max_=column.type.length)
 
 
 #

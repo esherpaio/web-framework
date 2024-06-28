@@ -38,6 +38,7 @@ class API(Generic[B]):
                     column.type.python_type,
                     nullable=column.nullable,
                     default=column.default,
+                    column=column,
                 )
         elif isinstance(column, str):
             if column in data:
