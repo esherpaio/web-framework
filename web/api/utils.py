@@ -78,7 +78,7 @@ def json_get(
         value = None
         data = {}
     has_key = key in data
-    validate_get(value, type_, nullable, column)
+    validate(value, type_, nullable, column)
     return value, has_key
 
 
@@ -92,11 +92,11 @@ def args_get(
     """Get a value from the request args."""
     value = request.args.get(key, default)
     has_key = key in request.args
-    validate_get(value, type_, nullable, column)
+    validate(value, type_, nullable, column)
     return value, has_key
 
 
-def validate_get(
+def validate(
     value: Any,
     type_: Any,
     nullable: bool,
@@ -113,9 +113,10 @@ def validate_get(
     elif not nullable and value is None:
         raise DbNullError
     elif (
-        isinstance(column.type, String)
+        column is not None
+        and isinstance(column.type, String)
         and column.type.length is not None
-        and column.type.length >= len(value)
+        and len(value) > column.type.length
     ):
         raise DbMaxLengthError(column.name)
 
