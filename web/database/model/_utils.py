@@ -3,10 +3,10 @@ from sqlalchemy import Numeric
 
 from web.database.errors import (
     DbEmailError,
-    DbLengthMaxError,
-    DbLengthMinError,
-    DbNumberMaxError,
-    DbNumberMinError,
+    DbMaxLengthError,
+    DbMaxNumberError,
+    DbMinLengthError,
+    DbMinNumberError,
     DbPhoneError,
 )
 from web.libs.parse import gen_slug, is_email, is_phone
@@ -45,9 +45,9 @@ def val_length(
 ) -> None:
     if isinstance(value, str):
         if min_ is not None and not min_ <= len(value):
-            raise DbLengthMinError(key)
+            raise DbMinLengthError(key)
         if max_ is not None and not max_ >= len(value):
-            raise DbLengthMaxError(key)
+            raise DbMaxLengthError(key)
 
 
 def val_number(
@@ -58,9 +58,9 @@ def val_number(
 ) -> None:
     if isinstance(value, (int, float)):
         if min_ is not None and not value >= min_:
-            raise DbNumberMinError(key)
+            raise DbMinNumberError(key)
         if max_ is not None and not value <= max_:
-            raise DbNumberMaxError(key)
+            raise DbMaxNumberError(key)
 
 
 #

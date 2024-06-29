@@ -7,8 +7,7 @@ from sqlalchemy import String
 from sqlalchemy.orm.attributes import InstrumentedAttribute
 from werkzeug import Response
 
-from web.api.errors import APINullError, APITypeError
-from web.database.model._utils import val_length
+from web.database.errors import DbMaxLengthError, DbNullError, DbTypeError
 from web.i18n import _
 
 #
@@ -103,16 +102,22 @@ def validate_get(
     nullable: bool,
     column: InstrumentedAttribute | None = None,
 ) -> None:
+    if nullable and value is None:
+        return
+    # Parsing
     if type_ in (float, int):
         type_ = (float, int)
-    if nullable and value is None:
-        pass
-    elif not isinstance(value, type_):
-        raise APITypeError
+    # Validation
+    if not isinstance(value, type_):
+        raise DbTypeError
     elif not nullable and value is None:
-        raise APINullError
-    elif isinstance(column.type, String) and column.type.length is not None:
-        val_length(column.name, value, max_=column.type.length)
+        raise DbNullError
+    elif (
+        isinstance(column.type, String)
+        and column.type.length is not None
+        and column.type.length >= len(value)
+    ):
+        raise DbMaxLengthError(column.name)
 
 
 #
