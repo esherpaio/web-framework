@@ -67,7 +67,7 @@ class Config(metaclass=Singleton):
     VARS: dict[str, StaticVar | EnvVar | ConfigVar] = {
         # App configuration
         "APP_SECRET": EnvVar("APP_SECRET", str),
-        "APP_DEVELOP": EnvVar("APP_DEVELOP", bool, False),
+        "APP_DEBUG": EnvVar("APP_DEBUG", bool, False),
         "APP_OPTIMIZE": EnvVar("APP_OPTIMIZE", bool, True),
         "APP_SYNC_STATIC": EnvVar("APP_SYNC_STATIC", bool, True),
         "APP_SYNC_EXTERNAL": EnvVar("APP_SYNC_EXTERNAL", bool, False),

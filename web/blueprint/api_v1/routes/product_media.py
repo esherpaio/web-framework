@@ -63,7 +63,7 @@ def post_products_id_media(product_id: int) -> Response:
 
             # Create CDN path
             cdn_path_parts = ["product", product.slug, filename]
-            if config.APP_DEVELOP:
+            if config.APP_DEBUG:
                 cdn_path_parts.insert(0, "_development")
             cdn_path = os.path.join(*cdn_path_parts)
 
