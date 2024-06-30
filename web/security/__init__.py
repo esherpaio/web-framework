@@ -1,6 +1,6 @@
-from .base import Security, authorize
+from .base import Security, secure
 
 __all__ = [
     "Security",
-    "authorize",
+    "secure",
 ]
