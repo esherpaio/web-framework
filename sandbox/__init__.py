@@ -1,5 +1,5 @@
 import flask_login
-from flask import Flask
+from flask import Flask, g
 
 from web.blueprint.admin import admin_bp
 from web.blueprint.api_v1 import api_v1_bp
@@ -43,8 +43,9 @@ def create_app() -> Flask:
 
 @optimizer.cache
 def view_login() -> str:
-    api_key = "admin"
+    API_KEY = "admin"
     with conn.begin() as s:
-        user = s.query(User).filter(User.api_key == api_key).first()
+        user = s.query(User).filter(User.api_key == API_KEY).first()
+        g._user_id = user.id
         flask_login.login_user(user, remember=True)
-    return f"Logged in as {api_key}"
+    return f"Logged in as {API_KEY}"
