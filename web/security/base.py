@@ -245,7 +245,7 @@ def decode_jwt(encoded_token: str, csrf_value=None) -> dict:
 
 
 def set_jwt(response: Response, access_token: str, max_age=None, domain=None) -> None:
-    if not config.APP_DEVELOP:
+    if not config.APP_DEBUG:
         secure = True
         domain = JWT_COOKIE_DOMAIN
     else:
