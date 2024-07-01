@@ -1,16 +1,16 @@
 from enum import StrEnum
 
 from flask import abort
-from flask_login import current_user
 from sqlalchemy.orm.session import Session
 from werkzeug import Response
 
 from web.api import API
-from web.api.utils import ApiText, response
+from web.api.utils import ApiText, json_response
 from web.blueprint.api_v1 import api_v1_bp
 from web.database import conn
 from web.database.model import Cart, CartItem
 from web.i18n import _
+from web.security import current_user
 
 from ._common import authorize_cart, update_cart_shipment_methods
 
@@ -54,7 +54,7 @@ def post_carts_id_items(cart_id: int) -> Response:
         model = upsert_cart_item(s, data, None)
         set_cart(s, data, None)
         resource = api.gen_resource(s, model)
-    return response(message=Text.CART_ITEM_ADDED, data=resource)
+    return json_response(message=Text.CART_ITEM_ADDED, data=resource)
 
 
 @api_v1_bp.patch("/carts/<int:cart_id>/items/<int:cart_item_id>")
@@ -68,7 +68,7 @@ def patch_cart_id_items_id(cart_id: int, cart_item_id: int) -> Response:
         api.update(s, data, model)
         set_cart(s, data, None)
         resource = api.gen_resource(s, model)
-    return response(data=resource)
+    return json_response(data=resource)
 
 
 @api_v1_bp.delete("/carts/<int:cart_id>/items/<int:cart_item_id>")
@@ -79,7 +79,7 @@ def delete_cart_id_items_id(cart_id: int, cart_item_id: int) -> Response:
         model: CartItem = api.get(s, cart_item_id)
         api.delete(s, model)
         set_cart(s, data, None)
-    return response()
+    return json_response()
 
 
 #
@@ -95,7 +95,7 @@ def upsert_cart_item(s: Session, data: dict, model: None) -> CartItem:
     filters = {Cart.user_id == current_user.id, Cart.id == cart_id}
     cart = s.query(Cart).filter(*filters).first()
     if cart is None:
-        abort(response(404, ApiText.HTTP_404))
+        abort(json_response(404, ApiText.HTTP_404))
     else:
         for cart_item in cart.items:
             if cart_item.sku_id == sku_id:
@@ -118,4 +118,4 @@ def set_cart(s: Session, data: dict, model: None) -> None:
 
 def val_cart_item(s: Session, data: dict, model: CartItem) -> None:
     if "quantity" in data and data["quantity"] <= 0:
-        abort(response(400, Text.CART_ITEM_QUANTITY_ZERO))
+        abort(json_response(400, Text.CART_ITEM_QUANTITY_ZERO))

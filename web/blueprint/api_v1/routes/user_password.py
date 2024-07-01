@@ -3,7 +3,7 @@ from enum import StrEnum
 from werkzeug import Response
 from werkzeug.security import generate_password_hash
 
-from web.api.utils import ApiText, json_get, response
+from web.api.utils import ApiText, json_get, json_response
 from web.blueprint.api_v1 import api_v1_bp
 from web.database import conn
 from web.database.model import User, Verification
@@ -35,12 +35,12 @@ def post_users_id_password(user_id: int) -> Response:
         # Get user
         user = s.query(User).filter_by(id=user_id).first()
         if user is None:
-            return response(404, ApiText.HTTP_404)
+            return json_response(404, ApiText.HTTP_404)
 
         # Recover password
         recover_user_password(s, user)
 
-    return response(200, Text.PASSWORD_REQUEST_SEND)
+    return json_response(200, Text.PASSWORD_REQUEST_SEND)
 
 
 @api_v1_bp.patch("/users/<int:user_id>/password")
@@ -53,29 +53,29 @@ def patch_users_id_password(user_id: int) -> Response:
         # Get user
         user = s.query(User).filter_by(id=user_id).first()
         if not user:
-            return response(404, ApiText.HTTP_404)
+            return json_response(404, ApiText.HTTP_404)
 
         # Check verification
         verification = s.query(Verification).filter_by(key=verification_key).first()
         if verification is None:
-            return response(401, Text.VERIFICATION_FAILED)
+            return json_response(401, Text.VERIFICATION_FAILED)
         if not verification.is_valid:
-            return response(401, Text.VERIFICATION_FAILED)
+            return json_response(401, Text.VERIFICATION_FAILED)
         if verification.user_id != user_id:
-            return response(401, Text.VERIFICATION_FAILED)
+            return json_response(401, Text.VERIFICATION_FAILED)
 
         # Check password
         if len(password) < 8:
-            return response(400, Text.PASSWORD_LENGTH)
+            return json_response(400, Text.PASSWORD_LENGTH)
         if password != password_eval:
-            return response(400, Text.PASSWORD_NO_MATCH)
+            return json_response(400, Text.PASSWORD_NO_MATCH)
 
         # Update password
         password_hash = generate_password_hash(password, "pbkdf2:sha256:1000000")
         user.password_hash = password_hash
         s.delete(verification)
 
-    return response(200, Text.PASSWORD_RESET_SUCCESS)
+    return json_response(200, Text.PASSWORD_RESET_SUCCESS)
 
 
 #

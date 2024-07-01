@@ -1,10 +1,10 @@
 from werkzeug import Response
 
-from web.api.utils import ApiText, json_get, response
+from web.api.utils import ApiText, json_get, json_response
 from web.blueprint.api_v1 import api_v1_bp
 from web.database import conn
 from web.database.model import ShipmentMethod, UserRoleLevel
-from web.libs.auth import access_control
+from web.security import secure
 
 #
 # Configuration
@@ -17,7 +17,7 @@ from web.libs.auth import access_control
 
 
 @api_v1_bp.post("/shipment-methods")
-@access_control(UserRoleLevel.ADMIN)
+@secure(UserRoleLevel.ADMIN)
 def post_shipment_methods() -> Response:
     class_id, _ = json_get("class_id", int, nullable=False)
     name, _ = json_get("name", str, nullable=False)
@@ -36,11 +36,11 @@ def post_shipment_methods() -> Response:
         )
         s.add(shipment_method)
 
-    return response()
+    return json_response()
 
 
 @api_v1_bp.patch("/shipment-methods/<int:shipment_method_id>")
-@access_control(UserRoleLevel.ADMIN)
+@secure(UserRoleLevel.ADMIN)
 def patch_shipment_methods_id(shipment_method_id: int) -> Response:
     name, has_name = json_get("name", str)
     phone_required, has_phone_required = json_get("phone_required", bool)
@@ -52,7 +52,7 @@ def patch_shipment_methods_id(shipment_method_id: int) -> Response:
             s.query(ShipmentMethod).filter_by(id=shipment_method_id).first()
         )
         if not shipment_method:
-            return response(404, ApiText.HTTP_404)
+            return json_response(404, ApiText.HTTP_404)
 
         # Update shipment method
         if has_name:
@@ -62,11 +62,11 @@ def patch_shipment_methods_id(shipment_method_id: int) -> Response:
         if has_phone_required:
             shipment_method.phone_required = phone_required
 
-    return response()
+    return json_response()
 
 
 @api_v1_bp.delete("/shipment-methods/<int:shipment_method_id>")
-@access_control(UserRoleLevel.ADMIN)
+@secure(UserRoleLevel.ADMIN)
 def delete_shipment_methods_id(shipment_method_id: int) -> Response:
     with conn.begin() as s:
         # Delete shipment method
@@ -74,10 +74,10 @@ def delete_shipment_methods_id(shipment_method_id: int) -> Response:
             s.query(ShipmentMethod).filter_by(id=shipment_method_id).first()
         )
         if shipment_method is None:
-            return response(404, ApiText.HTTP_404)
+            return json_response(404, ApiText.HTTP_404)
         shipment_method.is_deleted = True
 
-    return response()
+    return json_response()
 
 
 #

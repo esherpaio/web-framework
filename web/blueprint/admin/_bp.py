@@ -5,10 +5,10 @@ from werkzeug import Response
 
 from web.config import config
 from web.database.model import UserRoleLevel
-from web.libs.auth import access_control
 from web.libs.cache import cache
 from web.libs.logger import log
 from web.libs.meta import Meta
+from web.security import secure
 
 _dir = os.path.dirname(os.path.abspath(__file__))
 admin_bp = Blueprint(
@@ -22,7 +22,7 @@ admin_bp = Blueprint(
 
 
 @admin_bp.before_request
-@access_control(UserRoleLevel.ADMIN)
+@secure(UserRoleLevel.ADMIN)
 def authorize() -> None:
     pass
 

@@ -5,7 +5,6 @@ from typing import Callable, Type
 
 import alembic.config
 from flask import Blueprint, Flask, redirect, request, url_for
-from flask_login import LoginManager
 from werkzeug import Response
 
 from web.config import config
@@ -24,17 +23,16 @@ from web.database.model import (
     ProductType,
     Redirect,
     Region,
-    User,
     UserRole,
 )
 from web.libs import cdn
 from web.libs.app import check_redirects, handle_frontend_error
-from web.libs.auth import cookie_loader, session_loader
 from web.libs.cache import cache
 from web.libs.locale import current_locale, expects_locale, gen_locale, lacks_locale
 from web.libs.logger import log
 from web.mail import MailEvent, mail
 from web.optimizer import optimizer
+from web.security import Security, current_user
 from web.syncer import Syncer
 from web.syncer.object import (
     AppSettingSyncer,
@@ -120,7 +118,12 @@ class FlaskWeb:
     def setup_jinja(self) -> None:
         # Register context
         self._app.context_processor(
-            lambda: dict(cache=cache, config=config, current_locale=current_locale)
+            lambda: dict(
+                cache=cache,
+                config=config,
+                current_user=current_user,
+                current_locale=current_locale,
+            )
         )
 
         # Register filters
@@ -143,21 +146,7 @@ class FlaskWeb:
             self._app.add_template_global(func, name=name)
 
     def setup_auth(self) -> None:
-        # Initialize Flask-Login
-        manager = LoginManager(self._app)
-        manager.session_protection = "basic"
-        manager.login_view = config.ENDPOINT_LOGIN
-        manager.anonymous_user = User
-
-        # Register cookie loader
-        if self._accept_cookie_auth:
-            log.info("Accepting cookie authentication")
-            manager.user_loader(cookie_loader)
-
-        # Register request loader
-        if self._accept_request_auth:
-            log.info("Accepting bearer authentication")
-            manager.request_loader(session_loader)
+        Security(self._app)
 
     def setup_database(self) -> None:
         # Migrate database

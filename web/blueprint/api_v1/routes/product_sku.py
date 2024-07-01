@@ -2,13 +2,13 @@ import itertools
 
 from werkzeug import Response
 
-from web.api.utils import ApiText, response
+from web.api.utils import ApiText, json_response
 from web.blueprint.api_v1 import api_v1_bp
 from web.database import conn
 from web.database.model import Product, ProductValue, Sku, SkuDetail, UserRoleLevel
-from web.libs.auth import access_control
 from web.libs.logger import log
 from web.libs.parse import gen_slug
+from web.security import secure
 from web.syncer import sync_after
 from web.syncer.object import SkuSyncer
 
@@ -23,7 +23,7 @@ from web.syncer.object import SkuSyncer
 
 
 @api_v1_bp.post("/products/<int:product_id>/skus")
-@access_control(UserRoleLevel.ADMIN)
+@secure(UserRoleLevel.ADMIN)
 @sync_after(SkuSyncer)
 def post_skus(product_id: int) -> Response:
     with conn.begin() as s:
@@ -31,7 +31,7 @@ def post_skus(product_id: int) -> Response:
         skus = s.query(Sku).filter_by(product_id=product_id).all()
         product = s.query(Product).filter_by(id=product_id).first()
         if product is None:
-            return response(404, ApiText.HTTP_404)
+            return json_response(404, ApiText.HTTP_404)
 
         # Generate all possible combinations between value_ids
         value_id_sets = []
@@ -77,7 +77,7 @@ def post_skus(product_id: int) -> Response:
                 ]
                 s.add_all(sku_details)
 
-    return response()
+    return json_response()
 
 
 #

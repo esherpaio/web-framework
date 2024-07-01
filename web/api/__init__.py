@@ -1,10 +1,10 @@
 from .base import API
-from .utils import ApiText, args_get, json_get, modify_response, response
+from .utils import ApiText, args_get, json_get, json_response, modify_response
 
 __all__ = [
     "API",
     "ApiText",
-    "response",
+    "json_response",
     "json_get",
     "args_get",
     "modify_response",

@@ -3,7 +3,7 @@ from enum import StrEnum
 from sqlalchemy import null, true
 from werkzeug import Response
 
-from web.api.utils import json_get, response
+from web.api.utils import json_get, json_response
 from web.blueprint.api_v1 import api_v1_bp
 from web.database import conn
 from web.database.model import User
@@ -46,7 +46,7 @@ def post_emails() -> Response:
         # Trigger email events
         mail.trigger_events(s, event_id, **data)
 
-    return response(200, Text.CONTACT_SUCCESS)
+    return json_response(200, Text.CONTACT_SUCCESS)
 
 
 #

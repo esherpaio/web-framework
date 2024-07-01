@@ -2,7 +2,6 @@ from datetime import datetime
 from typing import Callable
 
 import pyvat
-from flask_login import current_user
 from pyvat import ItemType, Party, VatChargeAction
 from sqlalchemy import or_
 from sqlalchemy.orm import Session
@@ -21,6 +20,7 @@ from web.database.model import (
     User,
 )
 from web.libs.locale import current_locale
+from web.security import current_user
 
 #
 # Functions

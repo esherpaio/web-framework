@@ -1,11 +1,11 @@
 from werkzeug import Response
 
-from web.api.utils import ApiText, json_get, response
+from web.api.utils import ApiText, json_get, json_response
 from web.blueprint.api_v1 import api_v1_bp
 from web.database import conn
 from web.database.model import Category, UserRoleLevel
-from web.libs.auth import access_control
 from web.libs.parse import gen_slug
+from web.security import secure
 
 #
 # Configuration
@@ -18,7 +18,7 @@ from web.libs.parse import gen_slug
 
 
 @api_v1_bp.post("/categories")
-@access_control(UserRoleLevel.ADMIN)
+@secure(UserRoleLevel.ADMIN)
 def post_categories() -> Response:
     name, _ = json_get("name", str, nullable=False)
     order, _ = json_get("order", int)
@@ -29,19 +29,19 @@ def post_categories() -> Response:
         if category:
             if category.is_deleted:
                 category.is_deleted = False
-                return response()
+                return json_response()
             else:
-                return response(409, ApiText.HTTP_409)
+                return json_response(409, ApiText.HTTP_409)
 
         # Insert category
         category = Category(name=name, order=order)
         s.add(category)
 
-    return response()
+    return json_response()
 
 
 @api_v1_bp.patch("/categories/<int:category_id>")
-@access_control(UserRoleLevel.ADMIN)
+@secure(UserRoleLevel.ADMIN)
 def patch_categories_id(category_id: int) -> Response:
     attributes, has_attributes = json_get("attributes", dict, default={})
     order, has_order = json_get("order", int)
@@ -50,7 +50,7 @@ def patch_categories_id(category_id: int) -> Response:
         # Get category
         category = s.query(Category).filter_by(id=category_id, is_deleted=False).first()
         if not category:
-            return response(404, ApiText.HTTP_404)
+            return json_response(404, ApiText.HTTP_404)
 
         # Update category
         if has_attributes:
@@ -58,20 +58,20 @@ def patch_categories_id(category_id: int) -> Response:
         if has_order:
             category.order = order
 
-    return response()
+    return json_response()
 
 
 @api_v1_bp.delete("/categories/<int:category_id>")
-@access_control(UserRoleLevel.ADMIN)
+@secure(UserRoleLevel.ADMIN)
 def delete_categories_id(category_id: int) -> Response:
     with conn.begin() as s:
         # Delete category
         category = s.query(Category).filter_by(id=category_id, is_deleted=False).first()
         if not category:
-            return response(404, ApiText.HTTP_404)
+            return json_response(404, ApiText.HTTP_404)
         category.is_deleted = True
 
-    return response()
+    return json_response()
 
 
 #
