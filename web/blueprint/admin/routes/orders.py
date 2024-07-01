@@ -3,7 +3,7 @@ from sqlalchemy import or_
 from sqlalchemy.orm import contains_eager, joinedload
 from werkzeug import Response
 
-from web.api.utils import ApiText, response
+from web.api.utils import ApiText, json_response
 from web.blueprint.admin import admin_bp
 from web.database.client import conn
 from web.database.model import (
@@ -132,7 +132,7 @@ def download_invoice(order_id: int, invoice_id: int) -> Response:
     with conn.begin() as s:
         order_ = s.query(Order).filter_by(id=order_id).first()
         if not order_ or not order_.invoice:
-            return response(404, ApiText.HTTP_404)
+            return json_response(404, ApiText.HTTP_404)
         pdf_name, pdf_path = gen_invoice(s, order_, order_.invoice)
     remove_file(pdf_path, delay_s=20)
     return send_file(
@@ -148,7 +148,7 @@ def download_refund(order_id: int, refund_id: int) -> Response:
         order_ = s.query(Order).filter_by(id=order_id).first()
         refund = s.query(Refund).filter_by(id=refund_id).first()
         if not order_ or not order_.invoice or not refund:
-            return response(404, ApiText.HTTP_404)
+            return json_response(404, ApiText.HTTP_404)
         pdf_name, pdf_path = gen_refund(s, order_, order_.invoice, refund)
     remove_file(pdf_path, delay_s=20)
     return send_file(

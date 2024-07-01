@@ -1,20 +1,18 @@
-import time
 from enum import StrEnum
-from random import randint
 
-import flask_login
 from google.auth.transport import requests
 from google.oauth2 import id_token
 from werkzeug import Response
 from werkzeug.security import check_password_hash
 
-from web.api.utils import json_get, response
+from web.api.utils import json_get, json_response
 from web.blueprint.api_v1 import api_v1_bp
 from web.config import config
 from web.database import conn
 from web.database.model import User, UserRoleId
 from web.i18n import _
 from web.libs.cart import transfer_cart
+from web.security.base import jwt_login, jwt_logout
 
 from ._common import recover_user_password
 
@@ -47,35 +45,27 @@ def post_sessions() -> Response:
         user = s.query(User).filter_by(email=email.lower()).first()
 
     # Validate user
-    if not user:
-        return response(400, Text.CHECK_DETAILS)
+    if user is None:
+        return json_response(400, Text.CHECK_DETAILS)
     if not user.is_active:
-        return response(400, Text.CHECK_ACTIVATION)
+        return json_response(400, Text.CHECK_ACTIVATION)
     if not user.password_hash:
         with conn.begin() as s:
             recover_user_password(s, user)
-        return response(400, Text.CHECK_PASSWORD)
+        return json_response(400, Text.CHECK_PASSWORD)
     if not check_password_hash(user.password_hash, password):
-        return response(400, Text.CHECK_DETAILS)
-
-    # Wait random interval
-    sleep_s = randint(0, 1000) / 1000
-    time.sleep(sleep_s)
+        return json_response(400, Text.CHECK_DETAILS)
 
     # Login user
-    flask_login.login_user(user, remember=remember)
-    return response()
+    jwt_login(user.id)
+    return json_response()
 
 
 @api_v1_bp.delete("/sessions")
 def delete_sessions() -> Response:
-    # Wait random interval
-    sleep_s = randint(0, 1000) / 1000
-    time.sleep(sleep_s)
-
     # Logout user
-    flask_login.logout_user()
-    return response()
+    jwt_logout()
+    return json_response()
 
 
 @api_v1_bp.post("/sessions/google")
@@ -87,22 +77,22 @@ def post_sessions_google() -> Response:
     )
     email = token.get("email")
     if email is None:
-        return response(400, Text.GOOGLE_INVALID)
+        return json_response(400, Text.GOOGLE_INVALID)
     email = email.lower()
 
     # Get or add user
     with conn.begin() as s:
         user = s.query(User).filter_by(email=email, is_active=True).first()
     if user and not user.is_active:
-        return response(400, Text.CHECK_ACTIVATION)
+        return json_response(400, Text.CHECK_ACTIVATION)
     if not user:
         with conn.begin() as s:
             user = User(email=email, is_active=True, role_id=UserRoleId.USER)
             s.add(user)
 
     # Login user
-    flask_login.login_user(user, remember=False)
-    return response()
+    jwt_login(user.id)
+    return json_response()
 
 
 #

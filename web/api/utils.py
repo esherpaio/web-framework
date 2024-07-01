@@ -35,7 +35,7 @@ class ApiText(StrEnum):
 #
 
 
-def response(
+def json_response(
     code: int = 200,
     message: str | StrEnum | None = None,
     data: list | dict | None = None,

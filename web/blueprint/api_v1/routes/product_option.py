@@ -2,7 +2,7 @@ from sqlalchemy import false
 from sqlalchemy.orm import contains_eager
 from werkzeug import Response
 
-from web.api.utils import ApiText, json_get, response
+from web.api.utils import ApiText, json_get, json_response
 from web.blueprint.api_v1 import api_v1_bp
 from web.database import conn
 from web.database.model import (
@@ -12,8 +12,8 @@ from web.database.model import (
     SkuDetail,
     UserRoleLevel,
 )
-from web.libs.auth import access_control
 from web.libs.parse import gen_slug
+from web.security import secure
 
 #
 # Configuration
@@ -26,7 +26,7 @@ from web.libs.parse import gen_slug
 
 
 @api_v1_bp.post("/products/<int:product_id>/options")
-@access_control(UserRoleLevel.ADMIN)
+@secure(UserRoleLevel.ADMIN)
 def post_products_id_options(product_id: int) -> Response:
     name, _ = json_get("name", str, nullable=False)
     order, _ = json_get("order", int)
@@ -41,19 +41,19 @@ def post_products_id_options(product_id: int) -> Response:
         if product_option:
             if product_option.is_deleted:
                 product_option.is_deleted = False
-                return response()
+                return json_response()
             else:
-                return response(409, ApiText.HTTP_409)
+                return json_response(409, ApiText.HTTP_409)
 
         # Insert product option
         product_option = ProductOption(product_id=product_id, name=name, order=order)
         s.add(product_option)
 
-    return response()
+    return json_response()
 
 
 @api_v1_bp.patch("/products/<int:product_id>/options/<int:option_id>")
-@access_control(UserRoleLevel.ADMIN)
+@secure(UserRoleLevel.ADMIN)
 def patch_products_id_options_id(product_id: int, option_id: int) -> Response:
     order, has_order = json_get("order", int)
 
@@ -65,17 +65,17 @@ def patch_products_id_options_id(product_id: int, option_id: int) -> Response:
             .first()
         )
         if not product_option:
-            return response(404, ApiText.HTTP_404)
+            return json_response(404, ApiText.HTTP_404)
 
         # Update product option
         if has_order:
             product_option.order = order
 
-    return response()
+    return json_response()
 
 
 @api_v1_bp.delete("/products/<int:product_id>/options/<int:option_id>")
-@access_control(UserRoleLevel.ADMIN)
+@secure(UserRoleLevel.ADMIN)
 def delete_products_id_options_id(product_id: int, option_id: int) -> Response:
     with conn.begin() as s:
         # Delete product option
@@ -85,7 +85,7 @@ def delete_products_id_options_id(product_id: int, option_id: int) -> Response:
             .first()
         )
         if not product_option:
-            return response(404, ApiText.HTTP_404)
+            return json_response(404, ApiText.HTTP_404)
         product_option.is_deleted = True
         s.flush()
 
@@ -108,7 +108,7 @@ def delete_products_id_options_id(product_id: int, option_id: int) -> Response:
         for sku in skus:
             sku.is_deleted = True
 
-    return response()
+    return json_response()
 
 
 #

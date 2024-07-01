@@ -1,15 +1,15 @@
 from datetime import datetime, timedelta
 
 from flask import url_for
-from flask_login import current_user
 from werkzeug import Response
 
-from web.api.utils import ApiText, response
+from web.api.utils import ApiText, json_response
 from web.blueprint.api_v1 import api_v1_bp
 from web.config import config
 from web.database import conn
 from web.database.model import Order
 from web.ext.mollie import Mollie, mollie_amount, mollie_webhook
+from web.security import current_user
 
 #
 # Configuration
@@ -27,7 +27,7 @@ def post_orders_id_payments(order_id: int) -> Response:
         # Check if order is in use by the user
         order = s.query(Order).filter_by(user_id=current_user.id, id=order_id).first()
         if not order:
-            return response(403, ApiText.HTTP_403)
+            return json_response(403, ApiText.HTTP_403)
 
         # Create Mollie payment
         order_price_vat = order.total_price * order.vat_rate
@@ -51,7 +51,7 @@ def post_orders_id_payments(order_id: int) -> Response:
         order.mollie_id = mollie_payment.id
 
     links = {"payment": mollie_payment.checkout_url}
-    return response(links=links)
+    return json_response(links=links)
 
 
 #

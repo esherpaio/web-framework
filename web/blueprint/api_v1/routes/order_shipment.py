@@ -1,11 +1,11 @@
 from werkzeug import Response
 
-from web.api.utils import ApiText, json_get, response
+from web.api.utils import ApiText, json_get, json_response
 from web.blueprint.api_v1 import api_v1_bp
 from web.database import conn
 from web.database.model import Order, OrderStatusId, Shipment, UserRoleLevel
-from web.libs.auth import access_control
 from web.mail.base import MailEvent, mail
+from web.security import secure
 
 #
 # Configuration
@@ -18,7 +18,7 @@ from web.mail.base import MailEvent, mail
 
 
 @api_v1_bp.post("/orders/<int:order_id>/shipments")
-@access_control(UserRoleLevel.ADMIN)
+@secure(UserRoleLevel.ADMIN)
 def post_orders_id_shipments(order_id: int) -> Response:
     url, _ = json_get("url", str, nullable=False)
 
@@ -26,7 +26,7 @@ def post_orders_id_shipments(order_id: int) -> Response:
         # Get order
         order = s.query(Order).filter_by(id=order_id).first()
         if order is None:
-            return response(404, ApiText.HTTP_404)
+            return json_response(404, ApiText.HTTP_404)
 
         # Insert shipment
         shipment = Shipment(order_id=order_id, url=url)
@@ -48,7 +48,7 @@ def post_orders_id_shipments(order_id: int) -> Response:
             shipping_address=order.shipping.full_address,
         )
 
-    return response()
+    return json_response()
 
 
 #

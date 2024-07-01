@@ -5,13 +5,13 @@ from flask import request
 from werkzeug import Response
 from werkzeug.utils import secure_filename
 
-from web.api.utils import ApiText, json_get, response
+from web.api.utils import ApiText, json_get, json_response
 from web.blueprint.api_v1 import api_v1_bp
 from web.config import config
 from web.database import conn
 from web.database.model import Article, ArticleMedia, File, FileTypeId, UserRoleLevel
 from web.libs import cdn
-from web.libs.auth import access_control
+from web.security import secure
 
 #
 # Configuration
@@ -24,13 +24,13 @@ from web.libs.auth import access_control
 
 
 @api_v1_bp.post("/articles/<int:article_id>/media")
-@access_control(UserRoleLevel.ADMIN)
+@secure(UserRoleLevel.ADMIN)
 def post_articles_id_media(article_id: int) -> Response:
     with conn.begin() as s:
         # Get article
         article = s.query(Article).filter_by(id=article_id).first()
         if not article:
-            return response(404, ApiText.HTTP_404)
+            return json_response(404, ApiText.HTTP_404)
 
         # Generate sequence number
         sequence = 1
@@ -85,11 +85,11 @@ def post_articles_id_media(article_id: int) -> Response:
             article_media = ArticleMedia(article_id=article_id, file_id=file_.id)
             s.add(article_media)
 
-    return response()
+    return json_response()
 
 
 @api_v1_bp.patch("/articles/<int:article_id>/media/<int:media_id>")
-@access_control(UserRoleLevel.ADMIN)
+@secure(UserRoleLevel.ADMIN)
 def patch_articles_id_media_id(article_id: int, media_id: int) -> Response:
     description, has_description = json_get("description", str)
     order, has_order = json_get("order", int)
@@ -100,10 +100,10 @@ def patch_articles_id_media_id(article_id: int, media_id: int) -> Response:
             s.query(ArticleMedia).filter_by(id=media_id, article_id=article_id).first()
         )
         if not article_media:
-            return response(404, ApiText.HTTP_404)
+            return json_response(404, ApiText.HTTP_404)
         file_ = s.query(File).filter_by(id=article_media.file_id).first()
         if not file_:
-            return response(404, ApiText.HTTP_404)
+            return json_response(404, ApiText.HTTP_404)
 
         # Update article media and file
         if has_order:
@@ -111,11 +111,11 @@ def patch_articles_id_media_id(article_id: int, media_id: int) -> Response:
         if has_description:
             file_.description = description
 
-    return response()
+    return json_response()
 
 
 @api_v1_bp.delete("/articles/<int:article_id>/media/<int:media_id>")
-@access_control(UserRoleLevel.ADMIN)
+@secure(UserRoleLevel.ADMIN)
 def delete_articles_id_media_id(article_id: int, media_id: int) -> Response:
     with conn.begin() as s:
         # Get article media and file
@@ -123,10 +123,10 @@ def delete_articles_id_media_id(article_id: int, media_id: int) -> Response:
             s.query(ArticleMedia).filter_by(id=media_id, article_id=article_id).first()
         )
         if not article_media:
-            return response(404, ApiText.HTTP_404)
+            return json_response(404, ApiText.HTTP_404)
         file_ = s.query(File).filter_by(id=article_media.file_id).first()
         if not file_:
-            return response(404, ApiText.HTTP_404)
+            return json_response(404, ApiText.HTTP_404)
 
         # Delete file from CDN
         cdn.delete(file_.path)
@@ -135,7 +135,7 @@ def delete_articles_id_media_id(article_id: int, media_id: int) -> Response:
         s.delete(file_)
         s.delete(article_media)
 
-    return response()
+    return json_response()
 
 
 #

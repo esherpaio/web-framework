@@ -1,13 +1,12 @@
 from enum import StrEnum
 
 from flask import abort, g
-from flask_login import current_user
 from pyvat import is_vat_number_format_valid
 from sqlalchemy.orm.session import Session
 from werkzeug import Response
 
 from web.api import API
-from web.api.utils import ApiText, response
+from web.api.utils import ApiText, json_response
 from web.blueprint.api_v1 import api_v1_bp
 from web.database import conn
 from web.database.model import (
@@ -22,9 +21,9 @@ from web.database.model import (
 from web.database.utils import copy_row
 from web.ext.mollie import Mollie
 from web.i18n import _
-from web.libs.auth import access_control
 from web.libs.cart import get_shipment_methods
 from web.mail import MailEvent, mail
+from web.security import current_user, secure
 
 from ._common import create_refund
 
@@ -73,11 +72,11 @@ def post_orders() -> Response:
         set_order_lines(s, data, model)
         mail_order(s, data, model)
         resource = api.gen_resource(s, model)
-    return response(data=resource)
+    return json_response(data=resource)
 
 
 @api_v1_bp.patch("/orders/<int:order_id>")
-@access_control(UserRoleLevel.ADMIN)
+@secure(UserRoleLevel.ADMIN)
 def patch_orders_id(order_id: int) -> Response:
     api = OrderAPI()
     data = api.gen_request_data(api.patch_columns)
@@ -86,18 +85,18 @@ def patch_orders_id(order_id: int) -> Response:
         val_status(s, data, model)
         api.update(s, data, model)
         resource = api.gen_resource(s, model)
-    return response(data=resource)
+    return json_response(data=resource)
 
 
 @api_v1_bp.delete("/orders/<int:order_id>")
-@access_control(UserRoleLevel.ADMIN)
+@secure(UserRoleLevel.ADMIN)
 def delete_orders_id(order_id: int) -> Response:
     api = OrderAPI()
     data = api.gen_view_args_data()
     with conn.begin() as s:
         model: Order = api.get(s, order_id)
         cancel_mollie(s, data, model)
-    return response()
+    return json_response()
 
 
 #
@@ -110,13 +109,13 @@ def get_cart(s: Session, data: dict, model: Order) -> None:
     filters = {Cart.id == cart_id, Cart.user_id == current_user.id}
     cart = s.query(Cart).filter(*filters).first()
     if cart is None:
-        abort(response(404, ApiText.HTTP_404))
+        abort(json_response(404, ApiText.HTTP_404))
     g.cart = cart
 
 
 def val_status(s: Session, data: dict, model: Order) -> None:
     if data["status_id"] not in {x.id for x in model.next_statuses}:
-        abort(response(400, Text.STATUS_INVALID))
+        abort(json_response(400, Text.STATUS_INVALID))
 
 
 def val_cart(s: Session, data: dict, model: Order) -> None:
@@ -125,32 +124,32 @@ def val_cart(s: Session, data: dict, model: Order) -> None:
     shipment_methods = get_shipment_methods(s, cart)
     if shipment_methods is not None:
         if cart.shipment_method_id is None:
-            abort(response(400, ApiText.HTTP_400))
+            abort(json_response(400, ApiText.HTTP_400))
     # Check for valid shipment method
     shipment_method_ids = {x.id for x in shipment_methods}
     if cart.shipment_method_id is not None:
         if cart.shipment_method_id not in shipment_method_ids:
-            abort(response(400, ApiText.HTTP_400))
+            abort(json_response(400, ApiText.HTTP_400))
     # Check phone required
     if cart.shipment_method is not None:
         if cart.shipment_method.phone_required:
             if cart.billing.phone is None:
-                abort(response(400, Text.PHONE_REQUIRED))
+                abort(json_response(400, Text.PHONE_REQUIRED))
     # Check VAT required in Europe
     if cart.billing.company is not None:
         if cart.billing.country.vat_required:
             if cart.billing.vat is None:
-                abort(response(400, Text.VAT_REQUIRED))
+                abort(json_response(400, Text.VAT_REQUIRED))
     # Check VAT number
     if cart.billing.vat is not None:
         vat_parsed = "".join(x for x in cart.billing.vat if x.isalnum())
         is_valid = is_vat_number_format_valid(vat_parsed, cart.billing.country.code)
         if not is_valid:
-            abort(response(400, Text.VAT_INVALID))
+            abort(json_response(400, Text.VAT_INVALID))
     # Check state
     if cart.billing.country.state_required:
         if cart.billing.state is None:
-            abort(response(400, Text.STATE_REQUIRED))
+            abort(json_response(400, Text.STATE_REQUIRED))
 
 
 def set_order(s: Session, data: dict, model: Order) -> None:

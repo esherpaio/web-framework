@@ -8,7 +8,7 @@ from werkzeug import Response
 from werkzeug.exceptions import HTTPException
 from werkzeug.local import LocalProxy
 
-from web.api.utils import ApiText, response
+from web.api.utils import ApiText, json_response
 from web.config import config
 from web.database.model import AppBlueprint, AppRoute
 from web.i18n import _
@@ -112,7 +112,7 @@ def handle_backend_error(error: Exception) -> Response:
     if request.is_json:
         info.append(f"data {request.get_json()}")
     log.error(" - ".join(info), exc_info=True)
-    return response(code, message)
+    return json_response(code, message)
 
 
 #

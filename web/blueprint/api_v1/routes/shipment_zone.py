@@ -1,10 +1,10 @@
 from werkzeug import Response
 
-from web.api.utils import ApiText, json_get, response
+from web.api.utils import ApiText, json_get, json_response
 from web.blueprint.api_v1 import api_v1_bp
 from web.database import conn
 from web.database.model import ShipmentMethod, ShipmentZone, UserRoleLevel
-from web.libs.auth import access_control
+from web.security import secure
 
 #
 # Configuration
@@ -17,7 +17,7 @@ from web.libs.auth import access_control
 
 
 @api_v1_bp.post("/shipment-zones")
-@access_control(UserRoleLevel.ADMIN)
+@secure(UserRoleLevel.ADMIN)
 def post_shipment_zones() -> Response:
     country_id, _ = json_get("country_id", int)
     order, _ = json_get("order", int, nullable=False)
@@ -36,9 +36,9 @@ def post_shipment_zones() -> Response:
         if shipment_zone:
             if shipment_zone.is_deleted:
                 shipment_zone.is_deleted = False
-                return response()
+                return json_response()
             else:
-                return response(409, ApiText.HTTP_409)
+                return json_response(409, ApiText.HTTP_409)
 
         # Insert shipment zone
         shipment_zone = ShipmentZone(
@@ -48,11 +48,11 @@ def post_shipment_zones() -> Response:
         )
         s.add(shipment_zone)
 
-    return response()
+    return json_response()
 
 
 @api_v1_bp.patch("/shipment-zones/<int:shipment_zone_id>")
-@access_control(UserRoleLevel.ADMIN)
+@secure(UserRoleLevel.ADMIN)
 def patch_shipment_zones_id(shipment_zone_id: int) -> Response:
     country_id, has_country_id = json_get("country_id", int)
     order, has_order = json_get("order", int)
@@ -62,7 +62,7 @@ def patch_shipment_zones_id(shipment_zone_id: int) -> Response:
         # Get shipment zone
         shipment_zone = s.query(ShipmentZone).filter_by(id=shipment_zone_id).first()
         if not shipment_zone:
-            return response(404, ApiText.HTTP_404)
+            return json_response(404, ApiText.HTTP_404)
 
         # Update shipment zone
         if has_order:
@@ -72,17 +72,17 @@ def patch_shipment_zones_id(shipment_zone_id: int) -> Response:
         if has_region_id:
             shipment_zone.region_id = region_id
 
-    return response()
+    return json_response()
 
 
 @api_v1_bp.delete("/shipment-zones/<int:shipment_zone_id>")
-@access_control(UserRoleLevel.ADMIN)
+@secure(UserRoleLevel.ADMIN)
 def delete_shipment_zones_id(shipment_zone_id: int) -> Response:
     with conn.begin() as s:
         # Delete shipment zone
         shipment_zone = s.query(ShipmentZone).filter_by(id=shipment_zone_id).first()
         if not shipment_zone:
-            return response(404, ApiText.HTTP_404)
+            return json_response(404, ApiText.HTTP_404)
         shipment_zone.is_deleted = True
 
         # Delete shipment zones
@@ -94,7 +94,7 @@ def delete_shipment_zones_id(shipment_zone_id: int) -> Response:
         for shipment_method in shipment_methods:
             shipment_method.is_deleted = True
 
-    return response()
+    return json_response()
 
 
 #

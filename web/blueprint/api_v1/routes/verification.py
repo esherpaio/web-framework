@@ -5,7 +5,7 @@ from sqlalchemy.orm.session import Session
 from werkzeug import Response
 
 from web.api import API
-from web.api.utils import response
+from web.api.utils import json_response
 from web.blueprint.api_v1 import api_v1_bp
 from web.database import conn
 from web.database.model import Verification
@@ -47,7 +47,7 @@ def get_verifications() -> Response:
         for model in models:
             val_verification(s, data, model)
         resources = api.gen_resources(s, models)
-    return response(data=resources)
+    return json_response(data=resources)
 
 
 #
@@ -57,4 +57,4 @@ def get_verifications() -> Response:
 
 def val_verification(s: Session, data: dict, model: Verification) -> None:
     if not model.is_valid:
-        abort(response(400, Text.VERIFICATION_INVALID))
+        abort(json_response(400, Text.VERIFICATION_INVALID))

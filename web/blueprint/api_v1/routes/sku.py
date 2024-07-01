@@ -1,10 +1,10 @@
 from werkzeug import Response
 
-from web.api.utils import ApiText, json_get, response
+from web.api.utils import ApiText, json_get, json_response
 from web.blueprint.api_v1 import api_v1_bp
 from web.database import conn
 from web.database.model import CategoryItem, ProductLink, Sku, UserRoleLevel
-from web.libs.auth import access_control
+from web.security import secure
 
 #
 # Configuration
@@ -17,7 +17,7 @@ from web.libs.auth import access_control
 
 
 @api_v1_bp.patch("/skus/<int:sku_id>")
-@access_control(UserRoleLevel.ADMIN)
+@secure(UserRoleLevel.ADMIN)
 def patch_skus_id(sku_id: int) -> Response:
     attributes, has_attributes = json_get("attributes", dict, default={})
     is_visible, has_is_visible = json_get("is_visible", bool)
@@ -28,7 +28,7 @@ def patch_skus_id(sku_id: int) -> Response:
         # Get sku
         sku = s.query(Sku).filter_by(id=sku_id).first()
         if not sku:
-            return response(404, ApiText.HTTP_404)
+            return json_response(404, ApiText.HTTP_404)
 
         # Update sku
         if has_attributes:
@@ -40,17 +40,17 @@ def patch_skus_id(sku_id: int) -> Response:
         if has_number:
             sku.number = number
 
-    return response()
+    return json_response()
 
 
 @api_v1_bp.delete("/skus/<int:sku_id>")
-@access_control(UserRoleLevel.ADMIN)
+@secure(UserRoleLevel.ADMIN)
 def delete_skus_id(sku_id: int) -> Response:
     with conn.begin() as s:
         # Delete sku
         sku = s.query(Sku).filter_by(id=sku_id).first()
         if not sku:
-            return response(404, ApiText.HTTP_404)
+            return json_response(404, ApiText.HTTP_404)
         sku.number = None
         sku.is_deleted = True
 
@@ -64,7 +64,7 @@ def delete_skus_id(sku_id: int) -> Response:
         for product_link in product_links:
             s.delete(product_link)
 
-    return response()
+    return json_response()
 
 
 #

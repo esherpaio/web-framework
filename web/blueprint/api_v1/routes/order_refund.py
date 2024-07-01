@@ -2,13 +2,13 @@ from enum import StrEnum
 
 from werkzeug import Response
 
-from web.api.utils import ApiText, json_get, response
+from web.api.utils import ApiText, json_get, json_response
 from web.blueprint.api_v1 import api_v1_bp
 from web.database import conn
 from web.database.model import Order, UserRoleLevel
 from web.ext.mollie import Mollie
 from web.i18n.base import _
-from web.libs.auth import access_control
+from web.security import secure
 
 from ._common import create_refund
 
@@ -30,7 +30,7 @@ class Text(StrEnum):
 
 
 @api_v1_bp.post("/orders/<int:order_id>/refunds")
-@access_control(UserRoleLevel.ADMIN)
+@secure(UserRoleLevel.ADMIN)
 def post_orders_id_refund(order_id: int) -> Response:
     price, _ = json_get("total_price", int | float, nullable=False)
 
@@ -38,20 +38,20 @@ def post_orders_id_refund(order_id: int) -> Response:
         # Get order
         order = s.query(Order).filter_by(id=order_id).first()
         if not order:
-            return response(404, ApiText.HTTP_404)
+            return json_response(404, ApiText.HTTP_404)
 
         # Check if an invoice exists
         if not order.invoice:
-            return response(400, Text.INVOICE_NOT_FOUND)
+            return json_response(400, Text.INVOICE_NOT_FOUND)
 
         # Check if the order has a Mollie ID
         if not order.mollie_id:
-            return response(404, Text.PAYMENT_INCOMPLETE)
+            return json_response(404, Text.PAYMENT_INCOMPLETE)
 
         # Check if Mollie allows a refund
         mollie_payment = Mollie().payments.get(order.mollie_id)
         if not mollie_payment.can_be_refunded():
-            return response(404, Text.REFUND_NOT_ALLOWED)
+            return json_response(404, Text.REFUND_NOT_ALLOWED)
 
         # Generate price
         if price > order.remaining_refund_amount:
@@ -61,7 +61,7 @@ def post_orders_id_refund(order_id: int) -> Response:
         # Create refund
         create_refund(s, mollie_payment, order, price, price_vat)
 
-    return response()
+    return json_response()
 
 
 #
