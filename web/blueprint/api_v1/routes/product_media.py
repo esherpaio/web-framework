@@ -5,13 +5,13 @@ from flask import request
 from werkzeug import Response
 from werkzeug.utils import secure_filename
 
-from web.api.utils import ApiText, json_get, response
+from web.api.utils import ApiText, json_get, json_response
 from web.blueprint.api_v1 import api_v1_bp
 from web.config import config
 from web.database import conn
 from web.database.model import File, FileTypeId, Product, ProductMedia, UserRoleLevel
 from web.libs import cdn
-from web.libs.auth import access_control
+from web.security import secure
 
 #
 # Configuration
@@ -24,13 +24,13 @@ from web.libs.auth import access_control
 
 
 @api_v1_bp.post("/products/<int:product_id>/media")
-@access_control(UserRoleLevel.ADMIN)
+@secure(UserRoleLevel.ADMIN)
 def post_products_id_media(product_id: int) -> Response:
     with conn.begin() as s:
         # Get product
         product = s.query(Product).filter_by(id=product_id).first()
         if not product:
-            return response(404, ApiText.HTTP_404)
+            return json_response(404, ApiText.HTTP_404)
 
         # Generate sequence number
         sequence = 1
@@ -86,11 +86,11 @@ def post_products_id_media(product_id: int) -> Response:
             s.add(product_media)
             s.flush()
 
-    return response()
+    return json_response()
 
 
 @api_v1_bp.patch("/products/<int:product_id>/media/<int:media_id>")
-@access_control(UserRoleLevel.ADMIN)
+@secure(UserRoleLevel.ADMIN)
 def patch_products_id_media_id(product_id: int, media_id: int) -> Response:
     description, has_description = json_get("description", str)
     order, has_order = json_get("order", int)
@@ -101,10 +101,10 @@ def patch_products_id_media_id(product_id: int, media_id: int) -> Response:
             s.query(ProductMedia).filter_by(id=media_id, product_id=product_id).first()
         )
         if not product_media:
-            return response(404, ApiText.HTTP_404)
+            return json_response(404, ApiText.HTTP_404)
         file = s.query(File).filter_by(id=product_media.file_id).first()
         if not file:
-            return response(404, ApiText.HTTP_404)
+            return json_response(404, ApiText.HTTP_404)
 
         # Update product media and file
         if has_order:
@@ -112,11 +112,11 @@ def patch_products_id_media_id(product_id: int, media_id: int) -> Response:
         if has_description:
             file.description = description
 
-    return response()
+    return json_response()
 
 
 @api_v1_bp.delete("/products/<int:product_id>/media/<int:media_id>")
-@access_control(UserRoleLevel.ADMIN)
+@secure(UserRoleLevel.ADMIN)
 def delete_products_id_media_id(product_id: int, media_id) -> Response:
     with conn.begin() as s:
         # Get product media and file
@@ -124,10 +124,10 @@ def delete_products_id_media_id(product_id: int, media_id) -> Response:
             s.query(ProductMedia).filter_by(id=media_id, product_id=product_id).first()
         )
         if not product_media:
-            return response(404, ApiText.HTTP_404)
+            return json_response(404, ApiText.HTTP_404)
         file = s.query(File).filter_by(id=product_media.file_id).first()
         if not file:
-            return response(404, ApiText.HTTP_404)
+            return json_response(404, ApiText.HTTP_404)
 
         # Remove file from CDN
         cdn.delete(file.path)
@@ -136,7 +136,7 @@ def delete_products_id_media_id(product_id: int, media_id) -> Response:
         s.delete(file)
         s.delete(product_media)
 
-    return response()
+    return json_response()
 
 
 #

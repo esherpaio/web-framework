@@ -2,12 +2,12 @@ from sqlalchemy import false
 from sqlalchemy.orm import contains_eager
 from werkzeug import Response
 
-from web.api.utils import ApiText, json_get, response
+from web.api.utils import ApiText, json_get, json_response
 from web.blueprint.api_v1 import api_v1_bp
 from web.database import conn
 from web.database.model import ProductValue, Sku, SkuDetail, UserRoleLevel
-from web.libs.auth import access_control
 from web.libs.parse import gen_slug
+from web.security import secure
 from web.syncer import sync_after
 from web.syncer.object import SkuSyncer
 
@@ -22,7 +22,7 @@ from web.syncer.object import SkuSyncer
 
 
 @api_v1_bp.post("/products/<int:product_id>/values")
-@access_control(UserRoleLevel.ADMIN)
+@secure(UserRoleLevel.ADMIN)
 def post_products_id_values(product_id: int) -> Response:
     name, _ = json_get("name", str, nullable=False)
     option_id, _ = json_get("option_id", int, nullable=False)
@@ -39,9 +39,9 @@ def post_products_id_values(product_id: int) -> Response:
         if product_value:
             if product_value.is_deleted:
                 product_value.is_deleted = False
-                return response()
+                return json_response()
             else:
-                return response(409, ApiText.HTTP_409)
+                return json_response(409, ApiText.HTTP_409)
 
         # Insert product value
         product_value = ProductValue(
@@ -52,11 +52,11 @@ def post_products_id_values(product_id: int) -> Response:
         )
         s.add(product_value)
 
-    return response()
+    return json_response()
 
 
 @api_v1_bp.patch("/products/<int:product_id>/values/<int:value_id>")
-@access_control(UserRoleLevel.ADMIN)
+@secure(UserRoleLevel.ADMIN)
 @sync_after(SkuSyncer)
 def patch_products_id_values_id(product_id: int, value_id: int) -> Response:
     media_id, has_media_id = json_get("media_id", int)
@@ -67,7 +67,7 @@ def patch_products_id_values_id(product_id: int, value_id: int) -> Response:
         # Get product value
         product_value = s.query(ProductValue).filter_by(id=value_id).first()
         if not product_value:
-            return response(404, ApiText.HTTP_404)
+            return json_response(404, ApiText.HTTP_404)
 
         # Update product value
         if has_media_id:
@@ -77,17 +77,17 @@ def patch_products_id_values_id(product_id: int, value_id: int) -> Response:
         if has_order:
             product_value.order = order
 
-    return response()
+    return json_response()
 
 
 @api_v1_bp.delete("/products/<int:product_id>/values/<int:value_id>")
-@access_control(UserRoleLevel.ADMIN)
+@secure(UserRoleLevel.ADMIN)
 def delete_products_id_values_id(product_id: int, value_id: int) -> Response:
     with conn.begin() as s:
         # Delete product value
         product_value = s.query(ProductValue).filter_by(id=value_id).first()
         if not product_value:
-            return response(404, ApiText.HTTP_404)
+            return json_response(404, ApiText.HTTP_404)
         product_value.is_deleted = True
 
         # Delete skus
@@ -101,7 +101,7 @@ def delete_products_id_values_id(product_id: int, value_id: int) -> Response:
         for sku in skus:
             sku.is_deleted = True
 
-    return response()
+    return json_response()
 
 
 #

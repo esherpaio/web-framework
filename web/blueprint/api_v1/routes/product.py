@@ -1,11 +1,11 @@
 from werkzeug import Response
 
-from web.api.utils import ApiText, json_get, response
+from web.api.utils import ApiText, json_get, json_response
 from web.blueprint.api_v1 import api_v1_bp
 from web.database import conn
 from web.database.model import CategoryItem, Product, ProductTypeId, Sku, UserRoleLevel
-from web.libs.auth import access_control
 from web.libs.parse import gen_slug
+from web.security import secure
 from web.syncer import sync_after
 from web.syncer.object import SkuSyncer
 
@@ -20,7 +20,7 @@ from web.syncer.object import SkuSyncer
 
 
 @api_v1_bp.post("/products")
-@access_control(UserRoleLevel.ADMIN)
+@secure(UserRoleLevel.ADMIN)
 @sync_after(SkuSyncer)
 def post_products() -> Response:
     name, _ = json_get("name", str, nullable=False)
@@ -31,19 +31,19 @@ def post_products() -> Response:
         if product:
             if product.is_deleted:
                 product.is_deleted = False
-                return response()
+                return json_response()
             else:
-                return response(409, ApiText.HTTP_409)
+                return json_response(409, ApiText.HTTP_409)
 
         # Insert product
         product = Product(type_id=ProductTypeId.PHYSICAL, name=name, unit_price=1)
         s.add(product)
 
-    return response()
+    return json_response()
 
 
 @api_v1_bp.patch("/products/<int:product_id>")
-@access_control(UserRoleLevel.ADMIN)
+@secure(UserRoleLevel.ADMIN)
 @sync_after(SkuSyncer)
 def patch_products_id(product_id: int) -> Response:
     attributes, has_attributes = json_get("attributes", dict, default={})
@@ -58,7 +58,7 @@ def patch_products_id(product_id: int) -> Response:
         # Get product
         product = s.query(Product).filter_by(id=product_id).first()
         if product is None:
-            return response(404, ApiText.HTTP_404)
+            return json_response(404, ApiText.HTTP_404)
 
         # Update product
         if has_attributes:
@@ -76,17 +76,17 @@ def patch_products_id(product_id: int) -> Response:
         if has_file_url:
             product.file_url = file_url
 
-    return response()
+    return json_response()
 
 
 @api_v1_bp.delete("/products/<int:product_id>")
-@access_control(UserRoleLevel.ADMIN)
+@secure(UserRoleLevel.ADMIN)
 def delete_products_id(product_id: int) -> Response:
     with conn.begin() as s:
         # Delete product
         product = s.query(Product).filter_by(id=product_id).first()
         if not product:
-            return response(404, ApiText.HTTP_404)
+            return json_response(404, ApiText.HTTP_404)
         product.is_deleted = True
 
         # Delete skus
@@ -99,7 +99,7 @@ def delete_products_id(product_id: int) -> Response:
             for category_item in category_items:
                 s.delete(category_item)
 
-    return response()
+    return json_response()
 
 
 #

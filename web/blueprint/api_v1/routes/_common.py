@@ -1,17 +1,17 @@
 import uuid
 
 from flask import abort, url_for
-from flask_login import current_user
 from mollie.api.objects.payment import Payment
 from sqlalchemy.orm import Session
 
-from web.api.utils import ApiText, response
+from web.api.utils import ApiText, json_response
 from web.config import config
 from web.database.model import Cart, Order, Refund, User, Verification
 from web.ext.mollie import Mollie, mollie_amount
 from web.libs.cart import get_shipment_methods
 from web.libs.utils import none_attrgetter
 from web.mail.base import MailEvent, mail
+from web.security import current_user
 
 
 def create_refund(
@@ -52,7 +52,7 @@ def authorize_cart(s: Session, data: dict) -> Cart:
     filters = {Cart.id == cart_id, Cart.user_id == current_user.id}
     cart = s.query(Cart).filter(*filters).first()
     if cart is None:
-        abort(response(404, ApiText.HTTP_404))
+        abort(json_response(404, ApiText.HTTP_404))
     else:
         return cart
 

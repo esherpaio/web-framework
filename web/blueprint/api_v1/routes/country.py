@@ -1,11 +1,11 @@
 from werkzeug import Response
 
 from web.api import API
-from web.api.utils import response
+from web.api.utils import json_response
 from web.blueprint.api_v1 import api_v1_bp
 from web.database import conn
 from web.database.model import Country, UserRoleLevel
-from web.libs.auth import access_control
+from web.security import secure
 
 #
 # Configuration
@@ -41,7 +41,7 @@ class CountryAPI(API):
 
 
 @api_v1_bp.post("/countries")
-@access_control(UserRoleLevel.ADMIN)
+@secure(UserRoleLevel.ADMIN)
 def post_countries() -> Response:
     api = CountryAPI()
     data = api.gen_request_data(api.post_columns)
@@ -49,7 +49,7 @@ def post_countries() -> Response:
         model = api.model()
         api.insert(s, data, model)
         resource = api.gen_resource(s, model)
-    return response(data=resource)
+    return json_response(data=resource)
 
 
 @api_v1_bp.get("/countries")
@@ -58,7 +58,7 @@ def get_countries() -> Response:
     with conn.begin() as s:
         models: list[Country] = api.list_(s)
         resources = api.gen_resources(s, models)
-    return response(data=resources)
+    return json_response(data=resources)
 
 
 @api_v1_bp.get("/countries/<int:country_id>")
@@ -67,11 +67,11 @@ def get_countries_id(country_id: int) -> Response:
     with conn.begin() as s:
         model: Country = api.get(s, country_id)
         resource = api.gen_resource(s, model)
-    return response(data=resource)
+    return json_response(data=resource)
 
 
 @api_v1_bp.patch("/countries/<int:country_id>")
-@access_control(UserRoleLevel.ADMIN)
+@secure(UserRoleLevel.ADMIN)
 def patch_countries_id(country_id: int) -> Response:
     api = CountryAPI()
     data = api.gen_request_data(api.patch_columns)
@@ -79,17 +79,17 @@ def patch_countries_id(country_id: int) -> Response:
         model: Country = api.get(s, country_id)
         api.update(s, data, model)
         resource = api.gen_resource(s, model)
-    return response(data=resource)
+    return json_response(data=resource)
 
 
 @api_v1_bp.delete("/countries/<int:country_id>")
-@access_control(UserRoleLevel.ADMIN)
+@secure(UserRoleLevel.ADMIN)
 def delete_countries_id(country_id: int) -> Response:
     api = CountryAPI()
     with conn.begin() as s:
         model: Country = api.get(s, country_id)
         api.delete(s, model)
-    return response()
+    return json_response()
 
 
 #
