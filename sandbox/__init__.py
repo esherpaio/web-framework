@@ -1,4 +1,3 @@
-import flask_login
 from flask import Flask
 
 from web.blueprint.admin import admin_bp
@@ -8,7 +7,7 @@ from web.blueprint.webhook_v1 import webhook_v1_bp
 from web.database import conn
 from web.database.model import User, UserRoleId
 from web.flask import FlaskWeb
-from web.optimizer import optimizer
+from web.security import Security, jwt_login
 from web.syncer import Syncer
 from web.syncer.object import CountrySyncer, CurrencySyncer, RegionSyncer, SkuSyncer
 
@@ -36,13 +35,12 @@ def create_app() -> Flask:
         accept_request_auth=True,
         syncers=[CurrencySyncer, RegionSyncer, CountrySyncer, SkuSyncer, UserSyncer],
     ).setup()
+    Security(app)
     return app
 
 
-@optimizer.cache
 def view_login() -> str:
-    api_key = "admin"
     with conn.begin() as s:
-        user = s.query(User).filter(User.api_key == api_key).first()
-        flask_login.login_user(user, remember=True)
-    return f"Logged in as {api_key}"
+        user = s.query(User).filter(User.api_key == "admin").first()
+        jwt_login(user.id)
+    return "Logged in"

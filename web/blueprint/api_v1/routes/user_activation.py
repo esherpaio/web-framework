@@ -4,7 +4,7 @@ from enum import StrEnum
 from flask import url_for
 from werkzeug import Response
 
-from web.api.utils import ApiText, json_get, response
+from web.api.utils import ApiText, json_get, json_response
 from web.blueprint.api_v1 import api_v1_bp
 from web.config import config
 from web.database import conn
@@ -34,7 +34,7 @@ def post_users_id_activation(user_id: int) -> Response:
         # Get user
         user = s.query(User).filter_by(id=user_id).first()
         if not user:
-            return response(404, ApiText.HTTP_404)
+            return json_response(404, ApiText.HTTP_404)
 
         # Insert verification
         verification_key = str(uuid.uuid4())
@@ -55,7 +55,7 @@ def post_users_id_activation(user_id: int) -> Response:
             verification_url=verification_url,
         )
 
-    return response(200, message=Text.ACTIVATION_CHECK)
+    return json_response(200, message=Text.ACTIVATION_CHECK)
 
 
 @api_v1_bp.patch("/users/<int:user_id>/activation")
@@ -66,22 +66,22 @@ def patch_users_id_activation(user_id: int) -> Response:
         # Get user
         user = s.query(User).filter_by(id=user_id).first()
         if not user:
-            return response(404, ApiText.HTTP_404)
+            return json_response(404, ApiText.HTTP_404)
 
         # Check verification
         verification = s.query(Verification).filter_by(key=verification_key).first()
         if verification is None:
-            return response(401, Text.VERIFICATION_FAILED)
+            return json_response(401, Text.VERIFICATION_FAILED)
         if not verification.is_valid:
-            return response(401, Text.VERIFICATION_FAILED)
+            return json_response(401, Text.VERIFICATION_FAILED)
         if verification.user_id != user_id:
-            return response(401, Text.VERIFICATION_FAILED)
+            return json_response(401, Text.VERIFICATION_FAILED)
 
         # Update activation
         user.is_active = True
         s.delete(verification)
 
-    return response(200, message=Text.ACTIVATION_SUCCESS)
+    return json_response(200, message=Text.ACTIVATION_SUCCESS)
 
 
 #

@@ -1,10 +1,10 @@
 from werkzeug import Response
 
-from web.api.utils import ApiText, json_get, response
+from web.api.utils import ApiText, json_get, json_response
 from web.blueprint.api_v1 import api_v1_bp
 from web.database import conn
 from web.database.model import CategoryItem, UserRoleLevel
-from web.libs.auth import access_control
+from web.security import secure
 
 #
 # Configuration
@@ -17,7 +17,7 @@ from web.libs.auth import access_control
 
 
 @api_v1_bp.post("/categories/<int:category_id>/items")
-@access_control(UserRoleLevel.ADMIN)
+@secure(UserRoleLevel.ADMIN)
 def post_categories_id_items(category_id: int) -> Response:
     order, _ = json_get("order", int)
     sku_id, _ = json_get("sku_id", int)
@@ -31,7 +31,7 @@ def post_categories_id_items(category_id: int) -> Response:
             .first()
         )
         if category_item:
-            return response(409, ApiText.HTTP_409)
+            return json_response(409, ApiText.HTTP_409)
 
         # Insert category item
         category_item = CategoryItem(
@@ -42,11 +42,11 @@ def post_categories_id_items(category_id: int) -> Response:
         )
         s.add(category_item)
 
-    return response()
+    return json_response()
 
 
 @api_v1_bp.patch("/categories/<int:category_id>/items/<int:item_id>")
-@access_control(UserRoleLevel.ADMIN)
+@secure(UserRoleLevel.ADMIN)
 def patch_categories_id_items_id(category_id: int, item_id: int) -> Response:
     order, has_order = json_get("order", int)
 
@@ -56,17 +56,17 @@ def patch_categories_id_items_id(category_id: int, item_id: int) -> Response:
             s.query(CategoryItem).filter_by(id=item_id, category_id=category_id).first()
         )
         if not category_item:
-            return response(404, ApiText.HTTP_404)
+            return json_response(404, ApiText.HTTP_404)
 
         # Update category item
         if has_order:
             category_item.order = order
 
-    return response()
+    return json_response()
 
 
 @api_v1_bp.delete("/categories/<int:category_id>/items/<int:item_id>")
-@access_control(UserRoleLevel.ADMIN)
+@secure(UserRoleLevel.ADMIN)
 def delete_categories_id_items_id(category_id: int, item_id: int) -> Response:
     with conn.begin() as s:
         # Delete category item
@@ -74,10 +74,10 @@ def delete_categories_id_items_id(category_id: int, item_id: int) -> Response:
             s.query(CategoryItem).filter_by(id=item_id, category_id=category_id).first()
         )
         if not category_item:
-            return response(404, ApiText.HTTP_404)
+            return json_response(404, ApiText.HTTP_404)
         s.delete(category_item)
 
-    return response()
+    return json_response()
 
 
 #

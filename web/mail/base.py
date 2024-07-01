@@ -2,7 +2,6 @@ from datetime import datetime
 from enum import StrEnum
 from typing import Callable
 
-from flask_login import current_user
 from sqlalchemy.orm import Session
 
 from web.config import config
@@ -19,6 +18,7 @@ from web.mail.event import (
     mail_user_password,
     mail_user_verification,
 )
+from web.security import current_user
 
 #
 # Classes

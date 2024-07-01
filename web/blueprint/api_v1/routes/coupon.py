@@ -1,10 +1,10 @@
 from werkzeug import Response
 
-from web.api.utils import ApiText, json_get, response
+from web.api.utils import ApiText, json_get, json_response
 from web.blueprint.api_v1 import api_v1_bp
 from web.database import conn
 from web.database.model import Coupon, UserRoleLevel
-from web.libs.auth import access_control
+from web.security import secure
 
 #
 # Configuration
@@ -17,7 +17,7 @@ from web.libs.auth import access_control
 
 
 @api_v1_bp.post("/coupons")
-@access_control(UserRoleLevel.ADMIN)
+@secure(UserRoleLevel.ADMIN)
 def post_coupons() -> Response:
     amount, _ = json_get("amount", int | float)
     code, _ = json_get("code", str, nullable=False)
@@ -28,26 +28,26 @@ def post_coupons() -> Response:
         # Check if coupon already exists
         coupon = s.query(Coupon).filter_by(code=code, is_deleted=False).first()
         if coupon:
-            return response(409, ApiText.HTTP_409)
+            return json_response(409, ApiText.HTTP_409)
 
         # Insert coupon
         coupon = Coupon(code=code, rate=rate, amount=amount)
         s.add(coupon)
 
-    return response()
+    return json_response()
 
 
 @api_v1_bp.delete("/coupons/<int:coupon_id>")
-@access_control(UserRoleLevel.ADMIN)
+@secure(UserRoleLevel.ADMIN)
 def delete_coupons_id(coupon_id: int) -> Response:
     with conn.begin() as s:
         # Delete coupon
         coupon = s.query(Coupon).filter_by(id=coupon_id).first()
         if not coupon:
-            return response(404, ApiText.HTTP_404)
+            return json_response(404, ApiText.HTTP_404)
         coupon.is_deleted = True
 
-    return response()
+    return json_response()
 
 
 #

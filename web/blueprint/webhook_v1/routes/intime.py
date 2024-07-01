@@ -16,8 +16,8 @@ from web.database.model import (
     Sku,
     UserRoleLevel,
 )
-from web.libs.auth import access_control
 from web.mail import MailEvent, mail
+from web.security import secure
 
 #
 # Helpers
@@ -32,7 +32,11 @@ ORDER_FILTERS = (Order.status_id.in_([OrderStatusId.READY, OrderStatusId.COMPLET
 def response(code: int = 200, data: list | dict | None = None) -> Response:
     if data is None:
         data = {}
-    return Response(json.dumps(data), status=code, mimetype="application/json")
+    return Response(
+        json.dumps(data),
+        status=code,
+        mimetype="application/json",
+    )
 
 
 #
@@ -41,7 +45,7 @@ def response(code: int = 200, data: list | dict | None = None) -> Response:
 
 
 @webhook_v1_bp.get("/intime/products/count")
-@access_control(UserRoleLevel.EXTERNAL)
+@secure(UserRoleLevel.EXTERNAL)
 def intime_products_count() -> Response:
     with conn.begin() as s:
         count = s.query(Sku).filter(*SKU_FILTERS).count()
@@ -49,7 +53,7 @@ def intime_products_count() -> Response:
 
 
 @webhook_v1_bp.get("/intime/products/list")
-@access_control(UserRoleLevel.EXTERNAL)
+@secure(UserRoleLevel.EXTERNAL)
 def intime_products_list() -> Response:
     products = []
     with conn.begin() as s:
@@ -74,7 +78,7 @@ def intime_products_list() -> Response:
 
 
 @webhook_v1_bp.get("/intime/products/<string:sku_number>/stock")
-@access_control(UserRoleLevel.EXTERNAL)
+@secure(UserRoleLevel.EXTERNAL)
 def intime_products_id_stock(sku_number: str) -> Response:
     with conn.begin() as s:
         sku = s.query(Sku).filter(Sku.number == sku_number, *SKU_FILTERS).first()
@@ -84,7 +88,7 @@ def intime_products_id_stock(sku_number: str) -> Response:
 
 
 @webhook_v1_bp.post("/intime/products/<string:sku_number>/update-stock")
-@access_control(UserRoleLevel.EXTERNAL)
+@secure(UserRoleLevel.EXTERNAL)
 def intime_products_id(sku_number: str) -> Response:
     stock, _ = json_get("count", type_=int, nullable=False)
     with conn.begin() as s:
@@ -97,7 +101,7 @@ def intime_products_id(sku_number: str) -> Response:
 
 
 @webhook_v1_bp.get("/intime/open-orders/count")
-@access_control(UserRoleLevel.EXTERNAL)
+@secure(UserRoleLevel.EXTERNAL)
 def intime_open_orders_count() -> Response:
     with conn.begin() as s:
         count = s.query(Order).filter(*OPEN_ORDER_FILTERS).count()
@@ -105,7 +109,7 @@ def intime_open_orders_count() -> Response:
 
 
 @webhook_v1_bp.get("/intime/open-orders/list")
-@access_control(UserRoleLevel.EXTERNAL)
+@secure(UserRoleLevel.EXTERNAL)
 def intime_open_orders_list() -> Response:
     open_orders = []
     with conn.begin() as s:
@@ -160,7 +164,7 @@ def intime_open_orders_list() -> Response:
 
 
 @webhook_v1_bp.post("/intime/orders/<string:order_id>/update-tracking")
-@access_control(UserRoleLevel.EXTERNAL)
+@secure(UserRoleLevel.EXTERNAL)
 def intime_orders_id_update_tracking(order_id: str) -> Response:
     # Parse request
     carrier, _ = json_get("carrierCode", type_=str)
@@ -208,7 +212,7 @@ def intime_orders_id_update_tracking(order_id: str) -> Response:
 
 
 @webhook_v1_bp.post("/intime/orders/<string:order_id>/fulfill")
-@access_control(UserRoleLevel.EXTERNAL)
+@secure(UserRoleLevel.EXTERNAL)
 def intime_orders_id_fulfill(order_id: str) -> Response:
     with conn.begin() as s:
         order = s.query(Order).filter(Order.id == int(order_id), *ORDER_FILTERS).first()

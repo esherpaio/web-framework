@@ -1,19 +1,19 @@
 from typing import Any
 
 from flask import abort
-from flask_login import current_user
 from sqlalchemy.orm.session import Session
 from sqlalchemy.orm.util import has_identity
 from werkzeug import Response
 
 from web.api import API
-from web.api.utils import ApiText, response
+from web.api.utils import ApiText, json_response
 from web.blueprint.api_v1 import api_v1_bp
 from web.database import conn
 from web.database.model import Billing, Cart, Coupon, Shipping
 from web.libs.cart import get_shipment_methods, get_vat
 from web.libs.locale import current_locale
 from web.libs.utils import none_attrgetter
+from web.security import current_user
 
 #
 # Configuration
@@ -62,7 +62,7 @@ def post_carts() -> Response:
         set_vat(s, data, model)
         api.insert(s, data, model)
         resource = api.gen_resource(s, model)
-    return response(data=resource)
+    return json_response(data=resource)
 
 
 @api_v1_bp.get("/carts")
@@ -72,7 +72,7 @@ def get_carts() -> Response:
         filters = {Cart.user_id == current_user.id}
         models: list[Cart] = api.list_(s, *filters, limit=1)
         resources = api.gen_resources(s, models)
-    return response(data=resources)
+    return json_response(data=resources)
 
 
 @api_v1_bp.patch("/carts/<int:cart_id>")
@@ -87,7 +87,7 @@ def patch_carts_id(cart_id: int) -> Response:
         set_coupon(s, data, model)
         api.update(s, data, model)
         resource = api.gen_resource(s, model)
-    return response(data=resource)
+    return json_response(data=resource)
 
 
 @api_v1_bp.delete("/carts/<int:cart_id>")
@@ -97,7 +97,7 @@ def delete_carts_id(cart_id: int) -> Response:
         filters = {Cart.user_id == current_user.id}
         model: Cart = api.get(s, cart_id, *filters)
         api.delete(s, model)
-    return response()
+    return json_response()
 
 
 #
@@ -197,7 +197,7 @@ def set_coupon(s: Session, data: dict, model: Cart) -> None:
                 s.query(Coupon).filter_by(code=coupon_code, is_deleted=False).first()
             )
             if coupon is None:
-                abort(response(400, ApiText.HTTP_400))
+                abort(json_response(400, ApiText.HTTP_400))
             else:
                 coupon_id = coupon.id
         model.coupon_id = coupon_id
