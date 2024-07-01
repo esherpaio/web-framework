@@ -1,18 +1,22 @@
-class SecurityError(Exception):
+class AuthError(Exception):
     pass
 
 
-class JWTError(SecurityError):
+class NoValueError(AuthError):
     pass
 
 
-class CSRFError(SecurityError):
+class KEYError(AuthError):
     pass
 
 
-class NoAuthorizationError(SecurityError):
+class JWTError(AuthError):
     pass
 
 
-class Forbidden(SecurityError):
+class CSRFError(AuthError):
+    pass
+
+
+class Forbidden(AuthError):
     pass

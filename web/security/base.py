@@ -1,30 +1,34 @@
+import time
 import uuid
 from datetime import datetime, timedelta, timezone
 from hmac import compare_digest
 from json import JSONEncoder
+from random import randint
 from typing import Any, Literal
 
 import jwt
 from flask import Flask, current_app, g, request
+from sqlalchemy.orm import joinedload
 from werkzeug import Response
 
-from web.api.utils import ApiText, response
+from web.api.utils import ApiText, json_response
 from web.config import config
 from web.database import conn
 from web.database.model import User, UserRoleLevel
 from web.libs.logger import log
 
-from .enum import G
-from .error import CSRFError, Forbidden, JWTError, NoAuthorizationError, SecurityError
+from .enum import AuthType
+from .error import AuthError, CSRFError, Forbidden, JWTError, KEYError, NoValueError
 from .user import current_user
 
 #
 # Constants
 #
 
-CSRF_ENABLED = False
+CSRF_ENABLED = True
+CSRF_METHODS = ["GET", "POST", "PUT", "PATCH", "DELETE"]
 CSRF_COOKIE_NAME = "csrf_token"
-CSRF_METHODS = ["POST", "PUT", "PATCH", "DELETE"]
+CSRF_COOKIE_MAX_AGE = 31540000
 
 KEY_HEADER_NAME = "Authorization"
 
@@ -34,7 +38,7 @@ JWT_AUDIENCE = "https://esherpa.io/"
 
 JWT_COOKIE_DOMAIN = "esherpa.io"
 JWT_COOKIE_NAME = "access_token"
-JWT_COOKIE_MAX_AGE = 300
+JWT_COOKIE_MAX_AGE = 31540000
 
 JWT_ENCODE_ALGORITHM = "HS256"
 JWT_DECODE_ALGORITHMS = ["HS256"]
@@ -49,31 +53,36 @@ JWT_DECODE_LEEWAY_S = 60
 class Security:
     def __init__(self, app: Flask) -> None:
         self.app = app
-        self.app.register_error_handler(SecurityError, self.on_error)
+        self.app.register_error_handler(AuthError, self.on_error)
         self.app.before_request(self.before_request)
         self.app.after_request(self.after_request)
 
     @staticmethod
-    def on_error(error: SecurityError) -> Response:
+    def on_error(error: AuthError) -> Response:
         log.warning(f"JWT error: {error}")
         if isinstance(error, Forbidden):
             code, message = 403, ApiText.HTTP_403
         else:
             code, message = 401, ApiText.HTTP_401
-        return response(code, message)
+        return json_response(code, message)
 
     def before_request(self) -> None:
         user_id = None
         if KEY_HEADER_NAME in request.headers:
-            user_id = header_authentication()
+            user_id = key_authentication()
+            g._auth_type = AuthType.KEY
         if JWT_COOKIE_NAME in request.cookies:
-            user_id = cookie_authentication()
+            user_id = jwt_authentication()
+            g._auth_type = AuthType.JWT
         g._user_id = user_id
 
     def after_request(self, response: Response) -> Response:
-        if JWT_COOKIE_NAME in request.cookies and G.USER_ID in g:
-            access_token = encode_jwt(g._user_id, expires_delta=False)
-            set_jwt(response, access_token)
+        auth_type = getattr(g, "_auth_type", None)
+        if auth_type == AuthType.NONE:
+            del_jwt(response)
+        elif auth_type == AuthType.JWT:
+            access_token, csrf_token = encode_jwt(g._user_id, expires_delta=False)
+            set_jwt(response, access_token, csrf_token)
         return response
 
 
@@ -99,15 +108,22 @@ def secure(level: UserRoleLevel | None = None) -> Any:
 #
 
 
-def header_authentication() -> int:
+def key_authentication() -> int:
     auth = request.headers.get("Authorization")
     if auth is None:
-        raise NoAuthorizationError
+        raise NoValueError
     api_key = auth.replace("Bearer ", "", 1)
     with conn.begin() as s:
-        user = s.query(User).filter_by(api_key=api_key, is_active=True).first()
+        user = (
+            s.query(User)
+            .options(joinedload(User.role))
+            .filter_by(api_key=api_key, is_active=True)
+            .first()
+        )
     if user is None:
-        raise JWTError
+        raise KEYError
+    if not compare_digest(user.api_key, api_key):
+        raise CSRFError
     return user.id
 
 
@@ -116,7 +132,7 @@ def header_authentication() -> int:
 #
 
 
-def cookie_authentication() -> int:
+def jwt_authentication() -> int:
     encoded_token, csrf_token = get_jwt()
     token = decode_jwt(encoded_token, csrf_token)
     return token["sub"]
@@ -125,31 +141,34 @@ def cookie_authentication() -> int:
 def get_jwt() -> tuple[str, str | None]:
     encoded_token = request.cookies.get(JWT_COOKIE_NAME)
     if encoded_token is None:
-        raise NoAuthorizationError
+        raise NoValueError
 
     if request.method in CSRF_METHODS:
         csrf_value = request.cookies.get(CSRF_COOKIE_NAME)
         if csrf_value is None:
-            raise CSRFError
+            raise NoValueError
     else:
         csrf_value = None
 
     return encoded_token, csrf_value
 
 
-def encode_jwt(identity: int, expires_delta: timedelta | Literal[False]) -> str:
+def encode_jwt(
+    user_id: int, expires_delta: timedelta | Literal[False]
+) -> tuple[str, str]:
     now = datetime.now(timezone.utc)
+    csrf_token = str(uuid.uuid4())
     token_data = {
         # registered claims
         # https://datatracker.ietf.org/doc/html/rfc7519#section-4.1
         "iss": JWT_ISSUER,
-        "sub": identity,
+        "sub": user_id,
         "aud": JWT_AUDIENCE,
         "nbf": now,
         "iat": now,
         "jti": str(uuid.uuid4()),
         # custom claims
-        "csrf": str(uuid.uuid4()),
+        "csrf": csrf_token,
     }
     if expires_delta:
         token_data["exp"] = now + expires_delta
@@ -158,10 +177,10 @@ def encode_jwt(identity: int, expires_delta: timedelta | Literal[False]) -> str:
         JWT_SECRET,
         algorithm=JWT_ENCODE_ALGORITHM,
         json_encoder=JSONEncoder,
-    )
+    ), csrf_token
 
 
-def decode_jwt(encoded_token: str, csrf_value=None) -> dict:
+def decode_jwt(encoded_token: str, csrf_token: str | None = None) -> dict:
     try:
         decoded_token = jwt.decode(
             encoded_token,
@@ -174,16 +193,16 @@ def decode_jwt(encoded_token: str, csrf_value=None) -> dict:
     except Exception:
         raise JWTError
 
-    if csrf_value:
+    if csrf_token is not None:
         if "csrf" not in decoded_token:
             raise JWTError
-        if not compare_digest(decoded_token["csrf"], csrf_value):
+        if not compare_digest(decoded_token["csrf"], csrf_token):
             raise CSRFError
 
     return decoded_token
 
 
-def set_jwt(response: Response, access_token: str, max_age=None, domain=None) -> None:
+def set_jwt(response: Response, access_token: str, csrf_token: str) -> None:
     if not config.APP_DEBUG:
         secure = True
         domain = JWT_COOKIE_DOMAIN
@@ -203,14 +222,32 @@ def set_jwt(response: Response, access_token: str, max_age=None, domain=None) ->
     )
 
     if CSRF_ENABLED:
-        csrf_token = decode_jwt(access_token)["csrf"]
         response.set_cookie(
             CSRF_COOKIE_NAME,
             value=csrf_token,
-            max_age=max_age or config.cookie_max_age,
-            secure=config.cookie_secure,
+            max_age=CSRF_COOKIE_MAX_AGE,
+            secure=secure,
             httponly=False,
-            domain=domain or config.cookie_domain,
+            domain=domain,
             path=None,
             samesite=None,
         )
+
+
+def del_jwt(response: Response) -> None:
+    response.delete_cookie(JWT_COOKIE_NAME)
+    response.delete_cookie(CSRF_COOKIE_NAME)
+
+
+def jwt_login(user_id: int) -> None:
+    time.sleep(randint(0, 1000) / 1000)
+    g._user = None
+    g._user_id = user_id
+    g._auth_type = AuthType.JWT
+
+
+def jwt_logout() -> None:
+    time.sleep(randint(0, 1000) / 1000)
+    g._user = None
+    g._user_id = None
+    g._auth_type = AuthType.NONE
