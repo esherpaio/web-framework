@@ -1,5 +1,9 @@
+from web.api.utils import ApiText
+
+
 class AuthError(Exception):
-    pass
+    code = 401
+    message = ApiText.HTTP_401
 
 
 class NoValueError(AuthError):
@@ -19,4 +23,5 @@ class CSRFError(AuthError):
 
 
 class Forbidden(AuthError):
-    pass
+    code = 403
+    message = ApiText.HTTP_403

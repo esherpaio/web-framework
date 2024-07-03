@@ -7,11 +7,11 @@ from random import randint
 from typing import Any, Literal
 
 import jwt
-from flask import Flask, current_app, g, request
+from flask import Flask, current_app, g, redirect, request, url_for
 from sqlalchemy.orm import joinedload
 from werkzeug import Response
 
-from web.api.utils import ApiText, json_response
+from web.api.utils import json_response
 from web.config import config
 from web.database import conn
 from web.database.model import User, UserRoleLevel
@@ -59,12 +59,17 @@ class Security:
 
     @staticmethod
     def on_error(error: AuthError) -> Response:
-        log.warning(f"JWT error: {error}")
-        if isinstance(error, Forbidden):
-            code, message = 403, ApiText.HTTP_403
+        log.debug(f"AuthError {type(error).__name__}")
+        if request.blueprint and (
+            request.blueprint.startswith("api")
+            or request.blueprint.startswith("webhook")
+        ):
+            response = redirect(url_for("web.error_401"))
         else:
-            code, message = 401, ApiText.HTTP_401
-        return json_response(code, message)
+            response = json_response(error.code, error.message)
+        if error.code == 401:
+            del_jwt(response)
+        return response
 
     def before_request(self) -> None:
         user_id = None
@@ -123,7 +128,7 @@ def key_authentication() -> int:
     if user is None:
         raise KEYError
     if not compare_digest(user.api_key, api_key):
-        raise CSRFError
+        raise KEYError
     return user.id
 
 
@@ -203,7 +208,6 @@ def decode_jwt(encoded_token: str, csrf_token: str | None = None) -> dict:
 
 
 def set_jwt(response: Response, access_token: str, csrf_token: str) -> None:
-    path = "/"
     if not config.APP_DEBUG:
         secure = True
         domain = JWT_COOKIE_DOMAIN
@@ -218,21 +222,19 @@ def set_jwt(response: Response, access_token: str, csrf_token: str) -> None:
         secure=secure,
         httponly=True,
         domain=domain,
-        path=path,
+        path="/",
         samesite=None,
     )
-
-    if CSRF_ENABLED:
-        response.set_cookie(
-            CSRF_COOKIE_NAME,
-            value=csrf_token,
-            max_age=CSRF_COOKIE_MAX_AGE,
-            secure=secure,
-            httponly=False,
-            domain=domain,
-            path=path,
-            samesite=None,
-        )
+    response.set_cookie(
+        CSRF_COOKIE_NAME,
+        value=csrf_token,
+        max_age=CSRF_COOKIE_MAX_AGE,
+        secure=secure,
+        httponly=False,
+        domain=domain,
+        path="/",
+        samesite=None,
+    )
 
 
 def del_jwt(response: Response) -> None:
