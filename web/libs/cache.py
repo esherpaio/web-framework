@@ -31,9 +31,23 @@ class Cache(metaclass=Singleton):
 
     @classmethod
     def __getattr__(cls, key: str) -> Any:
-        if key not in cls._objects:
-            raise KeyError
         return cls._objects[key]
+
+    @classmethod
+    def __delattr__(cls, key: str) -> None:
+        del cls._objects[key]
+
+    @classmethod
+    def __setitem__(cls, key: str, value: Any) -> None:
+        cls._objects[key] = value
+
+    @classmethod
+    def __getitem__(cls, key: str) -> Any:
+        return cls._objects.get(key, None)
+
+    @classmethod
+    def __delitem__(cls, key: str) -> None:
+        del cls._objects[key]
 
     @classmethod
     def keys(cls) -> list[str]:

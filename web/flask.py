@@ -102,7 +102,7 @@ class FlaskWeb:
 
     def setup_flask(self) -> None:
         if config.APP_DEBUG:
-            log.info("Enabling debug mode")
+            log.info("Enabling Flask debug mode")
             self._app.debug = True
         self._app.secret_key = config.APP_SECRET
 
