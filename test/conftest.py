@@ -9,6 +9,7 @@ from web.blueprint.webhook_v1 import webhook_v1_bp
 from web.database.client import engine
 from web.database.model import Base, User, UserRoleId
 from web.flask import FlaskWeb
+from web.libs.cache import cache
 from web.syncer import Syncer
 
 #
@@ -85,9 +86,8 @@ def create_app() -> Flask:
 
 
 @pytest.fixture(scope="module", autouse=True)
-def update_cache(app) -> None:
-    web = app.config["web"]
-    web.update_cache(force=True)
+def update_cache() -> None:
+    cache.update(force=True)
 
 
 @pytest.fixture(scope="session")
