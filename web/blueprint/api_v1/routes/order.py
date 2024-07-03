@@ -7,6 +7,7 @@ from werkzeug import Response
 
 from web.api import API
 from web.api.utils import ApiText, json_response
+from web.auth import current_user, secure
 from web.blueprint.api_v1 import api_v1_bp
 from web.database import conn
 from web.database.model import (
@@ -23,7 +24,6 @@ from web.ext.mollie import Mollie
 from web.i18n import _
 from web.libs.cart import get_shipment_methods
 from web.mail import MailEvent, mail
-from web.security import current_user, secure
 
 from ._common import create_refund
 

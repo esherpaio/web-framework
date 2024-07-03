@@ -6,11 +6,11 @@ from werkzeug import Response
 
 from web.api import API
 from web.api.utils import ApiText, json_response
+from web.auth import current_user
 from web.blueprint.api_v1 import api_v1_bp
 from web.database import conn
 from web.database.model import Cart, CartItem
 from web.i18n import _
-from web.security import current_user
 
 from ._common import authorize_cart, update_cart_shipment_methods
 

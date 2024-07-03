@@ -7,13 +7,13 @@ from werkzeug import Response
 
 from web.api import API
 from web.api.utils import ApiText, json_response
+from web.auth import current_user
 from web.blueprint.api_v1 import api_v1_bp
 from web.database import conn
 from web.database.model import Billing, Cart, Coupon, Shipping
 from web.libs.cart import get_shipment_methods, get_vat
 from web.libs.locale import current_locale
 from web.libs.utils import none_attrgetter
-from web.security import current_user
 
 #
 # Configuration

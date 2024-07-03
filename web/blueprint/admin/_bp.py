@@ -3,12 +3,12 @@ import os
 from flask import Blueprint, redirect, url_for
 from werkzeug import Response
 
+from web.auth import secure
 from web.config import config
 from web.database.model import UserRoleLevel
 from web.libs.cache import cache
 from web.libs.logger import log
 from web.libs.meta import Meta
-from web.security import secure
 
 _dir = os.path.dirname(os.path.abspath(__file__))
 admin_bp = Blueprint(

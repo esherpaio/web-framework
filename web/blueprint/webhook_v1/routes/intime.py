@@ -5,6 +5,7 @@ from sqlalchemy.orm import joinedload
 from werkzeug import Response
 
 from web.api.utils import json_get
+from web.auth import secure
 from web.blueprint.webhook_v1 import webhook_v1_bp
 from web.database import conn
 from web.database.model import (
@@ -17,7 +18,6 @@ from web.database.model import (
     UserRoleLevel,
 )
 from web.mail import MailEvent, mail
-from web.security import secure
 
 #
 # Helpers

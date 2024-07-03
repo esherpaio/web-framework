@@ -1,10 +1,10 @@
 from werkzeug import Response
 
 from web.api.utils import ApiText, json_get, json_response
+from web.auth import secure
 from web.blueprint.api_v1 import api_v1_bp
 from web.database import conn
 from web.database.model import ShipmentMethod, ShipmentZone, UserRoleLevel
-from web.security import secure
 
 #
 # Configuration

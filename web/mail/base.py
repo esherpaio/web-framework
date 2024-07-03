@@ -4,6 +4,7 @@ from typing import Callable
 
 from sqlalchemy.orm import Session
 
+from web.auth import current_user
 from web.config import config
 from web.database.model import Email, EmailStatusId
 from web.libs.logger import log
@@ -18,7 +19,6 @@ from web.mail.event import (
     mail_user_password,
     mail_user_verification,
 )
-from web.security import current_user
 
 #
 # Classes

@@ -8,6 +8,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy.sql.expression import false
 from werkzeug import Response
 
+from web.auth import current_user
 from web.config import config
 from web.database import conn
 from web.database.model import (
@@ -20,7 +21,6 @@ from web.database.model import (
     User,
 )
 from web.libs.locale import current_locale
-from web.security import current_user
 
 #
 # Functions

@@ -1,11 +1,13 @@
 from typing import Any
 
+from web.libs.utils import Singleton
+
 #
 # Classes
 #
 
 
-class Cache(dict):
+class Cache(dict, metaclass=Singleton):
     """A simple in-memory cache mechanism."""
 
     def __setattr__(self, key: str, value: Any) -> None:

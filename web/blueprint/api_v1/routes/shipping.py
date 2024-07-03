@@ -4,10 +4,10 @@ from werkzeug import Response
 
 from web.api import API
 from web.api.utils import ApiText, json_response
+from web.auth import current_user
 from web.blueprint.api_v1 import api_v1_bp
 from web.database import conn
 from web.database.model import Cart, Order, Shipping
-from web.security import current_user
 
 from .cart import set_shipment, set_vat
 
