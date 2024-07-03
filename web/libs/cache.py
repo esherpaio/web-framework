@@ -1,12 +1,10 @@
 import time
 from datetime import datetime
 from threading import Thread
-from typing import Any
+from typing import Any, Callable
 
 from web.database.client import conn
-from web.database.model import (
-    AppSetting,
-)
+from web.database.model import AppSetting
 from web.libs.logger import log
 from web.libs.utils import Singleton
 
@@ -15,23 +13,31 @@ from web.libs.utils import Singleton
 #
 
 
-class Cache(dict, metaclass=Singleton):
+class Cache(metaclass=Singleton):
     """A simple in-memory cache mechanism."""
+
+    _objects: dict[str, Any] = {}
 
     def __init__(self) -> None:
         super().__init__()
         self._updated_at: datetime = datetime.utcnow()
         self._active: bool = True
-        self.hooks = set()
+        self.hooks: list[Callable] = []
         self.update(force=True)
 
-    def __setattr__(self, key: str, value: Any) -> None:
-        self[key] = value
+    @classmethod
+    def __setattr__(cls, key: str, value: Any) -> None:
+        cls._objects[key] = value
 
-    def __getattr__(self, key: str) -> Any:
-        if key not in self:
+    @classmethod
+    def __getattr__(cls, key: str) -> Any:
+        if key not in cls._objects:
             raise KeyError
-        return self[key]
+        return cls._objects[key]
+
+    @classmethod
+    def keys(cls) -> list[str]:
+        return list(cls._objects.keys())
 
     @property
     def expired(self) -> bool:

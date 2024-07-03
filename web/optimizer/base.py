@@ -9,13 +9,9 @@ from web.config import config
 from web.libs.cache import cache
 from web.libs.logger import log
 from web.libs.utils import Singleton
-from web.optimizer.io import (
-    Encoding,
-    Minification,
-    choose_encoding,
-    choose_minification,
-)
-from web.optimizer.object import minify_html
+
+from .io import Encoding, Minification, choose_encoding, choose_minification
+from .object import minify_html
 
 
 class Optimizer(metaclass=Singleton):

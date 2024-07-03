@@ -1,6 +1,7 @@
 from web.database.model import FileType
 from web.database.seed import file_type_seeds
-from web.syncer import Syncer
+
+from .. import Syncer
 
 
 class FileTypeSyncer(Syncer):

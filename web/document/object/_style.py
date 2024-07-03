@@ -1,9 +1,9 @@
 from decimal import Decimal
 
-from web.document.base.pdf import HexColor
-from web.document.base.pdf import Paragraph as Paragraph_
-from web.document.base.pdf import TableCell as TableCell_
-from web.document.base.pdf.canvas.layout.layout_element import LayoutElement
+from ..base.pdf import HexColor
+from ..base.pdf import Paragraph as Paragraph_
+from ..base.pdf import TableCell as TableCell_
+from ..base.pdf.canvas.layout.layout_element import LayoutElement
 
 FONT_NORMAL = "Helvetica"
 FONT_BOLD = "Helvetica Bold"

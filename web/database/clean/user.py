@@ -2,8 +2,8 @@ from datetime import datetime, timedelta
 
 from sqlalchemy.sql import not_, true
 
-from web.database import conn
-from web.database.model import User
+from .. import conn
+from ..model import User
 
 
 def clean_users() -> None:

@@ -5,8 +5,10 @@ from sqlalchemy.orm import Session
 
 from web.config import config
 from web.database.model import Invoice, Order, Refund
-from web.document._utils import float_to_str, save_pdf
-from web.document.base.pdf import (
+from web.i18n import _
+
+from .._utils import float_to_str, save_pdf
+from ..base.pdf import (
     Alignment,
     Document,
     FixedColumnWidthTable,
@@ -14,8 +16,8 @@ from web.document.base.pdf import (
     Page,
     SingleColumnLayout,
 )
-from web.document.base.toolkit.table.parsing import cells_to_tables
-from web.document.object._style import (
+from ..base.toolkit.table.parsing import cells_to_tables
+from ..object._style import (
     COLOR_DARKGREY,
     COLOR_LIGHTGREY,
     BoldPG,
@@ -24,7 +26,6 @@ from web.document.object._style import (
     TextPG,
     TitlePG,
 )
-from web.i18n import _
 
 
 def gen_refund(

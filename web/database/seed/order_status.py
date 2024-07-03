@@ -1,4 +1,4 @@
-from web.database.model import OrderStatus, OrderStatusId
+from ..model import OrderStatus, OrderStatusId
 
 order_status_seeds = [
     OrderStatus(id=OrderStatusId.COMPLETED, name="Completed", order=500),

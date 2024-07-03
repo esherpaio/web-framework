@@ -1,6 +1,6 @@
 import sass
 
-from web.packer.bundle import CssBundle
+from .css import CssBundle
 
 
 class ScssBundle:

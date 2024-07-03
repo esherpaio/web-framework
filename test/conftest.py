@@ -80,7 +80,7 @@ def create_app() -> Flask:
         syncers=[UserSyncer],
     )
     web.setup()
-    web._cache_active = False
+    cache._active = False
     app.config["web"] = web
     return app
 

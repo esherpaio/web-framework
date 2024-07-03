@@ -1,4 +1,4 @@
-from web.database.model import UserRole, UserRoleId, UserRoleLevel
+from ..model import UserRole, UserRoleId, UserRoleLevel
 
 user_role_seeds = [
     UserRole(id=UserRoleId.GUEST, name="Guest", level=UserRoleLevel.GUEST),
