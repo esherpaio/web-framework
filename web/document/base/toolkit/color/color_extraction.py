@@ -97,16 +97,20 @@ class ColorExtraction(EventListener):
         c = img.getpixel((x, y))
         if img.mode == "RGB":
             return RGBColor(
-                r=Decimal(c[0] / 255), g=Decimal(c[1] / 255), b=Decimal(c[2] / 255)
+                r=Decimal(c[0] / 255),  # type: ignore[index]
+                g=Decimal(c[1] / 255),  # type: ignore[index]
+                b=Decimal(c[2] / 255),  # type: ignore[index]
             )
         if img.mode == "RGBA":
             return RGBColor(
-                r=Decimal(c[0] / 255), g=Decimal(c[1] / 255), b=Decimal(c[2] / 255)
+                r=Decimal(c[0] / 255),  # type: ignore[index]
+                g=Decimal(c[1] / 255),  # type: ignore[index]
+                b=Decimal(c[2] / 255),  # type: ignore[index]
             )
         if img.mode == "CMYK":
-            r = int((1 - c[0]) * (1 - c[3]))
-            g = int((1 - c[1]) * (1 - c[3]))
-            b = int((1 - c[2]) * (1 - c[0]))
+            r = int((1 - c[0]) * (1 - c[3]))  # type: ignore[index]
+            g = int((1 - c[1]) * (1 - c[3]))  # type: ignore[index]
+            b = int((1 - c[2]) * (1 - c[0]))  # type: ignore[index]
             return RGBColor(r=Decimal(r), g=Decimal(g), b=Decimal(b))
         return RGBColor(Decimal(0), Decimal(0), Decimal(0))
 
