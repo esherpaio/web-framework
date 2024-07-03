@@ -60,13 +60,13 @@ class Security:
     @staticmethod
     def on_error(error: AuthError) -> Response:
         log.debug(f"AuthError {type(error).__name__}")
-        if request.blueprint and (
+        if request.blueprint is not None and (
             request.blueprint.startswith("api")
             or request.blueprint.startswith("webhook")
         ):
-            response = redirect(url_for("web.error_401"))
-        else:
             response = json_response(error.code, error.message)
+        else:
+            response = redirect(url_for(config.ENDPOINT_LOGIN))
         if error.code == 401:
             del_jwt(response)
         return response
