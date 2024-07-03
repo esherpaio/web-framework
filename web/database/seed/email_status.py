@@ -1,4 +1,4 @@
-from web.database.model import EmailStatus, EmailStatusId
+from ..model import EmailStatus, EmailStatusId
 
 email_status_seeds = [
     EmailStatus(id=EmailStatusId.QUEUED, name="Queued", order=100),

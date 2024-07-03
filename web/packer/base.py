@@ -4,7 +4,8 @@ import os
 
 from web.libs import cdn
 from web.libs.logger import log
-from web.packer.bundle import CssBundle, JsBundle, ScssBundle
+
+from .bundle import CssBundle, JsBundle, ScssBundle
 
 
 class Packer:

@@ -2,7 +2,8 @@ from sqlalchemy.orm import Session, joinedload
 
 from web.database.client import conn
 from web.database.model import Sku, SkuDetail
-from web.syncer import Syncer
+
+from ..base import Syncer
 
 
 class SkuSyncer(Syncer):

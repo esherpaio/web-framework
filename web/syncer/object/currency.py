@@ -8,7 +8,9 @@ from web.config import config
 from web.database.model import Currency
 from web.database.seed import currency_seeds
 from web.libs.logger import log
-from web.syncer import Syncer, external_sync
+
+from ..base import Syncer
+from ..utils import external_sync
 
 
 class CurrencySyncer(Syncer):

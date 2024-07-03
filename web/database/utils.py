@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 
-from web.database.model import Base
+from .model import Base
 
 
 def copy_row(s: Session, new: Base, row: Base) -> Base:

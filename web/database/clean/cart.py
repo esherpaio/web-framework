@@ -2,8 +2,8 @@ from datetime import datetime, timedelta
 
 from sqlalchemy.sql import and_, or_
 
-from web.database.client import conn
-from web.database.model import Cart
+from .. import conn
+from ..model import Cart
 
 
 def clean_carts() -> None:

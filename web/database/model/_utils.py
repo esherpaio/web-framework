@@ -1,7 +1,9 @@
 import emoji
 from sqlalchemy import Numeric
 
-from web.database.errors import (
+from web.libs.parse import gen_slug, is_email, is_phone
+
+from ..errors import (
     DbEmailError,
     DbMaxLengthError,
     DbMaxNumberError,
@@ -9,7 +11,6 @@ from web.database.errors import (
     DbMinNumberError,
     DbPhoneError,
 )
-from web.libs.parse import gen_slug, is_email, is_phone
 
 #
 # Types

@@ -9,7 +9,8 @@ from web.config import config
 from web.database.model import Email, EmailStatusId
 from web.libs.logger import log
 from web.libs.utils import Singleton
-from web.mail.event import (
+
+from .event import (
     mail_bulk,
     mail_contact_business,
     mail_order_paid,
@@ -37,7 +38,7 @@ class MailEvent(StrEnum):
 
 
 class Mail(metaclass=Singleton):
-    EVENTS: dict[MailEvent | str, list[Callable]] = {
+    events: dict[MailEvent | str, list[Callable]] = {
         MailEvent.ORDER_PAID: [mail_order_paid],
         MailEvent.ORDER_RECEIVED: [mail_order_received],
         MailEvent.ORDER_REFUNDED: [mail_order_refunded],
@@ -50,7 +51,7 @@ class Mail(metaclass=Singleton):
 
     @classmethod
     def get_events(cls, event_id: MailEvent | str) -> list[Callable]:
-        events = cls.EVENTS.get(event_id, [])
+        events = cls.events.get(event_id, [])
         if not events:
             log.error(f"Event {event_id} not found")
         return events

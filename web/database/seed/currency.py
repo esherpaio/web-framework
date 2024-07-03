@@ -1,4 +1,4 @@
-from web.database.model import Currency, CurrencyId
+from ..model import Currency, CurrencyId
 
 currency_seeds = [
     Currency(id=CurrencyId.EUR, code="EUR", symbol="€"),

@@ -8,7 +8,8 @@ from web.database.model import AppBlueprint, AppRoute, AppSetting
 from web.libs.logger import log
 from web.packer import Packer
 from web.packer.bundle import CssBundle, JsBundle, ScssBundle
-from web.syncer import Syncer
+
+from ..base import Syncer
 
 
 class StaticType(StrEnum):

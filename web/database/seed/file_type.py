@@ -1,4 +1,4 @@
-from web.database.model import FileType, FileTypeId
+from ..model import FileType, FileTypeId
 
 file_type_seeds = [
     FileType(id=FileTypeId.IMAGE, name="Image"),

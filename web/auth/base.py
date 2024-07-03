@@ -25,23 +25,17 @@ from .user import current_user
 # Constants
 #
 
-CSRF_METHODS = ["POST", "PUT", "PATCH", "DELETE"]
-CSRF_COOKIE_NAME = "csrf_token"
-CSRF_COOKIE_MAX_AGE = 31540000
+AUTH_KEY_HEADER_NAME = "Authorization"
 
-KEY_HEADER_NAME = "Authorization"
+AUTH_JWT_SECRET = "secret"
+AUTH_JWT_EXPIRES_S = 604800
+AUTH_JWT_COOKIE_NAME = "access_token"
+AUTH_JWT_ENCODE_ALGORITHM = "HS256"
+AUTH_JWT_DECODE_ALGORITHMS = ["HS256"]
+AUTH_JWT_DECODE_LEEWAY_S = 60
 
-JWT_SECRET = "secret"
-JWT_ISSUER = "https://esherpa.io/"
-JWT_AUDIENCE = "https://esherpa.io/"
-
-JWT_COOKIE_DOMAIN = "esherpa.io"
-JWT_COOKIE_NAME = "access_token"
-JWT_COOKIE_MAX_AGE = 31540000
-
-JWT_ENCODE_ALGORITHM = "HS256"
-JWT_DECODE_ALGORITHMS = ["HS256"]
-JWT_DECODE_LEEWAY_S = 60
+AUTH_CSRF_METHODS = ["POST", "PUT", "PATCH", "DELETE"]
+AUTH_CSRF_COOKIE_NAME = "csrf_token"
 
 
 #
@@ -79,10 +73,10 @@ class Auth:
 
     def before_request(self) -> None:
         user_id = None
-        if KEY_HEADER_NAME in request.headers:
+        if AUTH_KEY_HEADER_NAME in request.headers:
             user_id = key_authentication()
             g._user_auth = AuthType.KEY
-        elif JWT_COOKIE_NAME in request.cookies:
+        elif AUTH_JWT_COOKIE_NAME in request.cookies:
             user_id = jwt_authentication()
             g._user_auth = AuthType.JWT
         else:
@@ -95,7 +89,10 @@ class Auth:
         if auth_type == AuthType.NONE:
             del_jwt(response)
         elif auth_type == AuthType.JWT:
-            access_token, csrf_token = encode_jwt(g._user_id, expires_delta=False)
+            access_token, csrf_token = encode_jwt(
+                g._user_id,
+                expires_delta=timedelta(seconds=AUTH_JWT_EXPIRES_S),
+            )
             set_jwt(response, access_token, csrf_token)
         return response
 
@@ -153,12 +150,12 @@ def jwt_authentication() -> int:
 
 
 def get_jwt() -> tuple[str, str | None]:
-    encoded_token = request.cookies.get(JWT_COOKIE_NAME)
+    encoded_token = request.cookies.get(AUTH_JWT_COOKIE_NAME)
     if encoded_token is None:
         raise NoValueError
 
-    if request.method in CSRF_METHODS:
-        csrf_value = request.cookies.get(CSRF_COOKIE_NAME)
+    if request.method in AUTH_CSRF_METHODS:
+        csrf_value = request.cookies.get(AUTH_CSRF_COOKIE_NAME)
         if csrf_value is None:
             raise NoValueError
     else:
@@ -175,9 +172,7 @@ def encode_jwt(
     token_data = {
         # registered claims
         # https://datatracker.ietf.org/doc/html/rfc7519#section-4.1
-        "iss": JWT_ISSUER,
         "sub": user_id,
-        "aud": JWT_AUDIENCE,
         "nbf": now,
         "iat": now,
         "jti": str(uuid.uuid4()),
@@ -188,8 +183,8 @@ def encode_jwt(
         token_data["exp"] = now + expires_delta
     return jwt.encode(
         token_data,
-        JWT_SECRET,
-        algorithm=JWT_ENCODE_ALGORITHM,
+        AUTH_JWT_SECRET,
+        algorithm=AUTH_JWT_ENCODE_ALGORITHM,
         json_encoder=JSONEncoder,
     ), csrf_token
 
@@ -198,11 +193,9 @@ def decode_jwt(encoded_token: str, csrf_token: str | None = None) -> dict:
     try:
         decoded_token = jwt.decode(
             encoded_token,
-            JWT_SECRET,
-            algorithms=JWT_DECODE_ALGORITHMS,
-            audience=JWT_AUDIENCE,
-            issuer=JWT_ISSUER,
-            leeway=timedelta(seconds=JWT_DECODE_LEEWAY_S),
+            AUTH_JWT_SECRET,
+            algorithms=AUTH_JWT_DECODE_ALGORITHMS,
+            leeway=timedelta(seconds=AUTH_JWT_DECODE_LEEWAY_S),
         )
     except Exception:
         raise JWTError
@@ -219,36 +212,34 @@ def decode_jwt(encoded_token: str, csrf_token: str | None = None) -> dict:
 def set_jwt(response: Response, access_token: str, csrf_token: str) -> None:
     if not config.APP_DEBUG:
         secure = True
-        domain = JWT_COOKIE_DOMAIN
     else:
         secure = False
-        domain = None
 
     response.set_cookie(
-        JWT_COOKIE_NAME,
+        AUTH_JWT_COOKIE_NAME,
         value=access_token,
-        max_age=JWT_COOKIE_MAX_AGE,
+        max_age=AUTH_JWT_EXPIRES_S,
         secure=secure,
         httponly=True,
-        domain=domain,
+        domain=None,
         path="/",
         samesite=None,
     )
     response.set_cookie(
-        CSRF_COOKIE_NAME,
+        AUTH_CSRF_COOKIE_NAME,
         value=csrf_token,
-        max_age=CSRF_COOKIE_MAX_AGE,
+        max_age=AUTH_JWT_EXPIRES_S,
         secure=secure,
         httponly=False,
-        domain=domain,
+        domain=None,
         path="/",
         samesite=None,
     )
 
 
 def del_jwt(response: Response) -> None:
-    response.delete_cookie(JWT_COOKIE_NAME)
-    response.delete_cookie(CSRF_COOKIE_NAME)
+    response.delete_cookie(AUTH_JWT_COOKIE_NAME)
+    response.delete_cookie(AUTH_CSRF_COOKIE_NAME)
 
 
 def jwt_login(user_id: int) -> None:

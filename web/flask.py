@@ -81,40 +81,36 @@ class FlaskWeb:
         self._db_hook = db_hook
         self._cache_hook = cache_hook
 
-        self._cached_at: datetime = datetime.utcnow()
-        self._cache_active: bool = True
-
     #
     # Setup
     #
 
     def setup(self) -> "FlaskWeb":
+        # non-flask
+        self.setup_database()
+        self.setup_cache()
+        self.setup_mail()
+        # flask
         self.setup_flask()
         self.setup_jinja()
-        self.setup_database()
-        self.setup_optimizer()
         self.setup_auth()
-        self.setup_mail()
-        self.setup_cache()
-        self.setup_redirects()
-        self.setup_locale()
         self.setup_error_handling()
+        self.setup_locale()
+        self.setup_optimizer()
+        self.setup_redirects()
         return self
 
     def setup_flask(self) -> None:
-        # Setup Flask
         if config.APP_DEBUG:
             log.info("Enabling debug mode")
             self._app.debug = True
         self._app.secret_key = config.APP_SECRET
 
-        # Register blueprints
         log.info(f"Registering {len(self._blueprints)} blueprints")
         for blueprint in self._blueprints:
             self._app.register_blueprint(blueprint)
 
     def setup_jinja(self) -> None:
-        # Register context
         self._app.context_processor(
             lambda: dict(
                 cache=cache,
@@ -124,22 +120,17 @@ class FlaskWeb:
             )
         )
 
-        # Register filters
         self._jinja_filter_hooks.update(
             {
                 "price": lambda a: f"{a:.{2}f}",
                 "datetime": lambda a, b: a.strftime(b),
+                "now": lambda: datetime.utcnow(),
             }
         )
         for name, func in self._jinja_filter_hooks.items():
             self._app.add_template_filter(func, name=name)
 
-        # Register globals
-        self._jinja_global_hooks.update(
-            {
-                "cdn_url": cdn.url,
-            }
-        )
+        self._jinja_global_hooks.update({"cdn_url": cdn.url})
         for name, func in self._jinja_global_hooks.items():
             self._app.add_template_global(func, name=name)
 
@@ -190,39 +181,34 @@ class FlaskWeb:
             optimizer.init(self._app)
 
     def setup_redirects(self) -> None:
-        # Register Flask hooks
         if cache.redirects:
             log.info(f"Registering {len(cache.redirects)} redirects")
             self._app.before_request(check_redirects)
 
     def setup_locale(self) -> None:
-        # Register Flask hooks
         self._app.before_request(self.redirect_locale)
         self._app.url_defaults(self.set_locale_urls)
         self._app.add_template_global(self.get_locale_url, name="locale_url")
         self._app.after_request(self.set_locale)
 
     def setup_error_handling(self) -> None:
-        # Register Flask hooks
         self._app.register_error_handler(Exception, handle_frontend_error)
 
     def setup_mail(self) -> None:
-        # Log status
         if config.EMAIL_METHOD:
             log.info(f"Configuring email method {config.EMAIL_METHOD}")
         else:
             log.warning("No email method configured")
 
-        # Update mail events
         if self._mail_events:
             log.info(f"Updating {len(self._mail_events)} mail events")
-            mail.EVENTS.update(self._mail_events)
+            mail.events.update(self._mail_events)
 
     def setup_cache(self) -> None:
-        cache.hooks.add(self.cache_common)
+        cache.hooks.append(self.cache_common)
         if self._cache_hook is not None:
-            cache.hooks.add(self._cache_hook)
-        cache.hooks.add(optimizer.del_cache)
+            cache.hooks.append(self._cache_hook)
+        cache.hooks.append(optimizer.del_cache)
         cache.update(force=True)
 
     def cache_common(self) -> None:

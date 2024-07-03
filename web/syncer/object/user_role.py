@@ -1,6 +1,7 @@
 from web.database.model import UserRole
 from web.database.seed import user_role_seeds
-from web.syncer import Syncer
+
+from ..base import Syncer
 
 
 class UserRoleSyncer(Syncer):

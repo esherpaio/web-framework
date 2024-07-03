@@ -1,6 +1,6 @@
 import os
 
-from web.document.base.pdf import PDF, Document
+from .base.pdf import PDF, Document
 
 DIR = os.path.dirname(os.path.realpath(__file__))
 

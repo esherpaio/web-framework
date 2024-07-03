@@ -5,7 +5,8 @@ from sqlalchemy import null, or_
 from web.database import conn
 from web.database.model import Email, EmailStatusId
 from web.libs.logger import log
-from web.mail import mail
+
+from .base import mail
 
 #
 # Functions

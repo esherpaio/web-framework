@@ -1,6 +1,7 @@
 from web.database.model import ProductLinkType
 from web.database.seed import product_link_type_seeds
-from web.syncer import Syncer
+
+from .. import Syncer
 
 
 class ProductLinkeTypeSyncer(Syncer):

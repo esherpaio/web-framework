@@ -7,9 +7,10 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.attributes import InstrumentedAttribute
 from sqlalchemy.orm.session import Session
 
-from web.api.utils import ApiText, args_get, json_get, json_response
 from web.database.model import Base
 from web.libs.logger import log
+
+from .utils import ApiText, args_get, json_get, json_response
 
 B = TypeVar("B", bound=Base)
 
