@@ -1,0 +1,34 @@
+{% extends "admin_main.html" %}
+{% block admin_body %}
+    <div class="row g-3">
+        <div class="col-12">
+            <div class="d-flex justify-content-between gap-2">
+                <h2 class="mb-0">
+                    Changelog
+                </h2>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="row g-3">
+                <div class="col-12">
+                    <h3>
+                        v2.9 (2024-06-04)
+                    </h3>
+                    <ul>
+                        <li>
+                            Enhanced authentication and authorization
+                        </li>
+                        <ul>
+                            <li>
+                                Support JSON Web Tokens
+                            </li>
+                            <li>
+                                Support Cross-Site Request Forgery protection
+                            </li>
+                        </ul>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock admin_body %}

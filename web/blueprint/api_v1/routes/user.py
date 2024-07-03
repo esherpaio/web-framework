@@ -9,11 +9,11 @@ from werkzeug.security import generate_password_hash
 
 from web.api import API
 from web.api.utils import json_response
+from web.auth import current_user
 from web.blueprint.api_v1 import api_v1_bp
 from web.database import conn
 from web.database.model import User, UserRoleId
 from web.i18n import _
-from web.security import current_user
 
 #
 # Configuration

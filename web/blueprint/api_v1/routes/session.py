@@ -6,13 +6,13 @@ from werkzeug import Response
 from werkzeug.security import check_password_hash
 
 from web.api.utils import json_get, json_response
+from web.auth.base import jwt_login, jwt_logout
 from web.blueprint.api_v1 import api_v1_bp
 from web.config import config
 from web.database import conn
 from web.database.model import User, UserRoleId
 from web.i18n import _
 from web.libs.cart import transfer_cart
-from web.security.base import jwt_login, jwt_logout
 
 from ._common import recover_user_password
 

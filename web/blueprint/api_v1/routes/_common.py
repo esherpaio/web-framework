@@ -5,13 +5,13 @@ from mollie.api.objects.payment import Payment
 from sqlalchemy.orm import Session
 
 from web.api.utils import ApiText, json_response
+from web.auth import current_user
 from web.config import config
 from web.database.model import Cart, Order, Refund, User, Verification
 from web.ext.mollie import Mollie, mollie_amount
 from web.libs.cart import get_shipment_methods
 from web.libs.utils import none_attrgetter
 from web.mail.base import MailEvent, mail
-from web.security import current_user
 
 
 def create_refund(

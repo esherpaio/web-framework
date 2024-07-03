@@ -7,6 +7,7 @@ import alembic.config
 from flask import Blueprint, Flask, redirect, request, url_for
 from werkzeug import Response
 
+from web.auth import Auth, current_user
 from web.config import config
 from web.database.clean import clean_carts, clean_users
 from web.database.client import conn
@@ -32,7 +33,6 @@ from web.libs.locale import current_locale, expects_locale, gen_locale, lacks_lo
 from web.libs.logger import log
 from web.mail import MailEvent, mail
 from web.optimizer import optimizer
-from web.security import Security, current_user
 from web.syncer import Syncer
 from web.syncer.object import (
     AppSettingSyncer,
@@ -146,7 +146,7 @@ class FlaskWeb:
             self._app.add_template_global(func, name=name)
 
     def setup_auth(self) -> None:
-        Security(self._app)
+        Auth(self._app)
 
     def setup_database(self) -> None:
         # Migrate database

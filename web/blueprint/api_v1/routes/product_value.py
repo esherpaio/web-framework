@@ -3,11 +3,11 @@ from sqlalchemy.orm import contains_eager
 from werkzeug import Response
 
 from web.api.utils import ApiText, json_get, json_response
+from web.auth import secure
 from web.blueprint.api_v1 import api_v1_bp
 from web.database import conn
 from web.database.model import ProductValue, Sku, SkuDetail, UserRoleLevel
 from web.libs.parse import gen_slug
-from web.security import secure
 from web.syncer import sync_after
 from web.syncer.object import SkuSyncer
 

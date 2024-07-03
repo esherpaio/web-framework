@@ -6,12 +6,12 @@ from werkzeug import Response
 from werkzeug.utils import secure_filename
 
 from web.api.utils import ApiText, json_get, json_response
+from web.auth import secure
 from web.blueprint.api_v1 import api_v1_bp
 from web.config import config
 from web.database import conn
 from web.database.model import Article, ArticleMedia, File, FileTypeId, UserRoleLevel
 from web.libs import cdn
-from web.security import secure
 
 #
 # Configuration

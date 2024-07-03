@@ -3,12 +3,12 @@ from enum import StrEnum
 from werkzeug import Response
 
 from web.api.utils import ApiText, json_get, json_response
+from web.auth import secure
 from web.blueprint.api_v1 import api_v1_bp
 from web.database import conn
 from web.database.model import Order, UserRoleLevel
 from web.ext.mollie import Mollie
 from web.i18n.base import _
-from web.security import secure
 
 from ._common import create_refund
 

@@ -49,7 +49,7 @@ JWT_DECODE_LEEWAY_S = 60
 #
 
 
-class Security:
+class Auth:
     def __init__(self, app: Flask) -> None:
         self.app = app
         self.app.register_error_handler(AuthError, self.on_error)
@@ -70,7 +70,8 @@ class Security:
             del_jwt(response)
         return response
 
-    def create_guest(self) -> int:
+    @staticmethod
+    def _create_guest() -> int:
         with conn.begin() as s:
             user = User(is_active=True, role_id=UserRoleId.GUEST)
             s.add(user)
@@ -85,7 +86,7 @@ class Security:
             user_id = jwt_authentication()
             g._user_auth = AuthType.JWT
         else:
-            user_id = self.create_guest()
+            user_id = self._create_guest()
             g._user_auth = AuthType.JWT
         g._user_id = user_id
 

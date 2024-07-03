@@ -9,11 +9,11 @@ from web.config import config
 #
 
 
-_T_co = TypeVar("_T_co", covariant=True)
+_SP = TypeVar("_SP", covariant=True)
 
 
-class SupportsRead(Protocol[_T_co]):
-    def read(self, __length: int = ...) -> _T_co: ...
+class SupportsRead(Protocol[_SP]):
+    def read(self, __length: int = ...) -> _SP: ...
 
 
 #

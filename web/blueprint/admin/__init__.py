@@ -1,6 +1,7 @@
 from ._bp import admin_bp
 from .routes import (
     categories,
+    changelog,
     countries,
     coupons,
     error,
@@ -16,6 +17,7 @@ from .routes import (
 __all__ = [
     "admin_bp",
     "categories",
+    "changelog",
     "countries",
     "coupons",
     "error",
