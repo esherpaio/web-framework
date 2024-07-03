@@ -51,7 +51,7 @@ class ColorPaletteFromImage:
         color_histogram: typing.Dict[str, int] = {}
         for x in range(0, img_in.width):
             for y in range(0, img_in.height):
-                p: typing.Tuple[int, int, int] = img_in.getpixel((x, y))
+                p: typing.Tuple[int, int, int] = img_in.getpixel((x, y))  # type: ignore[assignment]
                 h: str = RGBColor(
                     Decimal(p[0] / 255.0), Decimal(p[1] / 255.0), Decimal(p[2] / 255.0)
                 ).to_hex_string()

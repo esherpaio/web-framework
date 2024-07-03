@@ -14,7 +14,7 @@ from werkzeug import Response
 from web.api.utils import json_response
 from web.config import config
 from web.database import conn
-from web.database.model import User, UserRoleLevel
+from web.database.model import User, UserRoleId, UserRoleLevel
 from web.libs.logger import log
 
 from .enum import AuthType
@@ -25,8 +25,7 @@ from .user import current_user
 # Constants
 #
 
-CSRF_ENABLED = True
-CSRF_METHODS = ["GET", "POST", "PUT", "PATCH", "DELETE"]
+CSRF_METHODS = ["POST", "PUT", "PATCH", "DELETE"]
 CSRF_COOKIE_NAME = "csrf_token"
 CSRF_COOKIE_MAX_AGE = 31540000
 
@@ -71,6 +70,12 @@ class Security:
             del_jwt(response)
         return response
 
+    def create_guest(self) -> int:
+        with conn.begin() as s:
+            user = User(is_active=True, role_id=UserRoleId.GUEST)
+            s.add(user)
+        return user.id
+
     def before_request(self) -> None:
         user_id = None
         if KEY_HEADER_NAME in request.headers:
@@ -78,6 +83,9 @@ class Security:
             g._user_auth = AuthType.KEY
         elif JWT_COOKIE_NAME in request.cookies:
             user_id = jwt_authentication()
+            g._user_auth = AuthType.JWT
+        else:
+            user_id = self.create_guest()
             g._user_auth = AuthType.JWT
         g._user_id = user_id
 

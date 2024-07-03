@@ -73,7 +73,7 @@ class JBIG2ImageTransformer(Transformer):
             )
             w = int(object_to_transform["Width"])
             h = int(object_to_transform["Height"])
-            tmp = PILImage.new("RGB", (w, h), (128, 128, 128))
+            tmp = PILImage.new("RGB", (w, h), (128, 128, 128))  # type: ignore[assignment]
 
         # add base methods
         PDFObject.add_pdf_object_methods(tmp)
