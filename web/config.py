@@ -28,7 +28,6 @@ class EnvVar:
         return self.parse(os.getenv(self.key, self.default))
 
     def parse(self, value: str, type_: Any = None) -> Any:
-        print(value, type_)
         if type_ is None:
             type_ = self.type
         if type_ == str:
