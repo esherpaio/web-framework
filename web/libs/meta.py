@@ -8,10 +8,6 @@ from markupsafe import Markup
 from web.config import config
 from web.database.model import AppRoute
 
-#
-# Enumerators
-#
-
 
 class MetaTag(StrEnum):
     LINK_APPLE_TOUCH_ICON = "<link rel='apple-touch-icon' href='%s'/>"
@@ -42,11 +38,6 @@ class RobotTag(StrEnum):
     INDEX_NOFOLLOW = "index, nofollow"
     NOINDEX_NOFOLLOW = "noindex, nofollow"
     INDEX_FOLLOW_MAX = "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"  # fmt: skip
-
-
-#
-# Classes
-#
 
 
 class Meta:
@@ -166,11 +157,6 @@ class Meta:
         if self.twitter_at:
             yield Markup(MetaTag.TWITTER_SITE % self.twitter_at)
             yield Markup(MetaTag.TWITTER_CREATOR % self.twitter_at)
-
-
-#
-# Functions
-#
 
 
 def gen_meta(route: AppRoute | None = None) -> Meta:

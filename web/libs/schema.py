@@ -5,11 +5,7 @@ from markupsafe import Markup
 
 from web.config import config
 from web.database.model import AppRoute
-from web.libs.locale import current_locale, url_for_locale
-
-#
-# Classes
-#
+from web.locale import current_locale, url_for_locale
 
 
 class Schema:
@@ -149,11 +145,6 @@ class SchemaProduct(Schema):
         if description:
             data["description"] = description
         self.data = data
-
-
-#
-# Functions
-#
 
 
 def gen_schemas(

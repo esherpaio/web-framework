@@ -6,11 +6,7 @@ from web.database import conn
 from web.database.model import Email, EmailStatusId
 from web.libs.logger import log
 
-from .base import mail
-
-#
-# Functions
-#
+from .mail import mail
 
 
 def send_emails() -> None:

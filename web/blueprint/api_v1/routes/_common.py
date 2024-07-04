@@ -11,7 +11,7 @@ from web.database.model import Cart, Order, Refund, User, Verification
 from web.ext.mollie import Mollie, mollie_amount
 from web.libs.cart import get_shipment_methods
 from web.libs.utils import none_attrgetter
-from web.mail.base import MailEvent, mail
+from web.mail.mail import MailEvent, mail
 
 
 def create_refund(

@@ -10,7 +10,7 @@ from web.config import config
 from web.libs.logger import log
 from web.libs.utils import Singleton
 
-from .io import Encoding, Minification, choose_encoding, choose_minification
+from .enums import Encoding, Minification, choose_encoding, choose_minification
 from .object import minify_html
 
 
@@ -173,9 +173,5 @@ class Optimizer(metaclass=Singleton):
         self.set_headers(response, encoding)
         return response
 
-
-#
-# Variables
-#
 
 optimizer = Optimizer()

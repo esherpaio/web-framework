@@ -6,20 +6,11 @@ from mollie.api.client import Client
 from web.config import config
 from web.libs.parse import strip_scheme
 
-#
-# Classes
-#
-
 
 class Mollie(Client):
     def __init__(self):
         super().__init__()
         self.set_api_key(config.MOLLIE_KEY)
-
-
-#
-# Functions
-#
 
 
 def mollie_amount(number: int | float, currency: str) -> dict:

@@ -1,10 +1,6 @@
 import math
 from typing import Any
 
-#
-# Functions
-#
-
 
 def get_pages(offset: int, limit: int, total: int) -> list[dict[str, Any]]:
     def _append_page(number_: int, name_: str, disabled: bool = False) -> None:

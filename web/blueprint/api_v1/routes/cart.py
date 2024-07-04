@@ -12,8 +12,8 @@ from web.blueprint.api_v1 import api_v1_bp
 from web.database import conn
 from web.database.model import Billing, Cart, Coupon, Shipping
 from web.libs.cart import get_shipment_methods, get_vat
-from web.libs.locale import current_locale
 from web.libs.utils import none_attrgetter
+from web.locale import current_locale
 
 #
 # Configuration

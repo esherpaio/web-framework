@@ -6,7 +6,7 @@ from werkzeug import Response
 from werkzeug.security import check_password_hash
 
 from web.api.utils import json_get, json_response
-from web.auth.base import jwt_login, jwt_logout
+from web.auth.auth import jwt_login, jwt_logout
 from web.blueprint.api_v1 import api_v1_bp
 from web.config import config
 from web.database import conn

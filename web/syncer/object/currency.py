@@ -9,7 +9,7 @@ from web.database.model import Currency
 from web.database.seed import currency_seeds
 from web.libs.logger import log
 
-from ..base import Syncer
+from ..syncer import Syncer
 from ..utils import external_sync
 
 

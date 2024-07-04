@@ -6,7 +6,7 @@ from web.config import config
 from web.database.model import Country, Currency, CurrencyId, Region
 from web.libs.logger import log
 
-from ..base import Syncer
+from ..syncer import Syncer
 from ..utils import external_sync
 
 

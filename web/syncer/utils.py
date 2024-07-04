@@ -5,7 +5,7 @@ from werkzeug import Response
 from web.config import config
 from web.database.client import conn
 
-from .base import Syncer
+from .syncer import Syncer
 
 
 def external_sync(f: Callable) -> Callable[..., None]:

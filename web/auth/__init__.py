@@ -1,5 +1,5 @@
-from .base import Auth, authorize, jwt_login, jwt_logout
-from .user import current_user
+from .auth import Auth, authorize, jwt_login, jwt_logout
+from .proxy import current_user
 
 __all__ = [
     "Auth",

@@ -1,7 +1,7 @@
 from web.libs.errors import WebError
 
 #
-# Super
+# Base
 #
 
 
@@ -30,7 +30,7 @@ class _DbFieldMixin:
 
 
 #
-# Sub
+# Exceptions
 #
 
 
