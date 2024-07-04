@@ -1,7 +1,7 @@
 from werkzeug import Response
 
 from web.api.utils import ApiText, json_get, json_response
-from web.auth import secure
+from web.auth import authorize
 from web.blueprint.api_v1 import api_v1_bp
 from web.database import conn
 from web.database.model import ShipmentMethod, ShipmentZone, UserRoleLevel
@@ -17,7 +17,7 @@ from web.database.model import ShipmentMethod, ShipmentZone, UserRoleLevel
 
 
 @api_v1_bp.post("/shipment-zones")
-@secure(UserRoleLevel.ADMIN)
+@authorize(UserRoleLevel.ADMIN)
 def post_shipment_zones() -> Response:
     country_id, _ = json_get("country_id", int)
     order, _ = json_get("order", int, nullable=False)
@@ -52,7 +52,7 @@ def post_shipment_zones() -> Response:
 
 
 @api_v1_bp.patch("/shipment-zones/<int:shipment_zone_id>")
-@secure(UserRoleLevel.ADMIN)
+@authorize(UserRoleLevel.ADMIN)
 def patch_shipment_zones_id(shipment_zone_id: int) -> Response:
     country_id, has_country_id = json_get("country_id", int)
     order, has_order = json_get("order", int)
@@ -76,7 +76,7 @@ def patch_shipment_zones_id(shipment_zone_id: int) -> Response:
 
 
 @api_v1_bp.delete("/shipment-zones/<int:shipment_zone_id>")
-@secure(UserRoleLevel.ADMIN)
+@authorize(UserRoleLevel.ADMIN)
 def delete_shipment_zones_id(shipment_zone_id: int) -> Response:
     with conn.begin() as s:
         # Delete shipment zone

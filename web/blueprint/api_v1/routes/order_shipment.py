@@ -1,7 +1,7 @@
 from werkzeug import Response
 
 from web.api.utils import ApiText, json_get, json_response
-from web.auth import secure
+from web.auth import authorize
 from web.blueprint.api_v1 import api_v1_bp
 from web.database import conn
 from web.database.model import Order, OrderStatusId, Shipment, UserRoleLevel
@@ -18,7 +18,7 @@ from web.mail.base import MailEvent, mail
 
 
 @api_v1_bp.post("/orders/<int:order_id>/shipments")
-@secure(UserRoleLevel.ADMIN)
+@authorize(UserRoleLevel.ADMIN)
 def post_orders_id_shipments(order_id: int) -> Response:
     url, _ = json_get("url", str, nullable=False)
 

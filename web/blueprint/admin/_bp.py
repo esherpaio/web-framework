@@ -3,7 +3,7 @@ import os
 from flask import Blueprint, redirect, url_for
 from werkzeug import Response
 
-from web.auth import secure
+from web.auth import authorize
 from web.cache import cache
 from web.config import config
 from web.database.model import UserRoleLevel
@@ -22,8 +22,8 @@ admin_bp = Blueprint(
 
 
 @admin_bp.before_request
-@secure(UserRoleLevel.ADMIN)
-def authorize() -> None:
+@authorize(UserRoleLevel.ADMIN)
+def _authorize() -> None:
     pass
 
 

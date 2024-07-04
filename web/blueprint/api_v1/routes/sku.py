@@ -1,7 +1,7 @@
 from werkzeug import Response
 
 from web.api.utils import ApiText, json_get, json_response
-from web.auth import secure
+from web.auth import authorize
 from web.blueprint.api_v1 import api_v1_bp
 from web.database import conn
 from web.database.model import CategoryItem, ProductLink, Sku, UserRoleLevel
@@ -17,7 +17,7 @@ from web.database.model import CategoryItem, ProductLink, Sku, UserRoleLevel
 
 
 @api_v1_bp.patch("/skus/<int:sku_id>")
-@secure(UserRoleLevel.ADMIN)
+@authorize(UserRoleLevel.ADMIN)
 def patch_skus_id(sku_id: int) -> Response:
     attributes, has_attributes = json_get("attributes", dict, default={})
     is_visible, has_is_visible = json_get("is_visible", bool)
@@ -44,7 +44,7 @@ def patch_skus_id(sku_id: int) -> Response:
 
 
 @api_v1_bp.delete("/skus/<int:sku_id>")
-@secure(UserRoleLevel.ADMIN)
+@authorize(UserRoleLevel.ADMIN)
 def delete_skus_id(sku_id: int) -> Response:
     with conn.begin() as s:
         # Delete sku

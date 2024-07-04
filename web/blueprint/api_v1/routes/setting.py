@@ -5,7 +5,7 @@ from werkzeug import Response
 
 from web.api import API
 from web.api.utils import json_response
-from web.auth import secure
+from web.auth import authorize
 from web.blueprint.api_v1 import api_v1_bp
 from web.database import conn
 from web.database.model import AppSetting, UserRoleLevel
@@ -33,7 +33,7 @@ class SettingAPI(API):
 
 
 @api_v1_bp.get("/setting")
-@secure(UserRoleLevel.ADMIN)
+@authorize(UserRoleLevel.ADMIN)
 def get_setting() -> Response:
     api = SettingAPI()
     with conn.begin() as s:
@@ -43,7 +43,7 @@ def get_setting() -> Response:
 
 
 @api_v1_bp.patch("/setting")
-@secure(UserRoleLevel.ADMIN)
+@authorize(UserRoleLevel.ADMIN)
 def patch_setting() -> Response:
     api = SettingAPI()
     data = api.gen_request_data(api.patch_columns)

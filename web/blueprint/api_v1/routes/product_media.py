@@ -6,7 +6,7 @@ from werkzeug import Response
 from werkzeug.utils import secure_filename
 
 from web.api.utils import ApiText, json_get, json_response
-from web.auth import secure
+from web.auth import authorize
 from web.blueprint.api_v1 import api_v1_bp
 from web.config import config
 from web.database import conn
@@ -24,7 +24,7 @@ from web.libs import cdn
 
 
 @api_v1_bp.post("/products/<int:product_id>/media")
-@secure(UserRoleLevel.ADMIN)
+@authorize(UserRoleLevel.ADMIN)
 def post_products_id_media(product_id: int) -> Response:
     with conn.begin() as s:
         # Get product
@@ -90,7 +90,7 @@ def post_products_id_media(product_id: int) -> Response:
 
 
 @api_v1_bp.patch("/products/<int:product_id>/media/<int:media_id>")
-@secure(UserRoleLevel.ADMIN)
+@authorize(UserRoleLevel.ADMIN)
 def patch_products_id_media_id(product_id: int, media_id: int) -> Response:
     description, has_description = json_get("description", str)
     order, has_order = json_get("order", int)
@@ -116,7 +116,7 @@ def patch_products_id_media_id(product_id: int, media_id: int) -> Response:
 
 
 @api_v1_bp.delete("/products/<int:product_id>/media/<int:media_id>")
-@secure(UserRoleLevel.ADMIN)
+@authorize(UserRoleLevel.ADMIN)
 def delete_products_id_media_id(product_id: int, media_id) -> Response:
     with conn.begin() as s:
         # Get product media and file

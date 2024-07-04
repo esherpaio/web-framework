@@ -1,7 +1,7 @@
 from werkzeug import Response
 
 from web.api.utils import ApiText, json_get, json_response
-from web.auth import secure
+from web.auth import authorize
 from web.blueprint.api_v1 import api_v1_bp
 from web.database import conn
 from web.database.model import Category, UserRoleLevel
@@ -18,7 +18,7 @@ from web.libs.parse import gen_slug
 
 
 @api_v1_bp.post("/categories")
-@secure(UserRoleLevel.ADMIN)
+@authorize(UserRoleLevel.ADMIN)
 def post_categories() -> Response:
     name, _ = json_get("name", str, nullable=False)
     order, _ = json_get("order", int)
@@ -41,7 +41,7 @@ def post_categories() -> Response:
 
 
 @api_v1_bp.patch("/categories/<int:category_id>")
-@secure(UserRoleLevel.ADMIN)
+@authorize(UserRoleLevel.ADMIN)
 def patch_categories_id(category_id: int) -> Response:
     attributes, has_attributes = json_get("attributes", dict, default={})
     order, has_order = json_get("order", int)
@@ -62,7 +62,7 @@ def patch_categories_id(category_id: int) -> Response:
 
 
 @api_v1_bp.delete("/categories/<int:category_id>")
-@secure(UserRoleLevel.ADMIN)
+@authorize(UserRoleLevel.ADMIN)
 def delete_categories_id(category_id: int) -> Response:
     with conn.begin() as s:
         # Delete category

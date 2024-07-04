@@ -10,4 +10,4 @@ class AuthType(StrEnum):
 class G(StrEnum):
     USER = "_user"
     USER_ID = "_user_id"
-    USER_AUTH = "_user_auth"
+    AUTH_TYPE = "_auth_type"

@@ -7,7 +7,7 @@ from werkzeug import Response
 
 from web.api import API
 from web.api.utils import ApiText, json_response
-from web.auth import current_user, secure
+from web.auth import authorize, current_user
 from web.blueprint.api_v1 import api_v1_bp
 from web.database import conn
 from web.database.model import (
@@ -76,7 +76,7 @@ def post_orders() -> Response:
 
 
 @api_v1_bp.patch("/orders/<int:order_id>")
-@secure(UserRoleLevel.ADMIN)
+@authorize(UserRoleLevel.ADMIN)
 def patch_orders_id(order_id: int) -> Response:
     api = OrderAPI()
     data = api.gen_request_data(api.patch_columns)
@@ -89,7 +89,7 @@ def patch_orders_id(order_id: int) -> Response:
 
 
 @api_v1_bp.delete("/orders/<int:order_id>")
-@secure(UserRoleLevel.ADMIN)
+@authorize(UserRoleLevel.ADMIN)
 def delete_orders_id(order_id: int) -> Response:
     api = OrderAPI()
     data = api.gen_view_args_data()

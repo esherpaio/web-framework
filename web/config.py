@@ -28,6 +28,7 @@ class EnvVar:
         return self.parse(os.getenv(self.key, self.default))
 
     def parse(self, value: str, type_: Any = None) -> Any:
+        print(value, type_)
         if type_ is None:
             type_ = self.type
         if type_ == str:
@@ -72,6 +73,10 @@ class Config(metaclass=Singleton):
         "APP_SYNC_STATIC": EnvVar("APP_SYNC_STATIC", bool, True),
         "APP_SYNC_EXTERNAL": EnvVar("APP_SYNC_EXTERNAL", bool, False),
         "APP_SYNC_TIMEOUT": EnvVar("APP_SYNC_TIMEOUT", int, 10),
+        # Auth
+        "AUTH_JWT_SECRET": EnvVar("AUTH_JWT_SECRET", str),
+        "AUTH_JWT_EXPIRES_S": EnvVar("AUTH_JWT_EXPIRES_S", int, 86400),
+        "AUTH_JWT_ALLOW_GUEST": EnvVar("AUTH_JWT_ALLOW_GUEST", bool, False),
         # Business details
         "BUSINESS_NAME": ConfigVar("BUSINESS_NAME"),
         "BUSINESS_EMAIL": ConfigVar("BUSINESS_EMAIL"),

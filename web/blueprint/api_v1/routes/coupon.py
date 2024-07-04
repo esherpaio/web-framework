@@ -1,7 +1,7 @@
 from werkzeug import Response
 
 from web.api.utils import ApiText, json_get, json_response
-from web.auth import secure
+from web.auth import authorize
 from web.blueprint.api_v1 import api_v1_bp
 from web.database import conn
 from web.database.model import Coupon, UserRoleLevel
@@ -17,7 +17,7 @@ from web.database.model import Coupon, UserRoleLevel
 
 
 @api_v1_bp.post("/coupons")
-@secure(UserRoleLevel.ADMIN)
+@authorize(UserRoleLevel.ADMIN)
 def post_coupons() -> Response:
     amount, _ = json_get("amount", int | float)
     code, _ = json_get("code", str, nullable=False)
@@ -38,7 +38,7 @@ def post_coupons() -> Response:
 
 
 @api_v1_bp.delete("/coupons/<int:coupon_id>")
-@secure(UserRoleLevel.ADMIN)
+@authorize(UserRoleLevel.ADMIN)
 def delete_coupons_id(coupon_id: int) -> Response:
     with conn.begin() as s:
         # Delete coupon

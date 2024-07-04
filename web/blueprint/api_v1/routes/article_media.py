@@ -6,7 +6,7 @@ from werkzeug import Response
 from werkzeug.utils import secure_filename
 
 from web.api.utils import ApiText, json_get, json_response
-from web.auth import secure
+from web.auth import authorize
 from web.blueprint.api_v1 import api_v1_bp
 from web.config import config
 from web.database import conn
@@ -24,7 +24,7 @@ from web.libs import cdn
 
 
 @api_v1_bp.post("/articles/<int:article_id>/media")
-@secure(UserRoleLevel.ADMIN)
+@authorize(UserRoleLevel.ADMIN)
 def post_articles_id_media(article_id: int) -> Response:
     with conn.begin() as s:
         # Get article
@@ -89,7 +89,7 @@ def post_articles_id_media(article_id: int) -> Response:
 
 
 @api_v1_bp.patch("/articles/<int:article_id>/media/<int:media_id>")
-@secure(UserRoleLevel.ADMIN)
+@authorize(UserRoleLevel.ADMIN)
 def patch_articles_id_media_id(article_id: int, media_id: int) -> Response:
     description, has_description = json_get("description", str)
     order, has_order = json_get("order", int)
@@ -115,7 +115,7 @@ def patch_articles_id_media_id(article_id: int, media_id: int) -> Response:
 
 
 @api_v1_bp.delete("/articles/<int:article_id>/media/<int:media_id>")
-@secure(UserRoleLevel.ADMIN)
+@authorize(UserRoleLevel.ADMIN)
 def delete_articles_id_media_id(article_id: int, media_id: int) -> Response:
     with conn.begin() as s:
         # Get article media and file

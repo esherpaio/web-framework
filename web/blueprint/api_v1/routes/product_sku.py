@@ -3,7 +3,7 @@ import itertools
 from werkzeug import Response
 
 from web.api.utils import ApiText, json_response
-from web.auth import secure
+from web.auth import authorize
 from web.blueprint.api_v1 import api_v1_bp
 from web.database import conn
 from web.database.model import Product, ProductValue, Sku, SkuDetail, UserRoleLevel
@@ -23,7 +23,7 @@ from web.syncer.object import SkuSyncer
 
 
 @api_v1_bp.post("/products/<int:product_id>/skus")
-@secure(UserRoleLevel.ADMIN)
+@authorize(UserRoleLevel.ADMIN)
 @sync_after(SkuSyncer)
 def post_skus(product_id: int) -> Response:
     with conn.begin() as s:

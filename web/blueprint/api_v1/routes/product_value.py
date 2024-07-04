@@ -3,7 +3,7 @@ from sqlalchemy.orm import contains_eager
 from werkzeug import Response
 
 from web.api.utils import ApiText, json_get, json_response
-from web.auth import secure
+from web.auth import authorize
 from web.blueprint.api_v1 import api_v1_bp
 from web.database import conn
 from web.database.model import ProductValue, Sku, SkuDetail, UserRoleLevel
@@ -22,7 +22,7 @@ from web.syncer.object import SkuSyncer
 
 
 @api_v1_bp.post("/products/<int:product_id>/values")
-@secure(UserRoleLevel.ADMIN)
+@authorize(UserRoleLevel.ADMIN)
 def post_products_id_values(product_id: int) -> Response:
     name, _ = json_get("name", str, nullable=False)
     option_id, _ = json_get("option_id", int, nullable=False)
@@ -56,7 +56,7 @@ def post_products_id_values(product_id: int) -> Response:
 
 
 @api_v1_bp.patch("/products/<int:product_id>/values/<int:value_id>")
-@secure(UserRoleLevel.ADMIN)
+@authorize(UserRoleLevel.ADMIN)
 @sync_after(SkuSyncer)
 def patch_products_id_values_id(product_id: int, value_id: int) -> Response:
     media_id, has_media_id = json_get("media_id", int)
@@ -81,7 +81,7 @@ def patch_products_id_values_id(product_id: int, value_id: int) -> Response:
 
 
 @api_v1_bp.delete("/products/<int:product_id>/values/<int:value_id>")
-@secure(UserRoleLevel.ADMIN)
+@authorize(UserRoleLevel.ADMIN)
 def delete_products_id_values_id(product_id: int, value_id: int) -> Response:
     with conn.begin() as s:
         # Delete product value

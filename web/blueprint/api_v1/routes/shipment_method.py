@@ -1,7 +1,7 @@
 from werkzeug import Response
 
 from web.api.utils import ApiText, json_get, json_response
-from web.auth import secure
+from web.auth import authorize
 from web.blueprint.api_v1 import api_v1_bp
 from web.database import conn
 from web.database.model import ShipmentMethod, UserRoleLevel
@@ -17,7 +17,7 @@ from web.database.model import ShipmentMethod, UserRoleLevel
 
 
 @api_v1_bp.post("/shipment-methods")
-@secure(UserRoleLevel.ADMIN)
+@authorize(UserRoleLevel.ADMIN)
 def post_shipment_methods() -> Response:
     class_id, _ = json_get("class_id", int, nullable=False)
     name, _ = json_get("name", str, nullable=False)
@@ -40,7 +40,7 @@ def post_shipment_methods() -> Response:
 
 
 @api_v1_bp.patch("/shipment-methods/<int:shipment_method_id>")
-@secure(UserRoleLevel.ADMIN)
+@authorize(UserRoleLevel.ADMIN)
 def patch_shipment_methods_id(shipment_method_id: int) -> Response:
     name, has_name = json_get("name", str)
     phone_required, has_phone_required = json_get("phone_required", bool)
@@ -66,7 +66,7 @@ def patch_shipment_methods_id(shipment_method_id: int) -> Response:
 
 
 @api_v1_bp.delete("/shipment-methods/<int:shipment_method_id>")
-@secure(UserRoleLevel.ADMIN)
+@authorize(UserRoleLevel.ADMIN)
 def delete_shipment_methods_id(shipment_method_id: int) -> Response:
     with conn.begin() as s:
         # Delete shipment method

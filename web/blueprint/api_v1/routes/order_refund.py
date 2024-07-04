@@ -3,7 +3,7 @@ from enum import StrEnum
 from werkzeug import Response
 
 from web.api.utils import ApiText, json_get, json_response
-from web.auth import secure
+from web.auth import authorize
 from web.blueprint.api_v1 import api_v1_bp
 from web.database import conn
 from web.database.model import Order, UserRoleLevel
@@ -30,7 +30,7 @@ class Text(StrEnum):
 
 
 @api_v1_bp.post("/orders/<int:order_id>/refunds")
-@secure(UserRoleLevel.ADMIN)
+@authorize(UserRoleLevel.ADMIN)
 def post_orders_id_refund(order_id: int) -> Response:
     price, _ = json_get("total_price", int | float, nullable=False)
 

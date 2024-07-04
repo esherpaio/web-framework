@@ -2,7 +2,7 @@ from werkzeug import Response
 
 from web.api import API
 from web.api.utils import json_response
-from web.auth import secure
+from web.auth import authorize
 from web.blueprint.api_v1 import api_v1_bp
 from web.database import conn
 from web.database.model import Country, UserRoleLevel
@@ -41,7 +41,7 @@ class CountryAPI(API):
 
 
 @api_v1_bp.post("/countries")
-@secure(UserRoleLevel.ADMIN)
+@authorize(UserRoleLevel.ADMIN)
 def post_countries() -> Response:
     api = CountryAPI()
     data = api.gen_request_data(api.post_columns)
@@ -71,7 +71,7 @@ def get_countries_id(country_id: int) -> Response:
 
 
 @api_v1_bp.patch("/countries/<int:country_id>")
-@secure(UserRoleLevel.ADMIN)
+@authorize(UserRoleLevel.ADMIN)
 def patch_countries_id(country_id: int) -> Response:
     api = CountryAPI()
     data = api.gen_request_data(api.patch_columns)
@@ -83,7 +83,7 @@ def patch_countries_id(country_id: int) -> Response:
 
 
 @api_v1_bp.delete("/countries/<int:country_id>")
-@secure(UserRoleLevel.ADMIN)
+@authorize(UserRoleLevel.ADMIN)
 def delete_countries_id(country_id: int) -> Response:
     api = CountryAPI()
     with conn.begin() as s:
