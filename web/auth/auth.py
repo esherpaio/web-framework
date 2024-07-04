@@ -19,7 +19,7 @@ from web.libs.logger import log
 
 from .enum import AuthType, G
 from .error import AuthError, CSRFError, Forbidden, JWTError, KEYError, NoValueError
-from .user import current_user
+from .proxy import current_user
 
 #
 # Constants

@@ -6,10 +6,6 @@ from smtplib import SMTP
 
 from web.config import config
 
-#
-# Classes
-#
-
 
 class _AnsiCode(StrEnum):
     """ANSI escape codes."""
@@ -69,11 +65,6 @@ class SMTPHandler(_SMTPHandler):
             self.handleError(record)
 
 
-#
-# Functions
-#
-
-
 def _get_logger(name: str) -> logging.Logger:
     level = logging.DEBUG if config.APP_DEBUG else logging.INFO
     base = logging.getLogger(name)
@@ -85,9 +76,6 @@ def _get_logger(name: str) -> logging.Logger:
         smtp = SMTPHandler()
         base.addHandler(smtp)
     return base
-
-
-# Variables
 
 
 log = _get_logger(__name__)

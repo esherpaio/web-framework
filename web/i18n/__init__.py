@@ -1,4 +1,4 @@
-from .base import _, translator
+from .translator import _, translator
 
 __all__ = [
     "_",

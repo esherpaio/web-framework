@@ -1,4 +1,4 @@
-from web.packer.base import CssBundle, JsBundle, Packer
+from web.packer.packer import CssBundle, JsBundle, Packer
 
 
 def generate_admin_static() -> None:

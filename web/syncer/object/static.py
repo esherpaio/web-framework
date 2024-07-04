@@ -9,7 +9,7 @@ from web.libs.logger import log
 from web.packer import Packer
 from web.packer.bundle import CssBundle, JsBundle, ScssBundle
 
-from ..base import Syncer
+from ..syncer import Syncer
 
 
 class StaticType(StrEnum):

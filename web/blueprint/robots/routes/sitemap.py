@@ -9,9 +9,9 @@ from web.cache import cache
 from web.database import conn
 from web.database.model import Article, Category, Sku
 from web.libs.app import has_argument, is_endpoint
-from web.libs.locale import gen_locale
 from web.libs.parse import str_to_xml
 from web.libs.sitemap import Sitemap, SitemapUrl
+from web.locale import gen_locale
 
 
 @robots_bp.route("/sitemap.xml")

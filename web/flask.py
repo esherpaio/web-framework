@@ -2,8 +2,7 @@ from datetime import datetime
 from typing import Callable, Type
 
 import alembic.config
-from flask import Blueprint, Flask, redirect, request, url_for
-from werkzeug import Response
+from flask import Blueprint, Flask
 
 from web.auth import Auth, current_user
 from web.cache import cache, cache_manager
@@ -27,8 +26,8 @@ from web.database.model import (
 )
 from web.libs import cdn
 from web.libs.app import check_redirects, handle_frontend_error
-from web.libs.locale import current_locale, expects_locale, gen_locale, lacks_locale
 from web.libs.logger import log
+from web.locale import LocaleManager, current_locale
 from web.mail import MailEvent, mail
 from web.optimizer import optimizer
 from web.syncer import Syncer
@@ -186,10 +185,7 @@ class FlaskWeb:
             self._app.before_request(check_redirects)
 
     def setup_locale(self) -> None:
-        self._app.before_request(self.redirect_locale)
-        self._app.url_defaults(self.set_locale_urls)
-        self._app.add_template_global(self.get_locale_url, name="locale_url")
-        self._app.after_request(self.set_locale)
+        LocaleManager(self._app)
 
     def setup_error_handling(self) -> None:
         self._app.register_error_handler(Exception, handle_frontend_error)
@@ -228,42 +224,3 @@ class FlaskWeb:
             cache.setting = s.query(AppSetting).first()
             cache.user_roles = s.query(UserRole).order_by(UserRole.name).all()
             # fmt: on
-
-    #
-    # Locale
-    #
-
-    @staticmethod
-    def redirect_locale() -> Response | None:
-        if request.endpoint is None:
-            return None
-        if request.view_args is None:
-            return None
-        if lacks_locale(request.endpoint, request.view_args):
-            request.view_args["_locale"] = current_locale.locale
-            url = url_for(request.endpoint, **request.view_args)
-            return redirect(url, code=301)
-        return None
-
-    @staticmethod
-    def set_locale_urls(endpoint: str, values: dict) -> None:
-        if lacks_locale(endpoint, values):
-            values["_locale"] = current_locale.locale
-
-    @staticmethod
-    def get_locale_url(language_code: str, country_code: str) -> str:
-        if request.endpoint is None:
-            return ""
-        if request.view_args is not None:
-            kwargs = request.view_args.copy()
-        else:
-            kwargs = {}
-        if expects_locale(request.endpoint):
-            locale = gen_locale(language_code, country_code)
-            kwargs["_locale"] = locale
-        return url_for(request.endpoint, **kwargs, _external=True)
-
-    @staticmethod
-    def set_locale(resp: Response) -> Response:
-        resp.set_cookie("locale", current_locale.locale)
-        return resp

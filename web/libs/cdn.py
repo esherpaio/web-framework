@@ -8,7 +8,6 @@ from web.config import config
 # Types
 #
 
-
 _SP = TypeVar("_SP", covariant=True)
 
 

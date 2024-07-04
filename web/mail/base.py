@@ -1,96 +1,91 @@
-from datetime import datetime
+import os
+from email.mime.application import MIMEApplication
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 from enum import StrEnum
-from typing import Callable
+from smtplib import SMTP
 
-from sqlalchemy.orm import Session
+import jinja2
 
-from web.auth import current_user
 from web.config import config
-from web.database.model import Email, EmailStatusId
 from web.libs.logger import log
-from web.libs.utils import Singleton
-
-from .event import (
-    mail_bulk,
-    mail_contact_business,
-    mail_order_paid,
-    mail_order_received,
-    mail_order_refunded,
-    mail_order_shipped,
-    mail_user_password,
-    mail_user_verification,
-)
-
-#
-# Classes
-#
 
 
-class MailEvent(StrEnum):
-    ORDER_PAID = "order.paid"
-    ORDER_RECEIVED = "order.received"
-    ORDER_REFUNDED = "order.refunded"
-    ORDER_SHIPPED = "order.shipped"
-    USER_REQUEST_PASSWORD = "user.request_password"
-    USER_REQUEST_VERIFICATION = "user.request_verification"
-    WEBSITE_CONTACT = "website.contact"
-    WEBSITE_BULK = "website.bulk"
+class MailMethod(StrEnum):
+    SMTP = "SMTP"
 
 
-class Mail(metaclass=Singleton):
-    events: dict[MailEvent | str, list[Callable]] = {
-        MailEvent.ORDER_PAID: [mail_order_paid],
-        MailEvent.ORDER_RECEIVED: [mail_order_received],
-        MailEvent.ORDER_REFUNDED: [mail_order_refunded],
-        MailEvent.ORDER_SHIPPED: [mail_order_shipped],
-        MailEvent.USER_REQUEST_PASSWORD: [mail_user_password],
-        MailEvent.USER_REQUEST_VERIFICATION: [mail_user_verification],
-        MailEvent.WEBSITE_CONTACT: [mail_contact_business],
-        MailEvent.WEBSITE_BULK: [mail_bulk],
-    }
-
-    @classmethod
-    def get_events(cls, event_id: MailEvent | str) -> list[Callable]:
-        events = cls.events.get(event_id, [])
-        if not events:
-            log.error(f"Event {event_id} not found")
-        return events
-
-    @classmethod
-    def trigger_events(
-        cls,
-        s: Session,
-        event_id: MailEvent | str,
-        _email: Email | None = None,
-        **kwargs,
-    ) -> None:
-        for event in cls.get_events(event_id):
-            status_id = EmailStatusId.QUEUED
-            if _email or not config.EMAIL_WORKER:
-                try:
-                    result = event(s, **kwargs)
-                except Exception:
-                    log.error(
-                        f"Error sending {config.EMAIL_METHOD} email", exc_info=True
-                    )
-                    result = False
-                status_id = EmailStatusId.SENT if result else EmailStatusId.FAILED
-            if _email is None:
-                _email = Email(
-                    event_id=event_id,
-                    data=kwargs,
-                    user_id=current_user.id if current_user else None,
-                    status_id=status_id,
-                )
-                s.add(_email)
-            else:
-                _email.updated_at = datetime.utcnow()
-                _email.status_id = status_id
-                s.flush()
+def render_email(name: str = "default", **attrs) -> str:
+    dir_ = os.path.dirname(os.path.realpath(__file__))
+    loader = jinja2.FileSystemLoader(dir_)
+    environment = jinja2.Environment(loader=loader)
+    fp = os.path.join("template", f"{name}.html")
+    attrs.update({"config": config})
+    html = environment.get_template(fp).render(attrs)
+    return html
 
 
-#
-# Variables
-#
+def send_email(
+    subject: str,
+    html: str,
+    to: list[str] | None = None,
+    reply_to: str | None = None,
+    cc: list[str] | None = None,
+    bcc: list[str] | None = None,
+    blob_path: str | None = None,
+    blob_name: str | None = None,
+) -> bool:
+    # Make unique addresses
+    if to is not None:
+        to = list(set(to))
+    if cc is not None:
+        cc = list(set(cc))
+    if bcc is not None:
+        bcc = list(set(bcc))
+    # Send email
+    if config.EMAIL_METHOD == MailMethod.SMTP:
+        _send_email_smtp(subject, html, to, reply_to, cc, bcc, blob_path, blob_name)
+    else:
+        log.error(f"Cannot send email, unknown method {config.EMAIL_METHOD}")
+        return False
+    return True
 
-mail = Mail()
+
+def _send_email_smtp(
+    subject: str,
+    html: str,
+    to: list[str] | None = None,
+    reply_to: str | None = None,
+    cc: list[str] | None = None,
+    bcc: list[str] | None = None,
+    blob_path: str | None = None,
+    blob_name: str | None = None,
+) -> None:
+    # Create message
+    msg = MIMEMultipart()
+    msg["From"] = config.EMAIL_FROM
+    msg["Reply-To"] = reply_to or config.EMAIL_FROM
+    msg["Subject"] = subject
+    if to is not None:
+        msg["To"] = ",".join(to)
+    if cc is not None:
+        msg["Cc"] = ",".join(cc)
+    if bcc is not None:
+        msg["Bcc"] = ",".join(bcc)
+    all_ = list(set((to or []) + (cc or []) + (bcc or [])))
+    # Add body
+    body = MIMEText(html, "html")
+    msg.attach(body)
+    # Add attachment
+    if blob_path and blob_name:
+        with open(blob_path, "rb") as file_:
+            data = file_.read()
+        attachment = MIMEApplication(data)
+        attachment.add_header("Content-Disposition", "attachment", filename=blob_name)
+        msg.attach(attachment)
+    # Send email
+    with SMTP(config.SMTP_HOST, port=config.SMTP_PORT, timeout=25) as smtp:
+        smtp.set_debuglevel(False)
+        smtp.starttls()
+        smtp.login(config.SMTP_USERNAME, config.SMTP_PASSWORD)
+        smtp.send_message(msg, from_addr=config.EMAIL_FROM, to_addrs=all_)

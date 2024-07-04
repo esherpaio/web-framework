@@ -1,4 +1,4 @@
-from .base import Packer
+from .packer import Packer
 
 __all__ = [
     "Packer",

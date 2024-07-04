@@ -2,7 +2,7 @@ from sqlalchemy.orm import Session
 
 from web.database.model import AppSetting
 
-from ..base import Syncer
+from ..syncer import Syncer
 
 
 class AppSettingSyncer(Syncer):

@@ -20,7 +20,7 @@ from web.database.model import (
     Shipping,
     User,
 )
-from web.libs.locale import current_locale
+from web.locale import current_locale
 
 #
 # Functions

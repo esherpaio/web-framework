@@ -6,7 +6,7 @@ from web.document.object import gen_invoice, gen_refund
 from web.i18n import _
 from web.libs.utils import remove_file
 
-from ..io import render_email, send_email
+from ..base import render_email, send_email
 
 
 def mail_order_received(

@@ -5,7 +5,7 @@ from web.auth import authorize
 from web.blueprint.api_v1 import api_v1_bp
 from web.database import conn
 from web.database.model import Order, OrderStatusId, Shipment, UserRoleLevel
-from web.mail.base import MailEvent, mail
+from web.mail.mail import MailEvent, mail
 
 #
 # Configuration
