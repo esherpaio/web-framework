@@ -14,7 +14,7 @@ from werkzeug import Response
 from web.api.utils import json_response
 from web.config import config
 from web.database import conn
-from web.database.model import User, UserRoleId, UserRoleLevel
+from web.database.model import User, UserRoleLevel
 from web.libs.logger import log
 
 from .enum import AuthType, G
@@ -27,7 +27,6 @@ from .user import current_user
 
 AUTH_KEY_HEADER_NAME = "Authorization"
 
-AUTH_JWT_SECRET = "secret"
 AUTH_JWT_EXPIRES_S = 604800
 AUTH_JWT_COOKIE_NAME = "access_token"
 AUTH_JWT_ENCODE_ALGORITHM = "HS256"
@@ -64,40 +63,34 @@ class Auth:
             del_jwt(response)
         return response
 
-    @staticmethod
-    def _create_guest() -> int:
-        with conn.begin() as s:
-            user = User(is_active=True, role_id=UserRoleId.GUEST)
-            s.add(user)
-        return user.id
-
     def before_request(self) -> None:
-        user_id = None
         if AUTH_KEY_HEADER_NAME in request.headers:
             user_id = key_authentication()
-            g._user_auth = AuthType.KEY
+            auth_type = AuthType.KEY
         elif AUTH_JWT_COOKIE_NAME in request.cookies:
             user_id = jwt_authentication()
-            g._user_auth = AuthType.JWT
+            auth_type = AuthType.JWT
         else:
-            user_id = self._create_guest()
-            g._user_auth = AuthType.JWT
+            user_id = None
+            auth_type = AuthType.NONE
         g._user_id = user_id
+        g._auth_type = auth_type
 
     def after_request(self, response: Response) -> Response:
-        auth_type = getattr(g, G.USER, None)
+        auth_type = getattr(g, G.AUTH_TYPE, None)
         if auth_type == AuthType.NONE:
             del_jwt(response)
-        elif auth_type == AuthType.JWT:
+        user_id = g.get(G.USER_ID, None)
+        if auth_type == AuthType.JWT and user_id is not None:
             access_token, csrf_token = encode_jwt(
-                g._user_id,
-                expires_delta=timedelta(seconds=AUTH_JWT_EXPIRES_S),
+                user_id,
+                expires_delta=timedelta(seconds=config.AUTH_JWT_EXPIRES_S),
             )
             set_jwt(response, access_token, csrf_token)
         return response
 
 
-def secure(level: UserRoleLevel | None = None) -> Any:
+def authorize(level: UserRoleLevel | None = None) -> Any:
     def decorate(f):
         def wrap(*args, **kwargs):
             if (
@@ -183,7 +176,7 @@ def encode_jwt(
         token_data["exp"] = now + expires_delta
     return jwt.encode(
         token_data,
-        AUTH_JWT_SECRET,
+        config.AUTH_JWT_SECRET,
         algorithm=AUTH_JWT_ENCODE_ALGORITHM,
         json_encoder=JSONEncoder,
     ), csrf_token
@@ -193,7 +186,7 @@ def decode_jwt(encoded_token: str, csrf_token: str | None = None) -> dict:
     try:
         decoded_token = jwt.decode(
             encoded_token,
-            AUTH_JWT_SECRET,
+            config.AUTH_JWT_SECRET,
             algorithms=AUTH_JWT_DECODE_ALGORITHMS,
             leeway=timedelta(seconds=AUTH_JWT_DECODE_LEEWAY_S),
         )
@@ -218,7 +211,7 @@ def set_jwt(response: Response, access_token: str, csrf_token: str) -> None:
     response.set_cookie(
         AUTH_JWT_COOKIE_NAME,
         value=access_token,
-        max_age=AUTH_JWT_EXPIRES_S,
+        max_age=config.AUTH_JWT_EXPIRES_S,
         secure=secure,
         httponly=True,
         domain=None,
@@ -228,7 +221,7 @@ def set_jwt(response: Response, access_token: str, csrf_token: str) -> None:
     response.set_cookie(
         AUTH_CSRF_COOKIE_NAME,
         value=csrf_token,
-        max_age=AUTH_JWT_EXPIRES_S,
+        max_age=config.AUTH_JWT_EXPIRES_S,
         secure=secure,
         httponly=False,
         domain=None,
@@ -242,17 +235,20 @@ def del_jwt(response: Response) -> None:
     response.delete_cookie(AUTH_CSRF_COOKIE_NAME)
 
 
-def jwt_login(user_id: int, sleep: bool = True) -> None:
-    if sleep:
-        time.sleep(randint(0, 1000) / 1000)
+#
+# Helpers
+#
+
+
+def jwt_login(user_id: int) -> None:
+    time.sleep(randint(0, 1000) / 1000)
     g._user = None
     g._user_id = user_id
-    g._user_auth = AuthType.JWT
+    g._auth_type = AuthType.JWT
 
 
-def jwt_logout(sleep: bool = True) -> None:
-    if sleep:
-        time.sleep(randint(0, 1000) / 1000)
+def jwt_logout() -> None:
+    time.sleep(randint(0, 1000) / 1000)
     g._user = None
     g._user_id = None
-    g._user_auth = AuthType.NONE
+    g._auth_type = AuthType.NONE

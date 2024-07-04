@@ -2,7 +2,7 @@ from werkzeug import Response
 
 from web.api import API
 from web.api.utils import json_response
-from web.auth import secure
+from web.auth import authorize
 from web.blueprint.api_v1 import api_v1_bp
 from web.database import conn
 from web.database.model import Currency, UserRoleLevel
@@ -33,7 +33,7 @@ class CurrencyAPI(API):
 
 
 @api_v1_bp.post("/currencies")
-@secure(UserRoleLevel.ADMIN)
+@authorize(UserRoleLevel.ADMIN)
 def post_currencies() -> Response:
     api = CurrencyAPI()
     data = api.gen_request_data(api.post_columns)
@@ -63,7 +63,7 @@ def get_currencies_id(currency_id: int) -> Response:
 
 
 @api_v1_bp.delete("/currencies/<int:currency_id>")
-@secure(UserRoleLevel.ADMIN)
+@authorize(UserRoleLevel.ADMIN)
 def delete_currencies_id(currency_id: int) -> Response:
     api = CurrencyAPI()
     with conn.begin() as s:

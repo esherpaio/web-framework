@@ -6,7 +6,7 @@ from flask.testing import FlaskClient
 
 from web.blueprint.api_v1 import api_v1_bp
 from web.blueprint.webhook_v1 import webhook_v1_bp
-from web.cache import cache
+from web.cache import cache_manager
 from web.database.client import engine
 from web.database.model import Base, User, UserRoleId
 from web.flask import FlaskWeb
@@ -80,14 +80,14 @@ def create_app() -> Flask:
         syncers=[UserSyncer],
     )
     web.setup()
-    cache._active = False
+    cache_manager._active = False
     app.config["web"] = web
     return app
 
 
 @pytest.fixture(scope="module", autouse=True)
 def update_cache() -> None:
-    cache.update(force=True)
+    cache_manager.update(force=True)
 
 
 @pytest.fixture(scope="session")

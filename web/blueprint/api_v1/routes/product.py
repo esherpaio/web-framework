@@ -1,7 +1,7 @@
 from werkzeug import Response
 
 from web.api.utils import ApiText, json_get, json_response
-from web.auth import secure
+from web.auth import authorize
 from web.blueprint.api_v1 import api_v1_bp
 from web.database import conn
 from web.database.model import CategoryItem, Product, ProductTypeId, Sku, UserRoleLevel
@@ -20,7 +20,7 @@ from web.syncer.object import SkuSyncer
 
 
 @api_v1_bp.post("/products")
-@secure(UserRoleLevel.ADMIN)
+@authorize(UserRoleLevel.ADMIN)
 @sync_after(SkuSyncer)
 def post_products() -> Response:
     name, _ = json_get("name", str, nullable=False)
@@ -43,7 +43,7 @@ def post_products() -> Response:
 
 
 @api_v1_bp.patch("/products/<int:product_id>")
-@secure(UserRoleLevel.ADMIN)
+@authorize(UserRoleLevel.ADMIN)
 @sync_after(SkuSyncer)
 def patch_products_id(product_id: int) -> Response:
     attributes, has_attributes = json_get("attributes", dict, default={})
@@ -80,7 +80,7 @@ def patch_products_id(product_id: int) -> Response:
 
 
 @api_v1_bp.delete("/products/<int:product_id>")
-@secure(UserRoleLevel.ADMIN)
+@authorize(UserRoleLevel.ADMIN)
 def delete_products_id(product_id: int) -> Response:
     with conn.begin() as s:
         # Delete product

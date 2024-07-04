@@ -42,5 +42,5 @@ def create_app() -> Flask:
 def view_login() -> str:
     with conn.begin() as s:
         user = s.query(User).filter(User.api_key == "admin").first()
-        jwt_login(user.id)
+    jwt_login(user.id)
     return "Logged in"

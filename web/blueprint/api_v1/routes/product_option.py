@@ -3,7 +3,7 @@ from sqlalchemy.orm import contains_eager
 from werkzeug import Response
 
 from web.api.utils import ApiText, json_get, json_response
-from web.auth import secure
+from web.auth import authorize
 from web.blueprint.api_v1 import api_v1_bp
 from web.database import conn
 from web.database.model import (
@@ -26,7 +26,7 @@ from web.libs.parse import gen_slug
 
 
 @api_v1_bp.post("/products/<int:product_id>/options")
-@secure(UserRoleLevel.ADMIN)
+@authorize(UserRoleLevel.ADMIN)
 def post_products_id_options(product_id: int) -> Response:
     name, _ = json_get("name", str, nullable=False)
     order, _ = json_get("order", int)
@@ -53,7 +53,7 @@ def post_products_id_options(product_id: int) -> Response:
 
 
 @api_v1_bp.patch("/products/<int:product_id>/options/<int:option_id>")
-@secure(UserRoleLevel.ADMIN)
+@authorize(UserRoleLevel.ADMIN)
 def patch_products_id_options_id(product_id: int, option_id: int) -> Response:
     order, has_order = json_get("order", int)
 
@@ -75,7 +75,7 @@ def patch_products_id_options_id(product_id: int, option_id: int) -> Response:
 
 
 @api_v1_bp.delete("/products/<int:product_id>/options/<int:option_id>")
-@secure(UserRoleLevel.ADMIN)
+@authorize(UserRoleLevel.ADMIN)
 def delete_products_id_options_id(product_id: int, option_id: int) -> Response:
     with conn.begin() as s:
         # Delete product option

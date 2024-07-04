@@ -2,7 +2,7 @@ from werkzeug import Response
 
 from web.api import API
 from web.api.utils import json_response
-from web.auth import secure
+from web.auth import authorize
 from web.blueprint.api_v1 import api_v1_bp
 from web.database import conn
 from web.database.model import Region, UserRoleLevel
@@ -29,7 +29,7 @@ class RegionAPI(API):
 
 
 @api_v1_bp.post("/regions")
-@secure(UserRoleLevel.ADMIN)
+@authorize(UserRoleLevel.ADMIN)
 def post_regions() -> Response:
     api = RegionAPI()
     data = api.gen_request_data(api.post_columns)
@@ -59,7 +59,7 @@ def get_regions_id(region_id: int) -> Response:
 
 
 @api_v1_bp.delete("/regions/<int:region_id>")
-@secure(UserRoleLevel.ADMIN)
+@authorize(UserRoleLevel.ADMIN)
 def delete_regions_id(region_id: int) -> Response:
     api = RegionAPI()
     with conn.begin() as s:

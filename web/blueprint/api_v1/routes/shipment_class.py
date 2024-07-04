@@ -1,7 +1,7 @@
 from werkzeug import Response
 
 from web.api.utils import ApiText, json_get, json_response
-from web.auth import secure
+from web.auth import authorize
 from web.blueprint.api_v1 import api_v1_bp
 from web.database import conn
 from web.database.model import ShipmentClass, ShipmentMethod, UserRoleLevel
@@ -17,7 +17,7 @@ from web.database.model import ShipmentClass, ShipmentMethod, UserRoleLevel
 
 
 @api_v1_bp.post("/shipment-classes")
-@secure(UserRoleLevel.ADMIN)
+@authorize(UserRoleLevel.ADMIN)
 def post_shipment_classes() -> Response:
     name, _ = json_get("name", str, nullable=False)
     order, _ = json_get("order", int, nullable=False)
@@ -38,7 +38,7 @@ def post_shipment_classes() -> Response:
 
 
 @api_v1_bp.patch("/shipment-classes/<int:shipment_class_id>")
-@secure(UserRoleLevel.ADMIN)
+@authorize(UserRoleLevel.ADMIN)
 def patch_shipment_classes_id(shipment_class_id: int) -> Response:
     order, has_order = json_get("order", int)
 
@@ -56,7 +56,7 @@ def patch_shipment_classes_id(shipment_class_id: int) -> Response:
 
 
 @api_v1_bp.delete("/shipment-classes/<int:shipment_class_id>")
-@secure(UserRoleLevel.ADMIN)
+@authorize(UserRoleLevel.ADMIN)
 def delete_shipment_classes_id(shipment_class_id: int) -> Response:
     with conn.begin() as s:
         # Delete shipment class
