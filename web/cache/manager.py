@@ -1,57 +1,21 @@
 import time
 from datetime import datetime
 from threading import Thread
-from typing import Any, Callable
+from typing import Callable
 
 from web.database.client import conn
 from web.database.model import AppSetting
 from web.libs.logger import log
 from web.libs.utils import Singleton
 
-#
-# Classes
-#
 
-
-class Cache(metaclass=Singleton):
-    """A simple in-memory cache mechanism."""
-
-    _objects: dict[str, Any] = {}
-
+class CacheManager(metaclass=Singleton):
     def __init__(self) -> None:
         super().__init__()
         self._updated_at: datetime = datetime.utcnow()
         self._active: bool = True
         self.hooks: list[Callable] = []
         self.update(force=True)
-
-    @classmethod
-    def __setattr__(cls, key: str, value: Any) -> None:
-        cls._objects[key] = value
-
-    @classmethod
-    def __getattr__(cls, key: str) -> Any:
-        return cls._objects[key]
-
-    @classmethod
-    def __delattr__(cls, key: str) -> None:
-        del cls._objects[key]
-
-    @classmethod
-    def __setitem__(cls, key: str, value: Any) -> None:
-        cls._objects[key] = value
-
-    @classmethod
-    def __getitem__(cls, key: str) -> Any:
-        return cls._objects.get(key, None)
-
-    @classmethod
-    def __delitem__(cls, key: str) -> None:
-        del cls._objects[key]
-
-    @classmethod
-    def keys(cls) -> list[str]:
-        return list(cls._objects.keys())
 
     @property
     def expired(self) -> bool:
@@ -78,8 +42,4 @@ class Cache(metaclass=Singleton):
                 hook()
 
 
-#
-# Variables
-#
-
-cache = Cache()
+cache_manager = CacheManager()

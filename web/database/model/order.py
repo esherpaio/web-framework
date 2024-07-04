@@ -5,7 +5,7 @@ from sqlalchemy.ext.hybrid import hybrid_method, hybrid_property
 from sqlalchemy.orm import mapped_column as MC
 from sqlalchemy.orm import relationship, validates
 
-from web.libs.cache import cache
+from web.cache import cache
 
 from ._base import Base
 from ._utils import (
@@ -111,7 +111,7 @@ class Order(Base):
             ids = [OrderStatusId.READY]
         else:
             ids = []
-        return [x for x in cache.order_statuses if x.id in ids]
+        return [x for x in cache.order_statuses if x.id in ids]  # type: ignore[attr-defined]
 
     # Properties - refund
 
