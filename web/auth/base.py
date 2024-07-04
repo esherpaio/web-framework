@@ -17,7 +17,7 @@ from web.database import conn
 from web.database.model import User, UserRoleId, UserRoleLevel
 from web.libs.logger import log
 
-from .enum import AuthType
+from .enum import AuthType, G
 from .error import AuthError, CSRFError, Forbidden, JWTError, KEYError, NoValueError
 from .user import current_user
 
@@ -85,7 +85,7 @@ class Auth:
         g._user_id = user_id
 
     def after_request(self, response: Response) -> Response:
-        auth_type = getattr(g, "_user_auth", None)
+        auth_type = getattr(g, G.USER, None)
         if auth_type == AuthType.NONE:
             del_jwt(response)
         elif auth_type == AuthType.JWT:
@@ -242,15 +242,17 @@ def del_jwt(response: Response) -> None:
     response.delete_cookie(AUTH_CSRF_COOKIE_NAME)
 
 
-def jwt_login(user_id: int) -> None:
-    time.sleep(randint(0, 1000) / 1000)
+def jwt_login(user_id: int, sleep: bool = True) -> None:
+    if sleep:
+        time.sleep(randint(0, 1000) / 1000)
     g._user = None
     g._user_id = user_id
     g._user_auth = AuthType.JWT
 
 
-def jwt_logout() -> None:
-    time.sleep(randint(0, 1000) / 1000)
+def jwt_logout(sleep: bool = True) -> None:
+    if sleep:
+        time.sleep(randint(0, 1000) / 1000)
     g._user = None
     g._user_id = None
     g._user_auth = AuthType.NONE
