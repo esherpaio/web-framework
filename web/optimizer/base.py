@@ -5,8 +5,8 @@ from typing import Callable
 import brotli
 from flask import Flask, Response, make_response, request
 
+from web.cache import cache
 from web.config import config
-from web.libs.cache import cache
 from web.libs.logger import log
 from web.libs.utils import Singleton
 

@@ -4,9 +4,9 @@ from flask import Blueprint, redirect, url_for
 from werkzeug import Response
 
 from web.auth import secure
+from web.cache import cache
 from web.config import config
 from web.database.model import UserRoleLevel
-from web.libs.cache import cache
 from web.libs.logger import log
 from web.libs.meta import Meta
 

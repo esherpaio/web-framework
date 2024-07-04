@@ -9,10 +9,10 @@ from werkzeug.exceptions import HTTPException
 from werkzeug.local import LocalProxy
 
 from web.api.utils import ApiText, json_response
+from web.cache import cache
 from web.config import config
 from web.database.model import AppBlueprint, AppRoute
 from web.i18n import _
-from web.libs.cache import cache
 from web.libs.errors import WebError
 from web.libs.logger import log
 

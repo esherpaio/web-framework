@@ -5,9 +5,9 @@ from typing import Any
 from flask import current_app, g, has_request_context, request, url_for
 from werkzeug.local import LocalProxy
 
+from web.cache import cache
 from web.config import config
 from web.database.model import Country, Currency, Language
-from web.libs.cache import cache
 
 #
 # Classes
@@ -63,7 +63,7 @@ class Locale:
     @cached_property
     def country(self) -> Country | None:
         _, country_code = self.locale_info
-        for country in cache.countries:
+        for country in cache.countries:  # type: ignore[attr-defined]
             if country.code == country_code:
                 return country
         return None
@@ -73,7 +73,7 @@ class Locale:
         if self.country is None:
             return None
         currency_id = self.country.currency_id
-        for currency in cache.currencies:
+        for currency in cache.currencies:  # type: ignore[attr-defined]
             if currency.id == currency_id:
                 return currency
         return None
@@ -81,7 +81,7 @@ class Locale:
     @cached_property
     def language(self) -> Language | None:
         language_code, _ = self.locale_info
-        for language in cache.languages:
+        for language in cache.languages:  # type: ignore[attr-defined]
             if language.code == language_code:
                 return language
         return None

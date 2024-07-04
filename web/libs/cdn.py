@@ -12,7 +12,7 @@ from web.config import config
 _SP = TypeVar("_SP", covariant=True)
 
 
-class SupportsRead(Protocol[_SP]):
+class _SupportsRead(Protocol[_SP]):
     def read(self, __length: int = ...) -> _SP: ...
 
 
@@ -21,7 +21,7 @@ class SupportsRead(Protocol[_SP]):
 #
 
 
-def upload(file_: SupportsRead[bytes], path: str) -> None:
+def upload(file_: _SupportsRead[bytes], path: str) -> None:
     folder = os.path.dirname(path)
     name = os.path.basename(path)
     with FTP(
