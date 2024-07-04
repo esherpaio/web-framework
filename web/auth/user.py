@@ -7,8 +7,7 @@ from werkzeug.local import LocalProxy
 from web.database import conn
 from web.database.model import User
 
-from .base import jwt_logout
-from .enum import G
+from .enum import AuthType, G
 
 
 def _get_proxy_user() -> User | None:
@@ -27,7 +26,9 @@ def _get_proxy_user() -> User | None:
                 g._user = user
                 return user
             else:
-                jwt_logout(sleep=False)
+                g._user = None
+                g._user_id = None
+                g._user_auth = AuthType.NONE
     return None
 
 
