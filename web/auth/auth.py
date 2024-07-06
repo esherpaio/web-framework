@@ -11,7 +11,7 @@ from flask import Flask, current_app, g, redirect, request, url_for
 from sqlalchemy.orm import joinedload
 from werkzeug import Response
 
-from web.api.utils import json_response
+from web.api import json_response
 from web.config import config
 from web.database import conn
 from web.database.model import User, UserRoleLevel
@@ -98,7 +98,7 @@ def authorize(level: UserRoleLevel | None = None) -> Any:
                 or not current_user.is_active
                 or current_user.role.level < level
             ):
-                raise Forbidden
+                return Auth.on_error(Forbidden())
             return current_app.ensure_sync(f)(*args, **kwargs)
 
         wrap.__name__ = f.__name__

@@ -15,6 +15,7 @@ from web.database.model import (
     Cart,
     Order,
     OrderLine,
+    OrderStatus,
     OrderStatusId,
     Shipping,
     UserRoleLevel,
@@ -114,7 +115,8 @@ def get_cart(s: Session, data: dict, model: Order) -> None:
 
 
 def val_status(s: Session, data: dict, model: Order) -> None:
-    if data["status_id"] not in {x.id for x in model.next_statuses}:
+    order_statuses = s.query(OrderStatus).all()
+    if data["status_id"] not in {x.id for x in model.next_statuses(order_statuses)}:
         abort(json_response(400, Text.STATUS_INVALID))
 
 
