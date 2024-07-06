@@ -46,7 +46,7 @@
                             Download invoice
                         </a>
                     {% endif %}
-                    {% if order.next_statuses %}
+                    {% if order.next_statuses(cache.order_statuses) %}
                         <button class="btn btn-primary"
                                 data-bs-toggle="modal"
                                 data-bs-target="#modal-update-order-status">
@@ -335,7 +335,7 @@
                         <span class="input-group-text">Status</span>
                         <select id="order-status-id"
                                 class="form-select">
-                            {% for x in order.next_statuses %}
+                            {% for x in order.next_statuses(cache.order_statuses) %}
                                 <option {{ 'selected' if x.id == order.status_id }} value="{{ x.id }}">
                                     {{ x.name }}
                                 </option>

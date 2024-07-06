@@ -5,8 +5,6 @@ from sqlalchemy.ext.hybrid import hybrid_method, hybrid_property
 from sqlalchemy.orm import mapped_column as MC
 from sqlalchemy.orm import relationship, validates
 
-from web.cache import cache
-
 from ._base import Base
 from ._utils import (
     default_price,
@@ -16,7 +14,7 @@ from ._utils import (
     val_length,
     val_number,
 )
-from .order_status import OrderStatusId
+from .order_status import OrderStatus, OrderStatusId
 
 
 class Order(Base):
@@ -103,15 +101,15 @@ class Order(Base):
     def is_completed(self) -> bool:
         return self.status_id == OrderStatusId.COMPLETED
 
-    @hybrid_property
-    def next_statuses(self) -> list:
+    @hybrid_method
+    def next_statuses(self, order_statuses: list[OrderStatus]) -> list:
         if self.is_paid:
             ids = [OrderStatusId.IN_PROGRESS, OrderStatusId.READY]
         elif self.is_in_progress:
             ids = [OrderStatusId.READY]
         else:
             ids = []
-        return [x for x in cache.order_statuses if x.id in ids]  # type: ignore[attr-defined]
+        return [x for x in order_statuses if x.id in ids]  # type: ignore[attr-defined]
 
     # Properties - refund
 

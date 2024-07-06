@@ -5,25 +5,10 @@ import alembic.config
 from flask import Blueprint, Flask
 
 from web.auth import Auth, current_user
-from web.cache import cache, cache_manager
+from web.cache import cache, cache_common, cache_manager
 from web.config import config
 from web.database.clean import clean_carts, clean_users
 from web.database.client import conn
-from web.database.model import (
-    AppBlueprint,
-    AppRoute,
-    AppSetting,
-    Country,
-    Currency,
-    FileType,
-    Language,
-    OrderStatus,
-    ProductLinkType,
-    ProductType,
-    Redirect,
-    Region,
-    UserRole,
-)
 from web.libs import cdn
 from web.libs.app import check_redirects, handle_frontend_error
 from web.libs.logger import log
@@ -201,26 +186,8 @@ class FlaskWeb:
             mail.events.update(self._mail_events)
 
     def setup_cache(self) -> None:
-        cache_manager.hooks.append(self.cache_common)
+        cache_manager.hooks.append(cache_common)
         if self._cache_hook is not None:
             cache_manager.hooks.append(self._cache_hook)
         cache_manager.hooks.append(optimizer.del_cache)
         cache_manager.update(force=True)
-
-    def cache_common(self) -> None:
-        with conn.begin() as s:
-            # fmt: off
-            cache.blueprints = s.query(AppBlueprint).all()
-            cache.countries = s.query(Country).order_by(Country.name).all()
-            cache.currencies = s.query(Currency).order_by(Currency.code).all()
-            cache.file_types = s.query(FileType).order_by(FileType.name).all()
-            cache.languages = s.query(Language).order_by(Language.code).all()
-            cache.order_statuses = s.query(OrderStatus).order_by(OrderStatus.order).all()
-            cache.product_link_types = s.query(ProductLinkType).order_by(ProductLinkType.name).all()
-            cache.product_types = s.query(ProductType).order_by(ProductType.name).all()
-            cache.redirects = s.query(Redirect).order_by(Redirect.url_from.desc()).all()
-            cache.regions = s.query(Region).order_by(Region.name).all()
-            cache.routes = s.query(AppRoute).all()
-            cache.setting = s.query(AppSetting).first()
-            cache.user_roles = s.query(UserRole).order_by(UserRole.name).all()
-            # fmt: on

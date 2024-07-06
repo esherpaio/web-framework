@@ -1,4 +1,5 @@
 from .auth import Auth, authorize, jwt_login, jwt_logout
+from .error import AuthError
 from .proxy import current_user
 
 __all__ = [
@@ -7,4 +8,5 @@ __all__ = [
     "current_user",
     "jwt_login",
     "jwt_logout",
+    "AuthError",
 ]

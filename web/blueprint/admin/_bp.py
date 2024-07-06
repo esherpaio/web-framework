@@ -1,13 +1,11 @@
 import os
 
-from flask import Blueprint, redirect, url_for
-from werkzeug import Response
+from flask import Blueprint
 
 from web.auth import authorize
 from web.cache import cache
 from web.config import config
 from web.database.model import UserRoleLevel
-from web.libs.logger import log
 from web.libs.meta import Meta
 
 _dir = os.path.dirname(os.path.abspath(__file__))
@@ -31,9 +29,3 @@ def _authorize() -> None:
 def context() -> dict:
     meta = Meta(title="Admin", robots="noindex,nofollow")
     return dict(cache=cache, config=config, meta=meta)
-
-
-@admin_bp.errorhandler(Exception)
-def error_handler(error: Exception) -> Response:
-    log.error(f"Admin error - error {error}", exc_info=True)
-    return redirect(url_for("admin.error"))
