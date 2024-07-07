@@ -16,9 +16,7 @@ from web.syncer import Syncer
 # Configuration
 #
 
-pytest_plugins = [
-    "test.fixtures.models",
-]
+pytest_plugins = ["test.fixtures.models"]
 
 
 def pytest_configure(*args) -> None:
@@ -72,16 +70,8 @@ class UserSyncer(Syncer):
 def create_app() -> Flask:
     app = Flask(__name__)
     app.testing = True
-    web = FlaskWeb(
-        app,
-        blueprints=[api_v1_bp, webhook_v1_bp],
-        accept_cookie_auth=True,
-        accept_request_auth=True,
-        syncers=[UserSyncer],
-    )
-    web.setup()
-    cache_manager._active = False
-    app.config["web"] = web
+    FlaskWeb(app, blueprints=[api_v1_bp, webhook_v1_bp], syncers=[UserSyncer])
+    cache_manager.pause()
     return app
 
 

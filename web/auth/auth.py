@@ -1,9 +1,7 @@
-import time
 import uuid
 from datetime import datetime, timedelta, timezone
 from hmac import compare_digest
 from json import JSONEncoder
-from random import randint
 from typing import Any, Literal
 
 import jwt
@@ -26,14 +24,9 @@ from .proxy import current_user
 #
 
 AUTH_KEY_HEADER_NAME = "Authorization"
-
-AUTH_JWT_EXPIRES_S = 604800
 AUTH_JWT_COOKIE_NAME = "access_token"
 AUTH_JWT_ENCODE_ALGORITHM = "HS256"
 AUTH_JWT_DECODE_ALGORITHMS = ["HS256"]
-AUTH_JWT_DECODE_LEEWAY_S = 60
-
-AUTH_CSRF_METHODS = ["POST", "PUT", "PATCH", "DELETE"]
 AUTH_CSRF_COOKIE_NAME = "csrf_token"
 
 
@@ -43,25 +36,14 @@ AUTH_CSRF_COOKIE_NAME = "csrf_token"
 
 
 class Auth:
-    def __init__(self, app: Flask) -> None:
-        self.app = app
-        self.app.register_error_handler(AuthError, self.on_error)
-        self.app.before_request(self.before_request)
-        self.app.after_request(self.after_request)
+    def __init__(self, app: Flask | None = None) -> None:
+        if app is not None:
+            self.init(app)
 
-    @staticmethod
-    def on_error(error: AuthError) -> Response:
-        log.debug(f"AuthError {type(error).__name__}")
-        if request.blueprint is not None and (
-            request.blueprint.startswith("api")
-            or request.blueprint.startswith("webhook")
-        ):
-            response = json_response(error.code, error.message)
-        else:
-            response = redirect(url_for(config.ENDPOINT_LOGIN))
-        if error.code == 401:
-            del_jwt(response)
-        return response
+    def init(self, app: Flask) -> None:
+        app.register_error_handler(AuthError, self.on_error)
+        app.before_request(self.before_request)
+        app.after_request(self.after_request)
 
     def before_request(self) -> None:
         if AUTH_KEY_HEADER_NAME in request.headers:
@@ -87,6 +69,21 @@ class Auth:
                 expires_delta=timedelta(seconds=config.AUTH_JWT_EXPIRES_S),
             )
             set_jwt(response, access_token, csrf_token)
+        return response
+
+    @staticmethod
+    def on_error(error: AuthError) -> Response:
+        user_id = getattr(g, G.USER_ID, None)
+        log.debug(f"Auth error {error} with user {user_id}")
+        if request.blueprint is not None and (
+            request.blueprint.startswith("api")
+            or request.blueprint.startswith("webhook")
+        ):
+            response = json_response(error.code, error.message)
+        else:
+            response = redirect(url_for(config.ENDPOINT_LOGIN))
+        if error.code == 401:
+            del_jwt(response)
         return response
 
 
@@ -147,7 +144,7 @@ def get_jwt() -> tuple[str, str | None]:
     if encoded_token is None:
         raise NoValueError
 
-    if request.method in AUTH_CSRF_METHODS:
+    if request.method in config.AUTH_CSRF_METHODS:
         csrf_value = request.cookies.get(AUTH_CSRF_COOKIE_NAME)
         if csrf_value is None:
             raise NoValueError
@@ -188,7 +185,7 @@ def decode_jwt(encoded_token: str, csrf_token: str | None = None) -> dict:
             encoded_token,
             config.AUTH_JWT_SECRET,
             algorithms=AUTH_JWT_DECODE_ALGORITHMS,
-            leeway=timedelta(seconds=AUTH_JWT_DECODE_LEEWAY_S),
+            leeway=timedelta(seconds=config.AUTH_JWT_DECODE_LEEWAY_S),
         )
     except Exception:
         raise JWTError
@@ -233,22 +230,3 @@ def set_jwt(response: Response, access_token: str, csrf_token: str) -> None:
 def del_jwt(response: Response) -> None:
     response.delete_cookie(AUTH_JWT_COOKIE_NAME)
     response.delete_cookie(AUTH_CSRF_COOKIE_NAME)
-
-
-#
-# Helpers
-#
-
-
-def jwt_login(user_id: int) -> None:
-    time.sleep(randint(0, 1000) / 1000)
-    g._user = None
-    g._user_id = user_id
-    g._auth_type = AuthType.JWT
-
-
-def jwt_logout() -> None:
-    time.sleep(randint(0, 1000) / 1000)
-    g._user = None
-    g._user_id = None
-    g._auth_type = AuthType.NONE

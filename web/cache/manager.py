@@ -3,7 +3,7 @@ from datetime import datetime
 from threading import Thread
 from typing import Callable
 
-from web.database.client import conn
+from web.database import conn
 from web.database.model import AppSetting
 from web.libs.logger import log
 from web.libs.utils import Singleton
@@ -16,6 +16,22 @@ class CacheManager(metaclass=Singleton):
         self._active: bool = True
         self.hooks: list[Callable] = []
         self.update(force=True)
+
+    def pause(self) -> None:
+        if not self._active:
+            log.info("Cache is already paused")
+            return
+        self._active = False
+
+    def resume(self) -> None:
+        if self._active:
+            log.info("Cache is already active")
+            return
+        self._active = True
+
+    def add_hook(self, hook: Callable) -> None:
+        if hook not in self.hooks:
+            self.hooks.append(hook)
 
     @property
     def expired(self) -> bool:

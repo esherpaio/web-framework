@@ -8,8 +8,6 @@ from web.config import config
 
 
 class _AnsiCode(StrEnum):
-    """ANSI escape codes."""
-
     DEBUG = "\x1b[37m"
     INFO = "\x1b[37m"
     WARNING = "\x1b[33m"

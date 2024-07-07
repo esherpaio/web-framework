@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 
 from sqlalchemy.sql import not_, true
 
-from .. import conn
+from ..client import conn
 from ..model import User
 
 
