@@ -13,7 +13,7 @@ class Minification(StrEnum):
     html = "html"
 
 
-def choose_encoding(headers: Headers) -> Encoding | None:
+def get_encoding(headers: Headers) -> Encoding | None:
     if headers is None:
         return None
     encoding = headers.get("Accept-Encoding", "").lower()
@@ -26,7 +26,7 @@ def choose_encoding(headers: Headers) -> Encoding | None:
     return None
 
 
-def choose_minification(mimetype: str | None) -> Minification | None:
+def get_minification(mimetype: str | None) -> Minification | None:
     if mimetype is None:
         return None
     if mimetype.endswith("html"):

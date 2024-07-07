@@ -171,7 +171,7 @@ def transfer_cart(
             curr_user_id = current_user.id
             # Transfer cart
             prev_cart = s.query(Cart).filter_by(user_id=prev_user_id).first()
-            if prev_cart:
+            if prev_cart is not None:
                 s.query(Cart).filter_by(user_id=curr_user_id).delete()
                 prev_cart.user_id = curr_user_id
 

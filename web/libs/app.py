@@ -1,4 +1,3 @@
-import fnmatch
 import logging
 from typing import Any
 
@@ -39,14 +38,6 @@ def has_argument(endpoint: str, arg: str) -> bool:
     except KeyError:
         pass
     return False
-
-
-def check_redirects() -> Response | None:
-    """Check if a redirect exists for the current request."""
-    for x in cache.redirects:
-        if fnmatch.fnmatch(request.url, x.url_from):
-            return redirect(x.url_to, code=301)
-    return None
 
 
 def get_route() -> AppRoute | None:

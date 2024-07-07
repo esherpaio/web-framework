@@ -1,6 +1,6 @@
 from flask import Flask
 
-from web.auth import Auth, jwt_login
+from web.auth import jwt_login
 from web.blueprint.admin import admin_bp
 from web.blueprint.api_v1 import api_v1_bp
 from web.blueprint.robots import robots_bp
@@ -31,11 +31,8 @@ def create_app() -> Flask:
     FlaskWeb(
         app,
         blueprints=[robots_bp, admin_bp, api_v1_bp, webhook_v1_bp],
-        accept_cookie_auth=True,
-        accept_request_auth=True,
         syncers=[CurrencySyncer, RegionSyncer, CountrySyncer, SkuSyncer, UserSyncer],
-    ).setup()
-    Auth(app)
+    )
     return app
 
 

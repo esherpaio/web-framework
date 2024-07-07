@@ -55,25 +55,3 @@ class User(Base, Attribute):
     @hybrid_property
     def is_super(self) -> bool:
         return self.role_id == UserRoleId.SUPER
-
-    # Flask mixin
-
-    @property
-    def is_authenticated(self) -> bool:
-        return (not self.is_guest) and self.is_active
-
-    @property
-    def is_anonymous(self) -> bool:
-        return self.is_guest
-
-    def get_id(self) -> int | None:
-        return self.id
-
-    def __eq__(self, other: object) -> bool:
-        if isinstance(other, User):
-            if not self.is_guest:
-                return self.get_id() == other.get_id()
-        return False
-
-    def __ne__(self, other: object) -> bool:
-        return not self.__eq__(other)

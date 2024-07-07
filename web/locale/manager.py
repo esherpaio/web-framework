@@ -8,12 +8,15 @@ from .utils import expects_locale, gen_locale, lacks_locale
 
 
 class LocaleManager(metaclass=Singleton):
-    def __init__(self, app: Flask) -> None:
-        self._app = app
-        self._app.before_request(self.redirect_locale)
-        self._app.url_defaults(self.set_locale_urls)
-        self._app.add_template_global(self.get_locale_url, name="locale_url")
-        self._app.after_request(self.set_locale)
+    def __init__(self, app: Flask | None = None) -> None:
+        if app is not None:
+            self.init(app)
+
+    def init(self, app: Flask) -> None:
+        app.before_request(self.redirect_locale)
+        app.url_defaults(self.set_locale_urls)
+        app.add_template_global(self.get_locale_url, name="locale_url")
+        app.after_request(self.set_locale)
 
     @staticmethod
     def redirect_locale() -> Response | None:

@@ -8,7 +8,7 @@ from web.libs.parse import strip_scheme
 
 
 class Mollie(Client):
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         self.set_api_key(config.MOLLIE_KEY)
 

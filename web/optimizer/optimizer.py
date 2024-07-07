@@ -10,16 +10,19 @@ from web.config import config
 from web.libs.logger import log
 from web.libs.utils import Singleton
 
-from .enums import Encoding, Minification, choose_encoding, choose_minification
+from .enums import Encoding, Minification, get_encoding, get_minification
 from .object import minify_html
 
 
 class Optimizer(metaclass=Singleton):
     ENCODING = "utf-8"
 
+    def __init__(self, app: Flask | None = None) -> None:
+        self._cached_endpoints: set[str] = set()
+        if app is not None:
+            self.init(app)
+
     def init(self, app: Flask) -> None:
-        self.app = app
-        self.cached_endpoints: set[str] = set()
         app.after_request(self.after_request)
 
     #
@@ -109,14 +112,14 @@ class Optimizer(metaclass=Singleton):
     #
 
     def set_cache(self, response: Response, encoding: Encoding | None) -> None:
-        if request.endpoint not in self.cached_endpoints:
+        if request.endpoint not in self._cached_endpoints:
             return
         log.info(f"Optimizer cached {request.full_path}")
         cache[(request.full_path, encoding)] = response.get_data(as_text=False)
 
     def get_cache(self, encoding: Encoding | None) -> Response | None:
         if isinstance(request.endpoint, str):
-            self.cached_endpoints.add(request.endpoint)
+            self._cached_endpoints.add(request.endpoint)
         from_cache = cache.get((request.full_path, encoding))
         if from_cache is not None:
             response = make_response()
@@ -125,8 +128,7 @@ class Optimizer(metaclass=Singleton):
             return response
         return None
 
-    @staticmethod
-    def del_cache() -> None:
+    def del_cache(self) -> None:
         for key in list(cache.keys()):
             if (
                 isinstance(key, tuple)
@@ -134,6 +136,7 @@ class Optimizer(metaclass=Singleton):
                 and key[0].startswith("/")
             ):
                 del cache[key]
+        self._cached_endpoints = set()
 
     #
     # Request handler
@@ -142,7 +145,7 @@ class Optimizer(metaclass=Singleton):
     def cache(self, f: Callable) -> Callable[..., Response]:
         def wrap(*args, **kwargs) -> Response:
             if config.APP_OPTIMIZE:
-                encoding = choose_encoding(request.headers)
+                encoding = get_encoding(request.headers)
                 response = self.get_cache(encoding)
                 if response is not None:
                     self.set_headers(response, encoding)
@@ -163,8 +166,8 @@ class Optimizer(metaclass=Singleton):
         if "Content-Encoding" in response.headers:
             return response
         # choose encoding and minification
-        encoding = choose_encoding(request.headers)
-        minification = choose_minification(response.mimetype)
+        encoding = get_encoding(request.headers)
+        minification = get_minification(response.mimetype)
         if encoding is None and minification is None:
             return response
         # handle response

@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 
 from sqlalchemy.sql import and_, or_
 
-from .. import conn
+from ..client import conn
 from ..model import Cart
 
 

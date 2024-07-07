@@ -1,6 +1,7 @@
-from .auth import Auth, authorize, jwt_login, jwt_logout
+from .auth import Auth, authorize
 from .error import AuthError
 from .proxy import current_user
+from .utils import jwt_login, jwt_logout
 
 __all__ = [
     "Auth",

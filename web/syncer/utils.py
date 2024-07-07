@@ -1,6 +1,4 @@
-from typing import Callable, Type
-
-from werkzeug import Response
+from typing import Any, Callable, Type
 
 from web.config import config
 from web.database.client import conn
@@ -20,9 +18,9 @@ def external_sync(f: Callable) -> Callable[..., None]:
 
 def sync_before(
     syncer: Type[Syncer],
-) -> Callable[[Callable[..., Response]], Callable[..., Response]]:
-    def decorate(f: Callable) -> Callable[..., Response]:
-        def wrap(*args, **kwargs) -> Response:
+) -> Callable[[Callable[..., Any]], Callable[..., Any]]:
+    def decorate(f: Callable) -> Callable[..., Any]:
+        def wrap(*args, **kwargs) -> Any:
             with conn.begin() as s:
                 syncer().sync(s)
             return f(*args, **kwargs)
@@ -35,9 +33,9 @@ def sync_before(
 
 def sync_after(
     syncer: Type[Syncer],
-) -> Callable[[Callable[..., Response]], Callable[..., Response]]:
-    def decorate(f: Callable) -> Callable[..., Response]:
-        def wrap(*args, **kwargs) -> Response:
+) -> Callable[[Callable[..., Any]], Callable[..., Any]]:
+    def decorate(f: Callable) -> Callable[..., Any]:
+        def wrap(*args, **kwargs) -> Any:
             result = f(*args, **kwargs)
             with conn.begin() as s:
                 syncer().sync(s)
