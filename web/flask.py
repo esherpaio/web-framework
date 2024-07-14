@@ -41,6 +41,7 @@ class FlaskWeb:
         jinja_globals: dict[str, Callable] | None = None,
         mail_events: dict[MailEvent | str, list[Callable]] | None = None,
         syncers: list[Type[Syncer]] | None = None,
+        db_migrate: bool = False,
         db_hook: Callable | None = None,
         cache_hook: Callable | None = None,
     ) -> None:
@@ -63,6 +64,7 @@ class FlaskWeb:
                 jinja_globals,
                 mail_events,
                 syncers,
+                db_migrate,
                 db_hook,
                 cache_hook,
             )
@@ -75,10 +77,11 @@ class FlaskWeb:
         jinja_globals: dict[str, Callable],
         mail_events: dict[MailEvent | str, list[Callable]],
         syncers: list[Type[Syncer]],
+        db_migrate: bool,
         db_hook: Callable | None,
         cache_hook: Callable | None,
     ) -> None:
-        self.setup_database(syncers, db_hook)
+        self.setup_database(db_migrate, syncers, db_hook)
         self.setup_cache(cache_hook)
         self.setup_mail(mail_events)
         self.setup_flask(app, blueprints)
@@ -89,11 +92,15 @@ class FlaskWeb:
     #
 
     def setup_database(
-        self, syncers: list[Type[Syncer]], hook: Callable | None = None
+        self,
+        migrate: bool,
+        syncers: list[Type[Syncer]],
+        hook: Callable | None = None,
     ) -> None:
         # Migrate database
-        log.info("Migrating database")
-        alembic.config.main(argv=["upgrade", "head"])
+        if migrate:
+            log.info("Migrating database")
+            alembic.config.main(argv=["upgrade", "head"])
 
         # Run syncers
         default_syncers = [
@@ -163,7 +170,10 @@ class FlaskWeb:
         Redirector(app)
 
     def setup_jinja(
-        self, app: Flask, filters: dict[str, Callable], globals_: dict[str, Callable]
+        self,
+        app: Flask,
+        filters: dict[str, Callable],
+        globals_: dict[str, Callable],
     ) -> None:
         app.context_processor(
             lambda: dict(
