@@ -68,7 +68,6 @@ class ConfigVar:
 class Config(metaclass=Singleton):
     VARS: list[EnvVar | ConfigVar | StaticVar] = [
         # App configuration
-        EnvVar("APP_SECRET", str),
         EnvVar("APP_DEBUG", bool, default=False),
         EnvVar("APP_OPTIMIZE", bool, default=True),
         EnvVar("APP_SYNC_STATIC", bool, default=True),
