@@ -61,6 +61,15 @@ def get_blueprint() -> AppBlueprint | None:
 #
 
 
+def handle_error(error: Exception) -> Response:
+    """Handle errors."""
+    if request.blueprint is not None and request.blueprint.startswith(
+        ("api", "webhook")
+    ):
+        return handle_backend_error(error)
+    return handle_frontend_error(error)
+
+
 def handle_frontend_error(error: Exception) -> Response:
     """Handle frontend errors."""
     # Parse error information

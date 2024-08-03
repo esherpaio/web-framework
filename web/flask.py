@@ -10,7 +10,7 @@ from web.config import config
 from web.database.clean import clean_carts, clean_users
 from web.database.client import conn
 from web.libs import cdn
-from web.libs.app import handle_frontend_error
+from web.libs.app import handle_error
 from web.libs.logger import log
 from web.locale import LocaleManager, current_locale
 from web.mail import MailEvent, mail
@@ -158,7 +158,7 @@ class FlaskWeb:
         else:
             log.info("Enabling Flask debug mode")
             app.debug = True
-        app.register_error_handler(Exception, handle_frontend_error)
+        app.register_error_handler(Exception, handle_error)
 
         log.info(f"Registering {len(blueprints)} blueprints")
         for blueprint in blueprints:
