@@ -1,10 +1,10 @@
 import urllib.parse
 
-from flask import url_for
 from mollie.api.client import Client
 
 from web.config import config
 from web.libs.parse import strip_scheme
+from web.libs.urls import url_for
 
 
 class Mollie(Client):
