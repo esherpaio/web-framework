@@ -65,7 +65,7 @@ class Mail(metaclass=Singleton):
         **kwargs,
     ) -> bool:
         # Remember error state
-        success = True
+        all_results = True
 
         for event in cls.get_events(event_id):
             status_id = EmailStatusId.QUEUED
@@ -75,7 +75,8 @@ class Mail(metaclass=Singleton):
                 try:
                     result = event(s, **kwargs)
                 except Exception:
-                    success = False
+                    result = False
+                    all_results = False
                     log.error(
                         f"Error sending {config.EMAIL_METHOD} email", exc_info=True
                     )
@@ -98,7 +99,7 @@ class Mail(metaclass=Singleton):
                 _email.status_id = status_id
                 s.flush()
 
-        return success
+        return all_results
 
 
 mail = Mail()
