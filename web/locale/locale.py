@@ -1,12 +1,10 @@
 from functools import cached_property
 
-from flask import request
-
 from web.cache import cache
 from web.config import config
 from web.database.model import Country, Currency, Language
 
-from .utils import gen_locale, get_route_locale, match_locale
+from .utils import gen_locale, get_cookie_locale, get_route_locale, match_locale
 
 
 class Locale:
@@ -24,7 +22,7 @@ class Locale:
         Example: "en-us" or "de-de".
         """
         view_locale = get_route_locale()
-        cookie_locale = request.cookies.get("locale")
+        cookie_locale = get_cookie_locale()
         website_locale = gen_locale(
             config.WEBSITE_LANGUAGE_CODE, config.WEBSITE_COUNTRY_CODE
         )
