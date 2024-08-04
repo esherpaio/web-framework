@@ -1,6 +1,6 @@
 import json
 from enum import StrEnum
-from typing import Any, Callable
+from typing import Any
 
 from flask import request
 from sqlalchemy import String
@@ -119,31 +119,3 @@ def validate(
         and len(value) > column.type.length
     ):
         raise DbMaxLengthError(column.name)
-
-
-#
-# Decorators
-#
-
-
-def modify_response(
-    mapping: dict[str, Callable],
-) -> Callable[[Callable[..., Response]], Callable[..., Response]]:
-    """Modify the response body."""
-
-    def decorate(f: Callable) -> Callable[..., Response]:
-        def wrap(resp: Response) -> Response:
-            if (
-                resp.is_json
-                and request.endpoint is not None
-                and request.view_args is not None
-            ):
-                for name, func in mapping.items():
-                    if f".{name}" in request.endpoint:
-                        return func(resp, **request.view_args)
-            return resp
-
-        wrap.__name__ = f.__name__
-        return wrap
-
-    return decorate

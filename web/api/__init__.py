@@ -1,5 +1,5 @@
 from .api import API
-from .utils import ApiText, args_get, json_get, json_response, modify_response
+from .utils import ApiText, args_get, json_get, json_response
 
 __all__ = [
     "API",
@@ -7,5 +7,4 @@ __all__ = [
     "json_response",
     "json_get",
     "args_get",
-    "modify_response",
 ]
