@@ -32,16 +32,16 @@ class EnvVar:
         return self.parse(os.getenv(self.key, self.default))
 
     def parse(self, value: str) -> Any:
-        if self.type == str:
+        if self.type is str:
             return value
-        if self.type == int:
+        if self.type is int:
             try:
                 return int(value)
             except (ValueError, TypeError):
                 pass
-        if self.type == bool:
+        if self.type is bool:
             return value in ["true", "1"]
-        if self.type == list:
+        if self.type is list:
             return [self.list_type(x) for x in value.split(",")]
 
 
