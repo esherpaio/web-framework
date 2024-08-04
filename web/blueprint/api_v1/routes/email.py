@@ -18,6 +18,7 @@ from web.mail import MailEvent, mail
 class Text(StrEnum):
     CONTACT_SUCCESS = _("API_MAIL_CONTACT_SUCCESS")
     EVENT_ID_INVALID = _("API_MAIL_INVALID_EVENT_ID")
+    MAIL_ERROR = _("API_MAIL_ERROR")
 
 
 #
@@ -44,8 +45,10 @@ def post_emails() -> Response:
             )
             data["emails"] = set(user.email for user in users)
         # Trigger email events
-        mail.trigger_events(s, event_id, **data)
+        result = mail.trigger_events(s, event_id, **data)
 
+    if not result:
+        return json_response(400, Text.MAIL_ERROR)
     return json_response(200, Text.CONTACT_SUCCESS)
 
 

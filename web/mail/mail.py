@@ -22,6 +22,10 @@ from .event import (
 )
 
 
+class MailError(Exception):
+    pass
+
+
 class MailEvent(StrEnum):
     ORDER_PAID = "order.paid"
     ORDER_RECEIVED = "order.received"
@@ -59,18 +63,28 @@ class Mail(metaclass=Singleton):
         event_id: MailEvent | str,
         _email: Email | None = None,
         **kwargs,
-    ) -> None:
+    ) -> bool:
+        # Remember error state
+        success = True
+
         for event in cls.get_events(event_id):
             status_id = EmailStatusId.QUEUED
+
+            # Send immediately if not using worker
             if _email or not config.EMAIL_WORKER:
                 try:
                     result = event(s, **kwargs)
                 except Exception:
+                    success = False
                     log.error(
                         f"Error sending {config.EMAIL_METHOD} email", exc_info=True
                     )
-                    result = False
-                status_id = EmailStatusId.SENT if result else EmailStatusId.FAILED
+                if result:
+                    status_id = EmailStatusId.SENT
+                else:
+                    status_id = EmailStatusId.FAILED
+
+            # Save email in database
             if _email is None:
                 _email = Email(
                     event_id=event_id,
@@ -83,6 +97,8 @@ class Mail(metaclass=Singleton):
                 _email.updated_at = datetime.utcnow()
                 _email.status_id = status_id
                 s.flush()
+
+        return success
 
 
 mail = Mail()
