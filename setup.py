@@ -21,7 +21,8 @@ DATA = [
 
 def find_requirements() -> list[str]:
     with open("requirements.txt") as f:
-        return f.read().splitlines()
+        lines = f.read().splitlines()
+    return [x for x in lines if x and not x.startswith("#")]
 
 
 setup(

@@ -1,17 +1,11 @@
-## REQUIREMENTS
-##
-## requirements: install requirements
+# REQUIREMENTS
 .PHONY: requirements
 requirements:
 	pip install --upgrade pip
 	pip install -r requirements.txt
 	pip install -r requirements-dev.txt
 
-## FORMATTING
-##
-## format: run formatters
-## format_py: run python formatters
-## format_html: run html formatters
+# FORMATTING
 .PHONY: format format_py format_html
 format: format_py format_html
 format_py:
@@ -20,11 +14,7 @@ format_py:
 format_html:
 	djlint . --reformat
 
-## LINTING
-##
-## lint: run linters
-## lint_py: run python linters
-## lint_html: run html linters
+# LINTING
 .PHONY: lint lint_py lint_html
 lint: lint_py lint_html
 lint_py:

@@ -219,7 +219,7 @@ class Dictionary(PDFObject, dict):
             out[copy.deepcopy(k, memodict)] = copy.deepcopy(v, memodict)
         return out
 
-    def __hash__(self):
+    def __hash__(self):  # type: ignore[override]
         hashcode: int = 1
         for e in self:
             hashcode = 31 * hashcode + (0 if e is None else hash(e))
@@ -453,7 +453,7 @@ class List(PDFObject, list):
     # PRIVATE
     #
 
-    def __hash__(self):
+    def __hash__(self):  # type: ignore[override]
         hashcode: int = 1
         for e in self:
             hashcode = 31 * hashcode + (0 if e is None else hash(e))
