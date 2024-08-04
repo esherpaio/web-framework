@@ -1,7 +1,6 @@
 import uuid
 from enum import StrEnum
 
-from flask import url_for
 from werkzeug import Response
 
 from web.api.utils import ApiText, json_get, json_response
@@ -11,6 +10,7 @@ from web.database import conn
 from web.database.model import User, Verification
 from web.i18n import _
 from web.libs.parse import parse_url
+from web.libs.urls import url_for
 from web.mail import MailEvent, mail
 
 #

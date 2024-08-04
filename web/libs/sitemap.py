@@ -1,4 +1,4 @@
-from flask import url_for
+from web.libs.urls import url_for
 
 
 class Sitemap:

@@ -7,11 +7,12 @@ from flask import Blueprint, Flask
 from web.auth import Auth, current_user
 from web.cache import cache, cache_common, cache_manager
 from web.config import config
+from web.database import conn
 from web.database.clean import clean_carts, clean_users
-from web.database.client import conn
 from web.libs import cdn
 from web.libs.app import handle_error
 from web.libs.logger import log
+from web.libs.urls import url_for
 from web.locale import LocaleManager, current_locale
 from web.mail import MailEvent, mail
 from web.optimizer import optimizer
@@ -196,6 +197,11 @@ class FlaskWeb:
         for name, func in filters.items():
             app.add_template_filter(func, name=name)
 
-        globals_.update({"cdn_url": cdn.url})
+        globals_.update(
+            {
+                "cdn_url": cdn.url,
+                "url_for": url_for,
+            }
+        )
         for name, func in globals_.items():
             app.add_template_global(func, name=name)

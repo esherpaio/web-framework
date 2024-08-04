@@ -1,6 +1,6 @@
 import uuid
 
-from flask import abort, url_for
+from flask import abort
 from mollie.api.objects.payment import Payment
 from sqlalchemy.orm import Session
 
@@ -11,6 +11,7 @@ from web.database.model import Cart, Order, Refund, User, Verification
 from web.ext.mollie import Mollie, mollie_amount
 from web.libs.cart import get_shipment_methods
 from web.libs.parse import parse_url
+from web.libs.urls import url_for
 from web.libs.utils import none_attrgetter
 from web.mail.mail import MailEvent, mail
 

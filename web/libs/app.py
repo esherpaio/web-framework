@@ -1,7 +1,7 @@
 import logging
 from typing import Any
 
-from flask import current_app, redirect, request, url_for
+from flask import current_app, redirect, request
 from sqlalchemy.orm.exc import NoResultFound
 from werkzeug import Response
 from werkzeug.exceptions import HTTPException
@@ -15,6 +15,7 @@ from web.i18n import _
 from web.libs.errors import WebError
 from web.libs.logger import log
 from web.libs.parse import parse_url
+from web.libs.urls import url_for
 
 #
 # Routes

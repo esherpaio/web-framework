@@ -1,4 +1,4 @@
-from flask import redirect, render_template, url_for
+from flask import redirect, render_template
 from sqlalchemy.orm import joinedload
 from werkzeug import Response
 
@@ -14,6 +14,7 @@ from web.database.model import (
     Sku,
     SkuDetail,
 )
+from web.libs.urls import url_for
 
 
 @admin_bp.get("/admin/products")
