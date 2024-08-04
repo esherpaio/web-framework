@@ -9,13 +9,13 @@ from web.libs.logger import log
 from .mail import mail
 
 
-def send_emails() -> None:
+def send_emails(max_weeks: int = 4) -> None:
     while True:
         with conn.begin() as s:
             email = (
                 s.query(Email)
                 .filter(
-                    Email.created_at > datetime.utcnow() - timedelta(weeks=1),
+                    Email.created_at > datetime.utcnow() - timedelta(weeks=max_weeks),
                     or_(
                         Email.updated_at == null(),
                         Email.updated_at < datetime.utcnow() - timedelta(days=1),
