@@ -7,7 +7,7 @@ class Sitemap:
 
     @property
     def loc(self) -> str:
-        return url_for(self._endpoint, _scheme="https", _external=True)
+        return url_for(self._endpoint, _external=True)
 
 
 class SitemapUrl:
@@ -17,4 +17,4 @@ class SitemapUrl:
 
     @property
     def loc(self) -> str:
-        return url_for(self._endpoint, **self._kwargs, _scheme="https", _external=True)
+        return url_for(self._endpoint, **self._kwargs, _external=True)
