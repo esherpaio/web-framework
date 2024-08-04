@@ -11,6 +11,17 @@ def get_route_locale() -> str | None:
         locale = request.view_args.get("_locale", None)
         if locale is None or None in match_locale(locale):
             return None
+        return locale
+    return None
+
+
+def get_cookie_locale() -> str | None:
+    """Get the locale from the cookie."""
+    if has_request_context():
+        locale = request.cookies.get("locale", None)
+        if locale is None or None in match_locale(locale):
+            return None
+        return locale
     return None
 
 
