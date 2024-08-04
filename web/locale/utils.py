@@ -7,29 +7,35 @@ from web.config import config
 
 def get_route_locale() -> str | None:
     """Get the locale for the current route."""
-    if has_request_context() and request.endpoint:
-        if request.view_args is not None and "_locale" in request.view_args:
-            return request.view_args["_locale"]
+    if has_request_context() and request.view_args is not None:
+        return request.view_args.get("_locale", None)
     return None
 
 
 def expects_locale(endpoint: str | None) -> bool:
     """Determine whether a locale is expected."""
-    if endpoint:
-        if current_app.url_map.is_endpoint_expecting(endpoint, "_locale"):
-            return True
+    if endpoint is not None and current_app.url_map.is_endpoint_expecting(
+        endpoint, "_locale"
+    ):
+        return True
     return False
 
 
 def lacks_locale(endpoint: str | None, values: dict) -> bool:
     """Determine whether a locale lacks."""
-    return expects_locale(endpoint) and "_locale" not in values
+    if expects_locale(endpoint):
+        locale = values.get("_locale", None)
+        if locale is None:
+            return False
+        if None in match_locale(locale):
+            return False
+    return True
 
 
 def match_locale(locale: str) -> tuple[str | None, ...]:
     """Parse a language and country code."""
     match = re.fullmatch(r"^([a-zA-Z]{2})[-_]+([a-zA-Z]{2})$", locale)
-    if match:
+    if match is not None:
         language_code, country_code = match.groups()
         return language_code.lower(), country_code.lower()
     return None, None
