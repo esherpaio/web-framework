@@ -14,6 +14,7 @@ from web.config import config
 from web.database import conn
 from web.database.model import User, UserRoleLevel
 from web.libs.logger import log
+from web.libs.parse import parse_url
 
 from .enum import AuthType, G
 from .error import AuthError, CSRFError, Forbidden, JWTError, KEYError, NoValueError
@@ -81,7 +82,7 @@ class Auth:
         ):
             response = json_response(error.code, error.message)
         else:
-            response = redirect(url_for(config.ENDPOINT_LOGIN))
+            response = redirect(parse_url(config.ENDPOINT_LOGIN, _func=url_for))
         if error.code == 401:
             del_jwt(response)
         return response

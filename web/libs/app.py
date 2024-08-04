@@ -14,6 +14,7 @@ from web.database.model import AppBlueprint, AppRoute
 from web.i18n import _
 from web.libs.errors import WebError
 from web.libs.logger import log
+from web.libs.parse import parse_url
 
 #
 # Routes
@@ -88,7 +89,7 @@ def handle_frontend_error(error: Exception) -> Response:
     info = ["Frontend error", f"HTTP {code} {request.method} {request.full_path}"]
     exc_info = True if level >= logging.ERROR else False
     log.log(level, " - ".join(info), exc_info=exc_info)
-    return redirect(url_for(config.ENDPOINT_ERROR))
+    return redirect(parse_url(config.ENDPOINT_ERROR, _func=url_for))
 
 
 def handle_backend_error(error: Exception) -> Response:

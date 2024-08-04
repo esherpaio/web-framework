@@ -10,6 +10,7 @@ from web.config import config
 from web.database import conn
 from web.database.model import User, Verification
 from web.i18n import _
+from web.libs.parse import parse_url
 from web.mail import MailEvent, mail
 
 #
@@ -43,10 +44,11 @@ def post_users_id_activation(user_id: int) -> Response:
         s.flush()
 
         # Send email
-        verification_url = url_for(
+        verification_url = parse_url(
             config.ENDPOINT_LOGIN,
-            verification_key=verification.key,
+            _func=url_for,
             _external=True,
+            verification_key=verification.key,
         )
         mail.trigger_events(
             s,

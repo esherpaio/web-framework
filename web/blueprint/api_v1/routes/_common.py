@@ -10,6 +10,7 @@ from web.config import config
 from web.database.model import Cart, Order, Refund, User, Verification
 from web.ext.mollie import Mollie, mollie_amount
 from web.libs.cart import get_shipment_methods
+from web.libs.parse import parse_url
 from web.libs.utils import none_attrgetter
 from web.mail.mail import MailEvent, mail
 
@@ -74,10 +75,11 @@ def recover_user_password(s: Session, user: User) -> None:
     verification = Verification(user_id=user.id, key=verification_key)
     s.add(verification)
     s.flush()
-    reset_url = url_for(
+    reset_url = parse_url(
         config.ENDPOINT_PASSWORD,
-        verification_key=verification_key,
+        _func=url_for,
         _external=True,
+        verification_key=verification.key,
     )
     mail.trigger_events(
         s,
