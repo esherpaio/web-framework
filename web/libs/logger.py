@@ -52,7 +52,9 @@ class SMTPHandler(_SMTPHandler):
             msg["Subject"] = self.getSubject(record)
             msg.set_content(self.format(record))
             # Send email
-            with SMTP(config.SMTP_HOST, port=config.SMTP_PORT, timeout=25) as smtp:
+            with SMTP(
+                config.SMTP_HOST, port=config.SMTP_PORT, timeout=config.EMAIL_TIMEOUT
+            ) as smtp:
                 smtp.set_debuglevel(False)
                 smtp.starttls()
                 smtp.login(config.SMTP_USERNAME, config.SMTP_PASSWORD)
