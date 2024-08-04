@@ -26,10 +26,10 @@ def lacks_locale(endpoint: str | None, values: dict) -> bool:
     if expects_locale(endpoint):
         locale = values.get("_locale", None)
         if locale is None:
-            return False
+            return True
         if None in match_locale(locale):
-            return False
-    return True
+            return True
+    return False
 
 
 def match_locale(locale: str) -> tuple[str | None, ...]:
