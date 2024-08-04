@@ -2,7 +2,7 @@ import uuid
 from datetime import datetime, timedelta, timezone
 from hmac import compare_digest
 from json import JSONEncoder
-from typing import Any, Literal
+from typing import Any, Literal, Type
 
 import jwt
 from flask import Flask, current_app, g, redirect, request, url_for
@@ -73,7 +73,7 @@ class Auth:
         return response
 
     @staticmethod
-    def on_error(error: AuthError) -> Response:
+    def on_error(error: Type[AuthError]) -> Response:
         user_id = getattr(g, G.USER_ID, None)
         log.debug(f"Auth error {type(error).__name__} with user {user_id}")
         if request.blueprint is not None and (
@@ -88,21 +88,33 @@ class Auth:
         return response
 
 
+#
+# Authorization
+#
+
+
 def authorize(level: UserRoleLevel | None = None) -> Any:
     def decorate(f):
         def wrap(*args, **kwargs):
-            if (
-                not current_user
-                or not current_user.is_active
-                or current_user.role.level < level
-            ):
-                return Auth.on_error(Forbidden())
+            auth = authorize_user(level)
+            if auth is not None:
+                return auth
             return current_app.ensure_sync(f)(*args, **kwargs)
 
         wrap.__name__ = f.__name__
         return wrap
 
     return decorate
+
+
+def authorize_user(level: UserRoleLevel | None = None) -> Response | None:
+    if (
+        not current_user
+        or not current_user.is_active
+        or current_user.role.level < level
+    ):
+        return Auth.on_error(Forbidden)
+    return None
 
 
 #
