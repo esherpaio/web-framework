@@ -22,7 +22,7 @@ from web.ext.mollie import Mollie, mollie_amount, mollie_webhook
 
 @api_v1_bp.post("/orders/<int:order_id>/payments")
 def post_orders_id_payments(order_id: int) -> Response:
-    redirect = json_get("redirect", str, nullable=False)
+    redirect = json_get("redirect", str, nullable=False)[0]
 
     with conn.begin() as s:
         # Check if order is in use by the user
