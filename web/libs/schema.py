@@ -5,6 +5,7 @@ from markupsafe import Markup
 
 from web.config import config
 from web.database.model import AppRoute
+from web.libs.parse import parse_url
 from web.locale import current_locale, url_for_locale
 
 
@@ -51,10 +52,11 @@ class SchemaWebPage(Schema):
 class SchemaWebsite(Schema):
     def __init__(self) -> None:
         super().__init__()
-        home_url = url_for_locale(
+        home_url = parse_url(
             config.ENDPOINT_HOME,
-            _locale=current_locale.locale,
+            _func=url_for_locale,
             _external=True,
+            _locale=current_locale.locale,
         )
         self.data = {
             "@context": "https://schema.org",
@@ -68,10 +70,11 @@ class SchemaWebsite(Schema):
 class SchemaOrganization(Schema):
     def __init__(self) -> None:
         super().__init__()
-        home_url = url_for_locale(
+        home_url = parse_url(
             config.ENDPOINT_HOME,
-            _locale=current_locale.locale,
+            _func=url_for_locale,
             _external=True,
+            _locale=current_locale.locale,
         )
         social_urls = [
             config.SOCIAL_DISCORD,

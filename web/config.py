@@ -135,6 +135,7 @@ class Config(metaclass=Singleton):
         ConfigVar("SOCIAL_YOUTUBE"),
         # Website details
         ConfigVar("WEBSITE_NAME"),
+        ConfigVar("WEBSITE_URL"),
         ConfigVar("WEBSITE_COUNTRY_CODE"),
         ConfigVar("WEBSITE_LANGUAGE_CODE"),
         ConfigVar("WEBSITE_FAVICON_URL"),

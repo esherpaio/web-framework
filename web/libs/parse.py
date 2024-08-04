@@ -1,9 +1,43 @@
 import re
 import urllib.parse
+from typing import Any, Callable
 from xml.dom import minidom
 from xml.dom.minidom import Node
 
 from phonenumbers.phonenumberutil import _is_viable_phone_number
+from requests.models import PreparedRequest
+
+#
+# Parsing
+#
+
+
+def parse_url(
+    endpoint: str,
+    _func: Callable,
+    _anchor: str | None = None,
+    _method: str | None = None,
+    _scheme: str | None = None,
+    _external: bool | None = None,
+    **values: Any,
+) -> str:
+    if endpoint.startswith(("http://", "https://")):
+        req = PreparedRequest()
+        req.prepare_url(endpoint, values)
+        url = req.url
+    else:
+        url = _func(
+            endpoint,
+            _anchor=_anchor,
+            _method=_method,
+            _scheme=_scheme,
+            _external=_external,
+            **values,
+        )
+    if url is None:
+        raise ValueError
+    return url
+
 
 #
 # Validation

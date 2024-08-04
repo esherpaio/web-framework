@@ -145,9 +145,9 @@ function deleteOrdersId(orderId, silent = false) {
     return callApi('DELETE', url, null, null, silent);
 }
 
-function postOrdersIdPayments(orderId, silent = false) {
+function postOrdersIdPayments(orderId, data, silent = false) {
     const url = `/api/v1/orders/${orderId}/payments`;
-    return callApi('POST', url, null, null, silent);
+    return callApi('POST', url, data, 'application/json', silent);
 }
 
 function postOrdersIdRefunds(orderId, data, silent = false) {
