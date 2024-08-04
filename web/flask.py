@@ -155,7 +155,8 @@ class FlaskWeb:
 
     def setup_flask(self, app: Flask, blueprints: list[Blueprint]) -> None:
         if not config.APP_DEBUG:
-            app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1)  # type: ignore[method-assign]
+            app = ProxyFix(app, x_for=1, x_host=1, x_proto=1, x_port=1)  # type: ignore[assignment]
+            # app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1)  # type: ignore[method-assign]
             app.config["PREFERRED_URL_SCHEME"] = "https"
         else:
             log.info("Enabling Flask debug mode")
