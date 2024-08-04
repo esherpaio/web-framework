@@ -18,7 +18,6 @@
     "ENDPOINT_ERROR": "home",
     "ENDPOINT_HOME": "home",
     "ENDPOINT_LOGIN": "home",
-    "ENDPOINT_ORDER": null,
     "ENDPOINT_PASSWORD": null,
     "INTIME": false,
     "SOCIAL_DISCORD": null,
