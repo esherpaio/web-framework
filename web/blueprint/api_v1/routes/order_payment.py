@@ -1,9 +1,8 @@
 from datetime import datetime, timedelta
 
-from flask import url_for
 from werkzeug import Response
 
-from web.api.utils import ApiText, json_response
+from web.api.utils import ApiText, json_get, json_response
 from web.auth import current_user
 from web.blueprint.api_v1 import api_v1_bp
 from web.config import config
@@ -23,6 +22,8 @@ from web.ext.mollie import Mollie, mollie_amount, mollie_webhook
 
 @api_v1_bp.post("/orders/<int:order_id>/payments")
 def post_orders_id_payments(order_id: int) -> Response:
+    redirect = json_get("redirect", str, nullable=False)
+
     with conn.begin() as s:
         # Check if order is in use by the user
         order = s.query(Order).filter_by(user_id=current_user.id, id=order_id).first()
@@ -33,7 +34,6 @@ def post_orders_id_payments(order_id: int) -> Response:
         order_price_vat = order.total_price * order.vat_rate
         amount = mollie_amount(order_price_vat, order.currency_code)
         description = f"Order {order.id}"
-        redirect = url_for(config.ENDPOINT_ORDER, order_id=order.id, _external=True)
         is_test = config.MOLLIE_KEY.startswith("test")
         due_date = (datetime.utcnow() + timedelta(days=100)).strftime("%Y-%m-%d")
         mollie_payment = Mollie().payments.create(

@@ -112,7 +112,6 @@ class Config(metaclass=Singleton):
         ConfigVar("ENDPOINT_ERROR"),
         ConfigVar("ENDPOINT_HOME"),
         ConfigVar("ENDPOINT_LOGIN"),
-        ConfigVar("ENDPOINT_ORDER"),
         ConfigVar("ENDPOINT_PASSWORD"),
         # External services
         EnvVar("DATABASE_URL", str),
