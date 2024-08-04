@@ -31,6 +31,7 @@ class CartAPI(API):
     }
     get_columns = {
         Cart.id,
+        Cart.user_id,
         Cart.billing_id,
         Cart.shipping_id,
         Cart.coupon_id,
