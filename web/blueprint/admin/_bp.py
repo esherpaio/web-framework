@@ -1,10 +1,9 @@
 import os
 
 from flask import Blueprint
+from werkzeug import Response
 
-from web.auth import authorize
-from web.cache import cache
-from web.config import config
+from web.auth import authorize_user
 from web.database.model import UserRoleLevel
 from web.libs.meta import Meta
 
@@ -20,12 +19,11 @@ admin_bp = Blueprint(
 
 
 @admin_bp.before_request
-@authorize(UserRoleLevel.ADMIN)
-def _authorize() -> None:
-    pass
+def authorize() -> Response | None:
+    return authorize_user(UserRoleLevel.ADMIN)
 
 
 @admin_bp.context_processor
 def context() -> dict:
     meta = Meta(title="Admin", robots="noindex,nofollow")
-    return dict(cache=cache, config=config, meta=meta)
+    return dict(meta=meta)
