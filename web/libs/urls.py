@@ -13,7 +13,6 @@ def url_for(
     _external: bool | None = None,
     **values: Any,
 ) -> str:
-    print(1)
     if _scheme is not None:
         scheme = _scheme
     elif not config.APP_DEBUG:
