@@ -18,7 +18,7 @@ def mollie_amount(number: int | float, currency: str) -> dict:
 
 
 def mollie_webhook() -> str | None:
-    url = url_for(config.ENDPOINT_MOLLIE, _external=True, _scheme="https")
+    url = url_for("webhook_v1.mollie_payment", _external=True, _scheme="https")
     if config.LOCALHOST:
         localhost = strip_scheme(config.LOCALHOST)
         parsed = urllib.parse.urlparse(url)
