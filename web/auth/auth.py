@@ -82,7 +82,8 @@ class Auth:
         ):
             response = json_response(error.code, error.message)
         else:
-            response = redirect(parse_url(config.ENDPOINT_LOGIN, _func=url_for))
+            url = parse_url(config.ENDPOINT_LOGIN, _func=url_for)
+            response = redirect(url, code=302)
         if error.code == 401:
             del_jwt(response)
         return response

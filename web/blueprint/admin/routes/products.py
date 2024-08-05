@@ -46,7 +46,7 @@ def product(product_id: int) -> str | Response:
             .first()
         )
         if not product_:
-            return redirect(url_for("admin.error"))
+            return redirect(url_for("admin.products"))
         shipment_classes = (
             s.query(ShipmentClass)
             .filter_by(is_deleted=False)
@@ -73,7 +73,7 @@ def product_options(product_id: int) -> str | Response:
             .first()
         )
         if not product_:
-            return redirect(url_for("admin.error"))
+            return redirect(url_for("admin.products"))
         product_options = (
             s.query(ProductOption)
             .options(joinedload(ProductOption.values))
@@ -133,7 +133,7 @@ def product_media(product_id: int) -> str | Response:
             .first()
         )
         if not product_:
-            return redirect(url_for("admin.error"))
+            return redirect(url_for("admin.products"))
         product_medias = (
             s.query(ProductMedia)
             .options(joinedload(ProductMedia.file))
@@ -161,7 +161,7 @@ def product_links(product_id: int) -> str | Response:
             .first()
         )
         if not product_:
-            return redirect(url_for("admin.error"))
+            return redirect(url_for("admin.products"))
         product_links = (
             s.query(ProductLink)
             .options(
@@ -209,7 +209,7 @@ def product_skus(product_id: int) -> str | Response:
             .first()
         )
         if not product_:
-            return redirect(url_for("admin.error"))
+            return redirect(url_for("admin.products"))
         skus = (
             s.query(Sku)
             .options(

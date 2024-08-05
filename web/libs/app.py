@@ -90,7 +90,8 @@ def handle_frontend_error(error: Exception) -> Response:
     info = ["Frontend error", f"HTTP {code} {request.method} {request.full_path}"]
     exc_info = True if level >= logging.ERROR else False
     log.log(level, " - ".join(info), exc_info=exc_info)
-    return redirect(parse_url(config.ENDPOINT_ERROR, _func=url_for))
+    url = parse_url(config.ENDPOINT_ERROR, _func=url_for)
+    return redirect(url, code=302)
 
 
 def handle_backend_error(error: Exception) -> Response:
