@@ -12,12 +12,12 @@ from .utils import (
 
 __all__ = [
     "current_locale",
+    "expects_locale",
+    "gen_locale",
+    "get_route_locale",
+    "lacks_locale",
     "Locale",
     "LocaleManager",
-    "get_route_locale",
-    "expects_locale",
-    "lacks_locale",
     "match_locale",
-    "gen_locale",
     "url_for_locale",
 ]

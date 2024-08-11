@@ -7,8 +7,8 @@ from sqlalchemy.orm import Session
 from web.auth import current_user
 from web.config import config
 from web.database.model import Email, EmailStatusId
-from web.libs.logger import log
-from web.libs.utils import Singleton
+from web.logger import log
+from web.utils import Singleton
 
 from .event import (
     mail_bulk,

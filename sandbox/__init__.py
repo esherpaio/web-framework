@@ -1,15 +1,15 @@
 from flask import Flask
 
+from web.app.web import FlaskWeb
 from web.auth import jwt_login
+from web.automation import Syncer
+from web.automation.task import CountrySyncer, CurrencySyncer, RegionSyncer, SkuSyncer
 from web.blueprint.admin import admin_bp
 from web.blueprint.api_v1 import api_v1_bp
 from web.blueprint.robots import robots_bp
 from web.blueprint.webhook_v1 import webhook_v1_bp
 from web.database import conn
 from web.database.model import User, UserRoleId
-from web.flask import FlaskWeb
-from web.syncer import Syncer
-from web.syncer.object import CountrySyncer, CurrencySyncer, RegionSyncer, SkuSyncer
 
 
 class UserSyncer(Syncer):
@@ -31,7 +31,7 @@ def create_app() -> Flask:
     FlaskWeb(
         app,
         blueprints=[robots_bp, admin_bp, api_v1_bp, webhook_v1_bp],
-        syncers=[CurrencySyncer, RegionSyncer, CountrySyncer, SkuSyncer, UserSyncer],
+        auto_tasks=[CurrencySyncer, RegionSyncer, CountrySyncer, SkuSyncer, UserSyncer],
     )
     return app
 

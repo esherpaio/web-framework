@@ -2,8 +2,8 @@ import hashlib
 import io
 import os
 
-from web.libs import cdn
-from web.libs.logger import log
+from web import cdn
+from web.logger import log
 
 from .bundle import CssBundle, JsBundle, ScssBundle
 

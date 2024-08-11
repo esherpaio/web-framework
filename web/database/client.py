@@ -4,10 +4,12 @@ from sqlalchemy.orm import sessionmaker
 from web.config import config
 
 
-def init_db(*args, **kwargs):
+def init_db(uri: str | None = None, **options):
+    if uri is None:
+        uri = config.DATABASE_URL
     engine, conn = None, None
-    if config.DATABASE_URL:
-        engine = create_engine(config.DATABASE_URL, *args, **kwargs)
+    if uri is not None:
+        engine = create_engine(config.DATABASE_URL, **options)
         conn = sessionmaker(engine, autoflush=False, expire_on_commit=False)
     return engine, conn
 

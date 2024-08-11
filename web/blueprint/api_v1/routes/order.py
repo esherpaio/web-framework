@@ -5,8 +5,8 @@ from pyvat import is_vat_number_format_valid
 from sqlalchemy.orm.session import Session
 from werkzeug import Response
 
-from web.api import API
-from web.api.utils import ApiText, json_response
+from web.api import API, ApiText, json_response
+from web.app.cart import get_shipment_methods
 from web.auth import authorize, current_user
 from web.blueprint.api_v1 import api_v1_bp
 from web.database import conn
@@ -23,7 +23,6 @@ from web.database.model import (
 from web.database.utils import copy_row
 from web.ext.mollie import Mollie
 from web.i18n import _
-from web.libs.cart import get_shipment_methods
 from web.mail import MailEvent, mail
 
 from ._common import create_refund
@@ -165,8 +164,8 @@ def set_order(s: Session, data: dict, model: Order) -> None:
     if cart.shipment_method is not None:
         model.shipment_name = cart.shipment_method.name
     # copy billing and shipping
-    model.billing = copy_row(s, Billing(), cart.billing)
-    model.shipping = copy_row(s, Shipping(), cart.shipping)
+    model.billing = copy_row(s, cart.billing, Billing())
+    model.shipping = copy_row(s, cart.shipping, Shipping())
     # set values
     model.billing_id = cart.billing_id
     model.currency_code = cart.currency.code

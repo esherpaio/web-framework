@@ -1,4 +1,4 @@
-from web.api.utils import ApiText
+from web.api import ApiText
 
 
 class AuthError(Exception):

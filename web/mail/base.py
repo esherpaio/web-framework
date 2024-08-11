@@ -8,7 +8,7 @@ from smtplib import SMTP
 import jinja2
 
 from web.config import config
-from web.libs.logger import log
+from web.logger import log
 
 
 class MailMethod(StrEnum):

@@ -1,7 +1,7 @@
 from flask import render_template
 
 from web.blueprint.admin import admin_bp
-from web.database.client import conn
+from web.database import conn
 from web.database.model import Country
 
 

@@ -2,9 +2,8 @@ import urllib.parse
 
 from mollie.api.client import Client
 
+from web.app.urls import url_for
 from web.config import config
-from web.libs.parse import strip_scheme
-from web.libs.urls import url_for
 
 
 class Mollie(Client):
@@ -25,3 +24,9 @@ def mollie_webhook() -> str | None:
         replaced = parsed._replace(netloc=localhost)
         url = urllib.parse.urlunparse(replaced)
     return url
+
+
+def strip_scheme(url: str) -> str:
+    parsed = urllib.parse.urlparse(url)
+    scheme = f"{parsed.scheme}://"
+    return parsed.geturl().replace(scheme, "", 1)

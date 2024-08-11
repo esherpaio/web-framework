@@ -2,8 +2,7 @@ from flask import abort
 from sqlalchemy.orm.session import Session
 from werkzeug import Response
 
-from web.api import API
-from web.api.utils import ApiText, json_response
+from web.api import API, ApiText, json_response
 from web.auth import current_user
 from web.blueprint.api_v1 import api_v1_bp
 from web.database import conn

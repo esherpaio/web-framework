@@ -2,8 +2,8 @@ import re
 
 from flask import current_app, has_request_context, request
 
+from web.app.urls import url_for
 from web.config import config
-from web.libs.urls import url_for
 
 
 def get_route_locale() -> str | None:

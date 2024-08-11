@@ -4,13 +4,13 @@ import pytest
 from flask import Flask
 from flask.testing import FlaskClient
 
+from web.app.web import FlaskWeb
+from web.automation import Syncer
 from web.blueprint.api_v1 import api_v1_bp
 from web.blueprint.webhook_v1 import webhook_v1_bp
 from web.cache import cache_manager
 from web.database.client import engine
 from web.database.model import Base, User, UserRoleId
-from web.flask import FlaskWeb
-from web.syncer import Syncer
 
 #
 # Configuration
@@ -70,7 +70,7 @@ class UserSyncer(Syncer):
 def create_app() -> Flask:
     app = Flask(__name__)
     app.testing = True
-    FlaskWeb(app, blueprints=[api_v1_bp, webhook_v1_bp], syncers=[UserSyncer])
+    FlaskWeb(app, blueprints=[api_v1_bp, webhook_v1_bp], auto_tasks=[UserSyncer])
     cache_manager.pause()
     return app
 

@@ -5,14 +5,14 @@ from google.oauth2 import id_token
 from werkzeug import Response
 from werkzeug.security import check_password_hash
 
-from web.api.utils import json_get, json_response
+from web.api import json_get, json_response
+from web.app.cart import transfer_cart
 from web.auth import jwt_login, jwt_logout
 from web.blueprint.api_v1 import api_v1_bp
 from web.config import config
 from web.database import conn
 from web.database.model import User, UserRoleId
 from web.i18n import _
-from web.libs.cart import transfer_cart
 
 from ._common import recover_user_password
 
@@ -78,15 +78,13 @@ def post_sessions_google() -> Response:
     email = token.get("email")
     if email is None:
         return json_response(400, Text.GOOGLE_INVALID)
-    email = email.lower()
 
     # Get or add user
     with conn.begin() as s:
-        user = s.query(User).filter_by(email=email, is_active=True).first()
-    if user and not user.is_active:
-        return json_response(400, Text.CHECK_ACTIVATION)
-    if not user:
-        with conn.begin() as s:
+        user = s.query(User).filter_by(email=email.lower()).first()
+        if user is not None and not user.is_active:
+            user.is_active = True
+        if user is None:
             user = User(email=email, is_active=True, role_id=UserRoleId.USER)
             s.add(user)
 

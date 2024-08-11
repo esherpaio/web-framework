@@ -3,8 +3,7 @@ from datetime import datetime
 from sqlalchemy.orm import Session
 from werkzeug import Response
 
-from web.api import API
-from web.api.utils import json_response
+from web.api import API, json_response
 from web.auth import authorize
 from web.blueprint.api_v1 import api_v1_bp
 from web.database import conn
