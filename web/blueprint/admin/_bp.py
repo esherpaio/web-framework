@@ -3,9 +3,9 @@ import os
 from flask import Blueprint
 from werkzeug import Response
 
+from web.app.meta import Meta
 from web.auth import authorize_user
 from web.database.model import UserRoleLevel
-from web.libs.meta import Meta
 
 _dir = os.path.dirname(os.path.abspath(__file__))
 admin_bp = Blueprint(

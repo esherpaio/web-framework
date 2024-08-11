@@ -8,7 +8,7 @@ from sqlalchemy.orm.attributes import InstrumentedAttribute
 from sqlalchemy.orm.session import Session
 
 from web.database.model import Base
-from web.libs.logger import log
+from web.logger import log
 
 from .utils import ApiText, args_get, json_get, json_response
 

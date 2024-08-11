@@ -4,15 +4,14 @@ from flask import abort
 from sqlalchemy.orm.session import Session
 from werkzeug import Response
 
-from web.api import API
-from web.api.utils import ApiText, json_response
+from web.api import API, ApiText, json_response
+from web.app.cart import get_shipment_methods
 from web.auth import current_user
 from web.blueprint.api_v1 import api_v1_bp
 from web.database import conn
 from web.database.model import Cart, CartItem
 from web.i18n import _
-
-from ._common import authorize_cart, update_cart_shipment_methods
+from web.utils import none_attrgetter
 
 #
 # Configuration
@@ -62,7 +61,7 @@ def patch_cart_id_items_id(cart_id: int, cart_item_id: int) -> Response:
     api = CartItemAPI()
     data = api.gen_request_data(api.patch_columns)
     with conn.begin() as s:
-        authorize_cart(s, data)
+        authorize_cart(s, data, None)
         model: CartItem = api.get(s, cart_item_id)
         val_cart_item(s, data, model)
         api.update(s, data, model)
@@ -113,9 +112,27 @@ def set_cart(s: Session, data: dict, model: None) -> None:
     cart_id = data["cart_id"]
     cart = s.query(Cart).filter(Cart.id == cart_id).first()
     if cart is not None:
-        update_cart_shipment_methods(s, cart)
+        shipment_methods = get_shipment_methods(s, cart)
+        if shipment_methods:
+            shipment_method = min(shipment_methods, key=none_attrgetter("unit_price"))
+            cart.shipment_method_id = shipment_method.id
+            cart.shipment_price = shipment_method.unit_price * cart.currency.rate
+        else:
+            cart.shipment_method_id = None
+            cart.shipment_price = 0
+        s.flush()
 
 
 def val_cart_item(s: Session, data: dict, model: CartItem) -> None:
     if "quantity" in data and data["quantity"] <= 0:
         abort(json_response(400, Text.CART_ITEM_QUANTITY_ZERO))
+
+
+def authorize_cart(s: Session, data: dict, model: None) -> Cart:
+    cart_id = data["cart_id"]
+    filters = {Cart.id == cart_id, Cart.user_id == current_user.id}
+    cart = s.query(Cart).filter(*filters).first()
+    if cart is None:
+        abort(json_response(404, ApiText.HTTP_404))
+    else:
+        return cart

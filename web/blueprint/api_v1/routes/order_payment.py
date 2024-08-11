@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 
 from werkzeug import Response
 
-from web.api.utils import ApiText, json_get, json_response
+from web.api import ApiText, json_get, json_response
 from web.auth import current_user
 from web.blueprint.api_v1 import api_v1_bp
 from web.config import config

@@ -2,9 +2,9 @@ import json
 import os
 
 from web.config import config
-from web.libs.logger import log
-from web.libs.utils import Singleton
 from web.locale import current_locale
+from web.logger import log
+from web.utils import Singleton
 
 
 class Translator(metaclass=Singleton):

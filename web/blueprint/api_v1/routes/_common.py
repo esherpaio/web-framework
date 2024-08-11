@@ -1,19 +1,13 @@
 import uuid
 
-from flask import abort
 from mollie.api.objects.payment import Payment
 from sqlalchemy.orm import Session
 
-from web.api.utils import ApiText, json_response
-from web.auth import current_user
+from web.app.urls import parse_url, url_for
 from web.config import config
-from web.database.model import Cart, Order, Refund, User, Verification
+from web.database.model import Order, Refund, User, Verification
 from web.ext.mollie import Mollie, mollie_amount
-from web.libs.cart import get_shipment_methods
-from web.libs.parse import parse_url
-from web.libs.urls import url_for
-from web.libs.utils import none_attrgetter
-from web.mail.mail import MailEvent, mail
+from web.mail import MailEvent, mail
 
 
 def create_refund(
@@ -49,33 +43,14 @@ def create_refund(
     )
 
 
-def authorize_cart(s: Session, data: dict) -> Cart:
-    cart_id = data["cart_id"]
-    filters = {Cart.id == cart_id, Cart.user_id == current_user.id}
-    cart = s.query(Cart).filter(*filters).first()
-    if cart is None:
-        abort(json_response(404, ApiText.HTTP_404))
-    else:
-        return cart
-
-
-def update_cart_shipment_methods(s: Session, cart: Cart) -> None:
-    shipment_methods = get_shipment_methods(s, cart)
-    if shipment_methods:
-        shipment_method = min(shipment_methods, key=none_attrgetter("unit_price"))
-        cart.shipment_method_id = shipment_method.id
-        cart.shipment_price = shipment_method.unit_price * cart.currency.rate
-    else:
-        cart.shipment_method_id = None
-        cart.shipment_price = 0
-    s.flush()
-
-
 def recover_user_password(s: Session, user: User) -> None:
-    verification_key = str(uuid.uuid4())
-    verification = Verification(user_id=user.id, key=verification_key)
+    # Insert verification
+    key = str(uuid.uuid4())
+    verification = Verification(user_id=user.id, key=key)
     s.add(verification)
     s.flush()
+
+    # Send email
     reset_url = parse_url(
         config.ENDPOINT_PASSWORD,
         _func=url_for,

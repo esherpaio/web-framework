@@ -5,7 +5,7 @@ from typing import Any
 
 from dotenv import load_dotenv
 
-from web.libs.utils import Singleton
+from web.utils import Singleton
 
 #
 # Types
@@ -61,7 +61,7 @@ class ConfigVar:
 
 
 #
-# Classes
+# Base
 #
 
 
@@ -158,9 +158,5 @@ class Config(metaclass=Singleton):
                 return
         raise AttributeError
 
-
-#
-# Variables
-#
 
 config = Config()

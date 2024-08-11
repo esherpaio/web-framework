@@ -7,8 +7,8 @@ from flask import Flask, Response, make_response, request
 
 from web.cache import cache
 from web.config import config
-from web.libs.logger import log
-from web.libs.utils import Singleton
+from web.logger import log
+from web.utils import Singleton
 
 from .enums import Encoding, Minification, get_encoding, get_minification
 from .object import minify_html

@@ -5,7 +5,7 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import mapped_column as MC
 from sqlalchemy.orm import relationship, validates
 
-from web.libs.utils import none_attrgetter
+from web.utils import none_attrgetter
 
 from ._base import Attribute, Base
 from ._utils import get_slug

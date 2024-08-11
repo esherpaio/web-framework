@@ -2,7 +2,7 @@ from sqlalchemy import false
 from sqlalchemy.orm import contains_eager
 from werkzeug import Response
 
-from web.api.utils import ApiText, json_get, json_response
+from web.api import ApiText, json_get, json_response
 from web.auth import authorize
 from web.blueprint.api_v1 import api_v1_bp
 from web.database import conn
@@ -13,7 +13,7 @@ from web.database.model import (
     SkuDetail,
     UserRoleLevel,
 )
-from web.libs.parse import gen_slug
+from web.validation import gen_slug
 
 #
 # Configuration

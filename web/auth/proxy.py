@@ -7,7 +7,7 @@ from werkzeug.local import LocalProxy
 from web.config import config
 from web.database import conn
 from web.database.model import User, UserRoleId
-from web.libs.logger import log
+from web.logger import log
 
 from .enum import AuthType, G
 

@@ -4,13 +4,12 @@ from typing import Type
 from flask import Response, current_app, make_response, render_template
 from sqlalchemy.orm import joinedload
 
+from web.app.routing import has_argument, is_endpoint
+from web.app.sitemap import Sitemap, SitemapUrl, str_to_xml
 from web.blueprint.robots import robots_bp
 from web.cache import cache
 from web.database import conn
 from web.database.model import Article, Category, Sku
-from web.libs.app import has_argument, is_endpoint
-from web.libs.parse import str_to_xml
-from web.libs.sitemap import Sitemap, SitemapUrl
 from web.locale import gen_locale
 
 

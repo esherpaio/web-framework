@@ -4,7 +4,7 @@ from sqlalchemy import false, null
 from sqlalchemy.orm import joinedload
 from werkzeug import Response
 
-from web.api.utils import json_get
+from web.api import json_get
 from web.auth import authorize
 from web.blueprint.webhook_v1 import webhook_v1_bp
 from web.database import conn

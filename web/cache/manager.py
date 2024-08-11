@@ -5,8 +5,8 @@ from typing import Callable
 
 from web.database import conn
 from web.database.model import AppSetting
-from web.libs.logger import log
-from web.libs.utils import Singleton
+from web.logger import log
+from web.utils import Singleton
 
 
 class CacheManager(metaclass=Singleton):

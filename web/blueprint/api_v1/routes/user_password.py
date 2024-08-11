@@ -3,7 +3,7 @@ from enum import StrEnum
 from werkzeug import Response
 from werkzeug.security import generate_password_hash
 
-from web.api.utils import ApiText, json_get, json_response
+from web.api import ApiText, json_get, json_response
 from web.blueprint.api_v1 import api_v1_bp
 from web.database import conn
 from web.database.model import User, Verification

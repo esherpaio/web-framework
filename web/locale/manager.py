@@ -1,8 +1,8 @@
 from flask import Flask, redirect, request
 from werkzeug import Response
 
-from web.libs.urls import url_for
-from web.libs.utils import Singleton
+from web.app.urls import url_for
+from web.utils import Singleton
 
 from .proxy import current_locale
 from .utils import expects_locale, gen_locale, lacks_locale

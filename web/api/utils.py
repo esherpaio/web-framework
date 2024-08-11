@@ -78,7 +78,7 @@ def json_get(
         value = None
         data = {}
     has_key = key in data
-    validate(value, type_, nullable, column)
+    _validate(value, type_, nullable, column)
     return value, has_key
 
 
@@ -92,11 +92,11 @@ def args_get(
     """Get a value from the request args."""
     value = request.args.get(key, default, type_)
     has_key = key in request.args
-    validate(value, type_, nullable, column)
+    _validate(value, type_, nullable, column)
     return value, has_key
 
 
-def validate(
+def _validate(
     value: Any,
     type_: Any,
     nullable: bool,
