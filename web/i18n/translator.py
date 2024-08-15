@@ -26,10 +26,13 @@ class Translator(metaclass=Singleton):
 
     def load_file(self, fp: str) -> None:
         with open(fp, "r") as f:
-            fn, _ = os.path.splitext(os.path.basename(fp))
-            if fn not in self.translations:
-                self.translations[fn] = {}
-            self.translations[fn].update(json.loads(f.read()))
+            data = f.read()
+        fn, fext = os.path.splitext(os.path.basename(fp))
+        if fext != ".json":
+            return
+        if fn not in self.translations:
+            self.translations[fn] = {}
+        self.translations[fn].update(json.loads(data))
 
     def get_translations(self, language_code: str) -> dict:
         try:
