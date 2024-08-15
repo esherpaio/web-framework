@@ -13,24 +13,23 @@ class Translator(metaclass=Singleton):
 
     def __init__(self) -> None:
         self.translations: dict = {}
-        self.load_translations()
+        cur_dir = os.path.dirname(os.path.realpath(__file__))
+        root_dir = os.path.join(cur_dir, "translation")
+        self.load_dir(root_dir)
 
-    def load_translations(self) -> None:
-        translations_dir = os.path.join(
-            os.path.dirname(os.path.realpath(__file__)),
-            "translation",
-        )
-        for dir_, _, filenames in os.walk(translations_dir):
-            for filename in filenames:
-                path = os.path.abspath(os.path.join(dir_, filename))
-                self.add_translations(path)
+    def load_dir(self, dir_: str) -> None:
+        dir_ = os.path.abspath(dir_)
+        for fd, _, fns in os.walk(dir_):
+            for fn in fns:
+                fp = os.path.abspath(os.path.join(fd, fn))
+                self.load_file(fp)
 
-    def add_translations(self, path: str) -> None:
-        with open(path, "r") as file:
-            name, _ = os.path.splitext(os.path.basename(path))
-            if name not in self.translations:
-                self.translations[name] = {}
-            self.translations[name].update(json.loads(file.read()))
+    def load_file(self, fp: str) -> None:
+        with open(fp, "r") as f:
+            fn, _ = os.path.splitext(os.path.basename(fp))
+            if fn not in self.translations:
+                self.translations[fn] = {}
+            self.translations[fn].update(json.loads(f.read()))
 
     def get_translations(self, language_code: str) -> dict:
         try:
