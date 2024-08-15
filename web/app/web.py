@@ -13,6 +13,7 @@ from web.automation import Automator, task
 from web.cache import cache, cache_common, cache_manager
 from web.config import config
 from web.database import conn
+from web.i18n import translator
 from web.locale import LocaleManager, current_locale
 from web.logger import log
 from web.mail import MailEvent, mail
@@ -31,6 +32,7 @@ class FlaskWeb:
         jinja_filters: dict[str, Callable] | None = None,
         jinja_globals: dict[str, Callable] | None = None,
         mail_events: dict[MailEvent | str, list[Callable]] | None = None,
+        translations_dir: str | None = None,
         auto_tasks: list[Type[Automator]] | None = None,
         db_migrate: bool = False,
         db_hook: Callable | None = None,
@@ -54,6 +56,7 @@ class FlaskWeb:
                 jinja_filters,
                 jinja_globals,
                 mail_events,
+                translations_dir,
                 auto_tasks,
                 db_migrate,
                 db_hook,
@@ -67,11 +70,13 @@ class FlaskWeb:
         jinja_filters: dict[str, Callable],
         jinja_globals: dict[str, Callable],
         mail_events: dict[MailEvent | str, list[Callable]],
+        translations_dir: str | None,
         auto_tasks: list[Type[Automator]],
         db_migrate: bool,
         db_hook: Callable | None,
         cache_hook: Callable | None,
     ) -> None:
+        self.setup_i18n(translations_dir)
         self.setup_database(db_migrate, auto_tasks, db_hook)
         self.setup_cache(cache_hook)
         self.setup_mail(mail_events)
@@ -81,6 +86,12 @@ class FlaskWeb:
     #
     # Setup
     #
+
+    def setup_i18n(self, dir_: str | None) -> None:
+        if dir_ is None:
+            return
+        log.info(f"Loading translations from {dir_}")
+        translator.load_dir(dir_)
 
     def setup_database(
         self,
