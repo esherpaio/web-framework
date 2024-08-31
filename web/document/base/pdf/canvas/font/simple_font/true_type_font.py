@@ -275,6 +275,8 @@ class TrueTypeFont(Type1Font):
         """This function returns the PDF TrueTypeFont object for a given TTF file."""
 
         if isinstance(font_file, Path):
+            if not font_file.is_absolute():
+                font_file = Path(__file__).parent / "ttf" / font_file
             assert font_file.exists()
             assert font_file.name.endswith(".ttf")
 
