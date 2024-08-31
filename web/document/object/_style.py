@@ -3,11 +3,11 @@ from decimal import Decimal
 from ..base.pdf import HexColor
 from ..base.pdf import Paragraph as Paragraph_
 from ..base.pdf import TableCell as TableCell_
+from ..base.pdf.canvas.font.simple_font.true_type_font import TrueTypeFont
 from ..base.pdf.canvas.layout.layout_element import LayoutElement
-from ..base.pdf.canvas.font.simple_font import true_type_font_from_file
 
-FONT_NORMAL = true_type_font_from_file("ttf/notosans-regular.ttf")
-FONT_BOLD = true_type_font_from_file("ttf/notosans-semibold.ttf")
+FONT_NORMAL = TrueTypeFont().true_type_font_from_file("ttf/notosans-regular.ttf")
+FONT_BOLD = TrueTypeFont().true_type_font_from_file("ttf/notosans-semibold.ttf")
 # FONT_NORMAL = "Helvetica"
 # FONT_BOLD = "Helvetica Bold"
 FONT_SIZE_NORMAL = Decimal(10)
