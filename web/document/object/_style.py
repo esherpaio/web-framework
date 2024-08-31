@@ -1,4 +1,5 @@
 from decimal import Decimal
+from pathlib import Path
 
 from ..base.pdf import HexColor
 from ..base.pdf import Paragraph as Paragraph_
@@ -6,8 +7,8 @@ from ..base.pdf import TableCell as TableCell_
 from ..base.pdf.canvas.font.simple_font.true_type_font import TrueTypeFont
 from ..base.pdf.canvas.layout.layout_element import LayoutElement
 
-FONT_NORMAL = TrueTypeFont().true_type_font_from_file("ttf/notosans-regular.ttf")
-FONT_BOLD = TrueTypeFont().true_type_font_from_file("ttf/notosans-semibold.ttf")
+FONT_NORMAL = TrueTypeFont().true_type_font_from_file(Path("notosans-regular.ttf"))
+FONT_BOLD = TrueTypeFont().true_type_font_from_file(Path("notosans-semibold.ttf"))
 # FONT_NORMAL = "Helvetica"
 # FONT_BOLD = "Helvetica Bold"
 FONT_SIZE_NORMAL = Decimal(10)
