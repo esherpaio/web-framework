@@ -28,11 +28,7 @@ from ..object._style import (
 )
 
 
-def gen_invoice(
-    s: Session,
-    order: Order,
-    invoice: Invoice,
-) -> tuple[str, str]:
+def gen_invoice(s: Session, order: Order, invoice: Invoice) -> tuple[str, str]:
     pdf = Document()
     page = Page()
     pdf.add_page(page)
@@ -58,10 +54,7 @@ def gen_invoice(
     return pdf_name, pdf_path
 
 
-def _build_order_info(
-    order: Order,
-    invoice: Invoice,
-) -> FixedColumnWidthTable:
+def _build_order_info(order: Order, invoice: Invoice) -> FixedColumnWidthTable:
     # Left 1 column
     left_items = []
     if order.billing.company:
@@ -135,9 +128,7 @@ def _build_order_info(
     return table
 
 
-def _build_order_lines(
-    order: Order,
-) -> list[FixedColumnWidthTable]:
+def _build_order_lines(order: Order) -> list[FixedColumnWidthTable]:
     cells = []
     h_texts = [_("PDF_DESCRIPTION"), _("PDF_QUANTITY"), _("PDF_PRICE")]
     h_widths = [Decimal(64), Decimal(10), Decimal(16)]
