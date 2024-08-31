@@ -12,6 +12,7 @@ DATA = [
     "blueprint/robots/templates/*.xml",
     "document/base/pdf/canvas/font/composite_font/cmaps/*",
     "document/base/pdf/canvas/font/simple_font/afm/*.afm",
+    "document/base/pdf/canvas/font/simple_font/ttf/*.ttf",
     "document/base/pdf/canvas/layout/hyphenation/resources/*.json",
     "document/base/pdf/canvas/lipsum/resources/*.json",
     "i18n/translation/*.json",
