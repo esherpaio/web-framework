@@ -29,10 +29,7 @@ from ..object._style import (
 
 
 def gen_refund(
-    s: Session,
-    order: Order,
-    invoice: Invoice,
-    refund: Refund,
+    s: Session, order: Order, invoice: Invoice, refund: Refund
 ) -> tuple[str, str]:
     pdf = Document()
     page = Page()
@@ -61,9 +58,7 @@ def gen_refund(
 
 
 def _build_refund_info(
-    order: Order,
-    invoice: Invoice,
-    refund: Refund,
+    order: Order, invoice: Invoice, refund: Refund
 ) -> FixedColumnWidthTable:
     # Left 1 column
     left_items = []
@@ -146,10 +141,7 @@ def _build_refund_info(
     return table
 
 
-def _build_refund_lines(
-    order: Order,
-    refund: Refund,
-) -> list[FixedColumnWidthTable]:
+def _build_refund_lines(order: Order, refund: Refund) -> list[FixedColumnWidthTable]:
     cells = []
     h_texts = [_("PDF_DESCRIPTION"), _("PDF_QUANTITY"), _("PDF_PRICE")]
     h_widths = [Decimal(64), Decimal(10), Decimal(16)]

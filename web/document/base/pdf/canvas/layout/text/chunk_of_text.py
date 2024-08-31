@@ -1,4 +1,5 @@
 import typing
+import unicodedata
 from decimal import Decimal
 
 from web.document.base.io.read.types import Dictionary, Name
@@ -10,6 +11,7 @@ from web.document.base.pdf.canvas.font.simple_font.true_type_font import TrueTyp
 from web.document.base.pdf.canvas.geometry.rectangle import Rectangle
 from web.document.base.pdf.canvas.layout.layout_element import Alignment, LayoutElement
 from web.document.base.pdf.page.page import Page
+from web.logger import log
 
 
 class ChunkOfText(LayoutElement):
@@ -74,7 +76,7 @@ class ChunkOfText(LayoutElement):
             horizontal_alignment=horizontal_alignment,
             background_color=background_color,
         )
-        self._text: str = text
+        self._text: str = self._normalize_text(text)
         self._is_tagged: bool = False
 
         # font information
@@ -97,6 +99,17 @@ class ChunkOfText(LayoutElement):
     #
     # PRIVATE
     #
+
+    def _normalize_text(self, text: str) -> str:
+        try:
+            return (
+                unicodedata.normalize("NFD", text)
+                .encode("ascii", "ignore")
+                .decode("utf-8")
+            )
+        except UnicodeEncodeError:
+            log.error("Failed to normalize text: %s" % text)
+            return text
 
     def _get_content_box(self, available_space: Rectangle) -> Rectangle:
         # line height
