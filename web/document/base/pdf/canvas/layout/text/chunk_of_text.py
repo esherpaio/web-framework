@@ -76,7 +76,7 @@ class ChunkOfText(LayoutElement):
             horizontal_alignment=horizontal_alignment,
             background_color=background_color,
         )
-        self._text: str = self._normalize_text(text)
+        self._text: str = text
         self._is_tagged: bool = False
 
         # font information
