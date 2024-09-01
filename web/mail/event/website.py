@@ -2,8 +2,7 @@ from sqlalchemy.orm import Session
 
 from web.config import config
 from web.i18n import _
-
-from ..base import render_email, send_email
+from web.mail import render_email, send_email
 
 
 def mail_contact_business(

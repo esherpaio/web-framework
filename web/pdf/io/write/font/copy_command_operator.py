@@ -1,0 +1,81 @@
+import typing
+from decimal import Decimal
+from typing import TYPE_CHECKING
+
+from web.pdf.io.read.types import AnyPDFType, HexadecimalString, Name, String
+from web.pdf.pdf.canvas.operator.canvas_operator import CanvasOperator
+
+if TYPE_CHECKING:
+    from web.pdf.pdf.canvas.canvas_stream_processor import (
+        CanvasStreamProcessor,
+    )
+    from web.pdf.pdf.canvas.event.event_listener import EventListener
+
+
+class CopyCommandOperator(CanvasOperator):
+    """This CanvasOperator copies an existing operator and writes its bytes to a
+    content stream of the canvas."""
+
+    #
+    # CONSTRUCTOR
+    #
+
+    def __init__(
+        self, operator_to_copy: CanvasOperator, output_content_stream: bytearray
+    ):
+        super().__init__("", 0)
+        self._operator_to_copy = operator_to_copy
+        self._output_content_stream: bytearray = output_content_stream
+
+    #
+    # PRIVATE
+    #
+
+    def _operand_to_str(self, op: AnyPDFType) -> str:
+        if isinstance(op, Decimal):
+            return str(op)
+        if isinstance(op, HexadecimalString):
+            return "<" + op._text + ">"
+        if isinstance(op, String):
+            return "(" + op._text + ")"
+        if isinstance(op, Name):
+            return "/" + str(op)
+        if isinstance(op, list):
+            return "[" + "".join([self._operand_to_str(x) + " " for x in op])[:-1] + "]"
+        return ""
+
+    #
+    # PUBLIC
+    #
+
+    def get_number_of_operands(self) -> int:
+        """Return the number of operands for this CanvasOperator."""
+
+        return self._operator_to_copy.get_number_of_operands()
+
+    def get_text(self) -> str:
+        """Return the str that invokes this CanvasOperator."""
+
+        return self._operator_to_copy.get_text()
+
+    def invoke(
+        self,
+        canvas_stream_processor: "CanvasStreamProcessor",
+        operands: typing.List[AnyPDFType] = [],
+        event_listeners: typing.List["EventListener"] = [],
+    ) -> None:
+        """Invokes this CanvasOperator."""
+
+        # execute command
+        self._operator_to_copy.invoke(canvas_stream_processor, operands)
+
+        # copy command in content stream
+        canvas_stream_processor.get_canvas()
+
+        # copy operand string
+
+        self._output_content_stream += b"\n"
+        self._output_content_stream += b"".join(
+            [(bytes(self._operand_to_str(s), encoding="utf8") + b" ") for s in operands]
+        )
+        self._output_content_stream += bytes(self.get_text(), encoding="utf8")
