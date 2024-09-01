@@ -6,9 +6,7 @@ from sqlalchemy.orm import Session
 from web.config import config
 from web.database.model import Invoice, Order, Refund
 from web.i18n import _
-
-from .._utils import float_to_str, save_pdf
-from ..base.pdf import (
+from web.pdf.pdf import (
     Alignment,
     Document,
     FixedColumnWidthTable,
@@ -16,7 +14,9 @@ from ..base.pdf import (
     Page,
     SingleColumnLayout,
 )
-from ..base.toolkit.table.parsing import cells_to_tables
+from web.pdf.toolkit.table.parsing import cells_to_tables
+
+from .._utils import float_to_str, save_pdf
 from ..object._style import (
     COLOR_DARKGREY,
     COLOR_LIGHTGREY,

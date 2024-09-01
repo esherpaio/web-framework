@@ -4,9 +4,8 @@ from web.config import config
 from web.database.model import Invoice, Order, Refund
 from web.document.object import gen_invoice, gen_refund
 from web.i18n import _
+from web.mail import render_email, send_email
 from web.utils import remove_file
-
-from ..base import render_email, send_email
 
 
 def mail_order_received(
