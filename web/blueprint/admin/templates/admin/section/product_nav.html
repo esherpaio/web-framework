@@ -7,7 +7,7 @@
         role="presentation">
         <a class="nav-link py-2 {{ 'active' if request.endpoint in ['admin.product'] }}"
            type="button"
-           href="{{ url_for("admin.product", product_id=product.id) }}">
+           href="{{ url_for('admin.product', product_id=product.id) }}">
             General
         </a>
     </li>
@@ -15,7 +15,7 @@
         role="presentation">
         <a class="nav-link py-2 {{ 'active' if request.endpoint in ['admin.product_options', 'admin.product_option'] }}"
            type="button"
-           href="{{ url_for("admin.product_options", product_id=product.id) }}">
+           href="{{ url_for('admin.product_options', product_id=product.id) }}">
             Options
         </a>
     </li>
@@ -23,7 +23,7 @@
         role="presentation">
         <a class="nav-link py-2 {{ 'active' if request.endpoint in ['admin.product_media'] }}"
            type="button"
-           href="{{ url_for("admin.product_media", product_id=product.id) }}">
+           href="{{ url_for('admin.product_media', product_id=product.id) }}">
             Media
         </a>
     </li>
@@ -31,7 +31,7 @@
         role="presentation">
         <a class="nav-link py-2 {{ 'active' if request.endpoint in ['admin.product_links'] }}"
            type="button"
-           href="{{ url_for("admin.product_links", product_id=product.id) }}">
+           href="{{ url_for('admin.product_links', product_id=product.id) }}">
             Links
         </a>
     </li>
@@ -39,7 +39,7 @@
         role="presentation">
         <a class="nav-link py-2 {{ 'active' if request.endpoint in ['admin.product_skus'] }}"
            type="button"
-           href="{{ url_for("admin.product_skus", product_id=product.id) }}">
+           href="{{ url_for('admin.product_skus', product_id=product.id) }}">
             SKUs
         </a>
     </li>
