@@ -19,17 +19,10 @@ class StaticVar:
 
 
 class EnvVar:
-    def __init__(
-        self,
-        key: str,
-        type_: Any,
-        default: Any = None,
-        list_type: Any = str,
-    ) -> None:
+    def __init__(self, key: str, type_: Any, default: Any = None) -> None:
         self.key = key
         self.type = type_
         self.default = default
-        self.list_type = list_type
 
     @cached_property
     def value(self) -> Any:
@@ -45,8 +38,6 @@ class EnvVar:
                 pass
         if self.type is bool:
             return value in ["true", "1"]
-        if self.type is list:
-            return [self.list_type(x) for x in value.split(",")]
 
 
 class ConfigVar:
@@ -84,7 +75,6 @@ class Config(metaclass=Singleton):
         EnvVar("AUTH_JWT_EXPIRES_S", int, default=86400),
         EnvVar("AUTH_JWT_ALLOW_GUEST", bool, default=False),
         EnvVar("AUTH_JWT_DECODE_LEEWAY_S", int, default=0),
-        EnvVar("AUTH_CSRF_METHODS", list, default=["POST", "PUT", "PATCH", "DELETE"]),
         # Business details
         ConfigVar("BUSINESS_NAME"),
         ConfigVar("BUSINESS_EMAIL"),

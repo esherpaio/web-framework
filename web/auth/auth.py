@@ -29,6 +29,7 @@ AUTH_JWT_COOKIE_NAME = "access_token"
 AUTH_JWT_ENCODE_ALGORITHM = "HS256"
 AUTH_JWT_DECODE_ALGORITHMS = ["HS256"]
 AUTH_CSRF_COOKIE_NAME = "csrf_token"
+AUTH_CSRF_METHODS = ["POST", "PUT", "PATCH", "DELETE"]
 
 
 #
@@ -157,7 +158,7 @@ def get_jwt() -> tuple[str, str | None]:
     if encoded_token is None:
         raise NoValueError
 
-    if request.method in config.AUTH_CSRF_METHODS:
+    if request.method in AUTH_CSRF_METHODS:
         csrf_value = request.cookies.get(AUTH_CSRF_COOKIE_NAME)
         if csrf_value is None:
             raise NoValueError
