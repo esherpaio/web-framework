@@ -78,7 +78,7 @@ def get_carts() -> Response:
 @api_v1_bp.patch("/carts/<int:cart_id>")
 def patch_carts_id(cart_id: int) -> Response:
     api = CartAPI()
-    data = api.gen_request_data(api.patch_columns)
+    data = api.gen_data(api.patch_columns)
     with conn.begin() as s:
         filters = {Cart.user_id == current_user.id}
         model: Cart = api.get(s, cart_id, *filters)

@@ -1,6 +1,6 @@
 from flask import Flask
 
-from web.app.web import FlaskWeb
+from web.app.flask import FlaskWeb
 from web.auth import jwt_login
 from web.automation import Syncer
 from web.automation.task import CountrySyncer, CurrencySyncer, RegionSyncer, SkuSyncer

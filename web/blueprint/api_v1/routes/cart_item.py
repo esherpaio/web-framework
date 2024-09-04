@@ -48,7 +48,7 @@ class CartItemAPI(API):
 @api_v1_bp.post("/carts/<int:cart_id>/items")
 def post_carts_id_items(cart_id: int) -> Response:
     api = CartItemAPI()
-    data = api.gen_request_data(api.post_columns)
+    data = api.gen_data(api.post_columns)
     with conn.begin() as s:
         model = upsert_cart_item(s, data, None)
         set_cart(s, data, None)
@@ -59,7 +59,7 @@ def post_carts_id_items(cart_id: int) -> Response:
 @api_v1_bp.patch("/carts/<int:cart_id>/items/<int:cart_item_id>")
 def patch_cart_id_items_id(cart_id: int, cart_item_id: int) -> Response:
     api = CartItemAPI()
-    data = api.gen_request_data(api.patch_columns)
+    data = api.gen_data(api.patch_columns)
     with conn.begin() as s:
         authorize_cart(s, data, None)
         model: CartItem = api.get(s, cart_item_id)
@@ -73,7 +73,7 @@ def patch_cart_id_items_id(cart_id: int, cart_item_id: int) -> Response:
 @api_v1_bp.delete("/carts/<int:cart_id>/items/<int:cart_item_id>")
 def delete_cart_id_items_id(cart_id: int, cart_item_id: int) -> Response:
     api = CartItemAPI()
-    data = api.gen_view_args_data()
+    data = api.gen_path_data()
     with conn.begin() as s:
         model: CartItem = api.get(s, cart_item_id)
         api.delete(s, model)

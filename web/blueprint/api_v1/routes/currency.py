@@ -35,7 +35,7 @@ class CurrencyAPI(API):
 @authorize(UserRoleLevel.ADMIN)
 def post_currencies() -> Response:
     api = CurrencyAPI()
-    data = api.gen_request_data(api.post_columns)
+    data = api.gen_data(api.post_columns)
     with conn.begin() as s:
         model = api.model()
         api.insert(s, data, model)

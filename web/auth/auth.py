@@ -75,7 +75,7 @@ class Auth:
     @staticmethod
     def on_error(error: Type[AuthError]) -> Response:
         user_id = getattr(g, G.USER_ID, None)
-        log.debug(f"Auth error {type(error).__name__} with user {user_id}")
+        log.debug(f"Auth error {type(error).__name__} at user {user_id}")
         if request.blueprint is not None and (
             request.blueprint.startswith(("api", "webhook"))
         ):
@@ -213,7 +213,7 @@ def decode_jwt(encoded_token: str, csrf_token: str | None = None) -> dict:
 
 
 def set_jwt(response: Response, access_token: str, csrf_token: str) -> None:
-    if not config.APP_DEBUG:
+    if config.APP_URL_SCHEME == "https":
         secure = True
     else:
         secure = False

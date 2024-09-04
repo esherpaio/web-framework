@@ -34,7 +34,7 @@ class LanguageAPI(API):
 @authorize(UserRoleLevel.ADMIN)
 def post_languages() -> Response:
     api = LanguageAPI()
-    data = api.gen_request_data(api.post_columns)
+    data = api.gen_data(api.post_columns)
     with conn.begin() as s:
         model = api.model()
         api.insert(s, data, model)

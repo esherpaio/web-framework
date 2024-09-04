@@ -60,12 +60,7 @@ def post_articles_id_media(article_id: int) -> Response:
                 name = secure_filename(name)
             extension = extension.lstrip(".").lower()
             filename = f"{name}.{extension}"
-
-            # Create CDN path
-            cdn_path_parts = ["article", article.slug, filename]
-            if config.APP_DEBUG:
-                cdn_path_parts.insert(0, "_development")
-            cdn_path = os.path.join(*cdn_path_parts)
+            path = os.path.join("article", article.slug, filename)
 
             # Get media type
             if extension in config.CDN_IMAGE_EXTS:
@@ -76,10 +71,10 @@ def post_articles_id_media(article_id: int) -> Response:
                 continue
 
             # Upload media
-            cdn.upload(request_file, cdn_path)
+            cdn.upload(request_file, path)
 
             # Insert file and article media
-            file_ = File(path=cdn_path, type_id=type_id)
+            file_ = File(path=path, type_id=type_id)
             s.add(file_)
             s.flush()
             article_media = ArticleMedia(article_id=article_id, file_id=file_.id)
