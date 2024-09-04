@@ -45,7 +45,7 @@ def get_setting() -> Response:
 @authorize(UserRoleLevel.ADMIN)
 def patch_setting() -> Response:
     api = SettingAPI()
-    data = api.gen_request_data(api.patch_columns)
+    data = api.gen_data(api.patch_columns)
     with conn.begin() as s:
         model: AppSetting = api.get(s, None)
         set_cache(s, data, model)

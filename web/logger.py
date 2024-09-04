@@ -65,9 +65,8 @@ class MailHandler(Handler):
 
 
 def _get_logger(name: str) -> logging.Logger:
-    level = logging.DEBUG if config.APP_DEBUG else logging.INFO
     base = logging.getLogger(name)
-    base.setLevel(level)
+    base.setLevel(config.APP_LOG_LEVEL)
     stream = logging.StreamHandler()
     stream.setFormatter(AnsiFormatter())
     base.addHandler(stream)

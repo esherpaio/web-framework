@@ -65,7 +65,7 @@ class UserAPI(API):
 @api_v1_bp.post("/users")
 def post_users() -> Response:
     api = UserAPI()
-    data = api.gen_request_data(api.post_columns)
+    data = api.gen_data(api.post_columns)
     with conn.begin() as s:
         model = api.model()
         set_password(s, data, model)
@@ -100,7 +100,7 @@ def get_users_id(user_id: int) -> Response:
 @api_v1_bp.patch("/users/<int:user_id>")
 def patch_users_id(user_id: int) -> Response:
     api = UserAPI()
-    data = api.gen_request_data(api.patch_columns)
+    data = api.gen_data(api.patch_columns)
     with conn.begin() as s:
         filters = {User.id == current_user.id, User.is_active == true()}
         model: User = api.get(s, user_id, *filters)

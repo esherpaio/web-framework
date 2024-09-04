@@ -145,9 +145,8 @@ class FlaskWeb:
             mail.events.update(events)
 
     def setup_flask(self, app: Flask, blueprints: list[Blueprint]) -> None:
-        if not config.APP_DEBUG:
-            app.config["PREFERRED_URL_SCHEME"] = "https"
-        else:
+        app.config["PREFERRED_URL_SCHEME"] = config.APP_URL_SCHEME
+        if config.APP_DEBUG:
             log.info("Enabling Flask debug mode")
             app.debug = True
         app.register_error_handler(Exception, handle_error)

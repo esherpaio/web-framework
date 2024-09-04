@@ -62,7 +62,7 @@ class OrderAPI(API):
 @api_v1_bp.post("/orders")
 def post_orders() -> Response:
     api = OrderAPI()
-    data = api.gen_request_data(api.post_columns)
+    data = api.gen_data(api.post_columns)
     with conn.begin() as s:
         model = api.model()
         get_cart(s, data, model)
@@ -79,7 +79,7 @@ def post_orders() -> Response:
 @authorize(UserRoleLevel.ADMIN)
 def patch_orders_id(order_id: int) -> Response:
     api = OrderAPI()
-    data = api.gen_request_data(api.patch_columns)
+    data = api.gen_data(api.patch_columns)
     with conn.begin() as s:
         model: Order = api.get(s, order_id)
         val_status(s, data, model)
@@ -92,7 +92,7 @@ def patch_orders_id(order_id: int) -> Response:
 @authorize(UserRoleLevel.ADMIN)
 def delete_orders_id(order_id: int) -> Response:
     api = OrderAPI()
-    data = api.gen_view_args_data()
+    data = api.gen_path_data()
     with conn.begin() as s:
         model: Order = api.get(s, order_id)
         cancel_mollie(s, data, model)

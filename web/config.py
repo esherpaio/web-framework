@@ -20,7 +20,11 @@ class StaticVar:
 
 class EnvVar:
     def __init__(
-        self, key: str, type_: Any, default: Any = None, list_type: Any = str
+        self,
+        key: str,
+        type_: Any,
+        default: Any = None,
+        list_type: Any = str,
     ) -> None:
         self.key = key
         self.type = type_
@@ -69,10 +73,12 @@ class Config(metaclass=Singleton):
     VARS: list[EnvVar | ConfigVar | StaticVar] = [
         # App configuration
         EnvVar("APP_DEBUG", bool, default=False),
+        EnvVar("APP_LOG_LEVEL", str, default="INFO"),
         EnvVar("APP_OPTIMIZE", bool, default=True),
-        EnvVar("APP_SYNC_STATIC", bool, default=True),
         EnvVar("APP_SYNC_EXTERNAL", bool, default=False),
+        EnvVar("APP_SYNC_STATIC", bool, default=True),
         EnvVar("APP_SYNC_TIMEOUT", int, default=10),
+        EnvVar("APP_URL_SCHEME", str, default="https"),
         # Auth
         EnvVar("AUTH_JWT_SECRET", str),
         EnvVar("AUTH_JWT_EXPIRES_S", int, default=86400),

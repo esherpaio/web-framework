@@ -28,7 +28,9 @@ class API(Generic[B]):
 
     @staticmethod
     def parse_column(
-        data: dict, column: InstrumentedAttribute | str, func: Callable
+        data: dict,
+        column: InstrumentedAttribute | str,
+        func: Callable,
     ) -> tuple[str | None, Any]:
         key, value = None, None
         if isinstance(column, InstrumentedAttribute):
@@ -48,11 +50,24 @@ class API(Generic[B]):
         return key, value
 
     @classmethod
-    def gen_request_data(
+    def gen_data(
         cls,
         columns: set[InstrumentedAttribute | str],
-        include_view_args: bool = True,
+        include_json: bool = True,
+        include_path: bool = True,
+        include_query: bool = False,
     ) -> dict[str, Any]:
+        data = {}
+        if include_json:
+            data.update(cls.gen_json_data(columns))
+        if include_path:
+            data.update(cls.gen_path_data())
+        if include_query:
+            data.update(cls.gen_query_data(columns))
+        return data
+
+    @classmethod
+    def gen_json_data(cls, columns: set[InstrumentedAttribute | str]) -> dict[str, Any]:
         if not has_request_context():
             raise RuntimeError
         if not request.is_json:
@@ -65,24 +80,19 @@ class API(Generic[B]):
             key, value = cls.parse_column(request_json, column, json_get)
             if key is not None:
                 data[key] = value
-        if include_view_args:
-            view_args = cls.gen_view_args_data()
-            data.update(view_args)
         return data
 
     @staticmethod
-    def gen_view_args_data() -> dict[str, Any]:
+    def gen_path_data() -> dict[str, Any]:
         if not has_request_context():
             raise RuntimeError
+        log.debug(f"View args: {request.view_args}")
         if request.view_args is None:
             return {}
         return request.view_args
 
     @classmethod
-    def gen_query_data(
-        cls,
-        args: set[InstrumentedAttribute | str],
-    ) -> dict[str, Any]:
+    def gen_query_data(cls, args: set[InstrumentedAttribute | str]) -> dict[str, Any]:
         if not has_request_context():
             raise RuntimeError
         if request.args is None:
@@ -100,11 +110,7 @@ class API(Generic[B]):
     #
 
     @classmethod
-    def gen_resource(
-        cls,
-        s: Session,
-        model: B,
-    ) -> dict[str, Any]:
+    def gen_resource(cls, s: Session, model: B) -> dict[str, Any]:
         data = {}
         for attr in cls.get_columns:
             if isinstance(attr, InstrumentedAttribute):
@@ -118,11 +124,7 @@ class API(Generic[B]):
         return data
 
     @classmethod
-    def gen_resources(
-        cls,
-        s: Session,
-        models: list[B],
-    ) -> list[dict[str, Any]]:
+    def gen_resources(cls, s: Session, models: list[B]) -> list[dict[str, Any]]:
         data = []
         for model in models:
             model_data = cls.gen_resource(s, model)

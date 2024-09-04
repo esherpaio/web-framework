@@ -68,7 +68,7 @@ class BillingAPI(API):
 @api_v1_bp.post("/billings")
 def post_billings() -> Response:
     api = BillingAPI()
-    data = api.gen_request_data(api.post_columns)
+    data = api.gen_data(api.post_columns)
     with conn.begin() as s:
         model = api.model()
         set_user(s, data, model)
@@ -90,7 +90,7 @@ def get_billings_id(billing_id: int) -> Response:
 @api_v1_bp.patch("/billings/<int:billing_id>")
 def patch_billings_id(billing_id: int) -> Response:
     api = BillingAPI()
-    data = api.gen_request_data(api.patch_columns)
+    data = api.gen_data(api.patch_columns)
     with conn.begin() as s:
         filters = {Billing.user_id == current_user.id}
         model: Billing = api.get(s, billing_id, *filters)

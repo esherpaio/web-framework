@@ -43,10 +43,8 @@ def url_for(
 ) -> str:
     if _scheme is not None:
         scheme = _scheme
-    elif not config.APP_DEBUG:
-        scheme = "https"
     else:
-        scheme = "http"
+        scheme = config.APP_URL_SCHEME
     return _url_for(
         endpoint,
         _anchor=_anchor,

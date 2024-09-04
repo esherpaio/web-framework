@@ -43,7 +43,7 @@ class CountryAPI(API):
 @authorize(UserRoleLevel.ADMIN)
 def post_countries() -> Response:
     api = CountryAPI()
-    data = api.gen_request_data(api.post_columns)
+    data = api.gen_data(api.post_columns)
     with conn.begin() as s:
         model = api.model()
         api.insert(s, data, model)
@@ -73,7 +73,7 @@ def get_countries_id(country_id: int) -> Response:
 @authorize(UserRoleLevel.ADMIN)
 def patch_countries_id(country_id: int) -> Response:
     api = CountryAPI()
-    data = api.gen_request_data(api.patch_columns)
+    data = api.gen_data(api.patch_columns)
     with conn.begin() as s:
         model: Country = api.get(s, country_id)
         api.update(s, data, model)
