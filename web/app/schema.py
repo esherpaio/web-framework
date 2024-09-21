@@ -125,6 +125,7 @@ class SchemaProduct(Schema):
         price: float,
         image_url: str | None = None,
         description: str | None = None,
+        stock: int | None = None,
     ) -> None:
         super().__init__()
         data = {
@@ -138,8 +139,8 @@ class SchemaProduct(Schema):
             "offers": {
                 "@type": "Offer",
                 "url": request.base_url,
-                "priceCurrency": current_locale.currency.code,
                 "price": round(price, 2),
+                "priceCurrency": current_locale.currency.code,
                 "itemCondition": "https://schema.org/NewCondition",
             },
         }
@@ -147,6 +148,12 @@ class SchemaProduct(Schema):
             data["image"] = image_url
         if description:
             data["description"] = description
+        if stock is not None:
+            if stock > 0:
+                availability = "https://schema.org/InStock"
+            else:
+                availability = "https://schema.org/OutOfStock"
+            data["offers"]["availability"] = availability
         self.data = data
 
 
