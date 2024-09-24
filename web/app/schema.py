@@ -144,7 +144,6 @@ class SchemaProduct(Schema):
                 "priceCurrency": current_locale.currency.code,
                 "itemCondition": "https://schema.org/NewCondition",
             },
-            "shippingDetails": [],
         }
         if sku is not None:
             data["sku"] = sku
