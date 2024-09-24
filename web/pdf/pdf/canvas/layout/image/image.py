@@ -147,7 +147,7 @@ class Image(LayoutElement):
         # load Image from URL
         if isinstance(self._image, str):
             self._image = PILImage.open(
-                requests.get(
+                requests.get(  # type: ignore[arg-type]
                     self._image, stream=True, headers={"Accept-Encoding": ""}
                 ).raw
             )
