@@ -85,7 +85,7 @@ class SchemaOrganization(Schema):
             config.SOCIAL_YOUTUBE,
         ]
         self.data = {
-            "@context": "https://schema.org",
+            "@context": "https://schema.org/Corporation",
             "@type": "Corporation",
             "name": config.WEBSITE_NAME,
             "url": home_url,
@@ -104,7 +104,7 @@ class SchemaPerson(Schema):
     ) -> None:
         super().__init__()
         data = {
-            "@context": "https://schema.org/",
+            "@context": "https://schema.org/Person",
             "@type": "Person",
             "name": name,
             "url": request.base_url,
@@ -123,13 +123,14 @@ class SchemaProduct(Schema):
         self,
         name: str,
         price: float,
+        sku: str | None = None,
+        stock: int | None = None,
         image_url: str | None = None,
         description: str | None = None,
-        stock: int | None = None,
     ) -> None:
         super().__init__()
         data = {
-            "@context": "https://schema.org/",
+            "@context": "https://schema.org/Product",
             "@type": "Product",
             "name": name,
             "brand": {
@@ -143,17 +144,20 @@ class SchemaProduct(Schema):
                 "priceCurrency": current_locale.currency.code,
                 "itemCondition": "https://schema.org/NewCondition",
             },
+            "shippingDetails": [],
         }
-        if image_url:
-            data["image"] = image_url
-        if description:
-            data["description"] = description
+        if sku is not None:
+            data["sku"] = sku
         if stock is not None:
             if stock > 0:
                 availability = "https://schema.org/InStock"
             else:
                 availability = "https://schema.org/OutOfStock"
-            data["offers"]["availability"] = availability
+            data["offers"]["availability"] = availability  # type: ignore[index]
+        if image_url is not None:
+            data["image"] = image_url
+        if description is not None:
+            data["description"] = description
         self.data = data
 
 
