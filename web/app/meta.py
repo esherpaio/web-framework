@@ -152,7 +152,7 @@ class Meta:
             yield Markup(MetaTag.OG_SITE_NAME % self.website_name)
         if self.facebook_url:
             yield Markup(MetaTag.OG_PUBLISHER % self.facebook_url)
-        # Twitter
+        # Twitteracquirer
         yield Markup(MetaTag.TWITTER_CARD)
         if self.twitter_at:
             yield Markup(MetaTag.TWITTER_SITE % self.twitter_at)
