@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from sqlalchemy.orm import Session
 from sqlalchemy.sql import not_, true
@@ -14,7 +14,7 @@ class UserCleaner(Cleaner):
     @classmethod
     def run(cls, s: Session, days: int = 14) -> None:
         # Delete guests older than x days
-        dt = datetime.utcnow() - timedelta(days=days)
+        dt = datetime.now(timezone.utc) - timedelta(days=days)
         s.query(cls.MODEL).filter(
             User.created_at <= dt,
             User.is_guest == true(),

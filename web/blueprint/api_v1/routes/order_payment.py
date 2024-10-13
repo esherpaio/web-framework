@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from werkzeug import Response
 
@@ -35,7 +35,9 @@ def post_orders_id_payments(order_id: int) -> Response:
         amount = mollie_amount(order_price_vat, order.currency_code)
         description = f"Order {order.id}"
         is_test = config.MOLLIE_KEY.startswith("test")
-        due_date = (datetime.utcnow() + timedelta(days=100)).strftime("%Y-%m-%d")
+        due_date = (datetime.now(timezone.utc) + timedelta(days=100)).strftime(
+            "%Y-%m-%d"
+        )
         mollie_payment = Mollie().payments.create(
             {
                 "amount": amount,

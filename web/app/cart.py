@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Callable
 
 import pyvat
@@ -131,7 +131,7 @@ def get_vat(
         vat_rate: The VAT rate.
         vat_reverse: Whether the VAT is reverse charged.
     """
-    date = datetime.utcnow().date()
+    date = datetime.now(timezone.utc).date()
     type_ = ItemType.generic_electronic_service
     buyer = Party(country_code, is_business)
     seller = Party(config.BUSINESS_COUNTRY_CODE, True)

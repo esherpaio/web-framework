@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from enum import StrEnum
 from typing import Callable
 
@@ -95,7 +95,7 @@ class Mail(metaclass=Singleton):
                 )
                 s.add(_email)
             else:
-                _email.updated_at = datetime.utcnow()
+                _email.updated_at = datetime.now(timezone.utc)
                 _email.status_id = status_id
                 s.flush()
 
