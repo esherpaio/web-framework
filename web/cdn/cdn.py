@@ -1,6 +1,6 @@
 import os
 from ftplib import FTP, error_perm
-from typing import Protocol, TypeVar
+from typing import Protocol, TypeVar, overload
 
 from web.config import config
 
@@ -50,5 +50,20 @@ def delete(path: str) -> None:
                 raise
 
 
-def url(*args: str) -> str:
-    return os.path.join(config.CDN_URL, *args)
+@overload
+def url(*args: None) -> None: ...
+
+
+@overload
+def url(*args: str) -> str: ...
+
+
+@overload
+def url(*args: str | None) -> str | None: ...
+
+
+def url(*args: str | None) -> str | None:
+    parts = [x for x in args if x is not None]
+    if not parts:
+        return None
+    return os.path.join(config.CDN_URL, *parts)
