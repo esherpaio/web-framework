@@ -8,9 +8,9 @@ from ._base import Attribute, Base
 class Invoice(Base, Attribute):
     __tablename__ = "invoice"
 
-    expires_at = MC(DateTime())
+    expires_at = MC(DateTime(timezone=True))
     number = MC(String(16), nullable=False, unique=True)
-    paid_at = MC(DateTime())
+    paid_at = MC(DateTime(timezone=True))
 
     order_id = MC(
         ForeignKey("order.id", ondelete="RESTRICT"), nullable=False, unique=True

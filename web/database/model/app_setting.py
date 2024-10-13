@@ -8,6 +8,6 @@ class AppSetting(Base):
     __tablename__ = "app_setting"
 
     banner = MC(String(256))
-    cached_at = MC(DateTime())
+    cached_at = MC(DateTime(timezone=True))
     css_path = MC(String(128))
     js_path = MC(String(128))
