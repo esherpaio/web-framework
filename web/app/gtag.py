@@ -11,16 +11,21 @@ from markupsafe import Markup
 class EventTrigger(StrEnum):
     ON_LOAD = "load"
     ON_CLICK = "click"
+    ON_SUBMIT = "submit"
 
 
 class Event:
-    def js_listener(self, *args, **kwargs) -> str:
-        raise NotImplementedError
-
     def js_function(self, name: str, data: dict | None = None) -> str:
         if data is None:
             data = {}
-        return f"function (e) {{ gtag('event', '{name}', {json.dumps(data)}); }}"
+        return f"gtag('event', '{name}', {json.dumps(data)});"
+
+    def js_callable(self, name: str, data: dict | None = None) -> str:
+        func = self.js_function(name, data)
+        return f"function (e) {{ {func} }}"
+
+    def js_listener(self, *args, **kwargs) -> str:
+        raise NotImplementedError
 
 
 class EventByWindow(Event):
@@ -28,19 +33,33 @@ class EventByWindow(Event):
         self.trigger = trigger
 
     def js_listener(self, name: str, data: dict | None = None) -> str:
-        function = self.js_function(name, data)
-        return Markup(f"window.addEventListener('{self.trigger}', {function});")
+        func = self.js_function(name, data)
+        return Markup(func)
 
 
 class EventById(Event):
-    def __init__(self, element_id: str, trigger: EventTrigger) -> None:
-        self.id_ = element_id
+    def __init__(self, trigger: EventTrigger, id_: str) -> None:
         self.trigger = trigger
+        self.id_ = id_
 
     def js_listener(self, name: str, data: dict | None = None) -> str:
-        function = self.js_function(name, data)
+        call = self.js_callable(name, data)
         return Markup(
-            f"document.getElementById('{self.id_}').addEventListener('{self.trigger}', {function});"
+            f"document.getElementById('{self.id_}').addEventListener('{self.trigger}', {call});"
+        )
+
+
+class EventByClass(Event):
+    def __init__(self, trigger: EventTrigger, class_: str | None = None) -> None:
+        self.trigger = trigger
+        self.class_ = class_
+
+    def js_listener(self, name: str, data: dict | None = None) -> str:
+        if self.class_ is None:
+            class_ = f"gtag-{name}"
+        call = self.js_callable(name, data)
+        return Markup(
+            f"[...document.getElementsByClassName('{class_}')].forEach((e) => {{ e.addEventListener('{self.trigger}', {call}) }});"
         )
 
 
@@ -114,14 +133,3 @@ class GtagAddPaymentInfo(Gtag):
 
 class GtagPurchase(Gtag):
     NAME = "purchase"
-
-
-#
-# Utilities
-#
-
-
-def gen_gtags(gtags: list[Gtag] | None = None) -> list[Gtag]:
-    if gtags is None:
-        gtags = []
-    return gtags
