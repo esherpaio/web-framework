@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from sqlalchemy.orm import Session
 from sqlalchemy.sql import and_, or_
@@ -14,7 +14,7 @@ class CartCleaner(Cleaner):
     @classmethod
     def run(cls, s: Session, days: int = 28) -> None:
         # Delete carts older than 30 days
-        dt = datetime.utcnow() - timedelta(days=days)
+        dt = datetime.now(timezone.utc) - timedelta(days=days)
         s.query(Cart).filter(
             or_(
                 Cart.updated_at <= dt,

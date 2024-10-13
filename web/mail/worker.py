@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from sqlalchemy import null, or_
 
@@ -15,10 +15,12 @@ def send_emails(max_weeks: int = 4) -> None:
             email = (
                 s.query(Email)
                 .filter(
-                    Email.created_at > datetime.utcnow() - timedelta(weeks=max_weeks),
+                    Email.created_at
+                    > datetime.now(timezone.utc) - timedelta(weeks=max_weeks),
                     or_(
                         Email.updated_at == null(),
-                        Email.updated_at < datetime.utcnow() - timedelta(days=1),
+                        Email.updated_at
+                        < datetime.now(timezone.utc) - timedelta(days=1),
                     ),
                     Email.status_id.in_([EmailStatusId.QUEUED, EmailStatusId.FAILED]),
                 )

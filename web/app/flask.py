@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Callable, Type
 
 import alembic.config
@@ -170,7 +170,7 @@ class FlaskWeb:
     ) -> None:
         app.context_processor(
             lambda: dict(
-                now=datetime.utcnow(),
+                now=datetime.now(timezone.utc),
                 cache=cache,
                 config=config,
                 current_user=current_user,

@@ -1,5 +1,5 @@
 import time
-from datetime import datetime
+from datetime import datetime, timezone
 from threading import Thread
 from typing import Callable
 
@@ -12,7 +12,7 @@ from web.utils import Singleton
 class CacheManager(metaclass=Singleton):
     def __init__(self) -> None:
         super().__init__()
-        self._updated_at: datetime = datetime.utcnow()
+        self._updated_at: datetime = datetime.now(timezone.utc)
         self._active: bool = True
         self.hooks: list[Callable] = []
         self.update(force=True)
@@ -53,7 +53,7 @@ class CacheManager(metaclass=Singleton):
             Thread(target=self.update, daemon=True).start()
         if force or self.expired:
             log.info("Updating cache")
-            self._updated_at = datetime.utcnow()
+            self._updated_at = datetime.now(timezone.utc)
             for hook in self.hooks:
                 hook()
 
