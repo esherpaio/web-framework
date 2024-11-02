@@ -5,6 +5,7 @@ from flask import Blueprint
 from web.app.meta import gen_meta
 from web.app.routing import get_route
 from web.app.schema import gen_schemas
+from web.packer.bundle import JsBundle
 
 _dir = os.path.dirname(os.path.abspath(__file__))
 auth_bp = Blueprint(
@@ -15,6 +16,7 @@ auth_bp = Blueprint(
     static_folder=os.path.join(_dir, "static"),
     static_url_path="/auth/static",
 )
+js_bundle = JsBundle("static/js")
 
 
 @auth_bp.context_processor
