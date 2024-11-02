@@ -5,7 +5,9 @@ async function checkParams() {
     if (match) {
         const verificationKey = getParameter(matchParam);
         removeParameter(matchParam);
-        await verifyUser(verificationKey);
+        if ((window.location.href.indexOf("/login") > -1)) {
+            await verifyUser(verificationKey);
+        }
     }
 }
 
@@ -13,12 +15,8 @@ async function verifyUser(verificationKey) {
     let resp = await getVerifications({ key: verificationKey });
     if (resp && resp.data.length > 0) {
         let verification = resp.data[0];
-        resp = await getUsersId(verification.user_id);
-        user = resp.data;
-        if (user && !user.is_active) {
-            resp = await patchUsersIdActivation(verification.user_id, { verification_key: verificationKey });
-            showMessage(resp.message);
-        }
+        resp = await patchUsersIdActivation(verification.user_id, { verification_key: verificationKey });
+        showMessage(resp.message);
     }
 }
 
