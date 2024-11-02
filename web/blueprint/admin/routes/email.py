@@ -1,0 +1,25 @@
+from flask import render_template, request
+
+from web.blueprint.admin import admin_bp
+from web.database import conn
+from web.database.model import Email
+from web.ext.bootstrap import get_pages
+from web.mail import MailEvent
+
+
+@admin_bp.get("/admin/email")
+def email() -> str:
+    limit = request.args.get("l", type=int, default=40)
+    page = request.args.get("p", type=int, default=1)
+    offset = (limit * page) - limit
+
+    with conn.begin() as s:
+        count = s.query(Email).filter(Email.event_id == MailEvent.WEBSITE_BULK).count()
+        emails = s.query(Email).filter(Email.event_id == MailEvent.WEBSITE_BULK).all()
+
+    pagination = get_pages(offset, limit, count)
+    return render_template(
+        "admin/email.html",
+        emails=emails,
+        pagination=pagination,
+    )
