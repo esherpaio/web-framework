@@ -3,10 +3,10 @@ import itertools
 from werkzeug import Response
 
 from web.api import ApiText, json_response
+from web.app.blueprint import api_v1_bp
 from web.auth import authorize
 from web.automation import sync_after
 from web.automation.task import SkuSyncer
-from web.blueprint.api_v1 import api_v1_bp
 from web.database import conn
 from web.database.model import Product, ProductValue, Sku, SkuDetail, UserRoleLevel
 from web.logger import log

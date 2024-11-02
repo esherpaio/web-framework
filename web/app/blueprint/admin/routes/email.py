@@ -1,6 +1,6 @@
 from flask import render_template, request
 
-from web.blueprint.admin import admin_bp
+from web.app.blueprint import admin_bp
 from web.database import conn
 from web.database.model import Email
 from web.ext.bootstrap import get_pages

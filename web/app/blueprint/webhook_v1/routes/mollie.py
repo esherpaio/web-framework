@@ -3,7 +3,7 @@ from mollie.api.error import NotFoundError
 from werkzeug import Response
 
 from web.api import ApiText, json_response
-from web.blueprint.webhook_v1 import webhook_v1_bp
+from web.app.blueprint import webhook_v1_bp
 from web.database import conn
 from web.database.model import Invoice, Order, OrderStatusId
 from web.ext.mollie import Mollie

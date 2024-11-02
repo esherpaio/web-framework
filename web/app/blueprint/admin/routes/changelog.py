@@ -1,6 +1,6 @@
 from flask import render_template
 
-from web.blueprint.admin import admin_bp
+from web.app.blueprint import admin_bp
 
 
 @admin_bp.get("/admin/changelog")

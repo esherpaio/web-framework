@@ -3,8 +3,8 @@ from sqlalchemy import false
 from sqlalchemy.orm import joinedload
 from werkzeug import Response
 
+from web.app.blueprint import admin_bp
 from web.app.urls import url_for
-from web.blueprint.admin import admin_bp
 from web.database import conn
 from web.database.model import Category, CategoryItem, Sku, SkuDetail
 

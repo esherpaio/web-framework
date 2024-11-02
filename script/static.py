@@ -5,14 +5,14 @@ def generate_admin_static() -> None:
     Packer().pack(
         JsBundle(
             "/home/stan/code/web-framework/web/blueprint/admin/static/js",
-            follow_subdirs=True,
+            subdirs=True,
         ),
         save_cdn=True,
     )
     Packer().pack(
         CssBundle(
             "/home/stan/code/web-framework/web/blueprint/admin/static/css",
-            follow_subdirs=False,
+            subdirs=False,
         ),
         save_cdn=True,
     )

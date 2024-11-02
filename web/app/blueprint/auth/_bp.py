@@ -1,6 +1,7 @@
 import os
 
 from flask import Blueprint
+
 from web.app.meta import gen_meta
 from web.app.routing import get_route
 from web.app.schema import gen_schemas

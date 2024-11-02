@@ -8,9 +8,9 @@ class CssBundle:
     IN_EXTS = [".css"]
     OUT_EXT = ".css"
 
-    def __init__(self, in_dir: str, follow_subdirs: bool = True) -> None:
+    def __init__(self, in_dir: str, subdirs: bool = True) -> None:
         self._in_dir = in_dir
-        self._follow_subdirs = follow_subdirs
+        self._subdirs = subdirs
 
     def compile(self) -> str:
         compiled = ""
@@ -21,7 +21,7 @@ class CssBundle:
                 path = os.path.join(subdir, fn)
                 content = open(path, "r", encoding=self.ENCODING).read()
                 compiled += self._compile(content)
-            if not self._follow_subdirs:
+            if not self._subdirs:
                 break
         return compiled
 

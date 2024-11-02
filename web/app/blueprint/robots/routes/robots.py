@@ -2,8 +2,8 @@ import os
 
 from flask import Response, make_response, render_template
 
+from web.app.blueprint import robots_bp
 from web.app.urls import url_for
-from web.blueprint.robots import robots_bp
 
 
 @robots_bp.route("/robots.txt")

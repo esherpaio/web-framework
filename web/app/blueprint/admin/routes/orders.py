@@ -4,7 +4,7 @@ from sqlalchemy.orm import contains_eager, joinedload
 from werkzeug import Response
 
 from web.api import ApiText, json_response
-from web.blueprint.admin import admin_bp
+from web.app.blueprint import admin_bp
 from web.database import conn
 from web.database.model import (
     Billing,
