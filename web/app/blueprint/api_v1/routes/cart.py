@@ -6,9 +6,9 @@ from sqlalchemy.orm.util import has_identity
 from werkzeug import Response
 
 from web.api import API, ApiText, json_response
+from web.app.blueprint import api_v1_bp
 from web.app.cart import get_shipment_methods, get_vat
 from web.auth import current_user
-from web.blueprint.api_v1 import api_v1_bp
 from web.database import conn
 from web.database.model import Billing, Cart, Coupon, Shipping
 from web.locale import current_locale

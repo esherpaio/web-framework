@@ -8,8 +8,8 @@ from werkzeug import Response
 from werkzeug.security import generate_password_hash
 
 from web.api import API, json_response
+from web.app.blueprint import api_v1_bp
 from web.auth import current_user
-from web.blueprint.api_v1 import api_v1_bp
 from web.database import conn
 from web.database.model import User, UserRoleId
 from web.i18n import _

@@ -1,7 +1,7 @@
 from flask import render_template
-from web.app.gtag import EventByClass, EventTrigger, GtagLogin
 
 from web.app.blueprint.auth import auth_bp
+from web.app.gtag import EventByClass, EventTrigger, GtagLogin
 
 
 @auth_bp.get("/login")

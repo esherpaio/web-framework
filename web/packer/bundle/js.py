@@ -8,7 +8,7 @@ class JsBundle(object):
     IN_EXTS = [".js"]
     OUT_EXT = ".js"
 
-    def __init__(self, in_dir: list[str], subdirs: bool = True) -> None:
+    def __init__(self, in_dir: str, subdirs: bool = True) -> None:
         self._in_dir = in_dir
         self._subdirs = subdirs
 

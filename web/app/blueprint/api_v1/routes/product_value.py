@@ -3,10 +3,10 @@ from sqlalchemy.orm import contains_eager
 from werkzeug import Response
 
 from web.api import ApiText, json_get, json_response
+from web.app.blueprint import api_v1_bp
 from web.auth import authorize
 from web.automation import sync_after
 from web.automation.task import SkuSyncer
-from web.blueprint.api_v1 import api_v1_bp
 from web.database import conn
 from web.database.model import ProductValue, Sku, SkuDetail, UserRoleLevel
 from web.validation import gen_slug

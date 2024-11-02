@@ -5,7 +5,7 @@ from sqlalchemy.orm.session import Session
 from werkzeug import Response
 
 from web.api import API, json_response
-from web.blueprint.api_v1 import api_v1_bp
+from web.app.blueprint import api_v1_bp
 from web.database import conn
 from web.database.model import Verification
 from web.i18n import _

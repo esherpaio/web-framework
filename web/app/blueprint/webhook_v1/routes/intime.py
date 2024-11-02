@@ -5,8 +5,8 @@ from sqlalchemy.orm import joinedload
 from werkzeug import Response
 
 from web.api import json_get
+from web.app.blueprint import webhook_v1_bp
 from web.auth import authorize
-from web.blueprint.webhook_v1 import webhook_v1_bp
 from web.database import conn
 from web.database.model import (
     Order,

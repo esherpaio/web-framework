@@ -3,8 +3,8 @@ from datetime import datetime, timedelta, timezone
 from werkzeug import Response
 
 from web.api import ApiText, json_get, json_response
+from web.app.blueprint import api_v1_bp
 from web.auth import current_user
-from web.blueprint.api_v1 import api_v1_bp
 from web.config import config
 from web.database import conn
 from web.database.model import Order

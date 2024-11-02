@@ -1,7 +1,7 @@
 from flask import render_template
 from sqlalchemy.orm import joinedload
 
-from web.blueprint.admin import admin_bp
+from web.app.blueprint import admin_bp
 from web.database import conn
 from web.database.model import ShipmentZone
 
