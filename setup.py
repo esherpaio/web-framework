@@ -8,7 +8,7 @@ DATA = [
     "blueprint/admin/templates/*.html",
     "blueprint/admin/templates/admin/*.html",
     "blueprint/admin/templates/admin/section/*.html",
-    "blueprint/auth/static/*.js",
+    "blueprint/auth/static/js/*.js",
     "blueprint/auth/templates/*.html",
     "blueprint/auth/templates/auth/*.html",
     "blueprint/robots/templates/*.txt",
