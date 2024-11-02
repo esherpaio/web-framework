@@ -11,33 +11,19 @@ async function requestPassword() {
     updateButton(buttonId, -1);
 }
 
-async function resetPassword() {
+async function recoverPassword() {
     event.preventDefault();
-    const formId = 'form-reset-password';
-    const buttonId = 'button-reset-password';
+    const buttonId = 'button-recover-password';
     updateButton(buttonId, 1);
-    let resp = await getVerifications({ key: document.getElementById(formId).dataset.verificationKey });
+    let resp = await getVerifications({ key: verificationKey });
     if (resp && resp.data.length > 0) {
         let verification = resp.data[0];
         resp = await patchUsersIdPassword(verification.user_id, {
-            password: document.getElementById('reset-password').value,
-            password_eval: document.getElementById('reset-password-eval').value,
-            verification_key: document.getElementById(formId).dataset.verificationKey
+            password: document.getElementById('recover-password').value,
+            password_eval: document.getElementById('recover-password-eval').value,
+            verification_key: verificationKey,
         });
         showMessage(resp.message);
     }
     updateButton(buttonId, -1);
 }
-
-function checkPasswordParams() {
-    const params = new URLSearchParams(window.location.search);
-    const matchParam = 'verification_key';
-    const match = params.has(matchParam);
-    if (match) removeParameter(matchParam);
-}
-
-window.addEventListener("load", () => {
-    if (isLoad('auth-password-reset')) {
-        checkPasswordParams();
-    }
-});
