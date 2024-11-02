@@ -8,6 +8,7 @@ from web.blueprint.admin import admin_bp
 from web.blueprint.api_v1 import api_v1_bp
 from web.blueprint.robots import robots_bp
 from web.blueprint.webhook_v1 import webhook_v1_bp
+from web.blueprint.auth import auth_bp
 from web.database import conn
 from web.database.model import User, UserRoleId
 
@@ -27,10 +28,10 @@ class UserSyncer(Syncer):
 def create_app() -> Flask:
     app = Flask(__name__)
     app.add_url_rule("/", endpoint="home", view_func=lambda: "Home")
-    app.add_url_rule("/login", endpoint="login", view_func=view_login)
+    # app.add_url_rule("/login", endpoint="login", view_func=view_login)
     FlaskWeb(
         app,
-        blueprints=[robots_bp, admin_bp, api_v1_bp, webhook_v1_bp],
+        blueprints=[auth_bp, robots_bp, admin_bp, api_v1_bp, webhook_v1_bp],
         auto_tasks=[CurrencySyncer, RegionSyncer, CountrySyncer, SkuSyncer, UserSyncer],
     )
     return app

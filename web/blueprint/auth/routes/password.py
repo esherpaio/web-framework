@@ -1,6 +1,6 @@
 from flask import render_template, request
 
-from web.app.blueprint.auth import auth_bp
+from web.blueprint.auth import auth_bp
 
 
 @auth_bp.get("/password-request")
