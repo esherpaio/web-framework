@@ -3,14 +3,14 @@ from setuptools import find_packages, setup
 from version import __version__
 
 DATA = [
-    "blueprint/admin/static/*.html",
     "blueprint/admin/static/css/*.css",
     "blueprint/admin/static/js/*.js",
     "blueprint/admin/templates/*.html",
     "blueprint/admin/templates/admin/*.html",
     "blueprint/admin/templates/admin/section/*.html",
-    "blueprint/admin/templates/auth/*.html",
+    "blueprint/auth/static/*.js",
     "blueprint/auth/templates/*.html",
+    "blueprint/auth/templates/auth/*.html",
     "blueprint/robots/templates/*.txt",
     "blueprint/robots/templates/*.xml",
     "i18n/translation/*.json",
