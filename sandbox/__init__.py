@@ -36,8 +36,16 @@ class UserSyncer(Syncer):
 
 class StaticSyncer(_StaticSyncer):
     SEEDS = [
-        StaticSeed(type_=StaticType.JS, bundle=js_bundle, model=AppSetting),
-        StaticSeed(type_=StaticType.CSS, bundle=admin_v1_css_bundle, model=AppSetting),
+        StaticSeed(
+            type_=StaticType.JS,
+            bundles=[js_bundle],
+            model=AppSetting,
+        ),
+        StaticSeed(
+            type_=StaticType.CSS,
+            bundles=[admin_v1_css_bundle],
+            model=AppSetting,
+        ),
     ]
 
 
@@ -47,7 +55,13 @@ def create_app() -> Flask:
     app.add_url_rule("/fnorce-login", edpoint="login", view_func=view_force_login)
     FlaskWeb(
         app,
-        blueprints=[api_v1_bp, auth_v1_bp, webhook_v1_bp, robots_v1_bp, admin_v1_bp],
+        blueprints=[
+            api_v1_bp,
+            auth_v1_bp,
+            webhook_v1_bp,
+            robots_v1_bp,
+            admin_v1_bp,
+        ],
         auto_tasks=[
             CurrencySyncer,
             RegionSyncer,

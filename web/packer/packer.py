@@ -13,21 +13,28 @@ class Packer:
 
     def pack(
         self,
-        bundle: CssBundle | JsBundle | ScssBundle,
+        bundles: list[CssBundle | JsBundle | ScssBundle],
         out_dir: str | None = None,
         save_cdn: bool = True,
         *args,
         **kwargs,
     ) -> tuple[str | None, str | None]:
+        # Compile bundles
+        if not bundles:
+            raise ValueError("No bundles to pack")
+        out_ext = bundles[0].OUT_EXT
+        if not all(x.OUT_EXT == out_ext for x in bundles):
+            raise ValueError("All bundles must have the same output extension")
+        compiled = "".join(x.compile(*args, **kwargs) for x in bundles)
+        # Save compiled bundles
         out_path, cdn_path = None, None
-        compiled = bundle.compile(*args, **kwargs)
         bytes_ = compiled.encode(self.ENCODING)
         hash_ = hashlib.md5(bytes_).hexdigest()
         if compiled:
             if out_dir is not None:
-                out_path = self.write_file(compiled, hash_, out_dir, bundle.OUT_EXT)
+                out_path = self.write_file(compiled, hash_, out_dir, out_ext)
             if save_cdn:
-                cdn_path = self.write_cdn(bytes_, hash_, bundle.OUT_EXT)
+                cdn_path = self.write_cdn(bytes_, hash_, out_ext)
         return out_path, cdn_path
 
     def write_file(self, data: str, hash_: str, out_dir: str, out_ext: str) -> str:
