@@ -4,6 +4,7 @@ from flask import Blueprint
 from werkzeug import Response
 
 from web.app.meta import Meta
+from web.app.static import js_bundle
 from web.auth import authorize_user
 from web.database.model import UserRoleLevel
 from web.packer.bundle import CssBundle
@@ -18,6 +19,7 @@ admin_v1_bp = Blueprint(
     static_url_path="/admin/static",
 )
 admin_v1_css_bundle = CssBundle(os.path.join(_dir, "static", "admin_v1.css"))
+admin_v1_js_bundle = js_bundle
 
 
 @admin_v1_bp.before_request
