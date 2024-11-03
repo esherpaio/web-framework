@@ -3,16 +3,16 @@ from setuptools import find_packages, setup
 from version import __version__
 
 DATA = [
-    "app/blueprint/admin_v1/static/css/*.css",
-    "app/blueprint/admin_v1/static/js/*.js",
+    "app/blueprint/admin_v1/static/*.css",
     "app/blueprint/admin_v1/templates/*.html",
     "app/blueprint/admin_v1/templates/admin/*.html",
     "app/blueprint/admin_v1/templates/admin/section/*.html",
-    "app/blueprint/auth_v1/static/js/*.js",
+    "app/blueprint/auth_v1/static/*.js",
     "app/blueprint/auth_v1/templates/*.html",
     "app/blueprint/auth_v1/templates/auth/*.html",
     "app/blueprint/robots_v1/templates/*.txt",
     "app/blueprint/robots_v1/templates/*.xml",
+    "app/static/*.js",
     "i18n/translation/*.json",
     "mail/template/*.html",
     "pdf/pdf/canvas/font/composite_font/cmaps/*",
