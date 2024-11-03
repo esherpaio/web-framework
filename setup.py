@@ -13,6 +13,7 @@ DATA = [
     "app/blueprint/robots_v1/templates/*.txt",
     "app/blueprint/robots_v1/templates/*.xml",
     "app/static/*.js",
+    "app/templates/*.html",
     "i18n/translation/*.json",
     "mail/template/*.html",
     "pdf/pdf/canvas/font/composite_font/cmaps/*",
