@@ -1,9 +1,9 @@
 from flask import Flask
 
-from web.app.blueprint.admin import admin_bp
+from web.app.blueprint.admin_v1 import admin_v1_bp
 from web.app.blueprint.api_v1 import api_v1_bp
-from web.app.blueprint.auth import auth_bp
-from web.app.blueprint.robots import robots_bp
+from web.app.blueprint.auth_v1 import auth_v1_bp
+from web.app.blueprint.robots_v1 import robots_v1_bp
 from web.app.blueprint.webhook_v1 import webhook_v1_bp
 from web.app.flask import FlaskWeb
 from web.auth import jwt_login
@@ -31,7 +31,7 @@ def create_app() -> Flask:
     # app.add_url_rule("/login", endpoint="login", view_func=view_login)
     FlaskWeb(
         app,
-        blueprints=[auth_bp, robots_bp, admin_bp, api_v1_bp, webhook_v1_bp],
+        blueprints=[auth_v1_bp, robots_v1_bp, admin_v1_bp, api_v1_bp, webhook_v1_bp],
         auto_tasks=[CurrencySyncer, RegionSyncer, CountrySyncer, SkuSyncer, UserSyncer],
     )
     return app
