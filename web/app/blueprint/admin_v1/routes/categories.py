@@ -53,7 +53,7 @@ def category(category_id: int) -> str | Response:
                 joinedload(Sku.details, SkuDetail.value),
             )
             .filter(
-                Sku.id.not_in([x.sku.id for x in category_items]),
+                Sku.id.not_in([x.sku.id for x in category_items if x.sku]),
                 Sku.is_deleted == false(),
             )
             .order_by(Sku.slug)
