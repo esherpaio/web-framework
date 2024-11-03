@@ -2,9 +2,9 @@ from flask import render_template, request
 from sqlalchemy.orm import joinedload
 
 from web.app.blueprint.admin import admin_bp
+from web.app.bootstrap import get_pages
 from web.database import conn
 from web.database.model import User
-from web.app.ext.bootstrap import get_pages
 
 
 @admin_bp.get("/admin/users")

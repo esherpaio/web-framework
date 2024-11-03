@@ -9,7 +9,7 @@ class CssBundle:
     IN_EXTS = [".css"]
     OUT_EXT = ".css"
 
-    def __init__(self, in_path: str, subdirs: bool = True) -> None:
+    def __init__(self, in_path: str, subdirs: bool = False) -> None:
         self._in_path = in_path
         self._subdirs = subdirs
 

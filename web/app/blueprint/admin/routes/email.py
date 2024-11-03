@@ -1,9 +1,9 @@
 from flask import render_template, request
 
 from web.app.blueprint.admin import admin_bp
+from web.app.bootstrap import get_pages
 from web.database import conn
 from web.database.model import Email
-from web.app.ext.bootstrap import get_pages
 from web.mail import MailEvent
 
 

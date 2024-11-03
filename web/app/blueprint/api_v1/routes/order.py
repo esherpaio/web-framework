@@ -6,6 +6,7 @@ from sqlalchemy.orm.session import Session
 from werkzeug import Response
 
 from web.api import API, ApiText, json_response
+from web.api.mollie import Mollie
 from web.app.blueprint.api_v1 import api_v1_bp
 from web.app.cart import get_shipment_methods
 from web.auth import authorize, current_user
@@ -21,7 +22,6 @@ from web.database.model import (
     UserRoleLevel,
 )
 from web.database.utils import copy_row
-from web.app.ext.mollie import Mollie
 from web.i18n import _
 from web.mail import MailEvent, mail
 
