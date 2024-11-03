@@ -17,7 +17,7 @@ admin_v1_bp = Blueprint(
     static_folder=os.path.join(_dir, "static"),
     static_url_path="/admin/static",
 )
-admin_v1_css = CssBundle(os.path.join(_dir, "static", "custom.css"))
+admin_v1_css_bundle = CssBundle(os.path.join(_dir, "static", "admin_v1.css"))
 
 
 @admin_v1_bp.before_request
