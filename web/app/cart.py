@@ -166,7 +166,7 @@ def transfer_cart(
     def wrap(*args, **kwargs) -> Response:
         with conn.begin() as s:
             if current_user is None:
-                return
+                return f(*args, **kwargs)
             # Get before and after user ids
             prev_user_id = current_user.id
             resp = f(*args, **kwargs)
