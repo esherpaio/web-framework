@@ -4,10 +4,10 @@ import pytest
 from flask import Flask
 from flask.testing import FlaskClient
 
+from web.app.blueprint.api_v1 import api_v1_bp
+from web.app.blueprint.webhook_v1 import webhook_v1_bp
 from web.app.flask import FlaskWeb
 from web.automation import Syncer
-from web.blueprint.api_v1 import api_v1_bp
-from web.blueprint.webhook_v1 import webhook_v1_bp
 from web.cache import cache_manager
 from web.database.client import engine
 from web.database.model import Base, User, UserRoleId
