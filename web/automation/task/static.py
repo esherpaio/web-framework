@@ -22,12 +22,12 @@ class StaticSeed:
     def __init__(
         self,
         type_: StaticType,
-        bundle: JsBundle | ScssBundle | CssBundle,
+        bundles: list[JsBundle | ScssBundle | CssBundle],
         model: Type[AppSetting | AppBlueprint | AppRoute],
         endpoint: str = "",
     ) -> None:
         self.type: StaticType = type_
-        self.bundle: JsBundle | ScssBundle | CssBundle = bundle
+        self.bundles: list[JsBundle | ScssBundle | CssBundle] = bundles
         self.model: Type[AppSetting | AppBlueprint | AppRoute] = model
         self.endpoint: str = endpoint
 
@@ -45,7 +45,7 @@ class StaticSeed:
         self, s: Session, resource: AppSetting | AppBlueprint | AppRoute
     ) -> None:
         # upload bundle to cdn
-        _, cdn_path = Packer().pack(self.bundle, save_cdn=True)
+        _, cdn_path = Packer().pack(self.bundles, save_cdn=True)
         # write resource
         if self.type == StaticType.JS:
             if resource.js_path != cdn_path:
