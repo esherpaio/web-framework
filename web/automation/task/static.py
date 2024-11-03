@@ -1,4 +1,5 @@
 from enum import StrEnum
+from typing import Type
 
 from sqlalchemy.orm import Session
 
@@ -22,12 +23,12 @@ class StaticSeed:
         self,
         type_: StaticType,
         bundle: JsBundle | ScssBundle | CssBundle,
-        model: AppSetting | AppBlueprint | AppRoute,
+        model: Type[AppSetting | AppBlueprint | AppRoute],
         endpoint: str = "",
     ) -> None:
         self.type: StaticType = type_
         self.bundle: JsBundle | ScssBundle | CssBundle = bundle
-        self.model: AppSetting | AppBlueprint | AppRoute = model
+        self.model: Type[AppSetting | AppBlueprint | AppRoute] = model
         self.endpoint: str = endpoint
 
     def get_resource(self, s: Session) -> AppSetting | AppBlueprint | AppRoute | None:

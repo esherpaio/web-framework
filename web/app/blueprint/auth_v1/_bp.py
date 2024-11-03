@@ -16,9 +16,7 @@ auth_v1_bp = Blueprint(
     static_folder=os.path.join(_dir, "static"),
     static_url_path="/auth/static",
 )
-auth_v1_js_login = JsBundle(os.path.join(_dir, "static", "login.js"))
-auth_v1_js_password = JsBundle(os.path.join(_dir, "static", "password.js"))
-auth_v1_js_register = JsBundle(os.path.join(_dir, "static", "register.js"))
+auth_v1_js_bundle = JsBundle(os.path.join(_dir, "static", "auth_v1.js"))
 
 
 @auth_v1_bp.context_processor
