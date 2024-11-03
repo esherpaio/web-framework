@@ -27,3 +27,15 @@ async function recoverPassword() {
     }
     updateButton(buttonId, -1);
 }
+
+async function checkParams() {
+    const params = new URLSearchParams(window.location.search);
+    const matchParam = 'verification_key';
+    const match = params.has(matchParam);
+    if (match) {
+        const verificationKey = getParameter(matchParam);
+        removeParameter(matchParam);
+    }
+}
+
+window.addEventListener("load", checkParams);
