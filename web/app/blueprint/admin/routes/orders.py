@@ -5,6 +5,7 @@ from werkzeug import Response
 
 from web.api import ApiText, json_response
 from web.app.blueprint.admin import admin_bp
+from web.app.bootstrap import get_pages
 from web.database import conn
 from web.database.model import (
     Billing,
@@ -18,7 +19,6 @@ from web.database.model import (
     SkuDetail,
 )
 from web.document.object import gen_invoice, gen_refund
-from web.app.ext.bootstrap import get_pages
 from web.utils import remove_file
 
 

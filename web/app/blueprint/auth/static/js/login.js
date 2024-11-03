@@ -7,7 +7,7 @@ async function loginUser() {
         password: document.getElementById('login-password').value,
         remember: true,
     });
-    window.location.href = URL_USER_SETTINGS;
+    window.location.href = URL_USER_LOGIN;
 }
 
 async function loginUserGoogle(resp) {
@@ -15,7 +15,7 @@ async function loginUserGoogle(resp) {
     updateButton(buttonId, 1);
     if (resp && resp.credential) {
         await postSessionsGoogle({ token_id: resp.credential });
-        window.location.href = URL_USER_SETTINGS;
+        window.location.href = URL_USER_LOGIN;
     }
     updateButton(buttonId, -1);
 }

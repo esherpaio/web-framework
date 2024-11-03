@@ -1,0 +1,17 @@
+const BASE = "/";
+
+// admin blueprint
+const URL_ADMIN_ORDERS = BASE;
+const URL_ADMIN_PRODUCTS = BASE;
+
+// checkout blueprint
+const URL_CHECKOUT_CART = BASE;
+const URL_CHECKOUT_ACCOUNT = BASE;
+const URL_CHECKOUT_SHIPPING = BASE;
+const URL_CHECKOUT_OPTIONS = BASE;
+const URL_CHECKOUT_BILLING = BASE;
+const URL_CHECKOUT_CONFIRMATION = BASE;
+
+// auth blueprint
+const URL_USER_LOGIN = BASE;
+const URL_USER_LOGOUT = BASE;

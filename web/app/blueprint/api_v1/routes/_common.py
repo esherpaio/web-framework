@@ -3,10 +3,10 @@ import uuid
 from mollie.api.objects.payment import Payment
 from sqlalchemy.orm import Session
 
+from web.api.mollie import Mollie, mollie_amount
 from web.app.urls import parse_url, url_for
 from web.config import config
 from web.database.model import Order, Refund, User, Verification
-from web.app.ext.mollie import Mollie, mollie_amount
 from web.mail import MailEvent, mail
 
 

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html class="h-100"
+      lang="{{ current_locale.language.code }}">
+    <head>
+        <!-- meta tags -->
+        {% for tag in meta.tags %}
+            {{ tag }}
+        {% endfor %}
+        <!-- google tag manager -->
+        <!-- json-ld schema -->
+        {% for schema in schemas %}
+            {{ schema.tag }}
+        {% endfor %}
+        <!-- fonts -->
+        <!-- include css -->
+        {% if cache.setting.css_path %}
+            <link type="text/css"
+                  rel="stylesheet"
+                  href="{{ cdn_url(cache.setting.css_path) }}">
+        {% endif %}
+        {% for blueprint in cache.blueprints %}
+            {% if blueprint.endpoint == request.blueprint %}
+                {% if blueprint.css_path %}
+                    <link type="text/css"
+                          rel="stylesheet"
+                          href="{{ cdn_url(blueprint.css_path) }}">
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+        {% for route in cache.routes %}
+            {% if route.endpoint == request.endpoint %}
+                {% if route.css_path %}
+                    <script defer
+                            src="{{ cdn_url(route.css_path) }}"></script>
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+        <!-- include js -->
+        {% if cache.setting.js_path %}
+            <script defer
+                    src="{{ cdn_url(cache.setting.js_path) }}"></script>
+        {% endif %}
+        {% for blueprint in cache.blueprints %}
+            {% if blueprint.endpoint == request.blueprint %}
+                {% if blueprint.js_path %}
+                    <script defer
+                            src="{{ cdn_url(blueprint.js_path) }}"></script>
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+        {% for route in cache.routes %}
+            {% if route.endpoint == request.endpoint %}
+                {% if route.js_path %}
+                    <script defer
+                            src="{{ cdn_url(route.js_path) }}"></script>
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+    </head>
+    <!-- content -->
+    {% block main %}
+    {% endblock %}
+</html>
