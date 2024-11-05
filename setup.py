@@ -21,6 +21,7 @@ DATA = [
     "pdf/pdf/canvas/font/simple_font/ttf/*.ttf",
     "pdf/pdf/canvas/layout/hyphenation/resources/*.json",
     "pdf/pdf/canvas/lipsum/resources/*.json",
+    "",
 ]
 
 
