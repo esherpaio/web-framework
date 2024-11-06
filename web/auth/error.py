@@ -2,26 +2,28 @@ from web.api import ApiText
 
 
 class AuthError(Exception):
+    name = ""
     code = 401
     message = ApiText.HTTP_401
 
 
 class NoValueError(AuthError):
-    pass
+    name = "NoValueError: missing value"
 
 
 class KEYError(AuthError):
-    pass
+    name = "KEYError: Key authentication failed"
 
 
 class JWTError(AuthError):
-    pass
+    name = "JWTError: JWT authentication failed"
 
 
 class CSRFError(AuthError):
-    pass
+    name = "CSRFError: CSRF verification failed"
 
 
 class Forbidden(AuthError):
+    name = "Forbidden: authorization failed"
     code = 403
     message = ApiText.HTTP_403

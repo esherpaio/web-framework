@@ -1,11 +1,9 @@
 import io
 import typing
 import zlib
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 
-from web.pdf.pdf.canvas.layout.annotation.free_text_annotation import (
-    FreeTextAnnotation,
-)
+from web.pdf.pdf.canvas.layout.annotation.free_text_annotation import FreeTextAnnotation
 
 if TYPE_CHECKING:
     from web.pdf.pdf import Document
@@ -171,9 +169,9 @@ class Page(Dictionary):
             self[Name("Annots")] = List()
         return self["Annots"]
 
-    def get_document(self) -> "Document":
+    def get_document(self) -> Optional["Document"]:
         """This function returns the Document from which this Page came."""
-        d: typing.Any = self.get_root()
+        d: "Document" = self.get_root()
         return d if d.__class__.__name__ == "Document" else None
 
     def get_form_field_value(

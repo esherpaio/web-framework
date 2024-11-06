@@ -76,7 +76,7 @@ class Auth:
     @staticmethod
     def on_error(error: Type[AuthError]) -> Response:
         user_id = getattr(g, G.USER_ID, None)
-        log.debug(f"Auth error {error.__name__} at user {user_id}")
+        log.debug(f"Auth error {error.name} at user {user_id}")
         if request.blueprint is not None and (
             request.blueprint.startswith(("api", "webhook"))
         ):
