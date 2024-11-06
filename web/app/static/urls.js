@@ -1,16 +1,16 @@
 const BASE = "/";
 
 // admin blueprint
-const URL_ADMIN_ORDERS = BASE;
-const URL_ADMIN_PRODUCTS = BASE;
+const URL_ADMIN_ORDERS = "/admin/orders";
+const URL_ADMIN_PRODUCTS = "/admin/products";
 
 // checkout blueprint
-const URL_CHECKOUT_CART = BASE;
-const URL_CHECKOUT_ACCOUNT = BASE;
-const URL_CHECKOUT_SHIPPING = BASE;
-const URL_CHECKOUT_OPTIONS = BASE;
-const URL_CHECKOUT_BILLING = BASE;
-const URL_CHECKOUT_CONFIRMATION = BASE;
+const URL_CHECKOUT_CART = "/checkout/cart";
+const URL_CHECKOUT_ACCOUNT = "/checkout/account";
+const URL_CHECKOUT_SHIPPING = "/checkout/shipping";
+const URL_CHECKOUT_OPTIONS = "/checkout/options";
+const URL_CHECKOUT_BILLING = "/checkout/billing";
+const URL_CHECKOUT_CONFIRMATION = "/checkout/confirmation";
 
 // auth blueprint
 const URL_USER_LOGIN = BASE;
