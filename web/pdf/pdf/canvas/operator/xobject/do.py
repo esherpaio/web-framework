@@ -1,6 +1,6 @@
 import io
 import typing
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 import PIL
 
@@ -62,7 +62,7 @@ class Do(CanvasOperator):
             and xobject["Subtype"] == "Form"
         ):
             # execute XObject
-            xobject_resources: Dictionary = (
+            xobject_resources: Any | Dictionary = (
                 xobject["Resources"] if "Resources" in xobject else {}
             )
             child_canvas_stream_processor = (
