@@ -55,3 +55,9 @@ table td {
     border-bottom-right-radius: .375rem;
     min-height: 300px;
 }
+
+/* markdown */
+
+.markdown-body>:first-child {
+    font-weight: 500 !important;
+}

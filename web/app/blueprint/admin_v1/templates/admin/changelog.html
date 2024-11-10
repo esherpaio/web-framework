@@ -3,14 +3,18 @@
     <div class="row g-3">
         <div class="col-12">
             <div class="d-flex justify-content-between gap-2">
-                <h2 class="mb-0">
-                    Changelog
-                </h2>
-            </div>
-        </div>
-        <div class="col-12">
-            <div class="row g-3">
-                {% include "admin/_changelog.html" %}
+                <zero-md>
+                <template data-append>
+                    <style>
+                          h1 {
+                            font-weight: 500 !important;
+                            padding-bottom: 0 !important;
+                            border-bottom: none !important;
+                          }
+                    </style>
+                </template>
+                <script type="text/markdown">{{ changelog }}</script>
+                </zero-md>
             </div>
         </div>
     </div>

@@ -3,6 +3,7 @@ from setuptools import find_packages, setup
 from version import __version__
 
 DATA = [
+    "*.md",
     "app/blueprint/admin_v1/static/*.css",
     "app/blueprint/admin_v1/templates/*.html",
     "app/blueprint/admin_v1/templates/admin/*.html",

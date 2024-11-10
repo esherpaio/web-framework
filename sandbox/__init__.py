@@ -22,7 +22,7 @@ from web.automation.task import (
 )
 from web.automation.task import StaticSyncer as _StaticSyncer
 from web.database import conn
-from web.database.model import AppSetting, User, UserRoleId
+from web.database.model import AppBlueprint, User, UserRoleId
 
 
 class UserSyncer(Syncer):
@@ -37,17 +37,27 @@ class UserSyncer(Syncer):
     ]
 
 
+class AppBlueprintSyncer(Syncer):
+    MODEL = AppBlueprint
+    KEY = "endpoint"
+    SEEDS = [
+        AppBlueprint(endpoint="admin", in_sitemap=False),
+    ]
+
+
 class StaticSyncer(_StaticSyncer):
     SEEDS = [
         StaticSeed(
             type_=StaticType.JS,
             bundles=[admin_v1_js_bundle],
-            model=AppSetting,
+            model=AppBlueprint,
+            endpoint="admin",
         ),
         StaticSeed(
             type_=StaticType.CSS,
             bundles=[admin_v1_css_bundle],
-            model=AppSetting,
+            model=AppBlueprint,
+            endpoint="admin",
         ),
     ]
 
@@ -55,7 +65,7 @@ class StaticSyncer(_StaticSyncer):
 def create_app() -> Flask:
     app = Flask(__name__)
     app.add_url_rule("/", endpoint="home", view_func=lambda: "Home")
-    app.add_url_rule("/fnorce-login", endpoint="login", view_func=view_force_login)
+    app.add_url_rule("/force-login", endpoint="login", view_func=view_force_login)
     FlaskWeb(
         app,
         blueprints=[
@@ -66,6 +76,7 @@ def create_app() -> Flask:
             admin_v1_bp,
         ],
         auto_tasks=[
+            AppBlueprintSyncer,
             CurrencySyncer,
             RegionSyncer,
             CountrySyncer,

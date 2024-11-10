@@ -63,6 +63,7 @@ class ConfigVar:
 class Config(metaclass=Singleton):
     VARS: list[EnvVar | ConfigVar | StaticVar] = [
         # App configuration
+        StaticVar("APP_ROOT", os.path.dirname(os.path.abspath(__file__))),
         EnvVar("APP_LOG_LEVEL", str, default="INFO"),
         EnvVar("APP_DEBUG", bool, default=False),
         EnvVar("APP_URL_SCHEME", str, default="https"),
