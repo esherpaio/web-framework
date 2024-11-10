@@ -19,7 +19,7 @@ class Article(Base, Attribute):
     is_visible = MC(Boolean, nullable=False, default=False, server_default="false")
     name = MC(String(64), nullable=False)
     slug = MC(String(64), unique=True, nullable=False)
-    summary = MC(String(64))
+    summary = MC(String(256))
 
     route_id = MC(ForeignKey("app_route.id", ondelete="SET NULL"))
 
