@@ -15,6 +15,7 @@ from web.database.model import AppBlueprint, AppRoute
 from web.error import WebError
 from web.i18n import _
 from web.logger import log
+from web.validation import obfuscate_data
 
 #
 # Routes
@@ -112,7 +113,8 @@ def handle_backend_error(error: Exception) -> Response:
         f"message {message}",
     ]
     if request.is_json:
-        info.append(f"data {request.get_json()}")
+        data = obfuscate_data(request.get_json())
+        info.append(f"data {data}")
     log.error(" - ".join(info), exc_info=True)
     return json_response(code, message)
 

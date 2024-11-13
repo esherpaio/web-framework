@@ -6,10 +6,11 @@ from web.app.blueprint.admin_v1 import (
     admin_v1_js_bundle,
 )
 from web.app.blueprint.api_v1 import api_v1_bp
-from web.app.blueprint.auth_v1 import auth_v1_bp
+from web.app.blueprint.auth_v1 import auth_v1_bp, auth_v1_js_bundle
 from web.app.blueprint.robots_v1 import robots_v1_bp
 from web.app.blueprint.webhook_v1 import webhook_v1_bp
 from web.app.flask import FlaskWeb
+from web.app.static import js_bundle
 from web.auth import jwt_login
 from web.automation import Syncer
 from web.automation.task import (
@@ -22,7 +23,7 @@ from web.automation.task import (
 )
 from web.automation.task import StaticSyncer as _StaticSyncer
 from web.database import conn
-from web.database.model import AppBlueprint, User, UserRoleId
+from web.database.model import AppBlueprint, AppSetting, User, UserRoleId
 
 
 class UserSyncer(Syncer):
@@ -42,11 +43,26 @@ class AppBlueprintSyncer(Syncer):
     KEY = "endpoint"
     SEEDS = [
         AppBlueprint(endpoint="admin", in_sitemap=False),
+        AppBlueprint(endpoint="auth", in_sitemap=False),
     ]
 
 
 class StaticSyncer(_StaticSyncer):
     SEEDS = [
+        # global
+        StaticSeed(
+            type_=StaticType.JS,
+            bundles=[js_bundle],
+            model=AppSetting,
+        ),
+        # auth
+        StaticSeed(
+            type_=StaticType.JS,
+            bundles=[auth_v1_js_bundle],
+            model=AppBlueprint,
+            endpoint="auth",
+        ),
+        # admin
         StaticSeed(
             type_=StaticType.JS,
             bundles=[admin_v1_js_bundle],
