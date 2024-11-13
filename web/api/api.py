@@ -86,7 +86,6 @@ class API(Generic[B]):
     def gen_path_data() -> dict[str, Any]:
         if not has_request_context():
             raise RuntimeError
-        log.debug(f"View args: {request.view_args}")
         if request.view_args is None:
             return {}
         return request.view_args
