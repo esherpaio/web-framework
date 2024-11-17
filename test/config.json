@@ -14,7 +14,6 @@
     "CDN_AUTO_NAMING": true,
     "CDN_HOSTNAME": "storage.bunnycdn.com",
     "CDN_USERNAME": "web-framework",
-    "CDN_ZONE": "web-framework",
     "ENDPOINT_ERROR": "home",
     "ENDPOINT_HOME": "home",
     "ENDPOINT_LOGIN": "home",
