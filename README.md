@@ -1,3 +1,3 @@
-# Web Framework
+# Introduction
 
-This repository contains a web framework for clients of eSherpa.
+This repository contains the web framework for clients of eSherpa.
