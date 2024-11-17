@@ -97,7 +97,6 @@ class Config(metaclass=Singleton):
         ConfigVar("CDN_HOSTNAME"),
         ConfigVar("CDN_USERNAME"),
         EnvVar("CDN_PASSWORD", str),
-        ConfigVar("CDN_ZONE"),
         # Email configuration
         EnvVar("EMAIL_METHOD", str),
         EnvVar("EMAIL_TIMEOUT", int, default=10),
