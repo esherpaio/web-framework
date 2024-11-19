@@ -6,6 +6,6 @@ def minify_html(value: str) -> str:
     value = re.sub(r"<!--.*?-->", "", value, flags=re.DOTALL)
     # Remove extra spaces between tags
     value = re.sub(r">\s+<", "><", value)
-    # Remove empty lines
-    lines = [line.strip() for line in value.splitlines() if line.strip()]
-    return "\n".join(lines)
+    # Remove all newlines and extra spaces
+    value = re.sub(r"\s+", " ", value).strip()
+    return value
