@@ -58,10 +58,17 @@ async function registerUser() {
         email: document.getElementById('register-email').value,
         password: document.getElementById('register-password').value,
         password_eval: document.getElementById('register-password-eval').value,
-    });
-    let user = resp.data;
-    resp = await postUsersIdActivation(user.id);
-    showMessage(resp.message);
+    }, true);
+    let message = resp.message;
+    if (resp.code == 409) {
+        resp = await getUsers({ email: document.getElementById('register-email').value })
+        let user = resp.data.length > 0 ? resp.data[0] : null;
+        if (user !== null && !user.is_active) {
+            resp = await postUsersIdActivation(user.id);
+            message = resp.message;
+        }
+    }
+    showMessage(message);
     updateButton(buttonId, -1);
 }
 
