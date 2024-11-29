@@ -5,7 +5,7 @@ async function checkParams() {
     const matchParam = 'verification_key';
     const match = params.has(matchParam);
     if (match) {
-        const verificationKey = getParameter(matchParam);
+        verificationKey = getParameter(matchParam);
         removeParameter(matchParam);
         if (window.location.href.indexOf("/login") > -1) {
             await verifyUser(verificationKey);
@@ -22,6 +22,7 @@ async function verifyUser(verificationKey) {
     }
 }
 
+let verificationKey;
 window.addEventListener("load", checkParams);
 
 /* login */
