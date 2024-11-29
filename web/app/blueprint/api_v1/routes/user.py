@@ -1,4 +1,3 @@
-import re
 from enum import StrEnum
 
 from flask import abort
@@ -13,6 +12,7 @@ from web.auth import current_user
 from web.database import conn
 from web.database.model import User, UserRoleId
 from web.i18n import _
+from web.validation import is_email
 
 #
 # Configuration
@@ -127,7 +127,7 @@ def set_password(s: Session, data: dict, model: User) -> None:
 
 def val_email(s: Session, data: dict, model: User) -> None:
     email = data["email"]
-    if not re.match(r"[^@]+@[^@]+\.[^@]+", email):
+    if not is_email(email):
         abort(json_response(400, Text.EMAIL_INVALID))
     user = s.query(User).filter(User.email == email.lower()).first()
     if user is not None:
