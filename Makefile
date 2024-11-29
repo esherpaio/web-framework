@@ -23,3 +23,15 @@ lint_py:
 	mypy --install-types --non-interactive .
 lint_html:
 	djlint . --check
+
+## TESTING
+.PHONY: test
+test:
+	pytest .
+
+## DATABASE
+.PHONY: migrations migrate
+migrations:
+	alembic check || alembic revision --autogenerate -m ""
+migrate:
+	alembic upgrade head
