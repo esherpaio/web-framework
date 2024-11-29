@@ -33,7 +33,7 @@ class FlaskWeb:
         jinja_globals: dict[str, Callable] | None = None,
         mail_events: dict[MailEvent | str, list[Callable]] | None = None,
         translations_dir: str | None = None,
-        auto_tasks: list[Type[Automator]] | None = None,
+        automation_tasks: list[Type[Automator]] | None = None,
         db_migrate: bool = False,
         db_hook: Callable | None = None,
         cache_hook: Callable | None = None,
@@ -46,8 +46,8 @@ class FlaskWeb:
             jinja_globals = {}
         if mail_events is None:
             mail_events = {}
-        if auto_tasks is None:
-            auto_tasks = []
+        if automation_tasks is None:
+            automation_tasks = []
 
         if app is not None:
             self.init(
@@ -57,7 +57,7 @@ class FlaskWeb:
                 jinja_globals,
                 mail_events,
                 translations_dir,
-                auto_tasks,
+                automation_tasks,
                 db_migrate,
                 db_hook,
                 cache_hook,
@@ -71,13 +71,13 @@ class FlaskWeb:
         jinja_globals: dict[str, Callable],
         mail_events: dict[MailEvent | str, list[Callable]],
         translations_dir: str | None,
-        auto_tasks: list[Type[Automator]],
+        automation_tasks: list[Type[Automator]],
         db_migrate: bool,
         db_hook: Callable | None,
         cache_hook: Callable | None,
     ) -> None:
         self.setup_i18n(translations_dir)
-        self.setup_database(db_migrate, auto_tasks, db_hook)
+        self.setup_database(db_migrate, automation_tasks, db_hook)
         self.setup_cache(cache_hook)
         self.setup_mail(mail_events)
         self.setup_flask(app, blueprints)

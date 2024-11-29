@@ -70,7 +70,7 @@ class UserSyncer(Syncer):
 def create_app() -> Flask:
     app = Flask(__name__)
     app.testing = True
-    FlaskWeb(app, blueprints=[api_v1_bp, webhook_v1_bp], auto_tasks=[UserSyncer])
+    FlaskWeb(app, blueprints=[api_v1_bp, webhook_v1_bp], automation_tasks=[UserSyncer])
     cache_manager.pause()
     return app
 
