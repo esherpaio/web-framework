@@ -1,9 +1,7 @@
 {% extends 'auth.html' %}
 
 {% block auth %}
-    <script src="https://accounts.google.com/gsi/client"
-            async
-            defer></script>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
     <a href="{{ url_for(config.ENDPOINT_HOME) }}">
         <img alt=""
              class="mb-4 img-contain"
@@ -11,13 +9,9 @@
              style="max-height: 120px;
                     max-width: 240px">
     </a>
-    <h1 class="h3 mb-4 fw-semibold">
-        Login
-    </h1>
+    <h1 class="h3 mb-4 fw-semibold">Login</h1>
     <div style="width: 320px">
-        <form id="form-login"
-              class="w-100 gtag-login"
-              onsubmit="loginUser();">
+        <form id="form-login" class="w-100 gtag-login" onsubmit="loginUser();">
             <div class="form-floating mb-2">
                 <input autofocus
                        required
@@ -26,9 +20,7 @@
                        placeholder="Email"
                        type="text"
                        autocomplete="email">
-                <label for="login-email">
-                    Email
-                </label>
+                <label for="login-email">Email</label>
             </div>
             <div class="form-floating mb-2">
                 <input required
@@ -37,39 +29,25 @@
                        placeholder="Password"
                        type="password"
                        autocomplete="current-password">
-                <label for="login-password">
-                    Password
-                </label>
+                <label for="login-password">Password</label>
             </div>
             <button id="button-login-user"
                     class="btn btn-info btn-load w-100"
-                    type="submit">
-                Login
-            </button>
+                    type="submit">Login</button>
         </form>
-        <div class="py-2 text-center text-uppercase small">
-            OR
-        </div>
+        <div class="py-2 text-center text-uppercase small">OR</div>
         <div>
             <div id="g_id_onload"
                  data-client_id="{{ config.GOOGLE_CLIENT_ID }}"
                  data-callback="loginUserGoogle"
-                 data-locale="{{ current_locale.locale_alt }}">
-            </div>
+                 data-locale="{{ current_locale.locale_alt }}"></div>
             <div class="g_id_signin mx-auto d-flex flex-row justify-content-center"
-                 data-type="standard">
-            </div>
+                 data-type="standard"></div>
         </div>
     </div>
     <div class="mt-4">
-        <a class="small"
-           href="{{ url_for('auth.register') }}">
-            Don't have an account?
-        </a>
+        <a class="small" href="{{ url_for('auth.register') }}">Don't have an account?</a>
         <span class="mx-2">•</span>
-        <a class="small"
-           href="{{ url_for('auth.password_request') }}">
-            Forgot your password?
-        </a>
+        <a class="small" href="{{ url_for('auth.password_request') }}">Forgot your password?</a>
     </div>
 {% endblock %}

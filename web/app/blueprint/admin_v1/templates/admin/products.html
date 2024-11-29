@@ -15,9 +15,7 @@
     <div class="row g-3">
         <div class="col-12">
             <div class="d-flex justify-content-between gap-2">
-                <h2 class="mb-0">
-                    Products
-                </h2>
+                <h2 class="mb-0">Products</h2>
                 <button class="btn btn-success"
                         type="submit"
                         data-bs-toggle="modal"
@@ -32,32 +30,18 @@
                 <table class="table rounded-2 overflow-hidden align-middle mb-0">
                     <thead class="table-secondary">
                         <tr>
-                            <th>
-                                Name
-                            </th>
-                            <th>
-                                Shipment Class
-                            </th>
-                            <th>
-                                Unit price
-                            </th>
-                            <th class="text-end">
-                                Actions
-                            </th>
+                            <th>Name</th>
+                            <th>Shipment Class</th>
+                            <th>Unit price</th>
+                            <th class="text-end">Actions</th>
                         </tr>
                     </thead>
                     <tbody class="table-light">
                         {% for x in products %}
                             <tr>
-                                <td>
-                                    {{ x.name }}
-                                </td>
-                                <td>
-                                    {{ x.shipment_class.name if x.shipment_class }}
-                                </td>
-                                <td>
-                                    {{ x.unit_price|price }}
-                                </td>
+                                <td>{{ x.name }}</td>
+                                <td>{{ x.shipment_class.name if x.shipment_class }}</td>
+                                <td>{{ x.unit_price|price }}</td>
                                 <td class="text-end">
                                     <div class="btn-group">
                                         <a class="btn btn-sm btn-outline-primary"
@@ -74,20 +58,12 @@
         </div>
     </div>
 
-    <div id="modal-add-product"
-         class="modal fade"
-         tabindex="-1">
+    <div id="modal-add-product" class="modal fade" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
-            <form class="modal-content"
-                  onsubmit="addProduct();">
+            <form class="modal-content" onsubmit="addProduct();">
                 <div class="modal-header">
-                    <h5 class="modal-title">
-                        Add product
-                    </h5>
-                    <button type="button"
-                            class="btn-close"
-                            data-bs-dismiss="modal">
-                    </button>
+                    <h5 class="modal-title">Add product</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
                     <div class="row g-2">
@@ -104,16 +80,8 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button id="add-product"
-                            class="btn btn-load btn-success"
-                            type="submit">
-                        Add
-                    </button>
-                    <button type="button"
-                            class="btn btn-secondary"
-                            data-bs-dismiss="modal">
-                        Cancel
-                    </button>
+                    <button id="add-product" class="btn btn-load btn-success" type="submit">Add</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                 </div>
             </form>
         </div>

@@ -1,16 +1,11 @@
 <!DOCTYPE html>
-<html class="h-100"
-      lang="{{ current_locale.language.code }}">
+<html class="h-100" lang="{{ current_locale.language.code }}">
     <head>
         <!-- meta tags -->
-        {% for tag in meta.tags %}
-            {{ tag }}
-        {% endfor %}
+        {% for tag in meta.tags %}{{ tag }}{% endfor %}
         <!-- google tag manager -->
         <!-- json-ld schema -->
-        {% for schema in schemas %}
-            {{ schema.tag }}
-        {% endfor %}
+        {% for schema in schemas %}{{ schema.tag }}{% endfor %}
         <!-- fonts -->
         <!-- include css -->
         {% if cache.setting.css_path %}
@@ -19,45 +14,32 @@
                   href="{{ cdn_url(cache.setting.css_path) }}">
         {% endif %}
         {% for blueprint in cache.blueprints %}
-            {% if blueprint.endpoint == request.blueprint %}
-                {% if blueprint.css_path %}
-                    <link type="text/css"
-                          rel="stylesheet"
-                          href="{{ cdn_url(blueprint.css_path) }}">
-                {% endif %}
+            {% if blueprint.endpoint == request.blueprint and blueprint.css_path %}
+                <link type="text/css"
+                      rel="stylesheet"
+                      href="{{ cdn_url(blueprint.css_path) }}">
             {% endif %}
         {% endfor %}
         {% for route in cache.routes %}
-            {% if route.endpoint == request.endpoint %}
-                {% if route.css_path %}
-                    <script defer
-                            src="{{ cdn_url(route.css_path) }}"></script>
-                {% endif %}
+            {% if route.endpoint == request.endpoint and route.css_path %}
+                <script defer src="{{ cdn_url(route.css_path) }}"></script>
             {% endif %}
         {% endfor %}
         <!-- include js -->
         {% if cache.setting.js_path %}
-            <script defer
-                    src="{{ cdn_url(cache.setting.js_path) }}"></script>
+            <script defer src="{{ cdn_url(cache.setting.js_path) }}"></script>
         {% endif %}
         {% for blueprint in cache.blueprints %}
-            {% if blueprint.endpoint == request.blueprint %}
-                {% if blueprint.js_path %}
-                    <script defer
-                            src="{{ cdn_url(blueprint.js_path) }}"></script>
-                {% endif %}
+            {% if blueprint.endpoint == request.blueprint and if blueprint.js_path %}
+                <script defer src="{{ cdn_url(blueprint.js_path) }}"></script>
             {% endif %}
         {% endfor %}
         {% for route in cache.routes %}
-            {% if route.endpoint == request.endpoint %}
-                {% if route.js_path %}
-                    <script defer
-                            src="{{ cdn_url(route.js_path) }}"></script>
-                {% endif %}
+            {% if route.endpoint == request.endpoint and if route.js_path %}
+                <script defer src="{{ cdn_url(route.js_path) }}"></script>
             {% endif %}
         {% endfor %}
     </head>
     <!-- content -->
-    {% block main %}
-    {% endblock %}
+    {% block main %}{% endblock %}
 </html>

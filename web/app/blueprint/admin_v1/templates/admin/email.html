@@ -33,20 +33,14 @@
     <div class="row g-3">
         <div class="col-12">
             <div class="d-flex justify-content-between gap-2">
-                <h2 class="mb-0">
-                    Email
-                </h2>
+                <h2 class="mb-0">Email</h2>
                 <div class="btn-toolbar justify-content-end gap-2">
                     <button class="btn btn-primary"
                             data-bs-toggle="modal"
-                            data-bs-target="#modal-test-email">
-                        Test
-                    </button>
+                            data-bs-target="#modal-test-email">Test</button>
                     <button class="btn btn-warning"
                             data-bs-toggle="modal"
-                            data-bs-target="#modal-send-email">
-                        Send
-                    </button>
+                            data-bs-target="#modal-send-email">Send</button>
                 </div>
             </div>
         </div>
@@ -55,16 +49,12 @@
                 <div class="col-12">
                     <div class="input-group">
                         <span class="input-group-text">Subject</span>
-                        <input id="email-subject"
-                               class="form-control mt-0"
-                               type="text"
-                               value="">
+                        <input id="email-subject" class="form-control mt-0" type="text" value="">
                     </div>
                 </div>
                 <div class="col-12">
                     <div class="d-block">
-                        <div id="html-editor">
-                        </div>
+                        <div id="html-editor"></div>
                     </div>
                     <script defer>
                         let htmlElement = document.getElementById('html-editor');
@@ -83,19 +73,12 @@
         </div>
     </div>
 
-    <div id="modal-send-email"
-         class="modal fade">
+    <div id="modal-send-email" class="modal fade">
         <div class="modal-dialog modal-dialog-centered">
-            <form class="modal-content"
-                  onsubmit="sendEmail();">
+            <form class="modal-content" onsubmit="sendEmail();">
                 <div class="modal-header">
-                    <h5 class="modal-title">
-                        Send email
-                    </h5>
-                    <button type="button"
-                            class="btn-close"
-                            data-bs-dismiss="modal">
-                    </button>
+                    <h5 class="modal-title">Send email</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
                     <p class="mb-0">
@@ -104,39 +87,22 @@
                     </p>
                 </div>
                 <div class="modal-footer">
-                    <button id="send-email"
-                            class="btn btn-load btn-warning"
-                            type="submit">
-                        Proceed
-                    </button>
-                    <button type="button"
-                            class="btn btn-secondary"
-                            data-bs-dismiss="modal">
-                        Cancel
-                    </button>
+                    <button id="send-email" class="btn btn-load btn-warning" type="submit">Proceed</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <div id="modal-test-email"
-         class="modal fade">
+    <div id="modal-test-email" class="modal fade">
         <div class="modal-dialog modal-dialog-centered">
-            <form class="modal-content"
-                  onsubmit="testEmail();">
+            <form class="modal-content" onsubmit="testEmail();">
                 <div class="modal-header">
-                    <h5 class="modal-title">
-                        Test email
-                    </h5>
-                    <button type="button"
-                            class="btn-close"
-                            data-bs-dismiss="modal">
-                    </button>
+                    <h5 class="modal-title">Test email</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <p>
-                        Test your email before sending it to all users.
-                    </p>
+                    <p>Test your email before sending it to all users.</p>
                     <div class="input-group">
                         <span class="input-group-text">Email</span>
                         <input required
@@ -148,16 +114,8 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button id="test-email"
-                            class="btn btn-load btn-warning"
-                            type="submit">
-                        Proceed
-                    </button>
-                    <button type="button"
-                            class="btn btn-secondary"
-                            data-bs-dismiss="modal">
-                        Cancel
-                    </button>
+                    <button id="test-email" class="btn btn-load btn-warning" type="submit">Proceed</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                 </div>
             </form>
         </div>

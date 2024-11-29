@@ -8,9 +8,7 @@
              style="max-height: 240px;
                     max-width: 240px">
     </a>
-    <h1 class="h3 mb-4 fw-semibold">
-        Register
-    </h1>
+    <h1 class="h3 mb-4 fw-semibold">Register</h1>
     <div style="width: 320px">
         <form id="form-register"
               class="w-100 gtag-sign_up"
@@ -22,9 +20,7 @@
                        placeholder="Email"
                        type="email"
                        autocomplete="email">
-                <label for="register-email">
-                    Email
-                </label>
+                <label for="register-email">Email</label>
             </div>
             <div class="form-floating mb-2">
                 <input required
@@ -33,9 +29,7 @@
                        placeholder="Password"
                        type="password"
                        autocomplete="new-password">
-                <label for="register-password">
-                    Password
-                </label>
+                <label for="register-password">Password</label>
             </div>
             <div class="form-floating mb-2">
                 <input required
@@ -44,17 +38,12 @@
                        placeholder="Password check"
                        type="password"
                        autocomplete="new-password">
-                <label for="register-password-eval">
-                    Password check
-                </label>
+                <label for="register-password-eval">Password check</label>
             </div>
             <button id="button-register-user"
                     class="btn btn-info btn-load w-100"
-                    type="submit">
-                Register
-            </button>
+                    type="submit">Register</button>
         </form>
     </div>
-    <a class="mt-4 small"
-       href="{{ url_for(config.ENDPOINT_LOGIN) }}">Already have an account?</a>
+    <a class="mt-4 small" href="{{ url_for(config.ENDPOINT_LOGIN) }}">Already have an account?</a>
 {% endblock %}
