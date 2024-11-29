@@ -56,9 +56,7 @@
                                      alt="{{ x.file.description if x.file.description }}"
                                      loading="lazy">
                             {% elif x.file.is_video %}
-                                <video controls
-                                       muted
-                                       class="card-img-top bg-light border-bottom">
+                                <video controls muted class="card-img-top bg-light border-bottom">
                                     <source src="{{ cdn_url(x.file.path) }}">
                                 </video>
                             {% endif %}
@@ -89,9 +87,7 @@
                                     <button class="btn btn-load btn-sm btn-outline-danger"
                                             onclick="_mediaId = {{ x.id }};"
                                             data-bs-toggle="modal"
-                                            data-bs-target="#modal-delete-media">
-                                        Delete
-                                    </button>
+                                            data-bs-target="#modal-delete-media">Delete</button>
                                 </div>
                             </div>
                         </div>
@@ -101,20 +97,12 @@
         </div>
     </div>
 
-    <div id="modal-add-media"
-         class="modal modal-lg fade"
-         tabindex="-1">
+    <div id="modal-add-media" class="modal modal-lg fade" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
-            <form class="modal-content"
-                  onsubmit="addMedia({{ product.id }});">
+            <form class="modal-content" onsubmit="addMedia({{ product.id }});">
                 <div class="modal-header">
-                    <h5 class="modal-title">
-                        Add media
-                    </h5>
-                    <button type="button"
-                            class="btn-close"
-                            data-bs-dismiss="modal">
-                    </button>
+                    <h5 class="modal-title">Add media</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
                     <div class="row g-2">
@@ -130,51 +118,28 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button id="add-media"
-                            class="btn btn-load btn-success"
-                            type="submit">
-                        Add
-                    </button>
-                    <button type="button"
-                            class="btn btn-secondary"
-                            data-bs-dismiss="modal">
-                        Cancel
-                    </button>
+                    <button id="add-media" class="btn btn-load btn-success" type="submit">Add</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <div id="modal-delete-media"
-         class="modal fade"
-         tabindex="-1">
+    <div id="modal-delete-media" class="modal fade" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">
-                        Delete media
-                    </h5>
-                    <button type="button"
-                            class="btn-close"
-                            data-bs-dismiss="modal">
-                    </button>
+                    <h5 class="modal-title">Delete media</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <p class="mb-0">
-                        Are you sure?
-                    </p>
+                    <p class="mb-0">Are you sure?</p>
                 </div>
                 <div class="modal-footer">
                     <button id="delete-media"
                             class="btn btn-load btn-danger"
-                            onclick="deleteMedia(_mediaId, {{ product.id }});">
-                        Delete
-                    </button>
-                    <button type="button"
-                            class="btn btn-secondary"
-                            data-bs-dismiss="modal">
-                        Cancel
-                    </button>
+                            onclick="deleteMedia(_mediaId, {{ product.id }});">Delete</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                 </div>
             </div>
         </div>

@@ -52,29 +52,17 @@
                 <table class="table rounded-2 overflow-hidden align-middle mb-0">
                     <thead class="table-secondary">
                         <tr>
-                            <th>
-                                Name
-                            </th>
-                            <th>
-                                Unit price
-                            </th>
-                            <th>
-                                Media
-                            </th>
-                            <th>
-                                Order
-                            </th>
-                            <th class="text-end">
-                                Actions
-                            </th>
+                            <th>Name</th>
+                            <th>Unit price</th>
+                            <th>Media</th>
+                            <th>Order</th>
+                            <th class="text-end">Actions</th>
                         </tr>
                     </thead>
                     <tbody class="table-light">
                         {% for value in option_values %}
                             <tr>
-                                <td>
-                                    {{ value.name }}
-                                </td>
+                                <td>{{ value.name }}</td>
                                 <td>
                                     <input id="value-unit-price-{{ value.id }}"
                                            class="form-control form-control-sm"
@@ -83,11 +71,8 @@
                                            value="{{ value.unit_price|price }}">
                                 </td>
                                 <td>
-                                    <select id="value-media-id-{{ value.id }}"
-                                            class="form-select form-select-sm">
-                                        <option>
-                                            None
-                                        </option>
+                                    <select id="value-media-id-{{ value.id }}" class="form-select form-select-sm">
+                                        <option>None</option>
                                         {% for media in product_medias %}
                                             {% if media.file.description %}
                                                 <option {{ 'selected' if value.media_id == media.id }} value="{{ media.id }}">
@@ -126,20 +111,13 @@
         </div>
     </div>
 
-    <div id="modal-add-value"
-         class="modal modal-lg fade"
-         tabindex="-1">
+    <div id="modal-add-value" class="modal modal-lg fade" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
             <form class="modal-content"
                   onsubmit="addValue({{ option.id }}, {{ product.id }});">
                 <div class="modal-header">
-                    <h5 class="modal-title">
-                        Add value
-                    </h5>
-                    <button type="button"
-                            class="btn-close"
-                            data-bs-dismiss="modal">
-                    </button>
+                    <h5 class="modal-title">Add value</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
                     <div class="row g-2">
@@ -166,51 +144,28 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button id="add-value"
-                            class="btn btn-load btn-success"
-                            type="submit">
-                        Add
-                    </button>
-                    <button type="button"
-                            class="btn btn-secondary"
-                            data-bs-dismiss="modal">
-                        Cancel
-                    </button>
+                    <button id="add-value" class="btn btn-load btn-success" type="submit">Add</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <div id="modal-delete-value"
-         class="modal fade"
-         tabindex="-1">
+    <div id="modal-delete-value" class="modal fade" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">
-                        Delete value
-                    </h5>
-                    <button type="button"
-                            class="btn-close"
-                            data-bs-dismiss="modal">
-                    </button>
+                    <h5 class="modal-title">Delete value</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <p class="mb-0">
-                        Are you sure?
-                    </p>
+                    <p class="mb-0">Are you sure?</p>
                 </div>
                 <div class="modal-footer">
                     <button id="delete-value"
                             class="btn btn-load btn-danger"
-                            onclick="deleteValue(_valueId, {{ product.id }});">
-                        Delete
-                    </button>
-                    <button type="button"
-                            class="btn btn-secondary"
-                            data-bs-dismiss="modal">
-                        Cancel
-                    </button>
+                            onclick="deleteValue(_valueId, {{ product.id }});">Delete</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                 </div>
             </div>
         </div>

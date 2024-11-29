@@ -1,11 +1,8 @@
 <!DOCTYPE html>
-<html lang="{{ current_locale.language.code }}"
-      class="h-100">
+<html lang="{{ current_locale.language.code }}" class="h-100">
     <head>
         <!-- meta tags -->
-        {% for tag in meta.tags %}
-            {{ tag }}
-        {% endfor %}
+        {% for tag in meta.tags %}{{ tag }}{% endfor %}
         <!-- default css -->
         <link rel="stylesheet"
               href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,500,600,700&display=swap">
@@ -18,8 +15,7 @@
         <!-- default js -->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.min.js"></script>
-        <script type="module"
-                src="https://cdn.jsdelivr.net/npm/zero-md@3?register"></script>
+        <script type="module" src="https://cdn.jsdelivr.net/npm/zero-md@3?register"></script>
         <!-- dynamic css -->
         {% for blueprint in cache.blueprints %}
             {% if blueprint.endpoint == request.blueprint %}
@@ -32,38 +28,27 @@
         {% endfor %}
         {% for route in cache.routes %}
             {% if route.endpoint == request.endpoint %}
-                {% if route.css_path %}
-                    <script defer
-                            src="{{ cdn_url(route.css_path) }}"></script>
-                {% endif %}
+                {% if route.css_path %}<script defer src="{{ cdn_url(route.css_path) }}"></script>{% endif %}
             {% endif %}
         {% endfor %}
         <!-- dynamic js -->
         {% for blueprint in cache.blueprints %}
             {% if blueprint.endpoint == request.blueprint %}
                 {% if blueprint.js_path %}
-                    <script defer
-                            src="{{ cdn_url(blueprint.js_path) }}"></script>
+                    <script defer src="{{ cdn_url(blueprint.js_path) }}"></script>
                 {% endif %}
             {% endif %}
         {% endfor %}
         {% for route in cache.routes %}
             {% if route.endpoint == request.endpoint %}
-                {% if route.js_path %}
-                    <script defer
-                            src="{{ cdn_url(route.js_path) }}"></script>
-                {% endif %}
+                {% if route.js_path %}<script defer src="{{ cdn_url(route.js_path) }}"></script>{% endif %}
             {% endif %}
         {% endfor %}
     </head>
     <body class="h-100 w-100 d-flex flex-row">
-        <nav id="sidebar"
-             class="offcanvas offcanvas-start"
-             tabindex="-1">
+        <nav id="sidebar" class="offcanvas offcanvas-start" tabindex="-1">
             <div class="offcanvas-header justify-content-center text-bg-secondary">
-                <h5 class="offcanvas-title">
-                    Admin Panel
-                </h5>
+                <h5 class="offcanvas-title">Admin Panel</h5>
             </div>
             <div class="offcanvas-body text-bg-light">
                 <div class="d-flex flex-column justify-content-between h-100">
@@ -99,16 +84,13 @@
                             </a>
                             <ul class="dropdown-menu ms-auto">
                                 <li>
-                                    <a class="dropdown-item"
-                                       href="{{ url_for('admin.shipment_classes') }}">Classes</a>
+                                    <a class="dropdown-item" href="{{ url_for('admin.shipment_classes') }}">Classes</a>
                                 </li>
                                 <li>
-                                    <a class="dropdown-item"
-                                       href="{{ url_for('admin.shipment_zones') }}">Zones</a>
+                                    <a class="dropdown-item" href="{{ url_for('admin.shipment_zones') }}">Zones</a>
                                 </li>
                                 <li>
-                                    <a class="dropdown-item"
-                                       href="{{ url_for('admin.shipment_methods') }}">Methods</a>
+                                    <a class="dropdown-item" href="{{ url_for('admin.shipment_methods') }}">Methods</a>
                                 </li>
                             </ul>
                         </li>
@@ -163,8 +145,7 @@
                        data-bs-target="#sidebar">
                         <i class="bi bi-layout-sidebar-inset"></i>
                     </a>
-                    <span class="navbar-brand fw-semibold"
-                          target="_blank">{{ config.WEBSITE_NAME }}</span>
+                    <span class="navbar-brand fw-semibold" target="_blank">{{ config.WEBSITE_NAME }}</span>
                     <div class="position-relative">
                         <a class="d-block d-md-none text-white fs-2"
                            href="#"
@@ -174,9 +155,7 @@
                         </a>
                         <a class="dropdown-toggle d-none d-md-block text-white text-decoration-none"
                            role="button"
-                           data-bs-toggle="dropdown">
-                            Account
-                        </a>
+                           data-bs-toggle="dropdown">Account</a>
                         <ul class="dropdown-menu dropdown-menu-end">
                             <li>
                                 <a class="dropdown-item disabled">{{ current_user.email }}</a>

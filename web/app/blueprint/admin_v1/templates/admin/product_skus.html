@@ -37,9 +37,7 @@
                 <button id="create-skus"
                         class="btn btn-load btn-primary"
                         type="submit"
-                        onclick="createSkus({{ product.id }});">
-                    Generate
-                </button>
+                        onclick="createSkus({{ product.id }});">Generate</button>
             </div>
         </div>
         <div class="col-12">
@@ -47,32 +45,18 @@
                 <table class="table rounded-2 overflow-hidden align-middle mb-0">
                     <thead class="table-secondary">
                         <tr>
-                            <th>
-                                ID
-                            </th>
-                            <th>
-                                Number
-                            </th>
-                            <th>
-                                Options
-                            </th>
-                            <th>
-                                Stock
-                            </th>
-                            <th>
-                                Visible
-                            </th>
-                            <th class="text-end">
-                                Actions
-                            </th>
+                            <th>ID</th>
+                            <th>Number</th>
+                            <th>Options</th>
+                            <th>Stock</th>
+                            <th>Visible</th>
+                            <th class="text-end">Actions</th>
                         </tr>
                     </thead>
                     <tbody class="table-light">
                         {% for sku in skus %}
                             <tr>
-                                <td>
-                                    {{ sku.id }}
-                                </td>
+                                <td>{{ sku.id }}</td>
                                 <td>
                                     <input id="sku-number-{{ sku.id }}"
                                            class="form-control form-control-sm"
@@ -102,15 +86,11 @@
                                     <div class="btn-group">
                                         <button id="update-sku-{{ sku.id }}"
                                                 class="btn btn-load btn-sm btn-outline-primary"
-                                                onclick="updateSku({{ sku.id }});">
-                                            Update
-                                        </button>
+                                                onclick="updateSku({{ sku.id }});">Update</button>
                                         <button class="btn btn-load btn-sm btn-outline-danger"
                                                 onclick="_skuId = {{ sku.id }};"
                                                 data-bs-toggle="modal"
-                                                data-bs-target="#modal-delete-sku">
-                                            Delete
-                                        </button>
+                                                data-bs-target="#modal-delete-sku">Delete</button>
                                     </div>
                                 </td>
                             </tr>
@@ -121,36 +101,21 @@
         </div>
     </div>
 
-    <div id="modal-delete-sku"
-         class="modal fade"
-         tabindex="-1">
+    <div id="modal-delete-sku" class="modal fade" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">
-                        Delete SKU
-                    </h5>
-                    <button type="button"
-                            class="btn-close"
-                            data-bs-dismiss="modal">
-                    </button>
+                    <h5 class="modal-title">Delete SKU</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <p class="mb-0">
-                        Are you sure?
-                    </p>
+                    <p class="mb-0">Are you sure?</p>
                 </div>
                 <div class="modal-footer">
                     <button id="delete-sku"
                             class="btn btn-load btn-danger"
-                            onclick="deleteSku(_skuId);">
-                        Delete
-                    </button>
-                    <button type="button"
-                            class="btn btn-secondary"
-                            data-bs-dismiss="modal">
-                        Cancel
-                    </button>
+                            onclick="deleteSku(_skuId);">Delete</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                 </div>
             </div>
         </div>
