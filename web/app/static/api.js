@@ -46,6 +46,8 @@ async function callApi(method, url, data = null, contentType = null, silent = fa
             resetButtons();
             showMessage(message);
             throw new Error(error);
+        } else {
+            return resp;
         }
     });
 }
