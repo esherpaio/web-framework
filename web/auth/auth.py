@@ -176,7 +176,7 @@ def encode_jwt(
     token_data = {
         # registered claims
         # https://datatracker.ietf.org/doc/html/rfc7519#section-4.1
-        "sub": user_id,
+        "sub": str(user_id),
         "nbf": now,
         "iat": now,
         "jti": str(uuid.uuid4()),
