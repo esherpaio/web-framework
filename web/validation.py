@@ -21,7 +21,6 @@ def gen_slug(name: str) -> str:
 def obfuscate_data(data: dict | list) -> dict | list:
     if isinstance(data, dict):
         for key in list(data.keys()):
-            print(key, OBFUSCATE_PARTIAL)
             if any(x for x in OBFUSCATE_PARTIAL if x in key):
                 data[key] = "[obfuscated]"
             if key in OBFUSCATE_MATCH:
