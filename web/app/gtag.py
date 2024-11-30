@@ -92,7 +92,7 @@ class Gtag:
 
 
 class Gtags:
-    def __init__(self, gtags: list[Gtag]) -> None:
+    def __init__(self, *gtags: Gtag) -> None:
         self._gtags = gtags
 
     def code(self) -> Markup:
