@@ -4,7 +4,6 @@
 
 - Support Google tags for conversion tracking
 - Updated schema.org JSON-LD for web crawlers
-- Minor bug fixes and stability improvements
 
 ## v2.9.0 (2024-09-03)
 
@@ -14,4 +13,3 @@
 - PDF generation
   - Faster PDF generation
   - New font to support more languages
-- Minor bug fixes and stability improvements
