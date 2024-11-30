@@ -91,6 +91,15 @@ class Gtag:
         return Markup(self.by.js_listener(self.NAME, self.data))
 
 
+class Gtags:
+    def __init__(self, gtags: list[Gtag]) -> None:
+        self._gtags = gtags
+
+    def code(self) -> Markup:
+        codes = " \n".join([x.code for x in self._gtags])
+        return Markup(f"window.addEventListener('load', () => {codes});")
+
+
 class GtagSignUp(Gtag):
     NAME = "sign_up"
 
