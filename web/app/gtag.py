@@ -95,9 +95,12 @@ class Gtags:
     def __init__(self, *gtags: Gtag) -> None:
         self._gtags = gtags
 
+    @property
     def code(self) -> Markup:
         codes = " \n".join([x.code for x in self._gtags])
-        return Markup(f"window.addEventListener('load', () => {codes});")
+        return Markup(
+            f"<script>window.addEventListener('load', () => {{ {codes} }});</script>"
+        )
 
 
 class GtagSignUp(Gtag):
