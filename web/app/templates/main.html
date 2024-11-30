@@ -6,6 +6,8 @@
         <!-- google tag manager -->
         <!-- json-ld schema -->
         {% for schema in schemas %}{{ schema.tag }}{% endfor %}
+        <!-- gtags -->
+        {% if gtags %}{{ gtags.code }}{% endif %}
         <!-- fonts -->
         <!-- include css -->
         {% if cache.setting.css_path %}
