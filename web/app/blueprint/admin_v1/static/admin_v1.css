@@ -35,9 +35,11 @@ table td {
         transition: none;
         visibility: visible;
     }
+
     .offcanvas.offcanvas-start {
         transform: none;
     }
+
     .offcanvas-backdrop {
         display: none;
     }
@@ -54,10 +56,4 @@ table td {
     border-bottom-left-radius: .375rem;
     border-bottom-right-radius: .375rem;
     min-height: 300px;
-}
-
-/* markdown */
-
-.markdown-body>:first-child {
-    font-weight: 500 !important;
 }
