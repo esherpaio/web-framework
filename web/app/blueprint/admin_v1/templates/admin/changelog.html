@@ -1,21 +1,4 @@
 {% extends "admin_main.html" %}
 {% block admin_body %}
-    <div class="row g-3">
-        <div class="col-12">
-            <div class="d-flex justify-content-between gap-2">
-                <zero-md>
-                <template data-append>
-                    <style>
-                          h1 {
-                            font-weight: 500 !important;
-                            padding-bottom: 0 !important;
-                            border-bottom: none !important;
-                          }
-                    </style>
-                </template>
-                <script type="text/markdown">{{ changelog }}</script>
-                </zero-md>
-            </div>
-        </div>
-    </div>
+    {{ changelog_html }}
 {% endblock admin_body %}
