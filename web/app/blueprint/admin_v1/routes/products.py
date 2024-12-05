@@ -34,7 +34,7 @@ def products() -> str:
 
 
 @admin_v1_bp.get("/admin/products/<int:product_id>")
-def product(product_id: int) -> str | Response:
+def products_id(product_id: int) -> str | Response:
     with conn.begin() as s:
         product_ = (
             s.query(Product)
@@ -61,7 +61,7 @@ def product(product_id: int) -> str | Response:
 
 
 @admin_v1_bp.get("/admin/products/<int:product_id>/options")
-def product_options(product_id: int) -> str | Response:
+def products_id_options(product_id: int) -> str | Response:
     with conn.begin() as s:
         product_ = (
             s.query(Product)
@@ -89,7 +89,7 @@ def product_options(product_id: int) -> str | Response:
 
 
 @admin_v1_bp.get("/admin/products/<int:product_id>/options/<int:option_id>")
-def product_option(product_id: int, option_id: int) -> str:
+def products_id_options_id(product_id: int, option_id: int) -> str:
     with conn.begin() as s:
         product_ = s.query(Product).filter_by(id=product_id, is_deleted=False).first()
         product_medias = (
@@ -121,7 +121,7 @@ def product_option(product_id: int, option_id: int) -> str:
 
 
 @admin_v1_bp.get("/admin/products/<int:product_id>/media")
-def product_media(product_id: int) -> str | Response:
+def products_id_media(product_id: int) -> str | Response:
     with conn.begin() as s:
         product_ = (
             s.query(Product)
@@ -149,7 +149,7 @@ def product_media(product_id: int) -> str | Response:
 
 
 @admin_v1_bp.get("/admin/products/<int:product_id>/links")
-def product_links(product_id: int) -> str | Response:
+def products_id_links(product_id: int) -> str | Response:
     with conn.begin() as s:
         product_ = (
             s.query(Product)
@@ -197,7 +197,7 @@ def product_links(product_id: int) -> str | Response:
 
 
 @admin_v1_bp.get("/admin/products/<int:product_id>/skus")
-def product_skus(product_id: int) -> str | Response:
+def products_id_skus(product_id: int) -> str | Response:
     with conn.begin() as s:
         product_ = (
             s.query(Product)

@@ -6,12 +6,17 @@ from werkzeug import Response
 from web.api import ApiText, json_response
 from web.app.blueprint.admin_v1 import admin_v1_bp
 from web.app.bootstrap import get_pages
+from web.auth import current_user
 from web.database import conn
 from web.database.model import (
     Billing,
+    Cart,
+    CartItem,
     Order,
     OrderLine,
     OrderStatusId,
+    Product,
+    ProductMedia,
     Refund,
     Shipment,
     Shipping,
@@ -20,6 +25,49 @@ from web.database.model import (
 )
 from web.document.object import gen_invoice, gen_refund
 from web.utils import remove_file
+
+
+@admin_v1_bp.get("/admin/orders/add")
+def orders_add() -> str:
+    with conn.begin() as s:
+        # fmt: off
+        cart_ = (
+            s.query(Cart)
+            .options(
+                joinedload(Cart.currency),
+                joinedload(Cart.coupon),
+                joinedload(Cart.items),
+                joinedload(Cart.items, CartItem.cart),
+                joinedload(Cart.items, CartItem.sku),
+                joinedload(Cart.items, CartItem.sku, Sku.product),
+            )
+            .filter_by(user_id=current_user.id)
+            .first()
+        )
+        cart_items = (
+            s.query(CartItem)
+            .options(
+                joinedload(CartItem.cart),
+                joinedload(CartItem.cart, Cart.currency),
+                joinedload(CartItem.sku),
+                joinedload(CartItem.sku, Sku.product),
+                joinedload(CartItem.sku, Sku.product, Product.medias),
+                joinedload(CartItem.sku, Sku.product, Product.medias, ProductMedia.file),
+                joinedload(CartItem.sku, Sku.details),
+                joinedload(CartItem.sku, Sku.details, SkuDetail.option),
+                joinedload(CartItem.sku, Sku.details, SkuDetail.value),
+            )
+            .filter_by(cart_id=cart_.id if cart_ else None)
+            .order_by(CartItem.id.desc())
+            .all()
+        )
+        # fmt: on
+
+    return render_template(
+        "admin/orders_add.html",
+        cart=cart_,
+        cart_items=cart_items,
+    )
 
 
 @admin_v1_bp.get("/admin")
@@ -84,7 +132,7 @@ def orders() -> str:
 
 
 @admin_v1_bp.get("/admin/orders/<int:order_id>")
-def order(order_id: int) -> str:
+def orders_id(order_id: int) -> str:
     with conn.begin() as s:
         order_ = (
             s.query(Order)
@@ -127,7 +175,7 @@ def order(order_id: int) -> str:
 
 
 @admin_v1_bp.get("/admin/orders/<int:order_id>/invoices/<int:invoice_id>/download")
-def download_invoice(order_id: int, invoice_id: int) -> Response:
+def orders_id_invoices_id_download(order_id: int, invoice_id: int) -> Response:
     with conn.begin() as s:
         order_ = s.query(Order).filter_by(id=order_id).first()
         if not order_ or not order_.invoice:
@@ -142,7 +190,7 @@ def download_invoice(order_id: int, invoice_id: int) -> Response:
 
 
 @admin_v1_bp.get("/admin/orders/<int:order_id>/refunds/<int:refund_id>/download")
-def download_refund(order_id: int, refund_id: int) -> Response:
+def orders_id_refunds_id_download(order_id: int, refund_id: int) -> Response:
     with conn.begin() as s:
         order_ = s.query(Order).filter_by(id=order_id).first()
         refund = s.query(Refund).filter_by(id=refund_id).first()

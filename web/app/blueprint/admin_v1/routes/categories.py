@@ -26,7 +26,7 @@ def categories() -> str:
 
 
 @admin_v1_bp.get("/admin/categories/<int:category_id>")
-def category(category_id: int) -> str | Response:
+def categories_id(category_id: int) -> str | Response:
     with conn.begin() as s:
         category_ = s.query(Category).filter_by(id=category_id).first()
         if not category_:

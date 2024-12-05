@@ -40,7 +40,7 @@
                 <div class="btn-toolbar justify-content-end gap-2">
                     {% if order.invoice %}
                         <a class="btn btn-primary"
-                           href="{{ url_for('admin.download_invoice', order_id=order.id, invoice_id=order.invoice.id) }}">
+                           href="{{ url_for('admin.orders_id_invoices_id_download', order_id=order.id, invoice_id=order.invoice.id) }}">
                             Download invoice
                         </a>
                     {% endif %}
@@ -230,7 +230,7 @@
                                     <td class="text-end">
                                         <div class="btn-group">
                                             <a class="btn btn-sm btn-outline-primary"
-                                               href="{{ url_for('admin.download_refund', order_id=order.id, refund_id=refund.id) }}">
+                                               href="{{ url_for('admin.orders_id_refunds_id_download', order_id=order.id, refund_id=refund.id) }}">
                                                 Download
                                             </a>
                                         </div>

@@ -5,12 +5,12 @@ from web.database import conn
 from web.database.model import AppSetting
 
 
-@admin_v1_bp.get("/admin/setting")
-def setting() -> str:
+@admin_v1_bp.get("/admin/settings")
+def settings() -> str:
     with conn.begin() as s:
-        setting_ = s.query(AppSetting).first()
+        settings_ = s.query(AppSetting).first()
 
     return render_template(
-        "admin/setting.html",
-        setting=setting_,
+        "admin/settings.html",
+        settings=settings_,
     )
