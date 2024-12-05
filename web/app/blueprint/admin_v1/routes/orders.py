@@ -166,7 +166,7 @@ def orders_id(order_id: int) -> str:
         refunds = s.query(Refund).filter_by(order_id=order_id).order_by(Refund.id).all()
 
     return render_template(
-        "admin/order.html",
+        "admin/orders_id.html",
         order=order_,
         order_lines=order_lines,
         refunds=refunds,

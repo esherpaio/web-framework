@@ -61,7 +61,7 @@ def categories_id(category_id: int) -> str | Response:
         )
 
     return render_template(
-        "admin/category.html",
+        "admin/categories_id.html",
         category=category_,
         category_items=category_items,
         available_skus=available_skus,
