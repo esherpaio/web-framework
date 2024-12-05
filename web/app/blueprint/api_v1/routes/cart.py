@@ -75,6 +75,16 @@ def get_carts() -> Response:
     return json_response(data=resources)
 
 
+@api_v1_bp.get("/carts/<int:cart_id>")
+def get_carts_id(cart_id: int) -> Response:
+    api = CartAPI()
+    with conn.begin() as s:
+        filters = {Cart.user_id == current_user.id}
+        model: Cart = api.get(s, cart_id, *filters)
+        resource = api.gen_resource(s, model)
+    return json_response(data=resource)
+
+
 @api_v1_bp.patch("/carts/<int:cart_id>")
 def patch_carts_id(cart_id: int) -> Response:
     api = CartAPI()

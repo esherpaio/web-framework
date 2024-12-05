@@ -1,5 +1,6 @@
 from ._bp import admin_v1_bp, admin_v1_css_bundle, admin_v1_js_bundle
 from .routes import (
+    cart,
     categories,
     changelog,
     countries,
@@ -17,6 +18,7 @@ __all__ = [
     "admin_v1_bp",
     "admin_v1_css_bundle",
     "admin_v1_js_bundle",
+    "cart",
     "categories",
     "changelog",
     "countries",

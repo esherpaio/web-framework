@@ -47,6 +47,7 @@ class OrderAPI(API):
     model = Order
     post_columns = {
         "cart_id",
+        "trigger_mail",
     }
     get_columns = {
         Order.id,
@@ -194,13 +195,14 @@ def set_order_lines(s: Session, data: dict, model: Order) -> None:
 
 
 def mail_order(s: Session, data: dict, model: Order) -> None:
-    mail.trigger_events(
-        s,
-        MailEvent.ORDER_RECEIVED,
-        order_id=model.id,
-        billing_email=model.billing.email,
-        shipping_email=model.shipping.email,
-    )
+    if data.get("trigger_mail", True):
+        mail.trigger_events(
+            s,
+            MailEvent.ORDER_RECEIVED,
+            order_id=model.id,
+            billing_email=model.billing.email,
+            shipping_email=model.shipping.email,
+        )
 
 
 def cancel_mollie(s: Session, data: dict, model: Order) -> None:

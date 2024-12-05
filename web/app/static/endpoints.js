@@ -15,6 +15,10 @@ function getCarts(silent = false) {
     const url = `/api/v1/carts`;
     return callApi('GET', url, null, null, silent);
 }
+function getCartsId(cartId, silent = false) {
+    const url = `/api/v1/carts/${cartId}`;
+    return callApi('GET', url, null, null, silent);
+}
 function patchCartsId(cartId, data, silent = false) {
     const url = `/api/v1/carts/${cartId}`;
     return callApi('PATCH', url, data, 'application/json', silent);

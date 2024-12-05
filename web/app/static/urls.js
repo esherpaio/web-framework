@@ -1,6 +1,7 @@
 const BASE = "/";
 
 // admin blueprint
+const URL_ADMIN_CART = "/admin/cart";
 const URL_ADMIN_ORDERS = "/admin/orders";
 const URL_ADMIN_PRODUCTS = "/admin/products";
 

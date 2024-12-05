@@ -1,0 +1,179 @@
+{% extends "admin_main.html" %}
+{% block admin_body %}
+    <script>
+        // cart
+        async function addCart() {
+            event.preventDefault();
+            updateButton(`add-cart`, 1);
+            await postCarts();
+            window.location.reload();
+        }
+        async function updateCart(cartId) {
+            event.preventDefault();
+            updateButton(`update-cart-coupon-code`, 1);
+            const data = { coupon_code: document.getElementById('cart-coupon-code').value };
+            await patchCartsId(cartId, emptyStrToNull(data));
+            window.location.reload();
+        }
+
+        // cart items
+        async function addCartItem(cartId) {
+            event.preventDefault();
+            updateButton(`add-cart-item`, 1);
+            const data = {
+                sku_id: parseInt(document.getElementById(`cart-item-sku-id`).value),
+                quantity: parseInt(document.getElementById(`cart-item-quantity`).value),
+            };
+            await postCartsIdItems(cartId, data);
+            window.location.reload();
+        }
+        async function updateCartItem(cartId, cartItemId) {
+            event.preventDefault();
+            updateButton(`update-cart-item-${cartItemId}`, 1);
+            const data = { 
+                quantity: parseInt(document.getElementById(`cart-item-quantity-${cartItemId}`).checked),
+            };
+            await patchCartIdItemsId(cartId, cartItemId, data);
+            window.location.reload();
+        }
+        async function deleteCartItem(cartId, cartItemId) {
+            event.preventDefault();
+            updateButton(`delete-cart-item-${cartItemId}`, 1);
+            await deleteCartIdItemsId(cartId, cartItemId);
+            window.location.reload();
+        }
+
+        // shipping
+        async function updateShipping(cartId) {
+            event.preventDefault();
+            const data = emptyStrToNull({
+                address: document.getElementById('shipping-address').value,
+                city: document.getElementById('shipping-city').value,
+                company: document.getElementById('shipping-company').value,
+                country_id: parseInt(document.getElementById('shipping-country-id').value),
+                email: document.getElementById('shipping-email').value,
+                first_name: document.getElementById('shipping-first-name').value,
+                last_name: document.getElementById('shipping-last-name').value,
+                phone: document.getElementById('shipping-phone').value,
+                state: document.getElementById('shipping-state').value,
+                zip_code: document.getElementById('shipping-zip-code').value,
+            });
+            let resp = await getCartsId(cartId);
+            let cart = resp.data;
+            let shipping;
+            if (cart.shipping_id) {
+                resp = await patchShippingsId(cart.shipping_id, data);
+                if (resp) shipping = resp.data;
+            }
+            if (!shipping) {
+                resp = await postShippings(data);
+                if (resp) shipping = resp.data;
+            }
+            data = { shipping_id: shipping.id };
+            await patchCartsId(cart.id, data);
+        }
+
+        // billing
+        async function updateBilling(cartId) {
+            event.preventDefault();
+            const data = emptyStrToNull({
+                address: document.getElementById('billing-address').value,
+                city: document.getElementById('billing-city').value,
+                company: document.getElementById('billing-company').value,
+                country_id: parseInt(document.getElementById('billing-country-id').value),
+                email: document.getElementById('billing-email').value,
+                first_name: document.getElementById('billing-first-name').value,
+                last_name: document.getElementById('billing-last-name').value,
+                phone: document.getElementById('billing-phone').value,
+                state: document.getElementById('billing-state').value,
+                vat: document.getElementById('billing-vat').value,
+                zip_code: document.getElementById('billing-zip-code').value,
+            });
+            let resp = await getCartsId(cartId);
+            let cart = resp.data;
+            let billing;
+            if (cart.billing_id) {
+                resp = await patchBillingsId(cart.billing_id, data);
+                if (resp) billing = resp.data;
+            }
+            if (!billing) {
+                resp = await postBillings(data);
+                if (resp) billing = resp.data;
+            }
+            data = { billing_id: billing.id };
+            await patchCartsId(cart.id, data);
+        }
+
+        // shipment method
+        async function updateShipmentMethod(cartId) {
+            event.preventDefault();
+            let element = document.querySelector('input[name="shipment-method-id"]:checked');
+            if (element) {
+                let resp = await getCartsId(cartId);
+                let cart = resp.data;
+                let data = { shipment_method_id: parseInt(element.value) };
+                await patchCartsId(cart.id, data);
+            }
+        }
+
+        // orders
+        async function proceedBilling(cartId) {
+            event.preventDefault();
+            let resp = await getCartsId(cartId);
+            let cart = resp.data;
+            let data = { 'cart_id': cart.id, 'trigger_mail': false };
+            resp = await postOrders(data);
+            let order = resp.data;
+            const redirect = location.protocol + '//' + location.host + URL_ADMIN_CART;
+            resp = await postOrdersIdPayments(order.id, {"redirect": redirect});
+            window.location.href = resp.links.payment;
+        }
+    </script>
+
+    <div class="row g-3">
+        <div class="col-12">
+            <div class="d-flex justify-content-between gap-2">
+                <h2 class="mb-0">Orders</h2>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="table-responsive">
+                <table class="table rounded-2 overflow-hidden align-middle mb-0">
+                    <thead class="table-secondary">
+                        <tr>
+                            <th>SKU ID</th>
+                            <th>SKU Name</th>
+                            <th>Quantity</th>
+                            <th>Price</th>
+                            <th class="text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="table-light">
+                        {% for x in cart_items %}
+                            <tr>
+                                <td>{{ x.sku.id }}</td>
+                                <td>{{ x.sku.name }}</td>
+                                <td>{{ x.quantity }}</td>
+                                <td>{{ x.unit_price_vat }}</td>
+                                <td class="text-end">
+                                    <div class="btn-group">
+                                        <button id="update-cart-item-{{ x.id }}"
+                                                class="btn btn-load btn-sm btn-outline-primary"
+                                                onclick="updateCartItem({{ x.id }});">
+                                            Update
+                                        </button>
+                                        <button id="update-cart-item-{{ x.id }}"
+                                                class="btn btn-load btn-sm btn-outline-primary"
+                                                onclick="deleteCartItem({{ x.id }});">
+                                            Delete
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock admin_body %}
