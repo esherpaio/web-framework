@@ -54,7 +54,7 @@
                 <div class="d-flex flex-column justify-content-between h-100">
                     <div class="nav nav-pills w-100 flex-column">
                         <li class="nav-item">
-                            <a class="nav-link {{ 'active' if request.endpoint in ['admin.orders', 'admin.order'] }}"
+                            <a class="nav-link {{ 'active' if menu == 'orders' }}"
                                href="{{ url_for('admin.orders') }}">
                                 <i class="bi bi-receipt-cutoff me-1"></i>
                                 Orders
@@ -106,6 +106,13 @@
                                href="{{ url_for('admin.users') }}">
                                 <i class="bi bi-people me-1"></i>
                                 Users
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {{ 'active' if request.endpoint in ['admin.emails'] }}"
+                               href="{{ url_for('admin.emails') }}">
+                                <i class="bi bi-people me-1"></i>
+                                Emails
                             </a>
                         </li>
                         <li class="nav-item">

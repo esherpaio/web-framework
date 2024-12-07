@@ -1,4 +1,4 @@
-from flask import render_template, request, send_file
+from flask import redirect, render_template, request, send_file
 from sqlalchemy import or_
 from sqlalchemy.orm import contains_eager, joinedload
 from werkzeug import Response
@@ -6,6 +6,7 @@ from werkzeug import Response
 from web.api import ApiText, json_response
 from web.app.blueprint.admin_v1 import admin_v1_bp
 from web.app.bootstrap import get_pages
+from web.app.urls import url_for
 from web.auth import current_user
 from web.database import conn
 from web.database.model import (
@@ -28,7 +29,7 @@ from web.utils import remove_file
 
 
 @admin_v1_bp.get("/admin/orders/add")
-def orders_add() -> str:
+def orders_add() -> str | Response:
     with conn.begin() as s:
         # fmt: off
         cart_ = (
@@ -44,6 +45,8 @@ def orders_add() -> str:
             .filter_by(user_id=current_user.id)
             .first()
         )
+        if cart_ is None:
+            return redirect(url_for("admin.orders"))
         cart_items = (
             s.query(CartItem)
             .options(
@@ -57,7 +60,7 @@ def orders_add() -> str:
                 joinedload(CartItem.sku, Sku.details, SkuDetail.option),
                 joinedload(CartItem.sku, Sku.details, SkuDetail.value),
             )
-            .filter_by(cart_id=cart_.id if cart_ else None)
+            .filter_by(cart_id=cart_.id)
             .order_by(CartItem.id.desc())
             .all()
         )
@@ -124,6 +127,7 @@ def orders() -> str:
     pagination = get_pages(offset, limit, orders_len)
     return render_template(
         "admin/orders.html",
+        active_menu="orders",
         search=search,
         status_id=status_id,
         orders=orders_,
