@@ -32,11 +32,13 @@ from web.utils import remove_file
 def orders_add() -> str | Response:
     with conn.begin() as s:
         # fmt: off
-        cart_ = (
+        cart = (
             s.query(Cart)
             .options(
                 joinedload(Cart.currency),
                 joinedload(Cart.coupon),
+                joinedload(Cart.billing),
+                joinedload(Cart.shipping),
                 joinedload(Cart.items),
                 joinedload(Cart.items, CartItem.cart),
                 joinedload(Cart.items, CartItem.sku),
@@ -45,7 +47,7 @@ def orders_add() -> str | Response:
             .filter_by(user_id=current_user.id)
             .first()
         )
-        if cart_ is None:
+        if cart is None:
             return redirect(url_for("admin.orders"))
         cart_items = (
             s.query(CartItem)
@@ -60,7 +62,7 @@ def orders_add() -> str | Response:
                 joinedload(CartItem.sku, Sku.details, SkuDetail.option),
                 joinedload(CartItem.sku, Sku.details, SkuDetail.value),
             )
-            .filter_by(cart_id=cart_.id)
+            .filter_by(cart_id=cart.id)
             .order_by(CartItem.id.desc())
             .all()
         )
@@ -69,7 +71,7 @@ def orders_add() -> str | Response:
     return render_template(
         "admin/orders_add.html",
         active_menu="orders",
-        cart=cart_,
+        cart=cart,
         cart_items=cart_items,
     )
 

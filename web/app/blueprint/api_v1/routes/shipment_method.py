@@ -1,6 +1,6 @@
 from werkzeug import Response
 
-from web.api import ApiText, json_get, json_response
+from web.api import API, ApiText, json_get, json_response
 from web.app.blueprint.api_v1 import api_v1_bp
 from web.auth import authorize
 from web.database import conn
@@ -9,6 +9,21 @@ from web.database.model import ShipmentMethod, UserRoleLevel
 #
 # Configuration
 #
+
+
+class ShipmentMethodAPI(API):
+    model = ShipmentMethod
+    get_filters = {
+        "cart_id",
+    }
+    get_columns = {
+        ShipmentMethod.id,
+        ShipmentMethod.name,
+        ShipmentMethod.phone_required,
+        ShipmentMethod.unit_price,
+        ShipmentMethod.class_id,
+        ShipmentMethod.zone_id,
+    }
 
 
 #
@@ -37,6 +52,18 @@ def post_shipment_methods() -> Response:
         s.add(shipment_method)
 
     return json_response()
+
+
+@api_v1_bp.get("/shipment-methods")
+def get_shipment_methods() -> Response:
+    api = ShipmentMethodAPI()
+    data = api.gen_query_data(api.get_filters)
+    with conn.begin() as s:
+        filters = api.gen_query_filters(data, required=True)
+        filters.add(ShipmentMethod.is_deleted == False)  # noqa: E712
+        models: list[ShipmentMethod] = api.list_(s, *filters)
+        resources = api.gen_resources(s, models)
+    return json_response(data=resources)
 
 
 @api_v1_bp.patch("/shipment-methods/<int:shipment_method_id>")
