@@ -23,7 +23,7 @@
             event.preventDefault();
             updateButton(`update-cart-item-${cartItemId}`, 1);
             const data = { 
-                quantity: parseInt(document.getElementById(`cart-item-quantity-${cartItemId}`).checked),
+                quantity: parseInt(document.getElementById(`cart-item-quantity-${cartItemId}`)),
             };
             await patchCartIdItemsId(cartId, cartItemId, data);
             window.location.reload();
@@ -97,7 +97,7 @@
         async function copyShippingToBilling() {
             const checkbox = document.getElementById("checkbox-use-shipping-for-billing");
             if (!checkbox.checked) return;
-            const partials = ["address", "city", "company", "country-id", "email", "first-name", "last-name", "phone", "state", "vat", "zip-code"];
+            const partials = ["address", "city", "country-id", "email", "first-name", "last-name", "phone", "state", "zip-code"];
             for (const partial of partials) {
                 document.getElementById(`billing-${partial}`).value = document.getElementById(`shipping-${partial}`).value;
             }
@@ -172,7 +172,7 @@
                                                 onclick="updateCartItem({{ cart.id }}, {{ x.id }});">
                                             Update
                                         </button>
-                                        <button id="update-cart-item-{{ x.id }}"
+                                        <button id="delete-cart-item-{{ x.id }}"
                                                 class="btn btn-load btn-sm btn-outline-primary"
                                                 onclick="deleteCartItem({{ cart.id }}, {{ x.id }});">
                                             Delete
