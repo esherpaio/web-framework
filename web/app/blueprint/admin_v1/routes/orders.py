@@ -39,6 +39,7 @@ def orders_add() -> str | Response:
                 joinedload(Cart.coupon),
                 joinedload(Cart.billing),
                 joinedload(Cart.shipping),
+                joinedload(Cart.shipment_method),
                 joinedload(Cart.items),
                 joinedload(Cart.items, CartItem.cart),
                 joinedload(Cart.items, CartItem.sku),
