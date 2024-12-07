@@ -2,12 +2,6 @@
 {% block admin_body %}
     <script>
         // cart
-        async function addCart() {
-            event.preventDefault();
-            updateButton(`add-cart`, 1);
-            await postCarts();
-            window.location.reload();
-        }
         async function updateCart(cartId) {
             event.preventDefault();
             updateButton(`update-cart-coupon-code`, 1);
@@ -74,6 +68,15 @@
         }
 
         // billing
+        async function copyShippingToBilling() {
+            const checkbox = document.getElementById("checkbox-use-shipping-for-billing");
+            if (!checkbox.checked) return;
+            const partials = ["address", "city", "company", "country-id", "email", "first-name", "last-name", "phone", "state", "vat", "zip-code"];
+            for (const partial of partials) {
+                document.getElementById(`billing-${partial}`).value = document.getElementById(`shipping-${partial}`).value;
+            }
+        }
+
         async function updateBilling(cartId) {
             event.preventDefault();
             const data = emptyStrToNull({
@@ -154,18 +157,23 @@
                             <tr>
                                 <td>{{ x.sku.id }}</td>
                                 <td>{{ x.sku.name }}</td>
-                                <td>{{ x.quantity }}</td>
+                                <td>
+                                    <input id="cart-item-quantity-{{ x.id }}"
+                                           class="form-control form-control-sm"
+                                           type="number"
+                                           value="{{ x.quantity }}">
+                                </td>
                                 <td>{{ x.unit_price_vat }}</td>
                                 <td class="text-end">
                                     <div class="btn-group">
                                         <button id="update-cart-item-{{ x.id }}"
                                                 class="btn btn-load btn-sm btn-outline-primary"
-                                                onclick="updateCartItem({{ x.id }});">
+                                                onclick="updateCartItem({{ cart.id }}, {{ x.id }});">
                                             Update
                                         </button>
                                         <button id="update-cart-item-{{ x.id }}"
                                                 class="btn btn-load btn-sm btn-outline-primary"
-                                                onclick="deleteCartItem({{ x.id }});">
+                                                onclick="deleteCartItem({{ cart.id }}, {{ x.id }});">
                                             Delete
                                         </button>
                                     </div>
@@ -277,7 +285,7 @@
                     <div class="form-floating">
                         <select required
                                 id="shipping-country-id"
-                                class="form-select"
+                                class="form-select update-pricing"
                                 autocomplete="country-name">
                             <option selected disabled value="">Make a selection</option>
                             {% for x in cache.countries %}
@@ -293,20 +301,22 @@
         </div>
         <div class="col-12">
             <h3>Billing</h3>
-            <div class="form-check">
+            <div class="form-check mb-2">
                 <input class="form-check-input"
                        type="checkbox"
                        value=""
-                       id="checkbox-use-shipping-as-billing"
+                       id="checkbox-use-shipping-for-billing"
                        data-bs-toggle="collapse"
-                       data-bs-target=".billing-toggle">
-                <label class="form-check-label" for="checkbox-use-shipping-as-billing">
+                       data-bs-target=".collapse-billing"
+                       aria-expanded="false"
+                       checked>
+                <label class="form-check-label" for="checkbox-use-shipping-for-billing">
                     Use shipping as billing information
                 </label>
             </div>
             <div class="row g-2">
                 <div class="col-12 col-sm-6">
-                    <div class="form-floating billing-toggle">
+                    <div class="form-floating collapse-billing">
                         <input required
                                id="billing-email"
                                class="form-control"
@@ -321,13 +331,13 @@
                     </div>
                 </div>
                 <div class="col-12 col-sm-6">
-                    <div class="form-floating">
+                    <div class="form-floating collapse-billing">
                         <input {{ 'required' if cart.shipment_method.phone_required }} id="billing-phone" class="form-control" type="tel" value="{{ cart.billing.phone if cart.billing.phone }}" placeholder="Phone" autocomplete="tel">
                         <label for="billing-phone">Phone</label>
                     </div>
                 </div>
                 <div class="col-12 col-sm-6">
-                    <div class="form-floating">
+                    <div class="form-floating collapse-billing">
                         <input required
                                id="billing-first-name"
                                class="form-control"
@@ -339,7 +349,7 @@
                     </div>
                 </div>
                 <div class="col-12 col-sm-6">
-                    <div class="form-floating">
+                    <div class="form-floating collapse-billing">
                         <input required
                                id="billing-last-name"
                                class="form-control"
@@ -351,7 +361,7 @@
                     </div>
                 </div>
                 <div class="col-12 col-sm-6">
-                    <div class="form-floating">
+                    <div class="form-floating collapse-billing">
                         <input required
                                id="billing-address"
                                class="form-control"
@@ -363,7 +373,7 @@
                     </div>
                 </div>
                 <div class="col-12 col-sm-6">
-                    <div class="form-floating">
+                    <div class="form-floating collapse-billing">
                         <input required
                                id="billing-city"
                                class="form-control"
@@ -375,7 +385,7 @@
                     </div>
                 </div>
                 <div class="col-12 col-sm-4">
-                    <div class="form-floating">
+                    <div class="form-floating collapse-billing">
                         <input required
                                id="billing-zip-code"
                                class="form-control"
@@ -387,7 +397,7 @@
                     </div>
                 </div>
                 <div class="col-12 col-sm-4">
-                    <div class="form-floating">
+                    <div class="form-floating collapse-billing">
                         <input id="billing-state"
                                class="form-control"
                                type="text"
@@ -398,10 +408,10 @@
                     </div>
                 </div>
                 <div class="col-12 col-sm-4">
-                    <div class="form-floating">
+                    <div class="form-floating collapse-billing">
                         <select required
                                 id="billing-country-id"
-                                class="form-select"
+                                class="form-select update-pricing"
                                 autocomplete="country-name">
                             <option selected disabled value="">Make a selection</option>
                             {% for x in cache.countries %}
@@ -416,7 +426,7 @@
                 <div class="col-12 col-sm-6">
                     <div class="form-floating">
                         <input id="billing-company"
-                               class="form-control"
+                               class="form-control update-pricing"
                                type="text"
                                value="{{ cart.billing.company if cart.billing.company }}"
                                placeholder="Company"
