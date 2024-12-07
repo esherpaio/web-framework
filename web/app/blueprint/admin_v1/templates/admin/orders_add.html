@@ -137,7 +137,7 @@
             </div>
         </div>
         <div class="col-12">
-            <h2>SKUs</h2>
+            <h3>SKUs</h3>
             <div class="table-responsive">
                 <table class="table rounded-2 overflow-hidden align-middle mb-0">
                     <thead class="table-secondary">
@@ -177,7 +177,7 @@
             </div>
         </div>
         <div class="col-12">
-            <h2>Shipping</h2>
+            <h3>Shipping</h3>
             <div class="row g-2">
                 <div class="col-12 col-sm-6">
                     <div class="form-floating">
@@ -287,6 +287,172 @@
                             {% endfor %}
                         </select>
                         <label for="shipping-country-id">Country</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            <h3>Billing</h3>
+            <div class="form-check">
+                <input class="form-check-input"
+                       type="checkbox"
+                       value=""
+                       id="checkbox-use-shipping-as-billing"
+                       data-bs-toggle="collapse"
+                       data-bs-target=".billing-toggle">
+                <label class="form-check-label" for="checkbox-use-shipping-as-billing">
+                    Use shipping as billing information
+                </label>
+            </div>
+            <div class="row g-2">
+                <div class="col-12 col-sm-6">
+                    <div class="form-floating billing-toggle">
+                        <input required
+                               id="billing-email"
+                               class="form-control"
+                               type="email"
+                               value="{{ billing.email if billing.email }}"
+                               placeholder="Email"
+                               autocomplete="email">
+                        <label for="billing-email">
+                            Email
+                            <sup class="text-danger">*</sup>
+                        </label>
+                    </div>
+                </div>
+                <div class="col-12 col-sm-6">
+                    <div class="form-floating">
+                        <input {{ "required" if cart.shipment_method.phone_required }} id="billing-phone" class="form-control" type="tel" value="{{ billing.phone if billing.phone }}" placeholder="Phone" autocomplete="tel">
+                        <label for="billing-phone">
+                            Phone
+                            {% if cart.shipment_method.phone_required %}<sup class="text-danger">*</sup>{% endif %}
+                        </label>
+                    </div>
+                </div>
+                <div class="col-12 col-sm-6">
+                    <div class="form-floating">
+                        <input required
+                               id="billing-first-name"
+                               class="form-control"
+                               type="text"
+                               value="{{ billing.first_name if billing.first_name }}"
+                               placeholder="First name"
+                               autocomplete="given-name">
+                        <label for="billing-first-name">
+                            First name
+                            <sup class="text-danger">*</sup>
+                        </label>
+                    </div>
+                </div>
+                <div class="col-12 col-sm-6">
+                    <div class="form-floating">
+                        <input required
+                               id="billing-last-name"
+                               class="form-control"
+                               type="text"
+                               value="{{ billing.last_name if billing.last_name }}"
+                               placeholder="First name"
+                               autocomplete="family-name">
+                        <label for="billing-last-name">
+                            Last name
+                            <sup class="text-danger">*</sup>
+                        </label>
+                    </div>
+                </div>
+                <div class="col-12 col-sm-6">
+                    <div class="form-floating">
+                        <input required
+                               id="billing-address"
+                               class="form-control"
+                               type="text"
+                               value="{{ billing.address if billing.address }}"
+                               placeholder="Address"
+                               autocomplete="street-address">
+                        <label for="billing-address">
+                            Address
+                            <sup class="text-danger">*</sup>
+                        </label>
+                    </div>
+                </div>
+                <div class="col-12 col-sm-6">
+                    <div class="form-floating">
+                        <input required
+                               id="billing-city"
+                               class="form-control"
+                               type="text"
+                               value="{{ billing.city if billing.city }}"
+                               placeholder="City"
+                               autocomplete="address-level2">
+                        <label for="billing-city">
+                            City
+                            <sup class="text-danger">*</sup>
+                        </label>
+                    </div>
+                </div>
+                <div class="col-12 col-sm-4">
+                    <div class="form-floating">
+                        <input required
+                               id="billing-zip-code"
+                               class="form-control"
+                               type="text"
+                               value="{{ billing.zip_code if billing.zip_code }}"
+                               placeholder="Postal code"
+                               autocomplete="postal-code">
+                        <label for="billing-zip-code">
+                            Postal code
+                            <sup class="text-danger">*</sup>
+                        </label>
+                    </div>
+                </div>
+                <div class="col-12 col-sm-4">
+                    <div class="form-floating">
+                        <input id="billing-state"
+                               class="form-control"
+                               type="text"
+                               value="{{ billing.state if billing.state }}"
+                               placeholder="State"
+                               autocomplete="address-level1">
+                        <label for="billing-zip-code">State</label>
+                    </div>
+                </div>
+                <div class="col-12 col-sm-4">
+                    <div class="form-floating">
+                        <select required
+                                id="billing-country-id"
+                                class="form-select"
+                                autocomplete="country-name">
+                            <option selected disabled value="">Make a selection</option>
+                            {% for x in cache.countries %}
+                                <option {{ 'selected' if x.id==billing.country_id }} value="{{ x.id }}">
+                                    {{ x.name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                        <label for="billing-country-id">
+                            Country
+                            <sup class="text-danger">*</sup>
+                        </label>
+                    </div>
+                </div>
+                <div class="col-12 col-sm-6">
+                    <div class="form-floating">
+                        <input id="billing-company"
+                               class="form-control"
+                               type="text"
+                               value="{{ billing.company if billing.company }}"
+                               placeholder="Company"
+                               autocomplete="organization">
+                        <label for="billing-company">Company</label>
+                    </div>
+                </div>
+                <div class="col-12 col-sm-6">
+                    <div class="form-floating">
+                        <input id="billing-vat"
+                               class="form-control"
+                               type="text"
+                               value="{{ billing.vat if billing.vat }}"
+                               placeholder="VAT">
+                        <label for="billing-vat">VAT</label>
                     </div>
                 </div>
             </div>

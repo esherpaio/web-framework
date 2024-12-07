@@ -43,7 +43,7 @@ def post_emails() -> Response:
                 )
                 .all()
             )
-            data["emails"] = set(user.email for user in users)
+            data["emails"] = list(set(user.email for user in users))
         # Trigger email events
         result = mail.trigger_events(s, event_id, **data)
 
