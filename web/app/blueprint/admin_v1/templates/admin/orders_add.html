@@ -311,7 +311,7 @@
                                id="billing-email"
                                class="form-control"
                                type="email"
-                               value="{{ billing.email if billing.email }}"
+                               value="{{ cart.billing.email if cart.billing.email }}"
                                placeholder="Email"
                                autocomplete="email">
                         <label for="billing-email">
@@ -322,11 +322,8 @@
                 </div>
                 <div class="col-12 col-sm-6">
                     <div class="form-floating">
-                        <input {{ "required" if cart.shipment_method.phone_required }} id="billing-phone" class="form-control" type="tel" value="{{ billing.phone if billing.phone }}" placeholder="Phone" autocomplete="tel">
-                        <label for="billing-phone">
-                            Phone
-                            {% if cart.shipment_method.phone_required %}<sup class="text-danger">*</sup>{% endif %}
-                        </label>
+                        <input {{ 'required' if cart.shipment_method.phone_required }} id="billing-phone" class="form-control" type="tel" value="{{ cart.billing.phone if cart.billing.phone }}" placeholder="Phone" autocomplete="tel">
+                        <label for="billing-phone">Phone</label>
                     </div>
                 </div>
                 <div class="col-12 col-sm-6">
@@ -335,13 +332,10 @@
                                id="billing-first-name"
                                class="form-control"
                                type="text"
-                               value="{{ billing.first_name if billing.first_name }}"
+                               value="{{ cart.billing.first_name if cart.billing.first_name }}"
                                placeholder="First name"
                                autocomplete="given-name">
-                        <label for="billing-first-name">
-                            First name
-                            <sup class="text-danger">*</sup>
-                        </label>
+                        <label for="billing-first-name">First name</label>
                     </div>
                 </div>
                 <div class="col-12 col-sm-6">
@@ -350,13 +344,10 @@
                                id="billing-last-name"
                                class="form-control"
                                type="text"
-                               value="{{ billing.last_name if billing.last_name }}"
+                               value="{{ cart.billing.last_name if cart.billing.last_name }}"
                                placeholder="First name"
                                autocomplete="family-name">
-                        <label for="billing-last-name">
-                            Last name
-                            <sup class="text-danger">*</sup>
-                        </label>
+                        <label for="billing-last-name">Last name</label>
                     </div>
                 </div>
                 <div class="col-12 col-sm-6">
@@ -365,13 +356,10 @@
                                id="billing-address"
                                class="form-control"
                                type="text"
-                               value="{{ billing.address if billing.address }}"
+                               value="{{ cart.billing.address if cart.billing.address }}"
                                placeholder="Address"
                                autocomplete="street-address">
-                        <label for="billing-address">
-                            Address
-                            <sup class="text-danger">*</sup>
-                        </label>
+                        <label for="billing-address">Address</label>
                     </div>
                 </div>
                 <div class="col-12 col-sm-6">
@@ -380,13 +368,10 @@
                                id="billing-city"
                                class="form-control"
                                type="text"
-                               value="{{ billing.city if billing.city }}"
+                               value="{{ cart.billing.city if cart.billing.city }}"
                                placeholder="City"
                                autocomplete="address-level2">
-                        <label for="billing-city">
-                            City
-                            <sup class="text-danger">*</sup>
-                        </label>
+                        <label for="billing-city">City</label>
                     </div>
                 </div>
                 <div class="col-12 col-sm-4">
@@ -395,13 +380,10 @@
                                id="billing-zip-code"
                                class="form-control"
                                type="text"
-                               value="{{ billing.zip_code if billing.zip_code }}"
+                               value="{{ cart.billing.zip_code if cart.billing.zip_code }}"
                                placeholder="Postal code"
                                autocomplete="postal-code">
-                        <label for="billing-zip-code">
-                            Postal code
-                            <sup class="text-danger">*</sup>
-                        </label>
+                        <label for="billing-zip-code">Postal code</label>
                     </div>
                 </div>
                 <div class="col-12 col-sm-4">
@@ -409,7 +391,7 @@
                         <input id="billing-state"
                                class="form-control"
                                type="text"
-                               value="{{ billing.state if billing.state }}"
+                               value="{{ cart.billing.state if cart.billing.state }}"
                                placeholder="State"
                                autocomplete="address-level1">
                         <label for="billing-zip-code">State</label>
@@ -423,15 +405,12 @@
                                 autocomplete="country-name">
                             <option selected disabled value="">Make a selection</option>
                             {% for x in cache.countries %}
-                                <option {{ 'selected' if x.id==billing.country_id }} value="{{ x.id }}">
+                                <option {{ 'selected' if x.id == cart.billing.country_id }} value="{{ x.id }}">
                                     {{ x.name }}
                                 </option>
                             {% endfor %}
                         </select>
-                        <label for="billing-country-id">
-                            Country
-                            <sup class="text-danger">*</sup>
-                        </label>
+                        <label for="billing-country-id">Country</label>
                     </div>
                 </div>
                 <div class="col-12 col-sm-6">
@@ -439,7 +418,7 @@
                         <input id="billing-company"
                                class="form-control"
                                type="text"
-                               value="{{ billing.company if billing.company }}"
+                               value="{{ cart.billing.company if cart.billing.company }}"
                                placeholder="Company"
                                autocomplete="organization">
                         <label for="billing-company">Company</label>
@@ -450,7 +429,7 @@
                         <input id="billing-vat"
                                class="form-control"
                                type="text"
-                               value="{{ billing.vat if billing.vat }}"
+                               value="{{ cart.billing.vat if cart.billing.vat }}"
                                placeholder="VAT">
                         <label for="billing-vat">VAT</label>
                     </div>
