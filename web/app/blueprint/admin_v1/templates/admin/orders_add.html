@@ -149,7 +149,7 @@
                             <th>ID</th>
                             <th>Name</th>
                             <th>Quantity</th>
-                            <th>Price</th>
+                            <th>Unit Price</th>
                             <th class="text-end">Actions</th>
                         </tr>
                     </thead>
@@ -309,6 +309,7 @@
                        id="checkbox-use-shipping-for-billing"
                        data-bs-toggle="collapse"
                        data-bs-target=".collapse-billing"
+                       data-bs-animation="false"
                        aria-expanded="true"
                        onclick="copyShippingToBilling();">
                 <label class="form-check-label" for="checkbox-use-shipping-for-billing">
@@ -327,7 +328,6 @@
                                autocomplete="email">
                         <label for="billing-email">
                             Email
-                            <sup class="text-danger">*</sup>
                         </label>
                     </div>
                 </div>
