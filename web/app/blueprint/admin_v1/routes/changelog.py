@@ -53,5 +53,6 @@ def changelog() -> str:
     changelog_html = Markdown(*changelog_lines).html
     return render_template(
         "admin/changelog.html",
+        active_menu="changelog",
         changelog_html=changelog_html,
     )

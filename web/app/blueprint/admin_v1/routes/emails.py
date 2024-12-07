@@ -27,6 +27,7 @@ def emails() -> str:
     pagination = get_pages(offset, limit, count)
     return render_template(
         "admin/emails.html",
+        active_menu="emails",
         emails=emails_,
         pagination=pagination,
     )

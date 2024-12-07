@@ -68,6 +68,7 @@ def orders_add() -> str | Response:
 
     return render_template(
         "admin/orders_add.html",
+        active_menu="orders",
         cart=cart_,
         cart_items=cart_items,
     )
@@ -171,6 +172,7 @@ def orders_id(order_id: int) -> str:
 
     return render_template(
         "admin/orders_id.html",
+        active_menu="orders",
         order=order_,
         order_lines=order_lines,
         refunds=refunds,

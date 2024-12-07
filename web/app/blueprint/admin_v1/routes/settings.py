@@ -12,5 +12,6 @@ def settings() -> str:
 
     return render_template(
         "admin/settings.html",
+        active_menu="settings",
         settings=settings_,
     )

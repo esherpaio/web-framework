@@ -17,5 +17,6 @@ def shipment_classes() -> str:
 
     return render_template(
         "admin/shipment_classes.html",
+        active_menu="shipments",
         shipment_classes=shipment_classes_,
     )

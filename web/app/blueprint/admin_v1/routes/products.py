@@ -29,6 +29,7 @@ def products() -> str:
         )
     return render_template(
         "admin/products.html",
+        active_menu="products",
         products=products_,
     )
 
@@ -55,6 +56,7 @@ def products_id(product_id: int) -> str | Response:
         )
     return render_template(
         "admin/products_id.html",
+        active_menu="products",
         product=product_,
         shipment_classes=shipment_classes,
     )
@@ -83,6 +85,7 @@ def products_id_options(product_id: int) -> str | Response:
         )
     return render_template(
         "admin/products_id_options.html",
+        active_menu="products",
         product=product_,
         product_options=product_options,
     )
@@ -113,6 +116,7 @@ def products_id_options_id(product_id: int, option_id: int) -> str:
         )
     return render_template(
         "admin/products_id_options_id.html",
+        active_menu="products",
         product=product_,
         product_medias=product_medias,
         option=option,
@@ -143,6 +147,7 @@ def products_id_media(product_id: int) -> str | Response:
         )
     return render_template(
         "admin/products_id_media.html",
+        active_menu="products",
         product=product_,
         product_medias=product_medias,
     )
@@ -190,6 +195,7 @@ def products_id_links(product_id: int) -> str | Response:
         )
     return render_template(
         "admin/products_id_links.html",
+        active_menu="products",
         product=product_,
         product_links=product_links,
         available_skus=available_skus,
@@ -223,6 +229,7 @@ def products_id_skus(product_id: int) -> str | Response:
         )
     return render_template(
         "admin/products_id_skus.html",
+        active_menu="products",
         product=product_,
         skus=skus,
     )

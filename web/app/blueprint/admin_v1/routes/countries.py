@@ -11,5 +11,6 @@ def countries() -> str:
         countries = s.query(Country).order_by(Country.name).all()
     return render_template(
         "admin/countries.html",
+        active_menu="countries",
         countries=countries,
     )

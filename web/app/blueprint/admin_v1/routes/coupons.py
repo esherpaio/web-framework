@@ -17,5 +17,6 @@ def coupons() -> str:
 
     return render_template(
         "admin/coupons.html",
+        active_menu="coupons",
         coupons=coupons_,
     )

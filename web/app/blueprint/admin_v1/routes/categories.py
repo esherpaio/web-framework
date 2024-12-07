@@ -21,6 +21,7 @@ def categories() -> str:
 
     return render_template(
         "admin/categories.html",
+        active_menu="categories",
         categories=categories_,
     )
 
@@ -62,6 +63,7 @@ def categories_id(category_id: int) -> str | Response:
 
     return render_template(
         "admin/categories_id.html",
+        active_menu="categories",
         category=category_,
         category_items=category_items,
         available_skus=available_skus,

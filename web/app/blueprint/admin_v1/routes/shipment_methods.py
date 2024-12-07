@@ -44,6 +44,7 @@ def shipment_methods() -> str:
 
     return render_template(
         "admin/shipment_methods.html",
+        active_menu="shipments",
         shipment_methods=shipment_methods_,
         shipment_classes=shipment_classes,
         shipment_zones=shipment_zones,
