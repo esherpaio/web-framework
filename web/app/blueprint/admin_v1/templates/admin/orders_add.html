@@ -1,7 +1,6 @@
 {% extends "admin_main.html" %}
 {% block admin_body %}
     <script>
-        // cart
         async function updateCart(cartId) {
             event.preventDefault();
             updateButton(`update-cart-coupon-code`, 1);
@@ -10,7 +9,6 @@
             window.location.reload();
         }
 
-        // cart items
         async function addCartItem(cartId) {
             event.preventDefault();
             updateButton(`add-cart-item`, 1);
@@ -37,7 +35,6 @@
             window.location.reload();
         }
 
-        // shipping
         async function updateShipping(cartId) {
             event.preventDefault();
             const data = emptyStrToNull({
@@ -65,16 +62,6 @@
             }
             data = { shipping_id: shipping.id };
             await patchCartsId(cart.id, data);
-        }
-
-        // billing
-        async function copyShippingToBilling() {
-            const checkbox = document.getElementById("checkbox-use-shipping-for-billing");
-            if (!checkbox.checked) return;
-            const partials = ["address", "city", "company", "country-id", "email", "first-name", "last-name", "phone", "state", "vat", "zip-code"];
-            for (const partial of partials) {
-                document.getElementById(`billing-${partial}`).value = document.getElementById(`shipping-${partial}`).value;
-            }
         }
 
         async function updateBilling(cartId) {
@@ -107,7 +94,22 @@
             await patchCartsId(cart.id, data);
         }
 
-        // shipment methods
+        async function copyShippingToBilling() {
+            const checkbox = document.getElementById("checkbox-use-shipping-for-billing");
+            if (!checkbox.checked) return;
+            const partials = ["address", "city", "company", "country-id", "email", "first-name", "last-name", "phone", "state", "vat", "zip-code"];
+            for (const partial of partials) {
+                document.getElementById(`billing-${partial}`).value = document.getElementById(`shipping-${partial}`).value;
+            }
+        }
+
+        document.addEventListener("load", () => {
+            const elements = document.getElementsByClassName("copy-billing");
+            elements.forEach(element => {
+                element.addEventListener("change", () => debounce(copyShippingToBilling, 100));
+            });
+        });
+
         async function updateShipmentMethod(cartId) {
             event.preventDefault();
             let element = document.querySelector('input[name="shipment-method-id"]:checked');
@@ -119,8 +121,7 @@
             }
         }
 
-        // orders
-        async function proceedBilling(cartId) {
+        async function addOrder(cartId) {
             event.preventDefault();
             let resp = await getCartsId(cartId);
             let cart = resp.data;
@@ -191,7 +192,7 @@
                     <div class="form-floating">
                         <input required
                                id="shipping-email"
-                               class="form-control"
+                               class="form-control copy-billing"
                                type="email"
                                value="{{ cart.shipping.email if cart.shipping.email }}"
                                placeholder="Email"
@@ -202,7 +203,7 @@
                 <div class="col-12 col-sm-6">
                     <div class="form-floating">
                         <input id="shipping-phone"
-                               class="form-control"
+                               class="form-control copy-billing"
                                type="tel"
                                value="{{ cart.shipping.phone if cart.shipping.phone }}"
                                placeholder="Phone"
@@ -214,7 +215,7 @@
                     <div class="form-floating">
                         <input required
                                id="shipping-first-name"
-                               class="form-control"
+                               class="form-control copy-billing"
                                type="text"
                                value="{{ cart.shipping.first_name if cart.shipping.first_name }}"
                                placeholder="First name"
@@ -226,7 +227,7 @@
                     <div class="form-floating">
                         <input required
                                id="shipping-last-name"
-                               class="form-control"
+                               class="form-control copy-billing"
                                type="text"
                                value="{{ cart.shipping.last_name if cart.shipping.last_name }}"
                                placeholder="First name"
@@ -238,7 +239,7 @@
                     <div class="form-floating">
                         <input required
                                id="shipping-address"
-                               class="form-control"
+                               class="form-control copy-billing"
                                type="text"
                                value="{{ cart.shipping.address if cart.shipping.address }}"
                                placeholder="Address"
@@ -250,7 +251,7 @@
                     <div class="form-floating">
                         <input required
                                id="shipping-city"
-                               class="form-control"
+                               class="form-control copy-billing"
                                type="text"
                                value="{{ cart.shipping.city if cart.shipping.city }}"
                                placeholder="City"
@@ -262,7 +263,7 @@
                     <div class="form-floating">
                         <input required
                                id="shipping-zip-code"
-                               class="form-control"
+                               class="form-control copy-billing"
                                type="text"
                                value="{{ cart.shipping.zip_code if cart.shipping.zip_code }}"
                                placeholder="Postal code"
@@ -273,7 +274,7 @@
                 <div class="col-12 col-sm-4">
                     <div class="form-floating">
                         <input id="shipping-state"
-                               class="form-control"
+                               class="form-control copy-billing"
                                type="text"
                                value="{{ cart.shipping.state if cart.shipping.state }}"
                                placeholder="State"
@@ -285,7 +286,7 @@
                     <div class="form-floating">
                         <select required
                                 id="shipping-country-id"
-                                class="form-select update-pricing"
+                                class="form-select update-pricing copy-billing"
                                 autocomplete="country-name">
                             <option selected disabled value="">Make a selection</option>
                             {% for x in cache.countries %}
@@ -308,15 +309,15 @@
                        id="checkbox-use-shipping-for-billing"
                        data-bs-toggle="collapse"
                        data-bs-target=".collapse-billing"
-                       aria-expanded="false"
-                       checked>
+                       aria-expanded="true"
+                       onclick="copyShippingToBilling();">
                 <label class="form-check-label" for="checkbox-use-shipping-for-billing">
                     Use shipping as billing information
                 </label>
             </div>
             <div class="row g-2">
-                <div class="col-12 col-sm-6">
-                    <div class="form-floating collapse-billing">
+                <div class="col-12 col-sm-6 collapse-billing">
+                    <div class="form-floating">
                         <input required
                                id="billing-email"
                                class="form-control"
@@ -330,14 +331,14 @@
                         </label>
                     </div>
                 </div>
-                <div class="col-12 col-sm-6">
-                    <div class="form-floating collapse-billing">
+                <div class="col-12 col-sm-6 collapse-billing">
+                    <div class="form-floating">
                         <input {{ 'required' if cart.shipment_method.phone_required }} id="billing-phone" class="form-control" type="tel" value="{{ cart.billing.phone if cart.billing.phone }}" placeholder="Phone" autocomplete="tel">
                         <label for="billing-phone">Phone</label>
                     </div>
                 </div>
-                <div class="col-12 col-sm-6">
-                    <div class="form-floating collapse-billing">
+                <div class="col-12 col-sm-6 collapse-billing">
+                    <div class="form-floating">
                         <input required
                                id="billing-first-name"
                                class="form-control"
@@ -348,8 +349,8 @@
                         <label for="billing-first-name">First name</label>
                     </div>
                 </div>
-                <div class="col-12 col-sm-6">
-                    <div class="form-floating collapse-billing">
+                <div class="col-12 col-sm-6 collapse-billing">
+                    <div class="form-floating">
                         <input required
                                id="billing-last-name"
                                class="form-control"
@@ -360,8 +361,8 @@
                         <label for="billing-last-name">Last name</label>
                     </div>
                 </div>
-                <div class="col-12 col-sm-6">
-                    <div class="form-floating collapse-billing">
+                <div class="col-12 col-sm-6 collapse-billing">
+                    <div class="form-floating">
                         <input required
                                id="billing-address"
                                class="form-control"
@@ -372,8 +373,8 @@
                         <label for="billing-address">Address</label>
                     </div>
                 </div>
-                <div class="col-12 col-sm-6">
-                    <div class="form-floating collapse-billing">
+                <div class="col-12 col-sm-6 collapse-billing">
+                    <div class="form-floating">
                         <input required
                                id="billing-city"
                                class="form-control"
@@ -384,8 +385,8 @@
                         <label for="billing-city">City</label>
                     </div>
                 </div>
-                <div class="col-12 col-sm-4">
-                    <div class="form-floating collapse-billing">
+                <div class="col-12 col-sm-4 collapse-billing">
+                    <div class="form-floating">
                         <input required
                                id="billing-zip-code"
                                class="form-control"
@@ -396,8 +397,8 @@
                         <label for="billing-zip-code">Postal code</label>
                     </div>
                 </div>
-                <div class="col-12 col-sm-4">
-                    <div class="form-floating collapse-billing">
+                <div class="col-12 col-sm-4 collapse-billing">
+                    <div class="form-floating">
                         <input id="billing-state"
                                class="form-control"
                                type="text"
@@ -407,8 +408,8 @@
                         <label for="billing-zip-code">State</label>
                     </div>
                 </div>
-                <div class="col-12 col-sm-4">
-                    <div class="form-floating collapse-billing">
+                <div class="col-12 col-sm-4 collapse-billing">
+                    <div class="form-floating">
                         <select required
                                 id="billing-country-id"
                                 class="form-select update-pricing"
