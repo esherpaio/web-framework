@@ -23,7 +23,7 @@
             event.preventDefault();
             updateButton(`update-cart-item-${cartItemId}`, 1);
             const data = { 
-                quantity: parseInt(document.getElementById(`cart-item-quantity-${cartItemId}`)),
+                quantity: parseInt(document.getElementById(`cart-item-quantity-${cartItemId}`).value),
             };
             await patchCartIdItemsId(cartId, cartItemId, data);
             window.location.reload();
@@ -164,7 +164,7 @@
                                            type="number"
                                            value="{{ x.quantity }}">
                                 </td>
-                                <td>{{ x.unit_price_vat }}</td>
+                                <td>{{ x.unit_price_vat|price }} {{ cart.currency.code }}</td>
                                 <td class="text-end">
                                     <div class="btn-group">
                                         <button id="update-cart-item-{{ x.id }}"
@@ -316,7 +316,7 @@
                 </label>
             </div>
             <div class="row g-2">
-                <div class="col-12 col-sm-6 collapse-billing">
+                <div class="col-12 col-sm-6 collapse-billing show">
                     <div class="form-floating">
                         <input required
                                id="billing-email"
@@ -331,13 +331,13 @@
                         </label>
                     </div>
                 </div>
-                <div class="col-12 col-sm-6 collapse-billing">
+                <div class="col-12 col-sm-6 collapse-billing show">
                     <div class="form-floating">
                         <input {{ 'required' if cart.shipment_method.phone_required }} id="billing-phone" class="form-control" type="tel" value="{{ cart.billing.phone if cart.billing.phone }}" placeholder="Phone" autocomplete="tel">
                         <label for="billing-phone">Phone</label>
                     </div>
                 </div>
-                <div class="col-12 col-sm-6 collapse-billing">
+                <div class="col-12 col-sm-6 collapse-billing show">
                     <div class="form-floating">
                         <input required
                                id="billing-first-name"
@@ -349,7 +349,7 @@
                         <label for="billing-first-name">First name</label>
                     </div>
                 </div>
-                <div class="col-12 col-sm-6 collapse-billing">
+                <div class="col-12 col-sm-6 collapse-billing show">
                     <div class="form-floating">
                         <input required
                                id="billing-last-name"
@@ -361,7 +361,7 @@
                         <label for="billing-last-name">Last name</label>
                     </div>
                 </div>
-                <div class="col-12 col-sm-6 collapse-billing">
+                <div class="col-12 col-sm-6 collapse-billing show">
                     <div class="form-floating">
                         <input required
                                id="billing-address"
@@ -373,7 +373,7 @@
                         <label for="billing-address">Address</label>
                     </div>
                 </div>
-                <div class="col-12 col-sm-6 collapse-billing">
+                <div class="col-12 col-sm-6 collapse-billing show">
                     <div class="form-floating">
                         <input required
                                id="billing-city"
@@ -385,7 +385,7 @@
                         <label for="billing-city">City</label>
                     </div>
                 </div>
-                <div class="col-12 col-sm-4 collapse-billing">
+                <div class="col-12 col-sm-4 collapse-billing show">
                     <div class="form-floating">
                         <input required
                                id="billing-zip-code"
@@ -397,7 +397,7 @@
                         <label for="billing-zip-code">Postal code</label>
                     </div>
                 </div>
-                <div class="col-12 col-sm-4 collapse-billing">
+                <div class="col-12 col-sm-4 collapse-billing show">
                     <div class="form-floating">
                         <input id="billing-state"
                                class="form-control"
@@ -408,7 +408,7 @@
                         <label for="billing-zip-code">State</label>
                     </div>
                 </div>
-                <div class="col-12 col-sm-4 collapse-billing">
+                <div class="col-12 col-sm-4 collapse-billing show">
                     <div class="form-floating">
                         <select required
                                 id="billing-country-id"
