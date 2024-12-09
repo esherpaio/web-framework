@@ -5,6 +5,7 @@ from werkzeug import Response
 
 from web.api import ApiText, json_response
 from web.app.blueprint.admin_v1 import admin_v1_bp
+from web.app.blueprint.api_v1.routes.shipment_method import set_shipment_methods
 from web.app.bootstrap import get_pages
 from web.app.urls import url_for
 from web.auth import current_user
@@ -67,6 +68,7 @@ def orders_add() -> str | Response:
             .order_by(CartItem.id.desc())
             .all()
         )
+        shipment_methods = set_shipment_methods(s, {"cart_id": cart.id}, [])
         # fmt: on
 
     return render_template(
@@ -74,6 +76,7 @@ def orders_add() -> str | Response:
         active_menu="orders",
         cart=cart,
         cart_items=cart_items,
+        shipment_methods=shipment_methods,
     )
 
 

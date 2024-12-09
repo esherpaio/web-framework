@@ -97,9 +97,9 @@
         async function copyShippingToBilling() {
             const checkbox = document.getElementById("checkbox-use-shipping-for-billing");
             if (!checkbox.checked) return;
-            const partials = ["address", "city", "country-id", "email", "first-name", "last-name", "phone", "state", "zip-code"];
-            for (const partial of partials) {
-                document.getElementById(`billing-${partial}`).value = document.getElementById(`shipping-${partial}`).value;
+            const names = ["address", "city", "country-id", "email", "first-name", "last-name", "phone", "state", "zip-code"];
+            for (const name of names) {
+                document.getElementById(`billing-${name}`).value = document.getElementById(`shipping-${name}`).value;
             }
         }
 
@@ -107,6 +107,47 @@
             const elements = document.getElementsByClassName("copy-billing");
             elements.forEach(element => {
                 element.addEventListener("change", () => debounce(copyShippingToBilling, 100));
+            });
+        });
+
+        async function makeShipmentMethods() {
+            let table = document.getElementById("shipment-methods");
+            let tableBody = table.getElementsByTagName("tbody");
+            while (tableBody.firstChild) tableBody.removeChild(tableBody.firstChild);
+
+            let cart = await getCarts().data[0];
+            let currency = await getCurrenciesId({"currency_id": cart.currency_id});
+
+            resp = await getShipmentMethods({"cart_id": cart.id});
+            for (const shipment_method of resp.data) {
+                const tr = document.createElement('tr');
+                const nameTd = document.createElement('td');
+                nameTd.textContent = shipment_method.name;
+                const priceTd = document.createElement('td');
+                priceTd.textContent = `${shipment_method.unit_price} ${currency.code}`;
+                const actionTd = document.createElement('td');
+                actionTd.classList.add('text-end');
+                const formCheckDiv = document.createElement('div');
+                formCheckDiv.classList.add('form-check', 'd-flex', 'justify-content-end');
+                const input = document.createElement('input');
+                input.id = `shipment-method-${shipment_method.id}`;
+                input.classList.add('form-check-input');
+                input.type = 'radio';
+                input.name = 'shipment-method-id';
+
+                formCheckDiv.appendChild(input);
+                actionTd.appendChild(formCheckDiv);
+                tr.appendChild(nameTd);
+                tr.appendChild(priceTd);
+                tr.appendChild(actionTd);
+                tableBody.appendChild(tr);
+            }
+        }
+
+        document.addEventListener("load", () => {
+            const elements = document.getElementsByClassName("update-shipment-methods");
+            elements.forEach(element => {
+                element.addEventListener("change", () => debounce(makeShipmentMethods, 100));
             });
         });
 
@@ -289,7 +330,7 @@
                     <div class="form-floating">
                         <select required
                                 id="shipping-country-id"
-                                class="form-select update-pricing copy-billing"
+                                class="form-select update-pricing update-shipment-methods copy-billing"
                                 autocomplete="country-name">
                             <option selected disabled value="">Make a selection</option>
                             {% for x in cache.countries %}
@@ -451,7 +492,8 @@
         <div class="col-12">
             <h3>Shipment methods</h3>
             <div class="table-responsive">
-                <table class="table rounded-2 overflow-hidden align-middle mb-0">
+                <table id="shipment-methods"
+                       class="table rounded-2 overflow-hidden align-middle mb-0">
                     <thead class="table-secondary">
                         <tr>
                             <th>Name</th>
@@ -463,9 +505,9 @@
                         {% for x in shipment_methods %}
                             <tr>
                                 <td>{{ x.name }}</td>
-                                <td>{{ x.unit_price }}</td>
-                                <td>
-                                    <div class="form-check">
+                                <td>{{ x.unit_price }} {{ cart.currency.code }}</td>
+                                <td class="text-end">
+                                    <div class="form-check d-flex justify-content-end">
                                         <input id="shipment-method-{{ x.id }}"
                                                class="form-check-input"
                                                type="radio"
