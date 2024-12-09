@@ -10,7 +10,15 @@ table td {
     white-space: nowrap;
 }
 
-/* style */
+/* collapse */
+
+.collapsing {
+    -webkit-transition: none;
+    transition: none;
+    display: none;
+}
+
+/* spacing */
 
 .w-fit {
     width: fit-content;

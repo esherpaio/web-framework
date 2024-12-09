@@ -138,6 +138,9 @@
         <div class="col-12">
             <div class="d-flex justify-content-between gap-2">
                 <h2 class="mb-0">Add order</h2>
+                <button class="btn btn-warning"
+                        data-bs-toggle="modal"
+                        data-bs-target="#modal-add-order">Create order</button>
             </div>
         </div>
         <div class="col-12">
@@ -173,7 +176,7 @@
                                             Update
                                         </button>
                                         <button id="delete-cart-item-{{ x.id }}"
-                                                class="btn btn-load btn-sm btn-outline-primary"
+                                                class="btn btn-load btn-sm btn-outline-danger"
                                                 onclick="deleteCartItem({{ cart.id }}, {{ x.id }});">
                                             Delete
                                         </button>
@@ -326,9 +329,7 @@
                                value="{{ cart.billing.email if cart.billing.email }}"
                                placeholder="Email"
                                autocomplete="email">
-                        <label for="billing-email">
-                            Email
-                        </label>
+                        <label for="billing-email">Email</label>
                     </div>
                 </div>
                 <div class="col-12 col-sm-6 collapse-billing show">
@@ -444,6 +445,60 @@
                                placeholder="VAT">
                         <label for="billing-vat">VAT</label>
                     </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            <h3>Shipment methods</h3>
+            <div class="table-responsive">
+                <table class="table rounded-2 overflow-hidden align-middle mb-0">
+                    <thead class="table-secondary">
+                        <tr>
+                            <th>Name</th>
+                            <th>Price</th>
+                            <th class="text-end">Selection</th>
+                        </tr>
+                    </thead>
+                    <tbody class="table-light">
+                        {% for x in shipment_methods %}
+                            <tr>
+                                <td>{{ x.name }}</td>
+                                <td>{{ x.unit_price }}</td>
+                                <td>
+                                    <div class="form-check">
+                                        <input id="shipment-method-{{ x.id }}"
+                                               class="form-check-input"
+                                               type="radio"
+                                               name="shipment-method-id">
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-add-order" class="modal fade" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Create order</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>
+                        <b>This action is irreversible.</b>
+                        The customer will not be notified automatically.
+                        A payment link will be created, which you can retrieve from the order page.
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button id="add-order"
+                            class="btn btn-load btn-warning"
+                            onclick="addOrder({{ cart.id }})">Proceed</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                 </div>
             </div>
         </div>
