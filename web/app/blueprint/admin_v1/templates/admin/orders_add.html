@@ -1,178 +1,194 @@
 {% extends "admin_main.html" %}
 {% block admin_body %}
     <script>
-        async function updateCart(cartId) {
-            event.preventDefault();
-            updateButton(`update-cart-coupon-code`, 1);
-            const data = { coupon_code: document.getElementById('cart-coupon-code').value };
-            await patchCartsId(cartId, emptyStrToNull(data));
-            window.location.reload();
-        }
+    async function updateCart(cartId) {
+        event.preventDefault();
+        updateButton(`update-cart-coupon-code`, 1);
+        const data = { coupon_code: document.getElementById('cart-coupon-code').value };
+        await patchCartsId(cartId, emptyStrToNull(data));
+        window.location.reload();
+    }
 
-        async function addCartItem(cartId) {
-            event.preventDefault();
-            updateButton(`add-cart-item`, 1);
-            const data = {
-                sku_id: parseInt(document.getElementById(`cart-item-sku-id`).value),
-                quantity: parseInt(document.getElementById(`cart-item-quantity`).value),
-            };
-            await postCartsIdItems(cartId, data);
-            window.location.reload();
-        }
-        async function updateCartItem(cartId, cartItemId) {
-            event.preventDefault();
-            updateButton(`update-cart-item-${cartItemId}`, 1);
-            const data = { 
-                quantity: parseInt(document.getElementById(`cart-item-quantity-${cartItemId}`).value),
-            };
-            await patchCartIdItemsId(cartId, cartItemId, data);
-            window.location.reload();
-        }
-        async function deleteCartItem(cartId, cartItemId) {
-            event.preventDefault();
-            updateButton(`delete-cart-item-${cartItemId}`, 1);
-            await deleteCartIdItemsId(cartId, cartItemId);
-            window.location.reload();
-        }
+    async function addCartItem(cartId) {
+        event.preventDefault();
+        updateButton(`add-cart-item`, 1);
+        const data = {
+            sku_id: parseInt(document.getElementById(`cart-item-sku-id`).value),
+            quantity: parseInt(document.getElementById(`cart-item-quantity`).value),
+        };
+        await postCartsIdItems(cartId, data);
+        window.location.reload();
+    }
+    async function updateCartItem(cartId, cartItemId) {
+        event.preventDefault();
+        updateButton(`update-cart-item-${cartItemId}`, 1);
+        const data = {
+            quantity: parseInt(document.getElementById(`cart-item-quantity-${cartItemId}`).value),
+        };
+        await patchCartIdItemsId(cartId, cartItemId, data);
+        window.location.reload();
+    }
+    async function deleteCartItem(cartId, cartItemId) {
+        event.preventDefault();
+        updateButton(`delete-cart-item-${cartItemId}`, 1);
+        await deleteCartIdItemsId(cartId, cartItemId);
+        window.location.reload();
+    }
 
-        async function updateShipping(cartId) {
-            event.preventDefault();
-            const data = emptyStrToNull({
-                address: document.getElementById('shipping-address').value,
-                city: document.getElementById('shipping-city').value,
-                company: document.getElementById('shipping-company').value,
-                country_id: parseInt(document.getElementById('shipping-country-id').value),
-                email: document.getElementById('shipping-email').value,
-                first_name: document.getElementById('shipping-first-name').value,
-                last_name: document.getElementById('shipping-last-name').value,
-                phone: document.getElementById('shipping-phone').value,
-                state: document.getElementById('shipping-state').value,
-                zip_code: document.getElementById('shipping-zip-code').value,
-            });
-            let resp = await getCartsId(cartId);
-            let cart = resp.data;
-            let shipping;
-            if (cart.shipping_id) {
-                resp = await patchShippingsId(cart.shipping_id, data);
-                if (resp) shipping = resp.data;
-            }
-            if (!shipping) {
-                resp = await postShippings(data);
-                if (resp) shipping = resp.data;
-            }
-            data = { shipping_id: shipping.id };
-            await patchCartsId(cart.id, data);
-        }
-
-        async function updateBilling(cartId) {
-            event.preventDefault();
-            const data = emptyStrToNull({
-                address: document.getElementById('billing-address').value,
-                city: document.getElementById('billing-city').value,
-                company: document.getElementById('billing-company').value,
-                country_id: parseInt(document.getElementById('billing-country-id').value),
-                email: document.getElementById('billing-email').value,
-                first_name: document.getElementById('billing-first-name').value,
-                last_name: document.getElementById('billing-last-name').value,
-                phone: document.getElementById('billing-phone').value,
-                state: document.getElementById('billing-state').value,
-                vat: document.getElementById('billing-vat').value,
-                zip_code: document.getElementById('billing-zip-code').value,
-            });
-            let resp = await getCartsId(cartId);
-            let cart = resp.data;
-            let billing;
-            if (cart.billing_id) {
-                resp = await patchBillingsId(cart.billing_id, data);
-                if (resp) billing = resp.data;
-            }
-            if (!billing) {
-                resp = await postBillings(data);
-                if (resp) billing = resp.data;
-            }
-            data = { billing_id: billing.id };
-            await patchCartsId(cart.id, data);
-        }
-
-        async function copyShippingToBilling() {
-            const checkbox = document.getElementById("checkbox-use-shipping-for-billing");
-            if (!checkbox.checked) return;
-            const names = ["address", "city", "country-id", "email", "first-name", "last-name", "phone", "state", "zip-code"];
-            for (const name of names) {
-                document.getElementById(`billing-${name}`).value = document.getElementById(`shipping-${name}`).value;
-            }
-        }
-
-        document.addEventListener("load", () => {
-            const elements = document.getElementsByClassName("copy-billing");
-            elements.forEach(element => {
-                element.addEventListener("change", () => debounce(copyShippingToBilling, 100));
-            });
+    async function updateShipping(cart, silent = false) {
+        let data = emptyStrToNull({
+            address: document.getElementById('shipping-address').value,
+            city: document.getElementById('shipping-city').value,
+            country_id: parseInt(document.getElementById('shipping-country-id').value),
+            email: document.getElementById('shipping-email').value,
+            first_name: document.getElementById('shipping-first-name').value,
+            last_name: document.getElementById('shipping-last-name').value,
+            phone: document.getElementById('shipping-phone').value,
+            state: document.getElementById('shipping-state').value,
+            zip_code: document.getElementById('shipping-zip-code').value,
         });
-
-        async function makeShipmentMethods() {
-            let table = document.getElementById("shipment-methods");
-            let tableBody = table.getElementsByTagName("tbody");
-            while (tableBody.firstChild) tableBody.removeChild(tableBody.firstChild);
-
-            let cart = await getCarts().data[0];
-            let currency = await getCurrenciesId({"currency_id": cart.currency_id});
-
-            resp = await getShipmentMethods({"cart_id": cart.id});
-            for (const shipment_method of resp.data) {
-                const tr = document.createElement('tr');
-                const nameTd = document.createElement('td');
-                nameTd.textContent = shipment_method.name;
-                const priceTd = document.createElement('td');
-                priceTd.textContent = `${shipment_method.unit_price} ${currency.code}`;
-                const actionTd = document.createElement('td');
-                actionTd.classList.add('text-end');
-                const formCheckDiv = document.createElement('div');
-                formCheckDiv.classList.add('form-check', 'd-flex', 'justify-content-end');
-                const input = document.createElement('input');
-                input.id = `shipment-method-${shipment_method.id}`;
-                input.classList.add('form-check-input');
-                input.type = 'radio';
-                input.name = 'shipment-method-id';
-
-                formCheckDiv.appendChild(input);
-                actionTd.appendChild(formCheckDiv);
-                tr.appendChild(nameTd);
-                tr.appendChild(priceTd);
-                tr.appendChild(actionTd);
-                tableBody.appendChild(tr);
-            }
+        let shipping_id = null;
+        if (cart.shipping_id) {
+            resp = await patchShippingsId(cart.shipping_id, data, silent);
+            if (resp) shipping_id = resp.data.id;
         }
+        if (!shipping_id) {
+            resp = await postShippings(data, silent);
+            if (resp) shipping_id = resp.data.id;
+        }
+        data = { shipping_id: shipping_id };
+        await patchCartsId(cart.id, data, silent);
+        return cart.shipping_id == shipping_id;
+    }
 
-        document.addEventListener("load", () => {
-            const elements = document.getElementsByClassName("update-shipment-methods");
-            elements.forEach(element => {
-                element.addEventListener("change", () => debounce(makeShipmentMethods, 100));
-            });
+    async function updateBilling(cart, silent = false) {
+        let data = emptyStrToNull({
+            address: document.getElementById('billing-address').value,
+            city: document.getElementById('billing-city').value,
+            company: document.getElementById('billing-company').value,
+            country_id: parseInt(document.getElementById('billing-country-id').value),
+            email: document.getElementById('billing-email').value,
+            first_name: document.getElementById('billing-first-name').value,
+            last_name: document.getElementById('billing-last-name').value,
+            phone: document.getElementById('billing-phone').value,
+            state: document.getElementById('billing-state').value,
+            vat: document.getElementById('billing-vat').value,
+            zip_code: document.getElementById('billing-zip-code').value,
         });
+        let billing_id = null;
+        if (cart.billing_id) {
+            resp = await patchBillingsId(cart.billing_id, data, silent);
+            if (resp) billing_id = resp.data.id;
+        }
+        if (!billing_id) {
+            resp = await postBillings(data, silent);
+            if (resp) billing_id = resp.data.id;
+        }
+        data = { billing_id: billing_id };
+        await patchCartsId(cart.id, data, silent);
+        return cart.billing_id == billing_id;
+    }
 
-        async function updateShipmentMethod(cartId) {
-            event.preventDefault();
-            let element = document.querySelector('input[name="shipment-method-id"]:checked');
-            if (element) {
-                let resp = await getCartsId(cartId);
-                let cart = resp.data;
-                let data = { shipment_method_id: parseInt(element.value) };
-                await patchCartsId(cart.id, data);
+    async function copyShippingToBilling() {
+        const checkbox = document.getElementById("checkbox-use-shipping-for-billing");
+        if (!checkbox.checked) return;
+        const names = ["address", "city", "country-id", "email", "first-name", "last-name", "phone", "state", "zip-code"];
+        for (const name of names) {
+            document.getElementById(`billing-${name}`).value = document.getElementById(`shipping-${name}`).value;
+        }
+    }
+
+    async function loadShipmentMethods(cart, currency) {
+        let table = document.getElementById("shipment-methods");
+        const tableBody = table.tBodies[0];
+        while (tableBody.firstChild) tableBody.removeChild(tableBody.firstChild);
+
+        resp = await getShipmentMethods({ "cart_id": cart.id });
+        for (const shipment_method of resp.data) {
+            const tr = document.createElement('tr');
+            const nameTd = document.createElement('td');
+            nameTd.textContent = shipment_method.name;
+            const priceTd = document.createElement('td');
+            priceTd.textContent = `${shipment_method.unit_price} ${currency.code}`;
+            const actionTd = document.createElement('td');
+            actionTd.classList.add('text-end');
+            const formCheckDiv = document.createElement('div');
+            formCheckDiv.classList.add('form-check', 'd-flex', 'justify-content-end');
+            const input = document.createElement('input');
+            input.id = `shipment-method-${shipment_method.id}`;
+            input.classList.add('form-check-input');
+            input.type = 'radio';
+            input.name = 'shipment-method-id';
+            input.value = `${shipment_method.id}`;
+            input.addEventListener("click", () => updateShipmentMethod(cart));
+            if (shipment_method.id === cart.shipment_method_id) {
+                input.checked = true;
             }
-        }
 
-        async function addOrder(cartId) {
-            event.preventDefault();
-            let resp = await getCartsId(cartId);
-            let cart = resp.data;
-            let data = { 'cart_id': cart.id, 'trigger_mail': false };
-            resp = await postOrders(data);
-            let order = resp.data;
-            const redirect = location.protocol + '//' + location.host + URL_ADMIN_CART;
-            resp = await postOrdersIdPayments(order.id, {"redirect": redirect});
-            window.location.href = resp.links.payment;
+            formCheckDiv.appendChild(input);
+            actionTd.appendChild(formCheckDiv);
+            tr.appendChild(nameTd);
+            tr.appendChild(priceTd);
+            tr.appendChild(actionTd);
+            tableBody.appendChild(tr);
         }
+    }
+
+    async function triggerLoadShipmentMethods() {
+        let cart = (await getCarts()).data[0];
+        let updated = false;
+        try {
+            updated = await updateShipping(cart, true);
+            await updateBilling(cart, true);
+        } catch { return; }
+        if (updated) {
+            cart = (await getCarts()).data[0];
+        }
+        currency = (await getCurrenciesId(cart.currency_id)).data;
+        await loadShipmentMethods(cart, currency)
+    }
+
+    async function updateShipmentMethod(cart) {
+        event.preventDefault();
+        let element = document.querySelector('input[name="shipment-method-id"]:checked');
+        let shipment_method_id;
+        if (element) {
+            shipment_method_id = parseInt(element.value);
+        } else {
+            shipment_method_id = null;
+        }
+        let data = { shipment_method_id: shipment_method_id };
+        await patchCartsId(cart.id, data);
+    }
+
+    async function addOrder(cartId) {
+        event.preventDefault();
+        let resp = await getCartsId(cartId);
+        let cart = resp.data;
+        let data = { 'cart_id': cart.id, 'trigger_mail': false };
+        resp = await postOrders(data);
+        let order = resp.data;
+        const mollieRedirect = location.protocol + '//' + location.host;
+        const redirect = location.protocol + '//' + location.host + URL_ADMIN_ORDERS + "/" + `${order.id}`;
+        resp = await postOrdersIdPayments(order.id, { "redirect": mollieRedirect });
+        window.location.href = redirect;
+    }
+
+    async function initializePage() {
+        let cart = (await getCarts()).data[0];
+        let currency = (await getCurrenciesId(cart.currency_id)).data;
+        loadShipmentMethods(cart, currency);
+        let elements = document.getElementsByClassName("copy-billing");
+        Array.from(elements).forEach(element => {
+            element.addEventListener("change", () => debounce(copyShippingToBilling, 100));
+        });
+        elements = document.getElementsByClassName("update-shipment-methods");
+        Array.from(elements).forEach(element => {
+            element.addEventListener("change", () => debounce(triggerLoadShipmentMethods, 100));
+        });
+    }
+
+    document.addEventListener("DOMContentLoaded", initializePage);
     </script>
 
     <div class="row g-3">
@@ -181,7 +197,10 @@
                 <h2 class="mb-0">Add order</h2>
                 <button class="btn btn-warning"
                         data-bs-toggle="modal"
-                        data-bs-target="#modal-add-order">Create order</button>
+                        data-bs-target="#modal-add-order">
+                    Create
+                    order
+                </button>
             </div>
         </div>
         <div class="col-12">
@@ -334,7 +353,7 @@
                                 autocomplete="country-name">
                             <option selected disabled value="">Make a selection</option>
                             {% for x in cache.countries %}
-                                <option {{ 'selected' if x.id == cart.shipping.country_id }} value="{{ x.id }}">
+                                <option {{ 'selected' if x.id==cart.shipping.country_id }} value="{{ x.id }}">
                                     {{ x.name }}
                                 </option>
                             {% endfor %}
@@ -458,7 +477,7 @@
                                 autocomplete="country-name">
                             <option selected disabled value="">Make a selection</option>
                             {% for x in cache.countries %}
-                                <option {{ 'selected' if x.id == cart.billing.country_id }} value="{{ x.id }}">
+                                <option {{ 'selected' if x.id==cart.billing.country_id }} value="{{ x.id }}">
                                     {{ x.name }}
                                 </option>
                             {% endfor %}
@@ -502,20 +521,6 @@
                         </tr>
                     </thead>
                     <tbody class="table-light">
-                        {% for x in shipment_methods %}
-                            <tr>
-                                <td>{{ x.name }}</td>
-                                <td>{{ x.unit_price }} {{ cart.currency.code }}</td>
-                                <td class="text-end">
-                                    <div class="form-check d-flex justify-content-end">
-                                        <input id="shipment-method-{{ x.id }}"
-                                               class="form-check-input"
-                                               type="radio"
-                                               name="shipment-method-id">
-                                    </div>
-                                </td>
-                            </tr>
-                        {% endfor %}
                     </tbody>
                 </table>
             </div>
