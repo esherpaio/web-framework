@@ -1,6 +1,5 @@
 import re
 from enum import Enum
-from re import Pattern
 
 
 class CommonRegularExpression(Enum):
@@ -38,9 +37,7 @@ class CommonRegularExpression(Enum):
         re.IGNORECASE,
     )
     PO_BOX = re.compile(r"P\.? ?O\.? Box \d+", re.IGNORECASE)
-    ROMAN_NUMERAL: Pattern = re.compile(
-        "M{0,4}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})"
-    )
+    ROMAN_NUMERAL = re.compile("M{0,4}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})")
     SOCIAL_SECURITY_NUMBER = re.compile(
         "(?!000|666|333)0*(?:[0-6][0-9][0-9]|[0-7][0-6][0-9]|[0-7][0-7][0-2])[- ](?!00)[0-9]{2}[- ](?!0000)[0-9]{4}"
     )
