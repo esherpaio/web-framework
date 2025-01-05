@@ -5,9 +5,9 @@ setuptools~=75.6.0
 alembic~=1.14.0
 
 # testing
-pytest~=8.3.3
+pytest~=8.3.4
 
 # formating and linting
-ruff~=0.8.1
-mypy==1.13.0
-djlint~=1.36.3
+ruff~=0.8.6
+mypy==1.14.1
+djlint~=1.36.4
