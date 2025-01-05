@@ -21,7 +21,7 @@
             updateButton(`delete-product`, 1);
             let resp = await deleteProductsId(productId);
             await patchSetting({ cached_at: null });
-            window.location = resp.links.products;
+            window.location = URL_ADMIN_PRODUCTS;
         }
     </script>
 
