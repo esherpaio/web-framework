@@ -28,6 +28,8 @@
     "API_SESSION_CHECK_DETAILS": "Controleer a.u.b. uw inloggegevens.",
     "API_SESSION_CHECK_PASSWORD": "Stel alstublieft uw wachtwoord opnieuw in. Controleer uw e-mail voor instructies.",
     "API_SESSION_GOOGLE_INVALID": "We kunnen je helaas niet inloggen met Google.",
+    "API_SHIPMENT_METHOD_REQUIRED": "Een verzend methode is vereist.",
+    "API_SHIPMENT_METHOD_INVALID": "De huidige verzend methode is ongeldig, gelieve een andere te selecteren.",
     "API_USER_ACTIVATION_CHECK": "Gelieve uw account te activeren met de link in uw email.",
     "API_USER_ACTIVATION_SUCCESS": "Uw account is geactiveerd.",
     "API_USER_EMAIL_IN_USE": "Dit emailadres is al in gebruik.",
