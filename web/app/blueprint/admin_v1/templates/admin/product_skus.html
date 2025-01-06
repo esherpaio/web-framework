@@ -80,7 +80,10 @@
                                            value="{{ sku.stock if sku.stock is number }}">
                                 </td>
                                 <td>
-                                    <input {{ 'checked' if sku.is_visible }} id="sku-is-visible-{{ sku.id }}" class="form-check-input" type="checkbox">
+                                    <input {{ 'checked' if sku.is_visible }}
+                                           id="sku-is-visible-{{ sku.id }}"
+                                           class="form-check-input"
+                                           type="checkbox">
                                 </td>
                                 <td class="text-end">
                                     <div class="btn-group">
