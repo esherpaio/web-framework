@@ -74,8 +74,7 @@
                                 None
                             </option>
                             {% for x in shipment_classes %}
-                                <option {{ 'selected' if x.id == product.shipment_class_id }}
-                                        value="{{ x.id }}">
+                                <option {{ 'selected' if x.id == product.shipment_class_id }} value="{{ x.id }}">
                                     {{ x.name }}
                                 </option>
                             {% endfor %}
@@ -97,10 +96,7 @@
                     <div class="input-group">
                         <span class="input-group-text">Consent required</span>
                         <div class="input-group-text">
-                            <input {{ "checked" if product.consent_required }}
-                                   id="product-consent-required"
-                                   class="form-check-input mt-0"
-                                   type="checkbox">
+                            <input {{ "checked" if product.consent_required }} id="product-consent-required" class="form-check-input mt-0" type="checkbox">
                         </div>
                     </div>
                 </div>

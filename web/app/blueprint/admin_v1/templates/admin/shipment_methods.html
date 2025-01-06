@@ -73,10 +73,7 @@
                                     {{ method.zone.region.name if method.zone.region }}
                                 </td>
                                 <td>
-                                    <input {{ 'checked' if method.phone_required }}
-                                           id="shipment-method-phone-required-{{ method.id }}"
-                                           class="form-check-input"
-                                           type="checkbox">
+                                    <input {{ 'checked' if method.phone_required }} id="shipment-method-phone-required-{{ method.id }}" class="form-check-input" type="checkbox">
                                 </td>
                                 <td class="text-end">
                                     <div class="btn-group">
