@@ -28,6 +28,8 @@
     "API_SESSION_CHECK_DETAILS": "Please check your login details.",
     "API_SESSION_CHECK_PASSWORD": "Please reset your password. Check your email for instructions.",
     "API_SESSION_GOOGLE_INVALID": "We are unable to log you in with Google.",
+    "API_SHIPMENT_METHOD_REQUIRED": "Please select a shipment method.",
+    "API_SHIPMENT_METHOD_INVALID": "Please select a different shipment method.",
     "API_USER_ACTIVATION_CHECK": "Please activate your account with the URL in your email.",
     "API_USER_ACTIVATION_SUCCESS": "Your account has been activated.",
     "API_USER_EMAIL_IN_USE": "This email address is already in use.",

@@ -39,6 +39,8 @@ class Text(StrEnum):
     VAT_INVALID = _("API_ORDER_VAT_INVALID")
     VAT_NO_CONNECTION = _("API_ORDER_VAT_NO_CONNECTION")
     VAT_REQUIRED = _("API_ORDER_VAT_REQUIRED")
+    SHIPMENT_METHOD_REQUIRED = _("API_SHIPMENT_METHOD_REQUIRED")
+    SHIPMENT_METHOD_INVALID = _("API_SHIPMENT_METHOD_INVALID")
 
 
 class OrderAPI(API):
@@ -123,14 +125,12 @@ def val_cart(s: Session, data: dict, model: Order) -> None:
     cart = g.cart
     # Check shipment method
     shipment_methods = get_shipment_methods(s, cart)
-    if shipment_methods is not None:
+    if shipment_methods:
         if cart.shipment_method_id is None:
-            abort(json_response(400, ApiText.HTTP_400))
-    # Check for valid shipment method
-    shipment_method_ids = {x.id for x in shipment_methods}
-    if cart.shipment_method_id is not None:
+            abort(json_response(400, Text.SHIPMENT_METHOD_REQUIRED))
+        shipment_method_ids = {x.id for x in shipment_methods}
         if cart.shipment_method_id not in shipment_method_ids:
-            abort(json_response(400, ApiText.HTTP_400))
+            abort(json_response(400, Text.SHIPMENT_METHOD_INVALID))
     # Check phone required
     if cart.shipment_method is not None:
         if cart.shipment_method.phone_required:
