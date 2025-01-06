@@ -22,18 +22,20 @@ class Markdown:
             is_heading = strip_space.startswith("#")
             heading_level = line.count("#") + 1
             heading_text = line.strip(" #")
-
             is_indent = strip_space.startswith("-")
+            indent_text = line.strip(" -")
+
             if is_indent:
                 indent_count = max(len(line) - len(line.lstrip(" ")), 1)
             else:
                 indent_count = 0
-            indent_text = line.strip(" -")
-            if indent_count > indent_level:
+
+            while indent_count > indent_level:
                 data.append("<ul>")
-            elif indent_count < indent_level:
+                indent_level += 1
+            while indent_count < indent_level:
                 data.append("</ul>")
-            indent_level = indent_count
+                indent_level -= 1
 
             if is_heading:
                 data.append(f"<h{heading_level}>{heading_text}</h{heading_level}>")
