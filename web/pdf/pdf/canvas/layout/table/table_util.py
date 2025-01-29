@@ -53,9 +53,9 @@ class TableUtil:
         # get number of cols
         col_count: int = len(data[0])
         assert col_count > 0, "Table must contain at least 1 column"
-        assert all(
-            [len(x) == col_count for x in data]
-        ), "All rows must contain the same number of columns"
+        assert all([len(x) == col_count for x in data]), (
+            "All rows must contain the same number of columns"
+        )
 
         # instantiate Table
         t: FlexibleColumnWidthTable | FixedColumnWidthTable

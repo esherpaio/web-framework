@@ -83,13 +83,13 @@ class Type1Font(SimpleFont):
 
         # figure out how many characters we'll need to calculate
         assert "FirstChar" in self, "Type1Font must have a /FirstChar entry"
-        assert isinstance(
-            self["FirstChar"], bDecimal
-        ), "Type1Font must have a valid /FirstChar entry"
+        assert isinstance(self["FirstChar"], bDecimal), (
+            "Type1Font must have a valid /FirstChar entry"
+        )
         assert "LastChar" in self, "Type1Font must have a /LastChar entry"
-        assert isinstance(
-            self["LastChar"], bDecimal
-        ), "Type1Font must have a valid /LastChar entry"
+        assert isinstance(self["LastChar"], bDecimal), (
+            "Type1Font must have a valid /LastChar entry"
+        )
 
         first_char: int = int(self["FirstChar"])
         last_char: int = int(self["LastChar"])
@@ -149,13 +149,13 @@ class Type1Font(SimpleFont):
         # figure out how many characters we'll need to calculate
 
         assert "FirstChar" in self, "Type1Font must have a /FirstChar entry"
-        assert isinstance(
-            self["FirstChar"], bDecimal
-        ), "Type1Font must have a valid /FirstChar entry"
+        assert isinstance(self["FirstChar"], bDecimal), (
+            "Type1Font must have a valid /FirstChar entry"
+        )
         assert "LastChar" in self, "Type1Font must have a /LastChar entry"
-        assert isinstance(
-            self["LastChar"], bDecimal
-        ), "Type1Font must have a valid /LastChar entry"
+        assert isinstance(self["LastChar"], bDecimal), (
+            "Type1Font must have a valid /LastChar entry"
+        )
 
         first_char: int = int(self["FirstChar"])
         last_char: int = int(self["LastChar"])
@@ -212,9 +212,9 @@ class Type1Font(SimpleFont):
             return
 
         assert "ToUnicode" in self, "Type1Font must have a /ToUnicode entry."
-        assert (
-            "DecodedBytes" in self["ToUnicode"]
-        ), "Type1Font must have a valid /ToUnicode entry."
+        assert "DecodedBytes" in self["ToUnicode"], (
+            "Type1Font must have a valid /ToUnicode entry."
+        )
 
         cmap_bytes: bytes = self["ToUnicode"]["DecodedBytes"]
         self._character_identifier_to_unicode_lookup = self._read_cmap(cmap_bytes)
@@ -423,9 +423,9 @@ class StandardType1Font(Type1Font):
         super(StandardType1Font, self).__init__()
         if font_name is not None:
             font_name = StandardType1Font._canonical_name(font_name)
-            assert (
-                font_name is not None
-            ), "font_name must be one of the 14 StandardType1Font names."
+            assert font_name is not None, (
+                "font_name must be one of the 14 StandardType1Font names."
+            )
 
             # check whether AFM directory exists
             afm_directory: Path = Path(__file__).parent / "afm"

@@ -70,40 +70,40 @@ class SetColorStroking(CanvasOperator):
         canvas = canvas_stream_processor.get_canvas()
         stroke_color_space = canvas.graphics_state.stroke_color_space
         if stroke_color_space == "DeviceCMYK":
-            assert isinstance(
-                operands[0], Decimal
-            ), "Operand 0 of SCN must be a Decimal"
-            assert isinstance(
-                operands[1], Decimal
-            ), "Operand 1 of SCN must be a Decimal"
-            assert isinstance(
-                operands[2], Decimal
-            ), "Operand 2 of SCN must be a Decimal"
-            assert isinstance(
-                operands[3], Decimal
-            ), "Operand 3 of SCN must be a Decimal"
+            assert isinstance(operands[0], Decimal), (
+                "Operand 0 of SCN must be a Decimal"
+            )
+            assert isinstance(operands[1], Decimal), (
+                "Operand 1 of SCN must be a Decimal"
+            )
+            assert isinstance(operands[2], Decimal), (
+                "Operand 2 of SCN must be a Decimal"
+            )
+            assert isinstance(operands[3], Decimal), (
+                "Operand 3 of SCN must be a Decimal"
+            )
             canvas.graphics_state.stroke_color = CMYKColor(
                 operands[0], operands[1], operands[2], operands[3]
             )
             return
 
         if stroke_color_space == "DeviceGray":
-            assert isinstance(
-                operands[0], Decimal
-            ), "Operand 0 of SCN must be a Decimal"
+            assert isinstance(operands[0], Decimal), (
+                "Operand 0 of SCN must be a Decimal"
+            )
             canvas.graphics_state.stroke_color = GrayColor(operands[0])
             return
 
         if stroke_color_space == "DeviceRGB":
-            assert isinstance(
-                operands[0], Decimal
-            ), "Operand 0 of SCN must be a Decimal"
-            assert isinstance(
-                operands[1], Decimal
-            ), "Operand 1 of SCN must be a Decimal"
-            assert isinstance(
-                operands[2], Decimal
-            ), "Operand 2 of SCN must be a Decimal"
+            assert isinstance(operands[0], Decimal), (
+                "Operand 0 of SCN must be a Decimal"
+            )
+            assert isinstance(operands[1], Decimal), (
+                "Operand 1 of SCN must be a Decimal"
+            )
+            assert isinstance(operands[2], Decimal), (
+                "Operand 2 of SCN must be a Decimal"
+            )
             canvas.graphics_state.stroke_color = RGBColor(
                 operands[0], operands[1], operands[2]
             )

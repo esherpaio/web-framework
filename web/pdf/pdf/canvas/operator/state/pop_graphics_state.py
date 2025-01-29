@@ -27,7 +27,7 @@ class PopGraphicsState(CanvasOperator):
         """Invoke the Q operator."""
 
         canvas = canvas_stream_processor.get_canvas()
-        assert (
-            len(canvas.graphics_state_stack) > 0
-        ), "Stack underflow. Q operator was applied to an empty stack."
+        assert len(canvas.graphics_state_stack) > 0, (
+            "Stack underflow. Q operator was applied to an empty stack."
+        )
         canvas.graphics_state = canvas.graphics_state_stack.pop(-1)

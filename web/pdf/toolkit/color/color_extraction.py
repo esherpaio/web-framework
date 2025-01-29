@@ -33,12 +33,12 @@ class ColorExtraction(EventListener):
         max_number_of_colors_to_register: int = 32,
     ):
         """Constructs a new ColorSpectrumExtraction."""
-        assert (
-            max_number_of_colors_to_return >= 0
-        ), "max_number_of_colors_to_return must be a positive integer"
-        assert (
-            max_number_of_colors_to_register >= 0
-        ), "max_number_of_colors_to_register must be a positive integer"
+        assert max_number_of_colors_to_return >= 0, (
+            "max_number_of_colors_to_return must be a positive integer"
+        )
+        assert max_number_of_colors_to_register >= 0, (
+            "max_number_of_colors_to_register must be a positive integer"
+        )
         self._max_number_of_colors_to_return: int = max_number_of_colors_to_return
         self._max_number_of_colors_to_register: int = max_number_of_colors_to_register
 

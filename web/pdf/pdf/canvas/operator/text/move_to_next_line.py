@@ -35,9 +35,9 @@ class MoveToNextLine(CanvasOperator):
         move_text_position_op: typing.Optional[CanvasOperator] = (
             canvas_stream_processor.get_operator("Td")
         )
-        assert (
-            move_text_position_op
-        ), "Operator Td must be defined for operator T* to function."
+        assert move_text_position_op, (
+            "Operator Td must be defined for operator T* to function."
+        )
         canvas = canvas_stream_processor.get_canvas()
         move_text_position_op.invoke(
             canvas_stream_processor,

@@ -32,15 +32,15 @@ class SetRGBStroking(CanvasOperator):
     ) -> None:
         """Invoke the RG operator."""
 
-        assert isinstance(
-            operands[0], Decimal
-        ), "operand 0 of rg operator must be of type Decimal"
-        assert isinstance(
-            operands[1], Decimal
-        ), "operand 1 of rg operator must be of type Decimal"
-        assert isinstance(
-            operands[2], Decimal
-        ), "operand 2 of rg operator must be of type Decimal"
+        assert isinstance(operands[0], Decimal), (
+            "operand 0 of rg operator must be of type Decimal"
+        )
+        assert isinstance(operands[1], Decimal), (
+            "operand 1 of rg operator must be of type Decimal"
+        )
+        assert isinstance(operands[2], Decimal), (
+            "operand 2 of rg operator must be of type Decimal"
+        )
 
         # set stroke_color
         canvas = canvas_stream_processor.get_canvas()

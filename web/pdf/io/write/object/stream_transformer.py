@@ -46,15 +46,15 @@ class StreamTransformer(Transformer):
     ):
         """This method writes a Stream to a byte stream."""
 
-        assert (
-            context is not None
-        ), "context must be defined in order to write Stream objects."
-        assert (
-            context.destination is not None
-        ), "context.destination must be defined in order to write Stream objects."
-        assert isinstance(
-            object_to_transform, Stream
-        ), "object_to_transform must be of type Stream"
+        assert context is not None, (
+            "context must be defined in order to write Stream objects."
+        )
+        assert context.destination is not None, (
+            "context.destination must be defined in order to write Stream objects."
+        )
+        assert isinstance(object_to_transform, Stream), (
+            "object_to_transform must be of type Stream"
+        )
 
         # avoid resolving objects twice
         object_ref: typing.Optional[Reference] = object_to_transform.get_reference()

@@ -33,18 +33,18 @@ class SetCMYKStroking(CanvasOperator):
     ) -> None:
         """Invoke the K operator."""
 
-        assert isinstance(
-            operands[0], Decimal
-        ), "operand 0 of K operator must be of type Decimal"
-        assert isinstance(
-            operands[1], Decimal
-        ), "operand 1 of K operator must be of type Decimal"
-        assert isinstance(
-            operands[2], Decimal
-        ), "operand 2 of K operator must be of type Decimal"
-        assert isinstance(
-            operands[3], Decimal
-        ), "operand 3 of K operator must be of type Decimal"
+        assert isinstance(operands[0], Decimal), (
+            "operand 0 of K operator must be of type Decimal"
+        )
+        assert isinstance(operands[1], Decimal), (
+            "operand 1 of K operator must be of type Decimal"
+        )
+        assert isinstance(operands[2], Decimal), (
+            "operand 2 of K operator must be of type Decimal"
+        )
+        assert isinstance(operands[3], Decimal), (
+            "operand 3 of K operator must be of type Decimal"
+        )
 
         c = operands[0]
         m = operands[1]

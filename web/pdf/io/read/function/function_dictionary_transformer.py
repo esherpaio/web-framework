@@ -55,15 +55,15 @@ class FunctionDictionaryTransformer(Transformer):
         """This function reads a Dictionary with /FunctionType key from a byte
         stream."""
 
-        assert isinstance(
-            object_to_transform, Dictionary
-        ), "object_to_transform must be of type Dictionary."
-        assert (
-            "FunctionType" in object_to_transform
-        ), "object_to_transform Dictionary must be FunctionType."
-        assert isinstance(
-            object_to_transform["FunctionType"], Decimal
-        ), "object_to_transform must contain a valid /FunctionType entry."
+        assert isinstance(object_to_transform, Dictionary), (
+            "object_to_transform must be of type Dictionary."
+        )
+        assert "FunctionType" in object_to_transform, (
+            "object_to_transform Dictionary must be FunctionType."
+        )
+        assert isinstance(object_to_transform["FunctionType"], Decimal), (
+            "object_to_transform must contain a valid /FunctionType entry."
+        )
 
         function_type: int = int(object_to_transform["FunctionType"])
         assert function_type in [0, 2, 3, 4], "FunctionType must be in [0, 2, 3, 4]"
@@ -80,9 +80,9 @@ class FunctionDictionaryTransformer(Transformer):
         # resolve references in stream dictionary
 
         assert context is not None, "context must be defined to read Dictionary objects"
-        assert (
-            context.tokenizer is not None
-        ), "context.tokenizer must be defined to read Dictionary objects"
+        assert context.tokenizer is not None, (
+            "context.tokenizer must be defined to read Dictionary objects"
+        )
 
         xref = parent_object.get_root().get("XRef")
         for k, v in object_to_transform.items():

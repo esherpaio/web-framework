@@ -61,24 +61,24 @@ class AppendCubicBezierCurve1(CanvasOperator):
         event_listeners: typing.List["EventListener"] = [],
     ) -> None:
         """Invokes the c operator."""
-        assert isinstance(
-            operands[0], Decimal
-        ), "operand 0 of c operator must be of type Decimal"
-        assert isinstance(
-            operands[1], Decimal
-        ), "operand 1 of c operator must be of type Decimal"
-        assert isinstance(
-            operands[2], Decimal
-        ), "operand 2 of c operator must be of type Decimal"
-        assert isinstance(
-            operands[3], Decimal
-        ), "operand 3 of c operator must be of type Decimal"
-        assert isinstance(
-            operands[4], Decimal
-        ), "operand 4 of c operator must be of type Decimal"
-        assert isinstance(
-            operands[5], Decimal
-        ), "operand 5 of c operator must be of type Decimal"
+        assert isinstance(operands[0], Decimal), (
+            "operand 0 of c operator must be of type Decimal"
+        )
+        assert isinstance(operands[1], Decimal), (
+            "operand 1 of c operator must be of type Decimal"
+        )
+        assert isinstance(operands[2], Decimal), (
+            "operand 2 of c operator must be of type Decimal"
+        )
+        assert isinstance(operands[3], Decimal), (
+            "operand 3 of c operator must be of type Decimal"
+        )
+        assert isinstance(operands[4], Decimal), (
+            "operand 4 of c operator must be of type Decimal"
+        )
+        assert isinstance(operands[5], Decimal), (
+            "operand 5 of c operator must be of type Decimal"
+        )
 
         # get graphic state
         canvas = canvas_stream_processor.get_canvas()
@@ -119,18 +119,18 @@ class AppendCubicBezierCurve2(CanvasOperator):
     ) -> None:
         """Invokes the v operator."""
 
-        assert isinstance(
-            operands[0], Decimal
-        ), "operand 0 of v operator must be of type Decimal"
-        assert isinstance(
-            operands[1], Decimal
-        ), "operand 1 of v operator must be of type Decimal"
-        assert isinstance(
-            operands[2], Decimal
-        ), "operand 2 of v operator must be of type Decimal"
-        assert isinstance(
-            operands[3], Decimal
-        ), "operand 3 of v operator must be of type Decimal"
+        assert isinstance(operands[0], Decimal), (
+            "operand 0 of v operator must be of type Decimal"
+        )
+        assert isinstance(operands[1], Decimal), (
+            "operand 1 of v operator must be of type Decimal"
+        )
+        assert isinstance(operands[2], Decimal), (
+            "operand 2 of v operator must be of type Decimal"
+        )
+        assert isinstance(operands[3], Decimal), (
+            "operand 3 of v operator must be of type Decimal"
+        )
 
         # get graphic state
         canvas = canvas_stream_processor.get_canvas()
@@ -168,18 +168,18 @@ class AppendCubicBezierCurve3(CanvasOperator):
         event_listeners: typing.List["EventListener"] = [],
     ) -> None:
         """Invokes the y operator."""
-        assert isinstance(
-            operands[0], Decimal
-        ), "operand 0 of y operator must be of type Decimal"
-        assert isinstance(
-            operands[1], Decimal
-        ), "operand 1 of y operator must be of type Decimal"
-        assert isinstance(
-            operands[2], Decimal
-        ), "operand 2 of y operator must be of type Decimal"
-        assert isinstance(
-            operands[3], Decimal
-        ), "operand 3 of y operator must be of type Decimal"
+        assert isinstance(operands[0], Decimal), (
+            "operand 0 of y operator must be of type Decimal"
+        )
+        assert isinstance(operands[1], Decimal), (
+            "operand 1 of y operator must be of type Decimal"
+        )
+        assert isinstance(operands[2], Decimal), (
+            "operand 2 of y operator must be of type Decimal"
+        )
+        assert isinstance(operands[3], Decimal), (
+            "operand 3 of y operator must be of type Decimal"
+        )
 
         # get graphic state
         canvas = canvas_stream_processor.get_canvas()

@@ -26,9 +26,9 @@ class XREFTransformer(Transformer):
 
     @staticmethod
     def _section_xref(context: Optional[WriteTransformerState] = None):
-        assert (
-            context is not None
-        ), "A WriteTransformerState must be defined in order to write XREF objects."
+        assert context is not None, (
+            "A WriteTransformerState must be defined in order to write XREF objects."
+        )
 
         # get all references
         indirect_objects: typing.List[AnyPDFType] = [
@@ -91,12 +91,12 @@ class XREFTransformer(Transformer):
         assert "Trailer" in object_to_transform
         assert isinstance(object_to_transform["Trailer"], Dictionary)
 
-        assert (
-            context is not None
-        ), "A WriteTransformerState must be defined in order to write XREF objects."
-        assert (
-            context.destination is not None
-        ), "A WriteTransformerState must be defined in order to write XREF objects."
+        assert context is not None, (
+            "A WriteTransformerState must be defined in order to write XREF objects."
+        )
+        assert context.destination is not None, (
+            "A WriteTransformerState must be defined in order to write XREF objects."
+        )
 
         trailer_out = Dictionary()
 

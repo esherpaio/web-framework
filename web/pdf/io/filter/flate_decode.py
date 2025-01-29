@@ -34,19 +34,18 @@ class FlateDecode:
 
         # check /Predictor
 
-        assert (
-            predictor
-            in [
-                1,
-                2,
-                10,
-                11,
-                12,
-                13,
-                14,
-                15,
-            ]
-        ), "Illegal argument exception. predictor must be in [1, 2, 10, 11, 12, 13, 14, 15]."
+        assert predictor in [
+            1,
+            2,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+        ], (
+            "Illegal argument exception. predictor must be in [1, 2, 10, 11, 12, 13, 14, 15]."
+        )
 
         # check /BitsPerComponent
 

@@ -40,12 +40,12 @@ class MultiColumnLayout(PageLayout):
         self._page_height: typing.Optional[Decimal] = (
             self._page.get_page_info().get_height()
         )
-        assert (
-            self._page_width
-        ), "page.get_width() must be defined for MultiColumnLayout to work"
-        assert (
-            self._page_height
-        ), "page.get_height() must be defined for MultiColumnLayout to work"
+        assert self._page_width, (
+            "page.get_width() must be defined for MultiColumnLayout to work"
+        )
+        assert self._page_height, (
+            "page.get_height() must be defined for MultiColumnLayout to work"
+        )
 
         # horizontal margin
         self._inter_column_margin: Decimal = Decimal(self._page_width) * Decimal(0.05)

@@ -82,9 +82,9 @@ class Hyphenation:
         This function returns the word with hyphenation_character inserted.
         """
 
-        assert (
-            len(hyphenation_character) == 1
-        ), "The hyphenation_character must be a single character str."
+        assert len(hyphenation_character) == 1, (
+            "The hyphenation_character must be a single character str."
+        )
 
         if len(s) <= 4:
             return s

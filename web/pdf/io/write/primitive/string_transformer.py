@@ -33,9 +33,9 @@ class StringTransformer(Transformer):
     ):
         """This method writes a String object to a byte stream."""
 
-        assert (
-            context is not None
-        ), "A WriteTransformerState must be defined in order to write String objects."
+        assert context is not None, (
+            "A WriteTransformerState must be defined in order to write String objects."
+        )
         assert context.destination is not None
         assert isinstance(object_to_transform, String)
 

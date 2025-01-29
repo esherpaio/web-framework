@@ -67,15 +67,15 @@ class ImageTransformer(Transformer):
     ):
         """This method writes an Image to a byte stream."""
 
-        assert (
-            context is not None
-        ), "context must be defined in order to write Image objects."
-        assert (
-            context.destination is not None
-        ), "context.destination must be defined in order to write Image objects."
-        assert isinstance(
-            object_to_transform, ImageType
-        ), "object_to_transform must be of type PILImage.Image"
+        assert context is not None, (
+            "context must be defined in order to write Image objects."
+        )
+        assert context.destination is not None, (
+            "context.destination must be defined in order to write Image objects."
+        )
+        assert isinstance(object_to_transform, ImageType), (
+            "object_to_transform must be of type PILImage.Image"
+        )
 
         # get image bytes
         contents: typing.Optional[bytes] = None

@@ -60,9 +60,9 @@ class PageDictionaryTransformer(Transformer):
 
         # convert key/value pairs
 
-        assert isinstance(
-            object_to_transform, Dictionary
-        ), "object_to_transform must be of type Dictionary"
+        assert isinstance(object_to_transform, Dictionary), (
+            "object_to_transform must be of type Dictionary"
+        )
 
         for k, v in object_to_transform.items():
             # avoid circular reference

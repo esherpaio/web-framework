@@ -76,21 +76,21 @@ class Type0Font(Font):
         # font’s CMap (for example, Adobe and Japan1) from its CIDSystemInfo dictionary.
 
         assert "DescendantFonts" in self, "Type0Font must have a /DescendantFonts entry"
-        assert isinstance(
-            self["DescendantFonts"], List
-        ), "Type0Font must have a valid /DescendantFonts entry"
-        assert (
-            len(self["DescendantFonts"]) == 1
-        ), "Type0Font must have a valid /DescendantFonts entry"
-        assert (
-            "CIDSystemInfo" in self["DescendantFonts"][0]
-        ), "Type0Font must have a valid /DescendantFonts entry"
-        assert (
-            "Registry" in self["DescendantFonts"][0]["CIDSystemInfo"]
-        ), "Type0Font must have a valid /DescendantFonts entry"
-        assert (
-            "Ordering" in self["DescendantFonts"][0]["CIDSystemInfo"]
-        ), "Type0Font must have a valid /DescendantFonts entry"
+        assert isinstance(self["DescendantFonts"], List), (
+            "Type0Font must have a valid /DescendantFonts entry"
+        )
+        assert len(self["DescendantFonts"]) == 1, (
+            "Type0Font must have a valid /DescendantFonts entry"
+        )
+        assert "CIDSystemInfo" in self["DescendantFonts"][0], (
+            "Type0Font must have a valid /DescendantFonts entry"
+        )
+        assert "Registry" in self["DescendantFonts"][0]["CIDSystemInfo"], (
+            "Type0Font must have a valid /DescendantFonts entry"
+        )
+        assert "Ordering" in self["DescendantFonts"][0]["CIDSystemInfo"], (
+            "Type0Font must have a valid /DescendantFonts entry"
+        )
 
         registry: str = str(self["DescendantFonts"][0]["CIDSystemInfo"]["Registry"])
         ordering: str = str(self["DescendantFonts"][0]["CIDSystemInfo"]["Ordering"])
@@ -107,9 +107,9 @@ class Type0Font(Font):
             return
 
         assert "Encoding" in self, "Type0Font must have an /Encoding entry"
-        assert (
-            "DecodedBytes" in self["Encoding"]
-        ), "Type0Font must have a valid /Encoding entry"
+        assert "DecodedBytes" in self["Encoding"], (
+            "Type0Font must have a valid /Encoding entry"
+        )
 
         cmap_bytes: bytes = self["Encoding"]["DecodedBytes"]
         self._byte_to_char_identifier = {
@@ -124,9 +124,9 @@ class Type0Font(Font):
             return
 
         assert "ToUnicode" in self, "Type0Font must have a /ToUnicode entry"
-        assert (
-            "DecodedBytes" in self["ToUnicode"]
-        ), "Type0Font must have a valid /ToUnicode entry"
+        assert "DecodedBytes" in self["ToUnicode"], (
+            "Type0Font must have a valid /ToUnicode entry"
+        )
 
         cmap_bytes: bytes = self["ToUnicode"]["DecodedBytes"]
         self._character_identifier_to_unicode_lookup = self._read_cmap(cmap_bytes)
@@ -197,12 +197,12 @@ class Type0Font(Font):
         """
 
         assert "DescendantFonts" in self, "Type0Font must have a /DescendantFonts entry"
-        assert isinstance(
-            self["DescendantFonts"], List
-        ), "Type0Font must have a valid /DescendantFonts entry"
-        assert (
-            len(self["DescendantFonts"]) == 1
-        ), "Type0Font must have a valid /DescendantFonts entry"
+        assert isinstance(self["DescendantFonts"], List), (
+            "Type0Font must have a valid /DescendantFonts entry"
+        )
+        assert len(self["DescendantFonts"]) == 1, (
+            "Type0Font must have a valid /DescendantFonts entry"
+        )
 
         descendant_font: Font = self["DescendantFonts"][0]
         return descendant_font.get_ascent()
@@ -215,12 +215,12 @@ class Type0Font(Font):
         """
 
         assert "DescendantFonts" in self, "Type0Font must have a /DescendantFonts entry"
-        assert isinstance(
-            self["DescendantFonts"], List
-        ), "Type0Font must have a valid /DescendantFonts entry"
-        assert (
-            len(self["DescendantFonts"]) == 1
-        ), "Type0Font must have a valid /DescendantFonts entry"
+        assert isinstance(self["DescendantFonts"], List), (
+            "Type0Font must have a valid /DescendantFonts entry"
+        )
+        assert len(self["DescendantFonts"]) == 1, (
+            "Type0Font must have a valid /DescendantFonts entry"
+        )
 
         descendant_font: Font = self["DescendantFonts"][0]
         return descendant_font.get_descent()
@@ -234,12 +234,12 @@ class Type0Font(Font):
         """
 
         assert "DescendantFonts" in self, "Type0Font must have a /DescendantFonts entry"
-        assert isinstance(
-            self["DescendantFonts"], List
-        ), "Type0Font must have a valid /DescendantFonts entry"
-        assert (
-            len(self["DescendantFonts"]) == 1
-        ), "Type0Font must have a valid /DescendantFonts entry"
+        assert isinstance(self["DescendantFonts"], List), (
+            "Type0Font must have a valid /DescendantFonts entry"
+        )
+        assert len(self["DescendantFonts"]) == 1, (
+            "Type0Font must have a valid /DescendantFonts entry"
+        )
 
         descendant_font: Font = self["DescendantFonts"][0]
         return descendant_font.get_width(character_identifier)
