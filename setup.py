@@ -33,7 +33,7 @@ def find_requirements() -> list[str]:
 
 setup(
     name="web-framework",
-    url="https://github.com/enlarge-online/web-framework",
+    url="https://github.com/esherpaio/web-framework",
     version=__version__,
     author="H.P. Mertens",
     python_requires=">=3.11",
