@@ -191,10 +191,20 @@ class API(Generic[B]):
         *filters: ColumnExpressionArgument[bool],
         limit: int | None = None,
         offset: int | None = None,
+        order_by: InstrumentedAttribute | None = None,
     ) -> list[B]:
         if cls.model is None:
             raise NotImplementedError
-        models = s.query(cls.model).filter(*filters).limit(limit).offset(offset).all()
+        if order_by is None:
+            order_by = cls.model.id
+        models = (
+            s.query(cls.model)
+            .filter(*filters)
+            .order_by(order_by)
+            .limit(limit)
+            .offset(offset)
+            .all()
+        )
         return models
 
     @staticmethod

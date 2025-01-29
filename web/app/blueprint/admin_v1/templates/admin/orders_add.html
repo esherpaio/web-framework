@@ -85,13 +85,21 @@
     }
 
     // shipping actions
-    async function loadShipping(shipping) {
-        const names = ["address", "city", "country-id", "email", "first-name", "last-name", "phone", "state", "zip-code"];
-        for (let name of names) {
-            let key = name.replace(/-/g, "_");
+    async function loadShipping(shipping, countries) {
+        const shippingCountryIdEl = document.getElementById('shipping-country-id');
+        for (const country of countries) {
+            const shippingCountryIdElOption = document.createElement('option');
+            shippingCountryIdElOption.value = country.id;
+            shippingCountryIdElOption.textContent = country.name;
+            shippingCountryIdEl.appendChild(shippingCountryIdElOption);
+        };
+
+        const idNames = ["address", "city", "country-id", "email", "first-name", "last-name", "phone", "state", "zip-code"];
+        for (let idName of idNames) {
+            let key = idName.replace(/-/g, "_");
             let value = shipping[key];
             if (value !== undefined) {
-                document.getElementById(`shipping-${name}`).value = value;
+                document.getElementById(`shipping-${idName}`).value = value;
             }
         }
     }
@@ -122,13 +130,21 @@
     }
 
     // billing actions
-    async function loadBilling(billing) {
-        const names = ["address", "city", "country-id", "email", "first-name", "last-name", "phone", "state", "zip-code", "company", "vat"];
-        for (let name of names) {
-            let key = name.replace(/-/g, "_");
+    async function loadBilling(billing, countries) {
+        const billingCountryIdEl = document.getElementById('billing-country-id');
+        for (const country of countries) {
+            const billingCountryIdElOption = document.createElement('option');
+            billingCountryIdElOption.value = country.id;
+            billingCountryIdElOption.textContent = country.name;
+            billingCountryIdEl.appendChild(billingCountryIdElOption);
+        };
+
+        const idNames = ["address", "city", "country-id", "email", "first-name", "last-name", "phone", "state", "zip-code", "company", "vat"];
+        for (let idName of idNames) {
+            let key = idName.replace(/-/g, "_");
             let value = billing[key];
             if (value !== undefined) {
-                document.getElementById(`billing-${name}`).value = value;
+                document.getElementById(`billing-${idName}`).value = value;
             }
         }
 
@@ -230,15 +246,19 @@
         await loadShipmentMethods(cart, currency)
     }
     async function updateShipmentMethod(cart) {
-        let element = document.querySelector('input[name="shipment-method-id"]:checked');
-        let shipment_method_id;
-        if (element) {
-            shipment_method_id = parseInt(element.value);
+        let shipmentMethodEl = document.querySelector('input[name="shipment-method-id"]:checked');
+        let shipmentMethodId;
+        if (shipmentMethodEl) {
+            shipmentMethodId = parseInt(shipmentMethodEl.value);
         } else {
-            shipment_method_id = null;
+            shipmentMethodId = null;
         }
-        let data = { shipment_method_id: shipment_method_id };
-        await patchCartsId(cart.id, data);
+        const cartData = { shipment_method_id: shipmentMethodId };
+        await patchCartsId(cart.id, cartData);
+
+        let shipmentMethod = (await getShipmentMethodsId(shipmentMethodId)).data;
+        let billingPhoneEl = document.getElementById("billing-phone");
+        billingPhoneEl.required = shipmentMethod.phone_required;
     }
 
     // order actions
@@ -273,7 +293,7 @@
         }
         if (shipping_id !== null) {
             shipping = (await getShippingsId(shipping_id)).data;
-            loadShipping(shipping);
+            loadShipping(shipping, countries);
         }
 
         let billing_id = null;
@@ -284,7 +304,7 @@
         }
         if (billing_id !== null) {
             billing = (await getBillingsId(billing_id)).data;
-            loadBilling(billing);
+            loadBilling(billing, countries);
         }
 
         loadCartItems(cart, currency);
@@ -424,7 +444,6 @@
                                 class="form-select update-pricing update-shipment-methods copy-billing"
                                 autocomplete="country-name">
                             <option selected disabled value="">Make a selection</option>
-                            {% for x in cache.countries %}<option value="{{ x.id }}">{{ x.name }}</option>{% endfor %}
                         </select>
                         <label for="shipping-country-id">Country</label>
                     </div>
@@ -461,8 +480,7 @@
                 </div>
                 <div class="col-12 col-sm-6 collapse-billing show">
                     <div class="form-floating">
-                        <input {{ 'required' if cart.shipment_method.phone_required }}
-                               id="billing-phone"
+                        <input id="billing-phone"
                                class="form-control"
                                type="tel"
                                placeholder="Phone"
@@ -542,7 +560,6 @@
                                 class="form-select update-pricing"
                                 autocomplete="country-name">
                             <option selected disabled value="">Make a selection</option>
-                            {% for x in cache.countries %}<option value="{{ x.id }}">{{ x.name }}</option>{% endfor %}
                         </select>
                         <label for="billing-country-id">Country</label>
                     </div>
@@ -608,4 +625,3 @@
         </div>
     </div>
 {% endblock admin_body %}
-`
