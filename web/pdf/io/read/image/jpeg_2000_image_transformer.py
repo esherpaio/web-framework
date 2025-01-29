@@ -60,9 +60,9 @@ class JPEG2000ImageTransformer(Transformer):
 
         # use PIL to read image bytes
 
-        assert isinstance(
-            object_to_transform, Stream
-        ), "object_to_transform must be of type Stream"
+        assert isinstance(object_to_transform, Stream), (
+            "object_to_transform must be of type Stream"
+        )
 
         try:
             tmp = PILImage.open(io.BytesIO(object_to_transform["Bytes"]))

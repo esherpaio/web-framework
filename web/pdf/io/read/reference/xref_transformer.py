@@ -246,7 +246,9 @@ class XREFTransformer(Transformer):
             v: int = int(xref["Trailer"]["Encrypt"].get("V", Decimal(0)))
             r: int = int(xref["Trailer"]["Encrypt"]["R"])
             if r != 2 and r != 3:
-                assert False, "R is not 2 or 3. A number specifying which revision of the standard security handler shall be used."
+                assert False, (
+                    "R is not 2 or 3. A number specifying which revision of the standard security handler shall be used."
+                )
             if v == 0:
                 assert False, (
                     "V is 0. An algorithm that is undocumented. "
@@ -261,7 +263,9 @@ class XREFTransformer(Transformer):
                     xref["Trailer"]["Encrypt"], context.password
                 )
             if v == 3:
-                assert False, "V is 3. (PDF 1.4) An unpublished algorithm that permits encryption key lengths."
+                assert False, (
+                    "V is 3. (PDF 1.4) An unpublished algorithm that permits encryption key lengths."
+                )
             if v == 4:
                 assert False, "V is 4. Currently unsupported encryption dictionary."
 

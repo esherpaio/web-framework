@@ -59,9 +59,9 @@ class JPEGImageTransformer(Transformer):
 
         # use PIL to read image bytes
 
-        assert isinstance(
-            object_to_transform, Stream
-        ), "object_to_transform must be of type Stream"
+        assert isinstance(object_to_transform, Stream), (
+            "object_to_transform must be of type Stream"
+        )
 
         # warnings
         if object_to_transform.get("Type", None) is None:

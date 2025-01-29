@@ -30,12 +30,12 @@ class AppendLineSegment(CanvasOperator):
     ) -> None:
         """Invokes the l operator."""
 
-        assert isinstance(
-            operands[0], Decimal
-        ), "operand 0 of l operator must be of type Decimal"
-        assert isinstance(
-            operands[1], Decimal
-        ), "operand 1 of l operator must be of type Decimal"
+        assert isinstance(operands[0], Decimal), (
+            "operand 0 of l operator must be of type Decimal"
+        )
+        assert isinstance(operands[1], Decimal), (
+            "operand 1 of l operator must be of type Decimal"
+        )
 
         # get graphic state
         canvas = canvas_stream_processor.get_canvas()

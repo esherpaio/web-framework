@@ -33,9 +33,9 @@ class ReferenceTransform(Transformer):
     ):
         """This method writes a Reference to a byte stream."""
 
-        assert (
-            context is not None
-        ), "A WriteTransformerState must be defined in order to write Reference objects."
+        assert context is not None, (
+            "A WriteTransformerState must be defined in order to write Reference objects."
+        )
         assert context.destination is not None
         assert isinstance(object_to_transform, Reference)
 

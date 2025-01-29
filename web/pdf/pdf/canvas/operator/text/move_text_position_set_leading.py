@@ -38,9 +38,9 @@ class MoveTextPositionSetLeading(CanvasOperator):
         set_text_leading_op: typing.Optional[CanvasOperator] = (
             canvas_stream_processor.get_operator("TL")
         )
-        assert (
-            set_text_leading_op
-        ), "Operand TL must be defined for operator TD to function"
+        assert set_text_leading_op, (
+            "Operand TL must be defined for operator TD to function"
+        )
         set_text_leading_op.invoke(
             canvas_stream_processor, [bDecimal(-operands[1])], event_listeners
         )
@@ -48,7 +48,7 @@ class MoveTextPositionSetLeading(CanvasOperator):
         move_text_position_op: typing.Optional[CanvasOperator] = (
             canvas_stream_processor.get_operator("Td")
         )
-        assert (
-            move_text_position_op
-        ), "Operand Td must be defined for operator TD to function"
+        assert move_text_position_op, (
+            "Operand Td must be defined for operator TD to function"
+        )
         move_text_position_op.invoke(canvas_stream_processor, operands, event_listeners)

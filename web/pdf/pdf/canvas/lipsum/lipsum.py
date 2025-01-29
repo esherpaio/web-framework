@@ -36,9 +36,9 @@ class Lipsum:
         :return:                            lorem ipsum text
         """
 
-        assert (
-            number_of_sentences >= 1
-        ), "number_of_sentences must be a positive non-zero quantity"
+        assert number_of_sentences >= 1, (
+            "number_of_sentences must be a positive non-zero quantity"
+        )
         resources_dir: Path = Path(__file__).parent / "resources"
         tg: TextGenerator = TextGenerator().load(
             resources_dir / "mm_agatha_christie.json"
@@ -59,9 +59,9 @@ class Lipsum:
         :return:                            lorem ipsum text
         """
 
-        assert (
-            number_of_sentences >= 1
-        ), "number_of_sentences must be a positive non-zero quantity"
+        assert number_of_sentences >= 1, (
+            "number_of_sentences must be a positive non-zero quantity"
+        )
         resources_dir: Path = Path(__file__).parent / "resources"
         tg: TextGenerator = TextGenerator().load(
             resources_dir / "mm_alan_alexander_milne.json"
@@ -81,9 +81,9 @@ class Lipsum:
         :return:                            lorem ipsum text
         """
 
-        assert (
-            number_of_sentences >= 1
-        ), "number_of_sentences must be a positive non-zero quantity"
+        assert number_of_sentences >= 1, (
+            "number_of_sentences must be a positive non-zero quantity"
+        )
         resources_dir: Path = Path(__file__).parent / "resources"
         tg: TextGenerator = TextGenerator().load(
             resources_dir / "mm_arthur_conan_doyle.json"
@@ -103,9 +103,9 @@ class Lipsum:
         :return:                            lorem ipsum text
         """
 
-        assert (
-            number_of_sentences >= 1
-        ), "number_of_sentences must be a positive non-zero quantity"
+        assert number_of_sentences >= 1, (
+            "number_of_sentences must be a positive non-zero quantity"
+        )
         resources_dir: Path = Path(__file__).parent / "resources"
         tg: TextGenerator = TextGenerator().load(resources_dir / "mm_emily_bronte.json")
         return "".join(
@@ -123,9 +123,9 @@ class Lipsum:
         :return:                            lorem ipsum text
         """
 
-        assert (
-            number_of_sentences >= 1
-        ), "number_of_sentences must be a positive non-zero quantity"
+        assert number_of_sentences >= 1, (
+            "number_of_sentences must be a positive non-zero quantity"
+        )
         resources_dir: Path = Path(__file__).parent / "resources"
         tg: TextGenerator = TextGenerator().load(resources_dir / "mm_jane_austen.json")
         return "".join(
@@ -143,9 +143,9 @@ class Lipsum:
         :return:                            lorem ipsum text
         """
 
-        assert (
-            number_of_sentences >= 1
-        ), "number_of_sentences must be a positive non-zero quantity"
+        assert number_of_sentences >= 1, (
+            "number_of_sentences must be a positive non-zero quantity"
+        )
         resources_dir: Path = Path(__file__).parent / "resources"
         tg: TextGenerator = TextGenerator().load(
             resources_dir / "mm_lewis_carroll.json"
@@ -165,9 +165,9 @@ class Lipsum:
         :return:                            lorem ipsum text
         """
 
-        assert (
-            number_of_sentences >= 1
-        ), "number_of_sentences must be a positive non-zero quantity"
+        assert number_of_sentences >= 1, (
+            "number_of_sentences must be a positive non-zero quantity"
+        )
         resources_dir: Path = Path(__file__).parent / "resources"
         tg: TextGenerator = TextGenerator().load(resources_dir / "mm_lipsum.json")
         return "".join(
@@ -185,9 +185,9 @@ class Lipsum:
         :return:                            lorem ipsum text
         """
 
-        assert (
-            number_of_sentences >= 1
-        ), "number_of_sentences must be a positive non-zero quantity"
+        assert number_of_sentences >= 1, (
+            "number_of_sentences must be a positive non-zero quantity"
+        )
         resources_dir: Path = Path(__file__).parent / "resources"
         tg: TextGenerator = TextGenerator().load(resources_dir / "mm_mary_shelley.json")
         return "".join(

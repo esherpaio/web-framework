@@ -101,9 +101,9 @@ class StandardSecurityHandler:
         # value: 40.
 
         self._key_length: int = int(encryption_dictionary.get("Length", Decimal(40)))
-        assert (
-            self._key_length % 8 == 0
-        ), "The length of the encryption key, in bits must be a multiple of 8."
+        assert self._key_length % 8 == 0, (
+            "The length of the encryption key, in bits must be a multiple of 8."
+        )
 
         # (Required) A number specifying which revision of the standard security
         # handler shall be used to interpret this dictionary

@@ -12,9 +12,9 @@ def decode_stream(s: Stream) -> Stream:
     entry of its stream dictionary."""
 
     assert isinstance(s, Stream), "decode_stream only works on Stream objects"
-    assert (
-        "Bytes" in s
-    ), "decode_stream only works on Stream objects with a `Bytes` key."
+    assert "Bytes" in s, (
+        "decode_stream only works on Stream objects with a `Bytes` key."
+    )
 
     # determine filter(s) to apply
     filters: typing.List[str] = []

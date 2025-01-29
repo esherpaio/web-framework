@@ -60,9 +60,9 @@ class CompressedJPEGImageTransformer(Transformer):
     ) -> Any:
         """This function reads a JPEG Image from a byte stream."""
 
-        assert isinstance(
-            object_to_transform, Stream
-        ), "object_to_transform must be of type Stream"
+        assert isinstance(object_to_transform, Stream), (
+            "object_to_transform must be of type Stream"
+        )
 
         # modify filter (temporarily)
         filters: typing.List = object_to_transform["Filter"]

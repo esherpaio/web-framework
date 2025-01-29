@@ -52,17 +52,17 @@ class DocumentTransformer(Transformer):
                 logger.debug(str(ex))
                 pass
             if isinstance(obj, List):
-                assert isinstance(
-                    obj, List
-                ), "unexpected error while performing _invalidate_all_references"
+                assert isinstance(obj, List), (
+                    "unexpected error while performing _invalidate_all_references"
+                )
 
                 for v in obj:
                     objects_todo.append(v)
                 continue
             if isinstance(obj, Dictionary):
-                assert isinstance(
-                    obj, Dictionary
-                ), "unexpected error while performing _invalidate_all_references"
+                assert isinstance(obj, Dictionary), (
+                    "unexpected error while performing _invalidate_all_references"
+                )
 
                 for k, v in obj.items():
                     objects_todo.append(k)
@@ -84,12 +84,12 @@ class DocumentTransformer(Transformer):
         """This method writes a Document object to a byte stream."""
 
         # write header
-        assert (
-            context is not None
-        ), "A WriteTransformerState must be defined in order to write Document objects."
-        assert (
-            context.destination is not None
-        ), "A WriteTransformerState must be defined in order to write Document objects."
+        assert context is not None, (
+            "A WriteTransformerState must be defined in order to write Document objects."
+        )
+        assert context.destination is not None, (
+            "A WriteTransformerState must be defined in order to write Document objects."
+        )
 
         context.destination.write(b"%PDF-1.7\n")
         context.destination.write(b"%")

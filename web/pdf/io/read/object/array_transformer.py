@@ -39,9 +39,9 @@ class ArrayTransformer(Transformer):
         """This function reads a List from a byte stream."""
 
         # create root object
-        assert isinstance(
-            object_to_transform, List
-        ), "object_to_transform must be of type List"
+        assert isinstance(object_to_transform, List), (
+            "object_to_transform must be of type List"
+        )
         object_to_transform.set_parent(parent_object)
 
         # transform child(ren)

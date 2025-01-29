@@ -46,15 +46,15 @@ class DictionaryTransformer(Transformer):
     ):
         """This method writes a Dictionary to a byte stream."""
 
-        assert isinstance(
-            object_to_transform, Dictionary
-        ), "object_to_transform must be of type Dictionary"
-        assert (
-            context is not None
-        ), "context must be defined in order to write Dictionary objects."
-        assert (
-            context.destination is not None
-        ), "context.destination must be defined in order to write Dictionary objects."
+        assert isinstance(object_to_transform, Dictionary), (
+            "object_to_transform must be of type Dictionary"
+        )
+        assert context is not None, (
+            "context must be defined in order to write Dictionary objects."
+        )
+        assert context.destination is not None, (
+            "context.destination must be defined in order to write Dictionary objects."
+        )
 
         # avoid resolving objects twice
         object_ref: typing.Optional[Reference] = object_to_transform.get_reference()

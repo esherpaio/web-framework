@@ -81,12 +81,12 @@ class Transformer:
 
         # write endobj
 
-        assert (
-            context is not None
-        ), "A WriteTransformerState must be defined in order to write indirect objects."
-        assert (
-            context.destination is not None
-        ), "A WriteTransformerState must be defined in order to write indirect objects."
+        assert context is not None, (
+            "A WriteTransformerState must be defined in order to write indirect objects."
+        )
+        assert context.destination is not None, (
+            "A WriteTransformerState must be defined in order to write indirect objects."
+        )
 
         context.destination.write(bytes("endobj\n\n", "latin1"))
 
@@ -119,12 +119,12 @@ class Transformer:
 
         # get offset position
 
-        assert (
-            context is not None
-        ), "A WriteTransformerState must be defined in order to write indirect objects."
-        assert (
-            context.destination is not None
-        ), "A WriteTransformerState must be defined in order to write indirect objects."
+        assert context is not None, (
+            "A WriteTransformerState must be defined in order to write indirect objects."
+        )
+        assert context.destination is not None, (
+            "A WriteTransformerState must be defined in order to write indirect objects."
+        )
 
         byte_offset = context.destination.tell()
 

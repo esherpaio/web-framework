@@ -340,9 +340,9 @@ class TrueTypeFont(Type1Font):
                 font["Widths"].append(w)
 
         assert font[Name("FirstChar")] >= 0
-        assert (
-            font[Name("LastChar")] < 256
-        ), "TrueType fonts with more than 256 glyphs are currently not supported."
+        assert font[Name("LastChar")] < 256, (
+            "TrueType fonts with more than 256 glyphs are currently not supported."
+        )
 
         font[Name("FontDescriptor")] = TrueTypeFont._get_font_descriptor(ttf_font_file)
         font[Name("Encoding")] = Dictionary()

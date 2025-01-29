@@ -79,9 +79,9 @@ class RootDictionaryTransformer(Transformer):
     ) -> Any:
         """This function reads a /Catalog Dictionary from a byte stream."""
 
-        assert isinstance(
-            object_to_transform, Dictionary
-        ), "object_to_transform must be of type Dictionary"
+        assert isinstance(object_to_transform, Dictionary), (
+            "object_to_transform must be of type Dictionary"
+        )
 
         # convert using Dictionary transformer
         transformed_root_dictionary: Optional[Dictionary] = None

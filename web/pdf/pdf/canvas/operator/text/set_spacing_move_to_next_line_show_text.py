@@ -34,9 +34,9 @@ class SetSpacingMoveToNextLineShowText(CanvasOperator):
         set_word_spacing_op: typing.Optional[CanvasOperator] = (
             canvas_stream_processor.get_operator("Tw")
         )
-        assert (
-            set_word_spacing_op
-        ), 'Operator Tw must be defined for operator " to function'
+        assert set_word_spacing_op, (
+            'Operator Tw must be defined for operator " to function'
+        )
         set_word_spacing_op.invoke(
             canvas_stream_processor, [operands[0]], event_listeners
         )
@@ -44,9 +44,9 @@ class SetSpacingMoveToNextLineShowText(CanvasOperator):
         set_character_spacing_op: typing.Optional[CanvasOperator] = (
             canvas_stream_processor.get_operator("Tc")
         )
-        assert (
-            set_character_spacing_op
-        ), 'Operator Tc must be defined for operator " to function'
+        assert set_character_spacing_op, (
+            'Operator Tc must be defined for operator " to function'
+        )
         set_character_spacing_op.invoke(
             canvas_stream_processor, [operands[1]], event_listeners
         )
@@ -54,9 +54,9 @@ class SetSpacingMoveToNextLineShowText(CanvasOperator):
         move_to_next_line_show_text_op: typing.Optional[CanvasOperator] = (
             canvas_stream_processor.get_operator("'")
         )
-        assert (
-            move_to_next_line_show_text_op
-        ), "Operator ' must be defined for operator \" to function"
+        assert move_to_next_line_show_text_op, (
+            "Operator ' must be defined for operator \" to function"
+        )
         move_to_next_line_show_text_op.invoke(
             canvas_stream_processor, [operands[2]], event_listeners
         )

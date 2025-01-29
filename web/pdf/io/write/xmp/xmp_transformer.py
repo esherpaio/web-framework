@@ -41,12 +41,12 @@ class XMPTransformer(Transformer):
 
         assert isinstance(object_to_transform, ET.Element)
 
-        assert (
-            context is not None
-        ), "A WriteTransformerState must be defined in order to write XMP objects."
-        assert (
-            context.destination is not None
-        ), "A WriteTransformerState must be defined in order to write XMP objects."
+        assert context is not None, (
+            "A WriteTransformerState must be defined in order to write XMP objects."
+        )
+        assert context.destination is not None, (
+            "A WriteTransformerState must be defined in order to write XMP objects."
+        )
 
         # build stream
         out_value = Stream()

@@ -29,7 +29,7 @@ class Schema:
     @property
     def tag(self) -> Markup:
         return Markup(
-            f"<script type='application/ld+json'>{ json.dumps(self.data) }</script>"
+            f"<script type='application/ld+json'>{json.dumps(self.data)}</script>"
         )
 
 

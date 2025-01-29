@@ -34,12 +34,12 @@ class BooleanTransformer(Transformer):
         """This method writes a Boolean to a byte stream."""
 
         assert context is not None, "context must be defined to write bool objects"
-        assert (
-            context.destination is not None
-        ), "context.destination must be defined to write bool objects"
-        assert isinstance(
-            object_to_transform, Boolean
-        ), "object_to_transform must be of type Boolean"
+        assert context.destination is not None, (
+            "context.destination must be defined to write bool objects"
+        )
+        assert isinstance(object_to_transform, Boolean), (
+            "object_to_transform must be of type Boolean"
+        )
 
         if bool(object_to_transform):
             context.destination.write(bytes("true", "latin1"))

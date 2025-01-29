@@ -39,7 +39,7 @@ class NumberTransformer(Transformer):
     ) -> Any:
         """This function reads a Decimal from a byte stream."""
 
-        assert isinstance(
-            object_to_transform, Decimal
-        ), "object_to_transform must be of type Decimal"
+        assert isinstance(object_to_transform, Decimal), (
+            "object_to_transform must be of type Decimal"
+        )
         return Decimal(object_to_transform).set_parent(parent_object)

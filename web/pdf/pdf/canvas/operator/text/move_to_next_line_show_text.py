@@ -31,9 +31,9 @@ class MoveToNextLineShowText(CanvasOperator):
         move_to_next_line_op: typing.Optional[CanvasOperator] = (
             canvas_stream_processor.get_operator("T*")
         )
-        assert (
-            move_to_next_line_op
-        ), "Operator T* must be defined for operator ' to function."
+        assert move_to_next_line_op, (
+            "Operator T* must be defined for operator ' to function."
+        )
         move_to_next_line_op.invoke(canvas_stream_processor, [], event_listeners)
 
         show_text_op: typing.Optional[CanvasOperator] = (
