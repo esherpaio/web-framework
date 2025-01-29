@@ -394,7 +394,13 @@
                 </div>
                 <div class="col-12 col-sm-6 collapse-billing show">
                     <div class="form-floating">
-                        <input {{ 'required' if cart.shipment_method.phone_required }} id="billing-phone" class="form-control" type="tel" value="{{ cart.billing.phone if cart.billing.phone }}" placeholder="Phone" autocomplete="tel">
+                        <input {{ 'required' if cart.shipment_method.phone_required }}
+                               id="billing-phone"
+                               class="form-control"
+                               type="tel"
+                               value="{{ cart.billing.phone if cart.billing.phone }}"
+                               placeholder="Phone"
+                               autocomplete="tel">
                         <label for="billing-phone">Phone</label>
                     </div>
                 </div>
