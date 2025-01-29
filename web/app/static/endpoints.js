@@ -28,7 +28,7 @@ function deleteCartsId(cartId, silent = false) {
     return callApi('DELETE', url, null, null, silent);
 }
 
-function getCartsIdItems(silent = false) {
+function getCartsIdItems(cartId, silent = false) {
     const url = `/api/v1/carts/${cartId}/items`;
     return callApi('GET', url, null, null, silent);
 }

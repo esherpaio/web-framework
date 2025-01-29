@@ -35,6 +35,9 @@
         window.location.reload();
     }
 
+    async function loadShipping(shipping) {
+
+    }
     async function updateShipping(cart, silent = false) {
         let data = emptyStrToNull({
             address: document.getElementById('shipping-address').value,
@@ -59,6 +62,9 @@
         data = { shipping_id: shipping_id };
         await patchCartsId(cart.id, data, silent);
         return cart.shipping_id == shipping_id;
+    }
+    async function loadBilling(billing) {
+
     }
     async function updateBilling(cart, silent = false) {
         let data = emptyStrToNull({
@@ -166,7 +172,7 @@
         const tableBody = table.tBodies[0];
         while (tableBody.firstChild) tableBody.removeChild(tableBody.firstChild);
 
-        resp = await getShipmentMethods({ "cart_id": cart.id });
+        resp = await getCartsIdItems(cart.id);
         for (const cart_item of resp.data) {
             const tr = document.createElement('tr');
             tableBody.appendChild(tr);
@@ -175,9 +181,9 @@
             idTd.textContent = cart_item.id;
             tr.appendChild(idTd);
 
-            const nameTd = document.createElement('td');
-            nameTd.textContent = cart_item.name;
-            tr.appendChild(nameTd);
+            const skuNameTd = document.createElement('td');
+            skuNameTd.textContent = cart_item.sku_name;
+            tr.appendChild(skuNameTd);
 
             const quantityTd = document.createElement('td');
             tr.appendChild(quantityTd);
@@ -190,20 +196,26 @@
 
             const unitPriceTd = document.createElement('td');
             unitPriceTd.textContent = `${cart_item.unit_price} ${currency.code}`;
+            tr.appendChild(unitPriceTd);
 
             const actionsTd = document.createElement('td');
             actionsTd.classList.add('text-end');
             tr.appendChild(actionsTd);
             const actionsTdDiv = document.createElement('div');
+            actionsTdDiv.classList.add("btn-group");
             actionsTd.append(actionsTdDiv);
-            const actionsTdDivButtonUpdate = document.createElement('button');
+            const actionsTdDivButtonUpdate = document.createElement('a');
             actionsTdDivButtonUpdate.id = `update-cart-item-${cart_item.id}`;
             actionsTdDivButtonUpdate.classList.add("btn", "btn-load", "btn-sm", "btn-outline-primary");
             actionsTdDivButtonUpdate.addEventListener("click", () => updateCartItem(cart.id, cart_item.id));
-            const actionsTdDivButtonDelete = document.createElement('button');
-            actionsTdDivButtonDelete.id = `update-cart-item-${cart_item.id}`;
+            actionsTdDivButtonUpdate.textContent = "Update";
+            actionsTdDiv.append(actionsTdDivButtonUpdate);
+            const actionsTdDivButtonDelete = document.createElement('a');
+            actionsTdDivButtonDelete.id = `delete-cart-item-${cart_item.id}`;
             actionsTdDivButtonDelete.classList.add("btn", "btn-load", "btn-sm", "btn-outline-danger");
             actionsTdDivButtonDelete.addEventListener("click", () => deleteCartItem(cart.id, cart_item.id));
+            actionsTdDivButtonDelete.textContent = "Delete";
+            actionsTdDiv.append(actionsTdDivButtonDelete);
         }
     }
 
@@ -223,7 +235,35 @@
     async function initializePage() {
         let cart = (await getCarts()).data[0];
         let currency = (await getCurrenciesId(cart.currency_id)).data;
+        let countries = (await getCountries()).data;
+        let user = (await getUsersId(cart.user_id)).data;
+
+        let shipping_id = null;
+        if (cart.shipping_id) {
+            shipping_id = cart.shipping_id;
+        } else if (user.shipping_id) {
+            shipping_id = user.shipping_id;
+        }
+        if (shipping_id !== null) {
+            shipping = (await getShippingsId(shipping_id)).data;
+            loadShipping(shipping);
+        }
+
+        let billing_id = null;
+        if (cart.billing_id) {
+            billing_id = cart.billing_id;
+        } else if (user.billing_id) {
+            billing_id = user.billing_id;
+        }
+        if (billing_id !== null) {
+            billing = (await getBillingsId(billing_id)).data;
+            loadBilling(billing);
+        }
+        
+        loadCartItems(cart, currency);
         loadShipmentMethods(cart, currency);
+
+
         let copyBillingElements = document.getElementsByClassName("copy-billing");
         Array.from(copyBillingElements).forEach(element => {
             element.addEventListener("change", () => debounce(copyShippingToBilling, 100));
@@ -232,11 +272,9 @@
         Array.from(updateShipmentMethodElements).forEach(element => {
             element.addEventListener("change", () => debounce(triggerLoadShipmentMethods, 100));
         });
-        // load cart items
         // load shipping
         // load billing
         // load countries
-
     }
 
     document.addEventListener("DOMContentLoaded", initializePage);
