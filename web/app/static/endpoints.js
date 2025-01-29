@@ -2,12 +2,12 @@ function postBillings(data, silent = false) {
     const url = `/api/v1/billings`;
     return callApi('POST', url, data, 'application/json', silent);
 }
-function getBillingsId(billingsId, silent = false) {
-    const url = `/api/v1/billings/${billingsId}`;
+function getBillingsId(billingId, silent = false) {
+    const url = `/api/v1/billings/${billingId}`;
     return callApi('GET', url, null, null, silent);
 }
-function patchBillingsId(billingsId, data, silent = false) {
-    const url = `/api/v1/billings/${billingsId}`;
+function patchBillingsId(billingId, data, silent = false) {
+    const url = `/api/v1/billings/${billingId}`;
     return callApi('PATCH', url, data, 'application/json', silent);
 }
 
@@ -298,6 +298,10 @@ function getShipmentMethods(data, silent = false) {
     const url = `/api/v1/shipment-methods`;
     return callApi('GET', url, data, null, silent);
 }
+function getShipmentMethodsId(shipmentMethodId, silent = false) {
+    const url = `/api/v1/shipment-methods/${shipmentMethodId}`;
+    return callApi('GET', url, null, null, silent);
+}
 function patchShipmentMethodsId(shipmentMethodId, data, silent = false) {
     const url = `/api/v1/shipment-methods/${shipmentMethodId}`;
     return callApi('PATCH', url, data, 'application/json', silent);
@@ -328,8 +332,8 @@ function getShippingsId(shippingId, silent = false) {
     const url = `/api/v1/shippings/${shippingId}`;
     return callApi('GET', url, null, null, silent);
 }
-function patchShippingsId(shippingsId, data, silent = false) {
-    const url = `/api/v1/shippings/${shippingsId}`;
+function patchShippingsId(shippingId, data, silent = false) {
+    const url = `/api/v1/shippings/${shippingId}`;
     return callApi('PATCH', url, data, 'application/json', silent);
 }
 

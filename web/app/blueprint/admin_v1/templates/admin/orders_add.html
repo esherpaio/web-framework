@@ -3,7 +3,6 @@
     <script>
     // cart actions
     async function updateCart(cartId) {
-        event.preventDefault();
         updateButton(`update-cart-coupon-code`, 1);
         const data = { coupon_code: document.getElementById('cart-coupon-code').value };
         await patchCartsId(cartId, emptyStrToNull(data));
@@ -63,7 +62,6 @@
         }
     }
     async function addCartItem(cartId) {
-        event.preventDefault();
         updateButton(`add-cart-item`, 1);
         const data = {
             sku_id: parseInt(document.getElementById(`cart-item-sku-id`).value),
@@ -73,7 +71,6 @@
         window.location.reload();
     }
     async function updateCartItem(cartId, cartItemId) {
-        event.preventDefault();
         updateButton(`update-cart-item-${cartItemId}`, 1);
         const data = {
             quantity: parseInt(document.getElementById(`cart-item-quantity-${cartItemId}`).value),
@@ -82,7 +79,6 @@
         window.location.reload();
     }
     async function deleteCartItem(cartId, cartItemId) {
-        event.preventDefault();
         updateButton(`delete-cart-item-${cartItemId}`, 1);
         await deleteCartIdItemsId(cartId, cartItemId);
         window.location.reload();
@@ -234,7 +230,6 @@
         await loadShipmentMethods(cart, currency)
     }
     async function updateShipmentMethod(cart) {
-        event.preventDefault();
         let element = document.querySelector('input[name="shipment-method-id"]:checked');
         let shipment_method_id;
         if (element) {
@@ -247,16 +242,19 @@
     }
 
     // order actions
-    async function addOrder(cartId) {
-        event.preventDefault();
-        let resp = await getCartsId(cartId);
-        let cart = resp.data;
-        let data = { 'cart_id': cart.id, 'trigger_mail': false };
-        resp = await postOrders(data);
-        let order = resp.data;
-        const mollieRedirect = location.protocol + '//' + location.host;
-        const redirect = location.protocol + '//' + location.host + URL_ADMIN_ORDERS + "/" + `${order.id}`;
-        resp = await postOrdersIdPayments(order.id, { "redirect": mollieRedirect });
+    async function loadAddOrderButton(cart) {
+        let addOrderButton = document.getElementById("add-order");
+        addOrderButton.dataset.cartId = cart.id;
+        addOrderButton.addEventListener("click", (e) => addOrder(e));
+    }
+    async function addOrder(event) {
+        const cartId = event.target.dataset.cartId;
+        let cart = (await getCartsId(cartId)).data;
+        let orderData = { 'cart_id': cart.id, 'trigger_mail': false };
+        let order = (await postOrders(orderData)).data;
+        const mollieRedirect = `${location.protocol}//${location.host}`;
+        const redirect = `${location.protocol}//${location.host}${URL_ADMIN_ORDERS}/${order.id}`;
+        await postOrdersIdPayments(order.id, { "redirect": mollieRedirect });
         window.location.href = redirect;
     }
 
@@ -288,9 +286,10 @@
             billing = (await getBillingsId(billing_id)).data;
             loadBilling(billing);
         }
-        
+
         loadCartItems(cart, currency);
         loadShipmentMethods(cart, currency);
+        loadAddOrderButton(cart);
     }
     document.addEventListener("DOMContentLoaded", initializePage);
     </script>
@@ -602,12 +601,11 @@
                     </p>
                 </div>
                 <div class="modal-footer">
-                    <button id="add-order"
-                            class="btn btn-load btn-warning"
-                            onclick="addOrder({{ cart.id }})">Proceed</button>
+                    <button id="add-order" class="btn btn-load btn-warning">Proceed</button>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                 </div>
             </div>
         </div>
     </div>
 {% endblock admin_body %}
+`
