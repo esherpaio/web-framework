@@ -104,14 +104,22 @@
         resp = await getShipmentMethods({ "cart_id": cart.id });
         for (const shipment_method of resp.data) {
             const tr = document.createElement('tr');
+            tableBody.appendChild(tr);
+
             const nameTd = document.createElement('td');
             nameTd.textContent = shipment_method.name;
+            tr.appendChild(nameTd);
+
             const priceTd = document.createElement('td');
             priceTd.textContent = `${shipment_method.unit_price} ${currency.code}`;
+            tr.appendChild(priceTd);
+            
             const actionTd = document.createElement('td');
             actionTd.classList.add('text-end');
+            tr.appendChild(actionTd);
             const formCheckDiv = document.createElement('div');
             formCheckDiv.classList.add('form-check', 'd-flex', 'justify-content-end');
+            actionTd.appendChild(formCheckDiv);
             const input = document.createElement('input');
             input.id = `shipment-method-${shipment_method.id}`;
             input.classList.add('form-check-input');
@@ -122,13 +130,7 @@
             if (shipment_method.id === cart.shipment_method_id) {
                 input.checked = true;
             }
-
             formCheckDiv.appendChild(input);
-            actionTd.appendChild(formCheckDiv);
-            tr.appendChild(nameTd);
-            tr.appendChild(priceTd);
-            tr.appendChild(actionTd);
-            tableBody.appendChild(tr);
         }
     }
 
@@ -159,12 +161,50 @@
         await patchCartsId(cart.id, data);
     }
 
-    async function loadCartItems(cart) {
+    async function loadCartItems(cart, currency) {
         let table = document.getElementById("cart-items");
         const tableBody = table.tBodies[0];
         while (tableBody.firstChild) tableBody.removeChild(tableBody.firstChild);
 
         resp = await getShipmentMethods({ "cart_id": cart.id });
+        for (const cart_item of resp.data) {
+            const tr = document.createElement('tr');
+            tableBody.appendChild(tr);
+
+            const idTd = document.createElement('td');
+            idTd.textContent = cart_item.id;
+            tr.appendChild(idTd);
+
+            const nameTd = document.createElement('td');
+            nameTd.textContent = cart_item.name;
+            tr.appendChild(nameTd);
+
+            const quantityTd = document.createElement('td');
+            tr.appendChild(quantityTd);
+            const quantityTdInput = document.createElement('input');
+            quantityTdInput.id = `cart-item-quantity-${cart_item.id}`;
+            quantityTdInput.classList.add("form-control", "form-control-sm");
+            quantityTdInput.type = "number";
+            quantityTdInput.value = cart_item.quantity;
+            quantityTd.append(quantityTdInput);
+
+            const unitPriceTd = document.createElement('td');
+            unitPriceTd.textContent = `${cart_item.unit_price} ${currency.code}`;
+
+            const actionsTd = document.createElement('td');
+            actionsTd.classList.add('text-end');
+            tr.appendChild(actionsTd);
+            const actionsTdDiv = document.createElement('div');
+            actionsTd.append(actionsTdDiv);
+            const actionsTdDivButtonUpdate = document.createElement('button');
+            actionsTdDivButtonUpdate.id = `update-cart-item-${cart_item.id}`;
+            actionsTdDivButtonUpdate.classList.add("btn", "btn-load", "btn-sm", "btn-outline-primary");
+            actionsTdDivButtonUpdate.addEventListener("click", () => updateCartItem(cart.id, cart_item.id));
+            const actionsTdDivButtonDelete = document.createElement('button');
+            actionsTdDivButtonDelete.id = `update-cart-item-${cart_item.id}`;
+            actionsTdDivButtonDelete.classList.add("btn", "btn-load", "btn-sm", "btn-outline-danger");
+            actionsTdDivButtonDelete.addEventListener("click", () => deleteCartItem(cart.id, cart_item.id));
+        }
     }
 
     async function addOrder(cartId) {
@@ -229,33 +269,6 @@
                         </tr>
                     </thead>
                     <tbody class="table-light">
-                        {% for x in cart_items %}
-                            <tr>
-                                <td>{{ x.sku.id }}</td>
-                                <td>{{ x.sku.name }}</td>
-                                <td>
-                                    <input id="cart-item-quantity-{{ x.id }}"
-                                           class="form-control form-control-sm"
-                                           type="number"
-                                           value="{{ x.quantity }}">
-                                </td>
-                                <td>{{ x.unit_price_vat|price }} {{ cart.currency.code }}</td>
-                                <td class="text-end">
-                                    <div class="btn-group">
-                                        <button id="update-cart-item-{{ x.id }}"
-                                                class="btn btn-load btn-sm btn-outline-primary"
-                                                onclick="updateCartItem({{ cart.id }}, {{ x.id }});">
-                                            Update
-                                        </button>
-                                        <button id="delete-cart-item-{{ x.id }}"
-                                                class="btn btn-load btn-sm btn-outline-danger"
-                                                onclick="deleteCartItem({{ cart.id }}, {{ x.id }});">
-                                            Delete
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                        {% endfor %}
                     </tbody>
                 </table>
             </div>
