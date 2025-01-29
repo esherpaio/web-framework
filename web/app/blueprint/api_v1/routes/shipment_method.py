@@ -75,6 +75,15 @@ def get_shipment_methods() -> Response:
     return json_response(data=resources)
 
 
+@api_v1_bp.get("/shipment-methods/<int:shipment_method_id>")
+def get_shipment_methods_id(shipment_method_id: int) -> Response:
+    api = ShipmentMethodAPI()
+    with conn.begin() as s:
+        model: ShipmentMethod = api.get(s, shipment_method_id)
+        resource = api.gen_resource(s, model)
+    return json_response(data=resource)
+
+
 @api_v1_bp.patch("/shipment-methods/<int:shipment_method_id>")
 @authorize(UserRoleLevel.ADMIN)
 def patch_shipment_methods_id(shipment_method_id: int) -> Response:
@@ -122,7 +131,9 @@ def delete_shipment_methods_id(shipment_method_id: int) -> Response:
 
 
 def set_shipment_methods(
-    s: Session, data: dict, model: list[ShipmentMethod]
+    s: Session,
+    data: dict,
+    model: list[ShipmentMethod],
 ) -> list[ShipmentMethod]:
     # Get cart
     cart_id = data["cart_id"]
