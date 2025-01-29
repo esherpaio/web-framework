@@ -60,7 +60,6 @@
         await patchCartsId(cart.id, data, silent);
         return cart.shipping_id == shipping_id;
     }
-
     async function updateBilling(cart, silent = false) {
         let data = emptyStrToNull({
             address: document.getElementById('billing-address').value,
@@ -88,7 +87,6 @@
         await patchCartsId(cart.id, data, silent);
         return cart.billing_id == billing_id;
     }
-
     async function copyShippingToBilling() {
         const checkbox = document.getElementById("checkbox-use-shipping-for-billing");
         if (!checkbox.checked) return;
@@ -161,6 +159,14 @@
         await patchCartsId(cart.id, data);
     }
 
+    async function loadCartItems(cart) {
+        let table = document.getElementById("cart-items");
+        const tableBody = table.tBodies[0];
+        while (tableBody.firstChild) tableBody.removeChild(tableBody.firstChild);
+
+        resp = await getShipmentMethods({ "cart_id": cart.id });
+    }
+
     async function addOrder(cartId) {
         event.preventDefault();
         let resp = await getCartsId(cartId);
@@ -178,14 +184,19 @@
         let cart = (await getCarts()).data[0];
         let currency = (await getCurrenciesId(cart.currency_id)).data;
         loadShipmentMethods(cart, currency);
-        let elements = document.getElementsByClassName("copy-billing");
-        Array.from(elements).forEach(element => {
+        let copyBillingElements = document.getElementsByClassName("copy-billing");
+        Array.from(copyBillingElements).forEach(element => {
             element.addEventListener("change", () => debounce(copyShippingToBilling, 100));
         });
-        elements = document.getElementsByClassName("update-shipment-methods");
-        Array.from(elements).forEach(element => {
+        updateShipmentMethodElements = document.getElementsByClassName("update-shipment-methods");
+        Array.from(updateShipmentMethodElements).forEach(element => {
             element.addEventListener("change", () => debounce(triggerLoadShipmentMethods, 100));
         });
+        // load cart items
+        // load shipping
+        // load billing
+        // load countries
+
     }
 
     document.addEventListener("DOMContentLoaded", initializePage);
@@ -206,7 +217,8 @@
         <div class="col-12">
             <h3>SKUs</h3>
             <div class="table-responsive">
-                <table class="table rounded-2 overflow-hidden align-middle mb-0">
+                <table id="cart-items"
+                       class="table rounded-2 overflow-hidden align-middle mb-0">
                     <thead class="table-secondary">
                         <tr>
                             <th>ID</th>
