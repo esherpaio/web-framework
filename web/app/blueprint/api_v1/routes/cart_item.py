@@ -37,7 +37,7 @@ class CartItemAPI(API):
         CartItem.id,
         CartItem.quantity,
         CartItem.sku_id,
-        CartItem.unit_price,
+        "unit_price",
         "sku_name",
     }
 
