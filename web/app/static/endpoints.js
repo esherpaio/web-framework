@@ -2,6 +2,10 @@ function postBillings(data, silent = false) {
     const url = `/api/v1/billings`;
     return callApi('POST', url, data, 'application/json', silent);
 }
+function getBillingsId(billingsId, silent = false) {
+    const url = `/api/v1/billings/${billingsId}`;
+    return callApi('GET', url, null, null, silent);
+}
 function patchBillingsId(billingsId, data, silent = false) {
     const url = `/api/v1/billings/${billingsId}`;
     return callApi('PATCH', url, data, 'application/json', silent);
@@ -320,7 +324,7 @@ function postShippings(data, silent = false) {
     const url = `/api/v1/shippings`;
     return callApi('POST', url, data, 'application/json', silent);
 }
-function getShippings(shippingId, silent = false) {
+function getShippingsId(shippingId, silent = false) {
     const url = `/api/v1/shippings/${shippingId}`;
     return callApi('GET', url, null, null, silent);
 }
