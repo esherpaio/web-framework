@@ -20,6 +20,19 @@ class _SupportsRead(Protocol[_SP]):
 #
 
 
+def exists(path: str) -> bool:
+    folder = os.path.dirname(path)
+    name = os.path.basename(path)
+    with FTP(
+        config.CDN_HOSTNAME,
+        config.CDN_USERNAME,
+        config.CDN_PASSWORD,
+    ) as ftp:
+        ftp.cwd(folder)
+        files = ftp.nlst()
+        return name in files
+
+
 def upload(file_: _SupportsRead[bytes], path: str) -> None:
     folder = os.path.dirname(path)
     name = os.path.basename(path)

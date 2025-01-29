@@ -46,8 +46,9 @@ class Packer:
 
     def write_cdn(self, data: bytes, hash_: str, out_ext: str) -> str:
         cdn_path = os.path.join("static", f"{hash_}{out_ext}")
-        fileb = io.BytesIO(data)
-        cdn.upload(fileb, cdn_path)
-        cdn_url = cdn.url(cdn_path)
-        log.info(f"Uploaded bundle to {cdn_url}")
+        if not cdn.exists(cdn_path):
+            fileb = io.BytesIO(data)
+            cdn.upload(fileb, cdn_path)
+            cdn_url = cdn.url(cdn_path)
+            log.info(f"Uploaded bundle to {cdn_url}")
         return cdn_path
