@@ -39,9 +39,10 @@ class Packer:
 
     def write_file(self, data: str, hash_: str, out_dir: str, out_ext: str) -> str:
         out_path = os.path.join(out_dir, f"{hash_}{out_ext}")
-        with open(out_path, "w", encoding=self.ENCODING) as file_:
-            file_.write(data)
-        log.info(f"Saved bundle to {out_path}")
+        if not os.path.isfile(out_path):
+            with open(out_path, "w", encoding=self.ENCODING) as file_:
+                file_.write(data)
+            log.info(f"Saved bundle to {out_path}")
         return out_path
 
     def write_cdn(self, data: bytes, hash_: str, out_ext: str) -> str:

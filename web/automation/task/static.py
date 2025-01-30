@@ -65,6 +65,10 @@ class StaticSyncer(Syncer):
             log.warning("Static syncer is disabled")
             return
 
+        # TODO(Stan): Doing `cdn.exists` for each bundle is expensive. Optimize
+        #  by fetching all filenames first, then generate all hashes, and
+        #  filter in Python.
+
         # Update static resources
         synced = defaultdict(list)
         for seed in cls.SEEDS:
