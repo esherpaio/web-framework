@@ -7,8 +7,8 @@ from web.app.meta import Meta
 from web.app.static import js_bundle
 from web.auth import authorize_user
 from web.automation.task import StaticSeed, StaticType
-from web.database.model import AppRoute, UserRoleLevel
-from web.packer.bundle import CssBundle, JsBundle
+from web.database.model import AppBlueprint, UserRoleLevel
+from web.packer.bundle import CssBundle
 
 _dir = os.path.dirname(os.path.abspath(__file__))
 admin_v1_bp = Blueprint(
@@ -21,16 +21,19 @@ admin_v1_bp = Blueprint(
 )
 admin_v1_css_bundle = CssBundle(os.path.join(_dir, "static", "admin_v1.css"))
 admin_v1_js_bundle = js_bundle
-admin_v1_js_seeds = [
+admin_v1_seeds = [
+    StaticSeed(
+        type_=StaticType.CSS,
+        bundles=[admin_v1_css_bundle],
+        model=AppBlueprint,
+        endpoint="admin",
+    ),
     StaticSeed(
         type_=StaticType.JS,
-        bundles=[JsBundle(os.path.join(_dir, "static", "orders_add.js"))],
-        model=AppRoute,
-        endpoint="admin.orders_add",
+        bundles=[admin_v1_js_bundle],
+        model=AppBlueprint,
+        endpoint="admin",
     ),
-]
-admin_v1_routes = [
-    AppRoute(id=100, endpoint="admin.orders_add"),
 ]
 
 
