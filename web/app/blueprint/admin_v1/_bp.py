@@ -7,7 +7,7 @@ from web.app.meta import Meta
 from web.app.static import js_bundle
 from web.auth import authorize_user
 from web.automation.task import StaticSeed, StaticType
-from web.database.model import AppBlueprint, UserRoleLevel, AppRoute
+from web.database.model import AppRoute, UserRoleLevel
 from web.packer.bundle import CssBundle, JsBundle
 
 _dir = os.path.dirname(os.path.abspath(__file__))
@@ -28,6 +28,9 @@ admin_v1_js_seeds = [
         model=AppRoute,
         endpoint="admin.orders_add",
     ),
+]
+admin_v1_routes = [
+    AppRoute(id=100, endpoint="admin.orders_add"),
 ]
 
 
