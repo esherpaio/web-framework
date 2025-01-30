@@ -14,6 +14,8 @@
     "API_MAIL_CONTACT_SUCCESS": "We hebben uw bericht ontvangen en nemen zo snel mogelijk contact met u op.",
     "API_MAIL_ERROR": "We kunnen uw verzoek op dit moment niet verwerken. Probeer het later opnieuw.",
     "API_MAIL_INVALID_EVENT_ID": "De event ID is ongeldig.",
+    "API_MAIL_CONTACT_ADMIN": "Neem contact op met uw websitebeheerder om deze functie in te schakelen.",
+    "API_MAIL_TOO_MANY": "U hebt te veel gebruikers om bulk-e-mails te versturen.",
     "API_ORDER_PHONE_REQUIRED": "Uw telefoonnummer is vereist.",
     "API_ORDER_REFUND_INVOICE_NOT_FOUND": "We kunnen niet doorgaan omdat er geen factuur is aangemaakt.",
     "API_ORDER_REFUND_NOT_ALLOWED": "Mollie staat geen terugbetalingen toe voor deze betaling.",

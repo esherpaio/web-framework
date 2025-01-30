@@ -1,5 +1,11 @@
 # Changelog
 
+## v2.10.2 (2025-01-30)
+
+- Admin panel
+  - Create orders (BETA)
+  - Send mass emails (BETA)
+
 ## v2.10.1 (2025-01-06)
 
 - Various improvements
