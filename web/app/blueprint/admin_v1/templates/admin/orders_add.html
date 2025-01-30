@@ -1,22 +1,14 @@
 {% extends "admin_main.html" %}
 {% block admin_body %}
     <script>
-    // cart actions
-    async function updateCart(cartId) {
-        updateButton(`update-cart-coupon-code`, 1);
-        const data = { coupon_code: document.getElementById('cart-coupon-code').value };
-        await patchCartsId(cartId, emptyStrToNull(data));
-        window.location.reload();
-    }
-
     // cart item actions
     async function loadCartItems(cart, currency) {
-        let table = document.getElementById("cart-items");
+        const table = document.getElementById("cart-items");
         const tableBody = table.tBodies[0];
         while (tableBody.firstChild) tableBody.removeChild(tableBody.firstChild);
 
-        resp = await getCartsIdItems(cart.id);
-        for (const cart_item of resp.data) {
+        cart_items = (await getCartsIdItems(cart.id)).data;
+        for (const cart_item of cart_items) {
             const tr = document.createElement('tr');
             tableBody.appendChild(tr);
 
@@ -41,33 +33,36 @@
             unitPriceTd.textContent = `${cart_item.unit_price} ${currency.code}`;
             tr.appendChild(unitPriceTd);
 
-            const actionsTd = document.createElement('td');
-            actionsTd.classList.add('text-end');
-            tr.appendChild(actionsTd);
-            const actionsTdDiv = document.createElement('div');
-            actionsTdDiv.classList.add("btn-group");
-            actionsTd.append(actionsTdDiv);
-            const actionsTdDivButtonUpdate = document.createElement('a');
-            actionsTdDivButtonUpdate.id = `update-cart-item-${cart_item.id}`;
-            actionsTdDivButtonUpdate.classList.add("btn", "btn-load", "btn-sm", "btn-outline-primary");
-            actionsTdDivButtonUpdate.addEventListener("click", () => updateCartItem(cart.id, cart_item.id));
-            actionsTdDivButtonUpdate.textContent = "Update";
-            actionsTdDiv.append(actionsTdDivButtonUpdate);
-            const actionsTdDivButtonDelete = document.createElement('a');
-            actionsTdDivButtonDelete.id = `delete-cart-item-${cart_item.id}`;
-            actionsTdDivButtonDelete.classList.add("btn", "btn-load", "btn-sm", "btn-outline-danger");
-            actionsTdDivButtonDelete.addEventListener("click", () => deleteCartItem(cart.id, cart_item.id));
-            actionsTdDivButtonDelete.textContent = "Delete";
-            actionsTdDiv.append(actionsTdDivButtonDelete);
+            const selectionTd = document.createElement('td');
+            selectionTd.classList.add('text-end');
+            tr.appendChild(selectionTd);
+            const selectionTdDiv = document.createElement('div');
+            selectionTdDiv.classList.add("btn-group");
+            selectionTd.append(selectionTdDiv);
+            const selectionTdDivA = document.createElement('a');
+            selectionTdDivA.id = `update-cart-item-${cart_item.id}`;
+            selectionTdDivA.classList.add("btn", "btn-load", "btn-sm", "btn-outline-primary");
+            selectionTdDivA.addEventListener("click", () => updateCartItem(cart.id, cart_item.id));
+            selectionTdDivA.textContent = "Update";
+            selectionTdDiv.append(selectionTdDivA);
+            const selectionButtonDelete = document.createElement('a');
+            selectionButtonDelete.id = `delete-cart-item-${cart_item.id}`;
+            selectionButtonDelete.classList.add("btn", "btn-load", "btn-sm", "btn-outline-danger");
+            selectionButtonDelete.addEventListener("click", () => deleteCartItem(cart.id, cart_item.id));
+            selectionButtonDelete.textContent = "Delete";
+            selectionTdDiv.append(selectionButtonDelete);
         }
 
         initButtons();
     }
-    async function addCartItem(cartId) {
+    async function addCartItem(event) {
+        const cartId = event.target.dataset.cartId;
+        const skuEl = document.querySelector('input[name="sku-id"]:checked');
+        const skuId = skuEl.value;
         updateButton(`add-cart-item`, 1);
         const data = {
-            sku_id: parseInt(document.getElementById(`cart-item-sku-id`).value),
-            quantity: parseInt(document.getElementById(`cart-item-quantity`).value),
+            sku_id: parseInt(skuId),
+            quantity: 1,
         };
         await postCartsIdItems(cartId, data);
         window.location.reload();
@@ -88,25 +83,27 @@
 
     // shipping actions
     async function loadShipping(shipping, countries) {
-        const shippingCountryIdEl = document.getElementById('shipping-country-id');
+        const countrySelect = document.getElementById('shipping-country-id');
         for (const country of countries) {
-            const shippingCountryIdElOption = document.createElement('option');
-            shippingCountryIdElOption.value = country.id;
-            shippingCountryIdElOption.textContent = country.name;
-            shippingCountryIdEl.appendChild(shippingCountryIdElOption);
+            const countryOption = document.createElement('option');
+            countryOption.value = country.id;
+            countryOption.textContent = country.name;
+            countrySelect.appendChild(countryOption);
         };
 
         const idNames = ["address", "city", "country-id", "email", "first-name", "last-name", "phone", "state", "zip-code"];
-        for (let idName of idNames) {
-            let key = idName.replace(/-/g, "_");
-            let value = shipping[key];
+        for (const idName of idNames) {
+            const key = idName.replace(/-/g, "_");
+            const value = shipping[key];
             if (value !== undefined) {
                 document.getElementById(`shipping-${idName}`).value = value;
+            } else {
+                document.getElementById(`shipping-${idName}`).value = "";
             }
         }
     }
     async function updateShipping(cart, silent = false) {
-        let data = emptyStrToNull({
+        const shippingData = emptyStrToNull({
             address: document.getElementById('shipping-address').value,
             city: document.getElementById('shipping-city').value,
             country_id: parseInt(document.getElementById('shipping-country-id').value),
@@ -117,46 +114,46 @@
             state: document.getElementById('shipping-state').value,
             zip_code: document.getElementById('shipping-zip-code').value,
         });
-        let shipping_id = null;
+        let shipping;
         if (cart.shipping_id) {
-            resp = await patchShippingsId(cart.shipping_id, data, silent);
-            if (resp) shipping_id = resp.data.id;
+            shipping = (await patchShippingsId(cart.shipping_id, shippingData, silent)).data;
         }
-        if (!shipping_id) {
-            resp = await postShippings(data, silent);
-            if (resp) shipping_id = resp.data.id;
+        if (!shipping) {
+            shipping = (await postShippings(cartData, silent)).data;
         }
-        data = { shipping_id: shipping_id };
-        await patchCartsId(cart.id, data, silent);
-        return cart.shipping_id == shipping_id;
+        const cartData = { shipping_id: shipping.id };
+        await patchCartsId(cart.id, cartData, silent);
+        return shipping;
     }
 
     // billing actions
     async function loadBilling(billing, countries) {
-        const billingCountryIdEl = document.getElementById('billing-country-id');
+        const countrySelect = document.getElementById('billing-country-id');
         for (const country of countries) {
-            const billingCountryIdElOption = document.createElement('option');
-            billingCountryIdElOption.value = country.id;
-            billingCountryIdElOption.textContent = country.name;
-            billingCountryIdEl.appendChild(billingCountryIdElOption);
+            const countryOption = document.createElement('option');
+            countryOption.value = country.id;
+            countryOption.textContent = country.name;
+            countrySelect.appendChild(countryOption);
         };
 
         const idNames = ["address", "city", "country-id", "email", "first-name", "last-name", "phone", "state", "zip-code", "company", "vat"];
-        for (let idName of idNames) {
-            let key = idName.replace(/-/g, "_");
-            let value = billing[key];
+        for (const idName of idNames) {
+            const key = idName.replace(/-/g, "_");
+            const value = billing[key];
             if (value !== undefined) {
                 document.getElementById(`billing-${idName}`).value = value;
+            } else {
+                document.getElementById(`billing-${idName}`).value = "";
             }
         }
 
-        let copyBillingElements = document.getElementsByClassName("copy-billing");
-        Array.from(copyBillingElements).forEach(element => {
+        const copyBillingEls = document.getElementsByClassName("copy-billing");
+        Array.from(copyBillingEls).forEach(element => {
             element.addEventListener("change", () => debounce(copyShippingToBilling, 100));
         });
     }
     async function updateBilling(cart, silent = false) {
-        let data = emptyStrToNull({
+        const billingData = emptyStrToNull({
             address: document.getElementById('billing-address').value,
             city: document.getElementById('billing-city').value,
             company: document.getElementById('billing-company').value,
@@ -169,36 +166,38 @@
             vat: document.getElementById('billing-vat').value,
             zip_code: document.getElementById('billing-zip-code').value,
         });
-        let billing_id = null;
+        let billing;
         if (cart.billing_id) {
-            resp = await patchBillingsId(cart.billing_id, data, silent);
-            if (resp) billing_id = resp.data.id;
+            billing = (await patchBillingsId(cart.billing_id, billingData, silent)).data;
         }
-        if (!billing_id) {
-            resp = await postBillings(data, silent);
-            if (resp) billing_id = resp.data.id;
+        if (!billing) {
+            billing = (await postBillings(cartData, silent)).data;
         }
-        data = { billing_id: billing_id };
-        await patchCartsId(cart.id, data, silent);
-        return cart.billing_id == billing_id;
+        const cartData = { billing_id: billing.id };
+        await patchCartsId(cart.id, cartData, silent);
+        return billing;
     }
     async function copyShippingToBilling() {
         const checkbox = document.getElementById("checkbox-use-shipping-for-billing");
-        if (!checkbox.checked) return;
-        const names = ["address", "city", "country-id", "email", "first-name", "last-name", "phone", "state", "zip-code"];
-        for (const name of names) {
-            document.getElementById(`billing-${name}`).value = document.getElementById(`shipping-${name}`).value;
+        if (!checkbox.checked) {
+            return;
+        }
+
+        const idNames = ["address", "city", "country-id", "email", "first-name", "last-name", "phone", "state", "zip-code"];
+        for (const idName of idNames) {
+            const shippingValue = document.getElementById(`shipping-${idName}`).value;
+            document.getElementById(`billing-${idName}`).value = shippingValue;
         }
     }
 
     // shipment method actions
     async function loadShipmentMethods(cart, currency) {
-        let table = document.getElementById("shipment-methods");
+        const table = document.getElementById("shipment-methods");
         const tableBody = table.tBodies[0];
         while (tableBody.firstChild) tableBody.removeChild(tableBody.firstChild);
 
-        resp = await getShipmentMethods({ "cart_id": cart.id });
-        for (const shipment_method of resp.data) {
+        shipment_methods = (await getShipmentMethods({ "cart_id": cart.id })).data;
+        for (const shipment_method of shipment_methods) {
             const tr = document.createElement('tr');
             tableBody.appendChild(tr);
 
@@ -210,45 +209,32 @@
             priceTd.textContent = `${shipment_method.unit_price} ${currency.code}`;
             tr.appendChild(priceTd);
             
-            const actionTd = document.createElement('td');
-            actionTd.classList.add('text-end');
-            tr.appendChild(actionTd);
-            const formCheckDiv = document.createElement('div');
-            formCheckDiv.classList.add('form-check', 'd-flex', 'justify-content-end');
-            actionTd.appendChild(formCheckDiv);
-            const input = document.createElement('input');
-            input.id = `shipment-method-${shipment_method.id}`;
-            input.classList.add('form-check-input');
-            input.type = 'radio';
-            input.name = 'shipment-method-id';
-            input.value = `${shipment_method.id}`;
-            input.addEventListener("click", () => updateShipmentMethod(cart));
+            const selectionTd = document.createElement('td');
+            selectionTd.classList.add('text-end');
+            tr.appendChild(selectionTd);
+            const selectionTdDiv = document.createElement('div');
+            selectionTdDiv.classList.add('form-check', 'd-flex', 'justify-content-end');
+            selectionTd.appendChild(selectionTdDiv);
+            const selectionInput = document.createElement('input');
+            selectionInput.id = `shipment-method-${shipment_method.id}`;
+            selectionInput.classList.add('form-check-input');
+            selectionInput.type = 'radio';
+            selectionInput.name = 'shipment-method-id';
+            selectionInput.value = `${shipment_method.id}`;
+            selectionInput.addEventListener("click", () => updateShipmentMethod(cart));
             if (shipment_method.id === cart.shipment_method_id) {
-                input.checked = true;
+                selectionInput.checked = true;
             }
-            formCheckDiv.appendChild(input);
+            selectionTdDiv.appendChild(selectionInput);
         }
 
-        updateShipmentMethodElements = document.getElementsByClassName("update-shipment-methods");
-        Array.from(updateShipmentMethodElements).forEach(element => {
-            element.addEventListener("change", () => debounce(triggerLoadShipmentMethods, 100));
+        updateShipmentMethodEls = document.getElementsByClassName("update-pricing");
+        Array.from(updateShipmentMethodEls).forEach(element => {
+            element.addEventListener("change", () => debounce(reinitializePage, 100));
         });
     }
-    async function triggerLoadShipmentMethods() {
-        let cart = (await getCarts()).data[0];
-        let updated = false;
-        try {
-            updated = await updateShipping(cart, true);
-            await updateBilling(cart, true);
-        } catch { return; }
-        if (updated) {
-            cart = (await getCarts()).data[0];
-        }
-        currency = (await getCurrenciesId(cart.currency_id)).data;
-        await loadShipmentMethods(cart, currency)
-    }
     async function updateShipmentMethod(cart) {
-        let shipmentMethodEl = document.querySelector('input[name="shipment-method-id"]:checked');
+        const shipmentMethodEl = document.querySelector('input[name="shipment-method-id"]:checked');
         let shipmentMethodId;
         if (shipmentMethodEl) {
             shipmentMethodId = parseInt(shipmentMethodEl.value);
@@ -258,34 +244,73 @@
         const cartData = { shipment_method_id: shipmentMethodId };
         await patchCartsId(cart.id, cartData);
 
-        let shipmentMethod = (await getShipmentMethodsId(shipmentMethodId)).data;
-        let billingPhoneEl = document.getElementById("billing-phone");
+        const shipmentMethod = (await getShipmentMethodsId(shipmentMethodId)).data;
+        const billingPhoneEl = document.getElementById("billing-phone");
         billingPhoneEl.required = shipmentMethod.phone_required;
     }
 
     // order actions
     async function loadAddOrderButton(cart) {
-        let addOrderButton = document.getElementById("add-order");
+        const addOrderButton = document.getElementById("add-order");
         addOrderButton.dataset.cartId = cart.id;
         addOrderButton.addEventListener("click", (e) => addOrder(e));
     }
     async function addOrder(event) {
         const cartId = event.target.dataset.cartId;
-        let cart = (await getCartsId(cartId)).data;
-        let orderData = { 'cart_id': cart.id, 'trigger_mail': false };
-        let order = (await postOrders(orderData)).data;
+        const cart = (await getCartsId(cartId)).data;
+        const orderData = { 'cart_id': cart.id, 'trigger_mail': false };
+        const order = (await postOrders(orderData)).data;
         const mollieRedirect = `${location.protocol}//${location.host}`;
         const redirect = `${location.protocol}//${location.host}${URL_ADMIN_ORDERS}/${order.id}`;
         await postOrdersIdPayments(order.id, { "redirect": mollieRedirect });
         window.location.href = redirect;
     }
 
+    // sku actions
+    async function loadSkus(cart, skus) {
+        const table = document.getElementById("skus");
+        const tableBody = table.tBodies[0];
+        while (tableBody.firstChild) tableBody.removeChild(tableBody.firstChild);
+
+        for (const sku of skus) {
+            const tr = document.createElement('tr');
+            tableBody.appendChild(tr);
+
+            const idTd = document.createElement('td');
+            idTd.textContent = sku.id;
+            tr.appendChild(idTd);
+
+            const nameTd = document.createElement('td');
+            nameTd.textContent = sku.name;
+            tr.appendChild(nameTd);
+
+            const selectionTd = document.createElement('td');
+            selectionTd.classList.add('text-end');
+            tr.appendChild(selectionTd);
+            const formCheckDiv = document.createElement('div');
+            formCheckDiv.classList.add('form-check', 'd-flex', 'justify-content-end');
+            selectionTd.appendChild(formCheckDiv);
+            const input = document.createElement('input');
+            input.id = `sku-${sku.id}`;
+            input.classList.add('form-check-input');
+            input.type = 'radio';
+            input.name = 'sku-id';
+            input.value = `${sku.id}`;
+            formCheckDiv.appendChild(input);
+        }
+
+        const AddCartItemButton = document.getElementById("add-cart-item");
+        AddCartItemButton.dataset.cartId = cart.id;
+        AddCartItemButton.addEventListener("click", (e) => addCartItem(e));
+    }    
+
     // initialization
     async function initializePage() {
-        let cart = (await getCarts()).data[0];
-        let currency = (await getCurrenciesId(cart.currency_id)).data;
-        let countries = (await getCountries()).data;
-        let user = (await getUsersId(cart.user_id)).data;
+        const cart = (await getCarts()).data[0];
+        const currency = (await getCurrenciesId(cart.currency_id)).data;
+        const countries = (await getCountries()).data;
+        const user = (await getUsersId(cart.user_id)).data;
+        const skus = (await getSkus()).data;
 
         let shipping_id = null;
         if (cart.shipping_id) {
@@ -311,7 +336,20 @@
 
         loadCartItems(cart, currency);
         loadShipmentMethods(cart, currency);
+        loadSkus(cart, skus);
         loadAddOrderButton(cart);
+    }
+    async function reinitializePage() {
+        let cart = (await getCarts()).data[0];
+        const shipping = await updateShipping(cart, true);
+        const billing = await updateBilling(cart, true);
+        cart = (await getCarts()).data[0];
+        const currency = (await getCurrenciesId(cart.currency_id)).data;
+        const countries = (await getCountries()).data;
+        await loadShipping(shipping, countries);
+        await loadBilling(billing, countries);
+        await loadCartItems(cart, currency);
+        await loadShipmentMethods(cart, currency);
     }
     document.addEventListener("DOMContentLoaded", initializePage);
     </script>
@@ -321,12 +359,14 @@
         <div class="col-12">
             <div class="d-flex justify-content-between gap-2">
                 <h2 class="mb-0">Add order</h2>
-                <button class="btn btn-warning"
-                        data-bs-toggle="modal"
-                        data-bs-target="#modal-add-order">
-                    Create
-                    order
-                </button>
+                <div class="btn-toolbar justify-content-end gap-2">
+                    <button class="btn btn-primary"
+                            data-bs-toggle="modal"
+                            data-bs-target="#modal-add-sku">Add SKU</button>
+                    <button class="btn btn-warning"
+                            data-bs-toggle="modal"
+                            data-bs-target="#modal-add-order">Create order</button>
+                </div>
             </div>
         </div>
         <!-- SKUs -->
@@ -443,7 +483,7 @@
                     <div class="form-floating">
                         <select required
                                 id="shipping-country-id"
-                                class="form-select update-pricing update-shipment-methods copy-billing"
+                                class="form-select update-pricing copy-billing"
                                 autocomplete="country-name">
                             <option selected disabled value="">Make a selection</option>
                         </select>
@@ -600,6 +640,35 @@
                     <tbody class="table-light">
                     </tbody>
                 </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- model add sku -->
+    <div id="modal-add-sku" class="modal fade" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add SKU</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <table id="skus" class="table rounded-2 overflow-hidden align-middle mb-0">
+                        <thead class="table-secondary">
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th class="text-end">Selection</th>
+                            </tr>
+                        </thead>
+                        <tbody class="table-light">
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button id="add-cart-item" class="btn btn-load btn-primary">Add</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                </div>
             </div>
         </div>
     </div>
