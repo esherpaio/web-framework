@@ -3,34 +3,36 @@
     <script>
     // cart item actions
     async function loadCartItems(cart, currency) {
+        // remove cart items
         const table = document.getElementById("cart-items");
         const tableBody = table.tBodies[0];
         while (tableBody.firstChild) tableBody.removeChild(tableBody.firstChild);
 
-        cart_items = (await getCartsIdItems(cart.id)).data;
-        for (const cart_item of cart_items) {
+        // set cart items
+        const cartItems = (await getCartsIdItems(cart.id)).data;
+        for (const cartItem of cartItems) {
             const tr = document.createElement('tr');
             tableBody.appendChild(tr);
 
             const idTd = document.createElement('td');
-            idTd.textContent = cart_item.id;
+            idTd.textContent = cartItem.id;
             tr.appendChild(idTd);
 
             const skuNameTd = document.createElement('td');
-            skuNameTd.textContent = cart_item.sku_name;
+            skuNameTd.textContent = cartItem.sku_name;
             tr.appendChild(skuNameTd);
 
             const quantityTd = document.createElement('td');
             tr.appendChild(quantityTd);
             const quantityTdInput = document.createElement('input');
-            quantityTdInput.id = `cart-item-quantity-${cart_item.id}`;
+            quantityTdInput.id = `cart-item-quantity-${cartItem.id}`;
             quantityTdInput.classList.add("form-control", "form-control-sm");
             quantityTdInput.type = "number";
-            quantityTdInput.value = cart_item.quantity;
+            quantityTdInput.value = cartItem.quantity;
             quantityTd.append(quantityTdInput);
 
             const unitPriceTd = document.createElement('td');
-            unitPriceTd.textContent = `${cart_item.unit_price} ${currency.code}`;
+            unitPriceTd.textContent = `${cartItem.unit_price} ${currency.code}`;
             tr.appendChild(unitPriceTd);
 
             const selectionTd = document.createElement('td');
@@ -40,39 +42,34 @@
             selectionTdDiv.classList.add("btn-group");
             selectionTd.append(selectionTdDiv);
             const selectionTdDivA = document.createElement('a');
-            selectionTdDivA.id = `update-cart-item-${cart_item.id}`;
+            selectionTdDivA.id = `update-cart-item-${cartItem.id}`;
             selectionTdDivA.classList.add("btn", "btn-load", "btn-sm", "btn-outline-primary");
-            selectionTdDivA.addEventListener("click", () => updateCartItem(cart.id, cart_item.id));
+            selectionTdDivA.addEventListener("click", () => updateCartItem(cart.id, cartItem.id));
             selectionTdDivA.textContent = "Update";
             selectionTdDiv.append(selectionTdDivA);
             const selectionButtonDelete = document.createElement('a');
-            selectionButtonDelete.id = `delete-cart-item-${cart_item.id}`;
+            selectionButtonDelete.id = `delete-cart-item-${cartItem.id}`;
             selectionButtonDelete.classList.add("btn", "btn-load", "btn-sm", "btn-outline-danger");
-            selectionButtonDelete.addEventListener("click", () => deleteCartItem(cart.id, cart_item.id));
+            selectionButtonDelete.addEventListener("click", () => deleteCartItem(cart.id, cartItem.id));
             selectionButtonDelete.textContent = "Delete";
             selectionTdDiv.append(selectionButtonDelete);
         }
-
-        initButtons();
     }
     async function addCartItem(event) {
         const cartId = event.target.dataset.cartId;
-        const skuEl = document.querySelector('input[name="sku-id"]:checked');
-        const skuId = skuEl.value;
         updateButton(`add-cart-item`, 1);
-        const data = {
-            sku_id: parseInt(skuId),
-            quantity: 1,
-        };
-        await postCartsIdItems(cartId, data);
+        const skuEl = document.querySelector('input[name="sku-id"]:checked');
+        const skuId = parseInt(skuEl.value);
+        const cartData = {sku_id: parseInt(skuId), quantity: 1};
+        await postCartsIdItems(cartId, cartData);
         window.location.reload();
     }
     async function updateCartItem(cartId, cartItemId) {
         updateButton(`update-cart-item-${cartItemId}`, 1);
-        const data = {
-            quantity: parseInt(document.getElementById(`cart-item-quantity-${cartItemId}`).value),
-        };
-        await patchCartIdItemsId(cartId, cartItemId, data);
+        cartItemQuantityEl = document.getElementById(`cart-item-quantity-${cartItemId}`);
+        cartItemQuantity = parseInt(cartItemQuantityEl.value);
+        const cartData = {quantity: cartItemQuantity};
+        await patchCartIdItemsId(cartId, cartItemId, cartData);
         window.location.reload();
     }
     async function deleteCartItem(cartId, cartItemId) {
@@ -83,6 +80,7 @@
 
     // shipping actions
     async function loadShipping(shipping, countries) {
+        // set countries
         const countrySelect = document.getElementById('shipping-country-id');
         for (const country of countries) {
             const countryOption = document.createElement('option');
@@ -91,6 +89,7 @@
             countrySelect.appendChild(countryOption);
         };
 
+        // set shipping values
         const idNames = ["address", "city", "country-id", "email", "first-name", "last-name", "phone", "state", "zip-code"];
         for (const idName of idNames) {
             const key = idName.replace(/-/g, "_");
@@ -128,6 +127,7 @@
 
     // billing actions
     async function loadBilling(billing, countries) {
+        // set countries
         const countrySelect = document.getElementById('billing-country-id');
         for (const country of countries) {
             const countryOption = document.createElement('option');
@@ -136,6 +136,7 @@
             countrySelect.appendChild(countryOption);
         };
 
+        // set billing values
         const idNames = ["address", "city", "country-id", "email", "first-name", "last-name", "phone", "state", "zip-code", "company", "vat"];
         for (const idName of idNames) {
             const key = idName.replace(/-/g, "_");
@@ -147,6 +148,7 @@
             }
         }
 
+        // set copy billing triggers
         const copyBillingEls = document.getElementsByClassName("copy-billing");
         Array.from(copyBillingEls).forEach(element => {
             element.addEventListener("change", () => debounce(copyShippingToBilling, 100));
@@ -179,10 +181,7 @@
     }
     async function copyShippingToBilling() {
         const checkbox = document.getElementById("checkbox-use-shipping-for-billing");
-        if (!checkbox.checked) {
-            return;
-        }
-
+        if (!checkbox.checked) return;
         const idNames = ["address", "city", "country-id", "email", "first-name", "last-name", "phone", "state", "zip-code"];
         for (const idName of idNames) {
             const shippingValue = document.getElementById(`shipping-${idName}`).value;
@@ -192,21 +191,23 @@
 
     // shipment method actions
     async function loadShipmentMethods(cart, currency) {
+        // remove shipment methods
         const table = document.getElementById("shipment-methods");
         const tableBody = table.tBodies[0];
         while (tableBody.firstChild) tableBody.removeChild(tableBody.firstChild);
 
-        shipment_methods = (await getShipmentMethods({ "cart_id": cart.id })).data;
-        for (const shipment_method of shipment_methods) {
+        // set shipment methods
+        const shipmentMethods = (await getShipmentMethods({ "cart_id": cart.id })).data;
+        for (const shipmentMethod of shipmentMethods) {
             const tr = document.createElement('tr');
             tableBody.appendChild(tr);
 
             const nameTd = document.createElement('td');
-            nameTd.textContent = shipment_method.name;
+            nameTd.textContent = shipmentMethod.name;
             tr.appendChild(nameTd);
 
             const priceTd = document.createElement('td');
-            priceTd.textContent = `${shipment_method.unit_price} ${currency.code}`;
+            priceTd.textContent = `${shipmentMethod.unit_price} ${currency.code}`;
             tr.appendChild(priceTd);
             
             const selectionTd = document.createElement('td');
@@ -216,24 +217,26 @@
             selectionTdDiv.classList.add('form-check', 'd-flex', 'justify-content-end');
             selectionTd.appendChild(selectionTdDiv);
             const selectionInput = document.createElement('input');
-            selectionInput.id = `shipment-method-${shipment_method.id}`;
+            selectionInput.id = `shipment-method-${shipmentMethod.id}`;
             selectionInput.classList.add('form-check-input');
             selectionInput.type = 'radio';
             selectionInput.name = 'shipment-method-id';
-            selectionInput.value = `${shipment_method.id}`;
+            selectionInput.value = `${shipmentMethod.id}`;
             selectionInput.addEventListener("click", () => updateShipmentMethod(cart));
-            if (shipment_method.id === cart.shipment_method_id) {
+            if (shipmentMethod.id === cart.shipment_method_id) {
                 selectionInput.checked = true;
             }
             selectionTdDiv.appendChild(selectionInput);
         }
 
+        // set update pricing triggers
         updateShipmentMethodEls = document.getElementsByClassName("update-pricing");
         Array.from(updateShipmentMethodEls).forEach(element => {
             element.addEventListener("change", () => debounce(reinitializePage, 100));
         });
     }
     async function updateShipmentMethod(cart) {
+        // update cart
         const shipmentMethodEl = document.querySelector('input[name="shipment-method-id"]:checked');
         let shipmentMethodId;
         if (shipmentMethodEl) {
@@ -244,6 +247,7 @@
         const cartData = { shipment_method_id: shipmentMethodId };
         await patchCartsId(cart.id, cartData);
 
+        // set phone required
         const shipmentMethod = (await getShipmentMethodsId(shipmentMethodId)).data;
         const billingPhoneEl = document.getElementById("billing-phone");
         billingPhoneEl.required = shipmentMethod.phone_required;
@@ -256,7 +260,7 @@
         addOrderButton.addEventListener("click", (e) => addOrder(e));
     }
     async function addOrder(event) {
-        const cartId = event.target.dataset.cartId;
+        const cartId = parseInt(event.target.dataset.cartId);
         const cart = (await getCartsId(cartId)).data;
         const orderData = { 'cart_id': cart.id, 'trigger_mail': false };
         const order = (await postOrders(orderData)).data;
@@ -268,10 +272,12 @@
 
     // sku actions
     async function loadSkus(cart, skus) {
+        // remove skus
         const table = document.getElementById("skus");
         const tableBody = table.tBodies[0];
         while (tableBody.firstChild) tableBody.removeChild(tableBody.firstChild);
 
+        // set skus
         for (const sku of skus) {
             const tr = document.createElement('tr');
             tableBody.appendChild(tr);
@@ -287,21 +293,22 @@
             const selectionTd = document.createElement('td');
             selectionTd.classList.add('text-end');
             tr.appendChild(selectionTd);
-            const formCheckDiv = document.createElement('div');
-            formCheckDiv.classList.add('form-check', 'd-flex', 'justify-content-end');
-            selectionTd.appendChild(formCheckDiv);
-            const input = document.createElement('input');
-            input.id = `sku-${sku.id}`;
-            input.classList.add('form-check-input');
-            input.type = 'radio';
-            input.name = 'sku-id';
-            input.value = `${sku.id}`;
-            formCheckDiv.appendChild(input);
+            const selectionTdDiv = document.createElement('div');
+            selectionTdDiv.classList.add('form-check', 'd-flex', 'justify-content-end');
+            selectionTd.appendChild(selectionTdDiv);
+            const selectionInput = document.createElement('input');
+            selectionInput.id = `sku-${sku.id}`;
+            selectionInput.classList.add('form-check-input');
+            selectionInput.type = 'radio';
+            selectionInput.name = 'sku-id';
+            selectionInput.value = `${sku.id}`;
+            selectionTdDiv.appendChild(selectionInput);
         }
 
-        const AddCartItemButton = document.getElementById("add-cart-item");
-        AddCartItemButton.dataset.cartId = cart.id;
-        AddCartItemButton.addEventListener("click", (e) => addCartItem(e));
+        // set add cart item button
+        const addCartItemButton = document.getElementById("add-cart-item");
+        addCartItemButton.dataset.cartId = cart.id;
+        addCartItemButton.addEventListener("click", (e) => addCartItem(e));
     }    
 
     // initialization
@@ -320,7 +327,7 @@
         }
         if (shipping_id !== null) {
             shipping = (await getShippingsId(shipping_id)).data;
-            loadShipping(shipping, countries);
+            await loadShipping(shipping, countries);
         }
 
         let billing_id = null;
@@ -331,13 +338,14 @@
         }
         if (billing_id !== null) {
             billing = (await getBillingsId(billing_id)).data;
-            loadBilling(billing, countries);
+            await loadBilling(billing, countries);
         }
 
-        loadCartItems(cart, currency);
-        loadShipmentMethods(cart, currency);
-        loadSkus(cart, skus);
-        loadAddOrderButton(cart);
+        await loadCartItems(cart, currency);
+        await loadShipmentMethods(cart, currency);
+        await loadSkus(cart, skus);
+        await loadAddOrderButton(cart);
+        await initButtons();
     }
     async function reinitializePage() {
         let cart = (await getCarts()).data[0];
@@ -350,6 +358,7 @@
         await loadBilling(billing, countries);
         await loadCartItems(cart, currency);
         await loadShipmentMethods(cart, currency);
+        await initButtons();
     }
     document.addEventListener("DOMContentLoaded", initializePage);
     </script>
