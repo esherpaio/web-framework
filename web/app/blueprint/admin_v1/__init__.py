@@ -1,4 +1,10 @@
-from ._bp import admin_v1_bp, admin_v1_css_bundle, admin_v1_js_bundle, admin_v1_js_seeds
+from ._bp import (
+    admin_v1_bp,
+    admin_v1_css_bundle,
+    admin_v1_js_bundle,
+    admin_v1_js_seeds,
+    admin_v1_routes,
+)
 from .routes import (
     categories,
     changelog,
@@ -19,6 +25,7 @@ __all__ = [
     "admin_v1_css_bundle",
     "admin_v1_js_bundle",
     "admin_v1_js_seeds",
+    "admin_v1_routes",
     "categories",
     "changelog",
     "countries",
