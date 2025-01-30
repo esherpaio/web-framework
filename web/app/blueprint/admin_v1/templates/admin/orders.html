@@ -1,25 +1,11 @@
 {% extends "admin_main.html" %}
 {% block admin_body %}
-    <script>
-        async function redirectOrdersAdd() {
-            let resp = await getCarts(true);
-            let cart;
-            if (resp.data.length > 0) {
-                cart = resp.data[0];
-            } else {
-                resp = await postCarts();
-                cart = resp.data;
-            }
-            window.location.href = URL_ADMIN_ORDERS_ADD;
-        }
-    </script>
-
     <div class="row g-3">
         <div class="col-12">
             <div class="d-flex justify-content-between gap-2">
                 <h2 class="mb-0">Orders</h2>
                 <div class="btn-toolbar justify-content-end gap-2">
-                    <a class="btn btn-success" onclick="redirectOrdersAdd();">
+                    <a class="btn btn-success" href="{{ url_for('admin.orders_add') }}">
                         Add
                         <i class="bi bi-plus-square ms-1"></i>
                     </a>

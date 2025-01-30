@@ -1,24 +1,17 @@
-from flask import redirect, render_template, request, send_file
+from flask import render_template, request, send_file
 from sqlalchemy import or_
 from sqlalchemy.orm import contains_eager, joinedload
 from werkzeug import Response
 
 from web.api import ApiText, json_response
 from web.app.blueprint.admin_v1 import admin_v1_bp
-from web.app.blueprint.api_v1.routes.shipment_method import set_shipment_methods
 from web.app.bootstrap import get_pages
-from web.app.urls import url_for
-from web.auth import current_user
 from web.database import conn
 from web.database.model import (
     Billing,
-    Cart,
-    CartItem,
     Order,
     OrderLine,
     OrderStatusId,
-    Product,
-    ProductMedia,
     Refund,
     Shipment,
     Shipping,
@@ -31,52 +24,9 @@ from web.utils import remove_file
 
 @admin_v1_bp.get("/admin/orders/add")
 def orders_add() -> str | Response:
-    with conn.begin() as s:
-        # fmt: off
-        cart = (
-            s.query(Cart)
-            .options(
-                joinedload(Cart.currency),
-                joinedload(Cart.coupon),
-                joinedload(Cart.billing),
-                joinedload(Cart.shipping),
-                joinedload(Cart.shipment_method),
-                joinedload(Cart.items),
-                joinedload(Cart.items, CartItem.cart),
-                joinedload(Cart.items, CartItem.sku),
-                joinedload(Cart.items, CartItem.sku, Sku.product),
-            )
-            .filter_by(user_id=current_user.id)
-            .first()
-        )
-        if cart is None:
-            return redirect(url_for("admin.orders"))
-        cart_items = (
-            s.query(CartItem)
-            .options(
-                joinedload(CartItem.cart),
-                joinedload(CartItem.cart, Cart.currency),
-                joinedload(CartItem.sku),
-                joinedload(CartItem.sku, Sku.product),
-                joinedload(CartItem.sku, Sku.product, Product.medias),
-                joinedload(CartItem.sku, Sku.product, Product.medias, ProductMedia.file),
-                joinedload(CartItem.sku, Sku.details),
-                joinedload(CartItem.sku, Sku.details, SkuDetail.option),
-                joinedload(CartItem.sku, Sku.details, SkuDetail.value),
-            )
-            .filter_by(cart_id=cart.id)
-            .order_by(CartItem.id.desc())
-            .all()
-        )
-        shipment_methods = set_shipment_methods(s, {"cart_id": cart.id}, [])
-        # fmt: on
-
     return render_template(
         "admin/orders_add.html",
         active_menu="orders",
-        cart=cart,
-        cart_items=cart_items,
-        shipment_methods=shipment_methods,
     )
 
 

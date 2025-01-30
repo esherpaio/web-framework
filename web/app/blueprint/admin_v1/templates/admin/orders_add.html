@@ -1,10 +1,360 @@
 {% extends "admin_main.html" %}
 {% block admin_body %}
+    <script>
+        // cart item actions
+        async function loadCartItems(cartItems, cart, currency) {
+            const tableBody = document.querySelector("#cart-items tbody");
+            tableBody.innerHTML = "";
+            for (const cartItem of cartItems) {
+                const tr = document.createElement('tr');
+                tableBody.appendChild(tr);
+        
+                const idTd = document.createElement('td');
+                idTd.textContent = cartItem.id;
+                tr.appendChild(idTd);
+        
+                const skuNameTd = document.createElement('td');
+                skuNameTd.textContent = cartItem.sku_name;
+                tr.appendChild(skuNameTd);
+        
+                const quantityTd = document.createElement('td');
+                tr.appendChild(quantityTd);
+                const quantityTdInput = document.createElement('input');
+                quantityTdInput.id = `cart-item-quantity-${cartItem.id}`;
+                quantityTdInput.dataset.cartId = cartItem.cart_id;
+                quantityTdInput.dataset.cartItemId = cartItem.id;
+                quantityTdInput.classList.add("form-control", "form-control-sm");
+                quantityTdInput.type = "number";
+                quantityTdInput.value = cartItem.quantity;
+                quantityTdInput.addEventListener("change", (e) => updateCartItemQuantity(e));
+                quantityTd.append(quantityTdInput);
+        
+                const unitPriceTd = document.createElement('td');
+                unitPriceTd.textContent = `${cartItem.unit_price} ${currency.code}`;
+                tr.appendChild(unitPriceTd);
+        
+                const selectionTd = document.createElement('td');
+                selectionTd.classList.add('text-end');
+                tr.appendChild(selectionTd);
+                const selectionTdDiv = document.createElement('div');
+                selectionTdDiv.classList.add("btn-group");
+                selectionTd.append(selectionTdDiv);
+                const selectionButtonDelete = document.createElement('a');
+                selectionButtonDelete.id = `delete-cart-item-${cartItem.id}`;
+                selectionButtonDelete.dataset.cartId = cartItem.cart_id;
+                selectionButtonDelete.dataset.cartItemId = cartItem.id;
+                selectionButtonDelete.classList.add("btn", "btn-load", "btn-sm", "btn-outline-danger");
+                selectionButtonDelete.addEventListener("click", (e) => deleteCartItem(e));
+                selectionButtonDelete.textContent = "Delete";
+                selectionTdDiv.append(selectionButtonDelete);
+            }
+        }
+        async function addCartItem(event) {
+            const cartId = parseInt(event.target.dataset.cartId);
+            await updateButton(event.target.id, 1);
+            const skuEl = document.querySelector('input[name="sku-id"]:checked');
+            const skuId = parseInt(skuEl.value);
+            const cartData = { sku_id: parseInt(skuId), quantity: 1 };
+            await postCartsIdItems(cartId, cartData);
+            await reloadPage();
+            await updateButton(event.target.id, -1);
+        }
+        async function updateCartItemQuantity(event) {
+            const cartId = parseInt(event.target.dataset.cartId);
+            const cartItemId = parseInt(event.target.dataset.cartItemId);
+            const cartItemQuantityEl = document.getElementById(`cart-item-quantity-${cartItemId}`);
+            const cartItemQuantity = parseInt(cartItemQuantityEl.value);
+            const cartData = { quantity: cartItemQuantity };
+            await patchCartIdItemsId(cartId, cartItemId, cartData);
+            await reloadPage();
+        }
+        async function deleteCartItem(event) {
+            const cartId = parseInt(event.target.dataset.cartId);
+            const cartItemId = parseInt(event.target.dataset.cartItemId);
+            await updateButton(event.target.id, 1);
+            await deleteCartIdItemsId(cartId, cartItemId);
+            await reloadPage();
+        }
+        
+        // shipping actions
+        async function loadShipping(shipping, countries) {
+            const countrySelect = document.getElementById('shipping-country-id');
+            countrySelect.options.length = 0;
+            for (const country of countries) {
+                const countryOption = document.createElement('option');
+                countryOption.value = country.id;
+                countryOption.textContent = country.name;
+                countrySelect.appendChild(countryOption);
+            };
+        
+            const idNames = ["address", "city", "country-id", "email", "first-name", "last-name", "phone", "state", "zip-code"];
+            for (const idName of idNames) {
+                const key = idName.replace(/-/g, "_");
+                let value = shipping[key];
+                value = value !== undefined ? value : "";
+                document.getElementById(`shipping-${idName}`).value = value;
+            }
+        }
+        async function updateShipping(cart, silent = false) {
+            const shippingData = emptyStrToNull({
+                address: document.getElementById('shipping-address').value,
+                city: document.getElementById('shipping-city').value,
+                country_id: parseInt(document.getElementById('shipping-country-id').value),
+                email: document.getElementById('shipping-email').value,
+                first_name: document.getElementById('shipping-first-name').value,
+                last_name: document.getElementById('shipping-last-name').value,
+                phone: document.getElementById('shipping-phone').value,
+                state: document.getElementById('shipping-state').value,
+                zip_code: document.getElementById('shipping-zip-code').value,
+            });
+            let shipping;
+            if (cart.shipping_id) {
+                shipping = (await patchShippingsId(cart.shipping_id, shippingData, silent)).data;
+            }
+            if (!shipping) {
+                shipping = (await postShippings(shippingData, silent)).data;
+            }
+            const cartData = { shipping_id: shipping.id };
+            cart = (await patchCartsId(cart.id, cartData, silent)).data;
+            await reloadPage();
+
+            const checkbox = document.getElementById("checkbox-use-shipping-for-billing");
+            if (checkbox.checked) {
+                const idNames = ["address", "city", "country-id", "email", "first-name", "last-name", "phone", "state", "zip-code"];
+                for (const idName of idNames) {
+                    const shippingValue = document.getElementById(`shipping-${idName}`).value;
+                    document.getElementById(`billing-${idName}`).value = shippingValue;
+                }
+                await updateBilling(cart, true);
+            }
+        }
+
+        // billing actions
+        async function loadBilling(billing, countries) {
+            const countrySelect = document.getElementById('billing-country-id');
+            countrySelect.options.length = 0;
+            for (const country of countries) {
+                const countryOption = document.createElement('option');
+                countryOption.value = country.id;
+                countryOption.textContent = country.name;
+                countrySelect.appendChild(countryOption);
+            };
+        
+            const idNames = ["address", "city", "country-id", "email", "first-name", "last-name", "phone", "state", "zip-code", "company", "vat"];
+            for (const idName of idNames) {
+                const key = idName.replace(/-/g, "_");
+                let value = billing[key];
+                value = value !== undefined ? value : "";
+                document.getElementById(`billing-${idName}`).value = value;
+            }
+        }
+        async function updateBilling(cart, silent = false) {
+            const billingData = emptyStrToNull({
+                address: document.getElementById('billing-address').value,
+                city: document.getElementById('billing-city').value,
+                company: document.getElementById('billing-company').value,
+                country_id: parseInt(document.getElementById('billing-country-id').value),
+                email: document.getElementById('billing-email').value,
+                first_name: document.getElementById('billing-first-name').value,
+                last_name: document.getElementById('billing-last-name').value,
+                phone: document.getElementById('billing-phone').value,
+                state: document.getElementById('billing-state').value,
+                vat: document.getElementById('billing-vat').value,
+                zip_code: document.getElementById('billing-zip-code').value,
+            });
+            let billing;
+            if (cart.billing_id) {
+                billing = (await patchBillingsId(cart.billing_id, billingData, silent)).data;
+            }
+            if (!billing) {
+                billing = (await postBillings(billingData, silent)).data;
+            }
+            const cartData = { billing_id: billing.id };
+            await patchCartsId(cart.id, cartData, silent);
+            await reloadPage();
+        }
+
+        // shipment method actions
+        async function loadShipmentMethods(shipmentMethods, cart, currency) {
+            const tableBody = document.querySelector("#shipment-methods tbody");
+            tableBody.innerHTML = "";
+            for (const shipmentMethod of shipmentMethods) {
+                const tr = document.createElement('tr');
+                tableBody.appendChild(tr);
+        
+                const nameTd = document.createElement('td');
+                nameTd.textContent = shipmentMethod.name;
+                tr.appendChild(nameTd);
+        
+                const priceTd = document.createElement('td');
+                priceTd.textContent = `${shipmentMethod.unit_price} ${currency.code}`;
+                tr.appendChild(priceTd);
+        
+                const selectionTd = document.createElement('td');
+                selectionTd.classList.add('text-end');
+                tr.appendChild(selectionTd);
+                const selectionTdDiv = document.createElement('div');
+                selectionTdDiv.classList.add('form-check', 'd-flex', 'justify-content-end');
+                selectionTd.appendChild(selectionTdDiv);
+                const selectionInput = document.createElement('input');
+                selectionInput.id = `shipment-method-${shipmentMethod.id}`;
+                selectionInput.classList.add('form-check-input');
+                selectionInput.type = 'radio';
+                selectionInput.name = 'shipment-method-id';
+                selectionInput.value = `${shipmentMethod.id}`;
+                selectionInput.dataset.cartId = cart.id;
+                selectionInput.addEventListener("click", (e) => updateShipmentMethod(e));
+                if (shipmentMethod.id === cart.shipment_method_id) {
+                    selectionInput.checked = true;
+                }
+                selectionTdDiv.appendChild(selectionInput);
+            }
+        }
+        async function updateShipmentMethod(event) {
+            const cartId = parseInt(event.target.dataset.cartId);
+            const shipmentMethodEl = document.querySelector('input[name="shipment-method-id"]:checked');
+            let shipmentMethodId;
+            if (shipmentMethodEl) {
+                shipmentMethodId = parseInt(shipmentMethodEl.value);
+            } else {
+                shipmentMethodId = null;
+            }
+            const cartData = { shipment_method_id: shipmentMethodId };
+            await patchCartsId(cartId, cartData);
+
+            if (shipmentMethodId !== null) {
+                const shipmentMethod = (await getShipmentMethodsId(shipmentMethodId)).data;
+                const shippingPhoneEl = document.getElementById("shipping-phone");
+                shippingPhoneEl.required = shipmentMethod.phone_required;
+            }
+        }
+        
+        // order actions
+        async function loadAddOrderButton(cart) {
+            const addOrderButton = document.getElementById("add-order");
+            addOrderButton.dataset.cartId = cart.id;
+            addOrderButton.addEventListener("click", (e) => addOrder(e));
+        }
+        async function addOrder(event) {
+            const cartId = parseInt(event.target.dataset.cartId);
+            const orderData = { 'cart_id': cartId, 'trigger_mail': false };
+            const order = (await postOrders(orderData)).data;
+            const mollieRedirect = `${location.protocol}//${location.host}`;
+            const redirect = `${location.protocol}//${location.host}${URL_ADMIN_ORDERS}/${order.id}`;
+            await postOrdersIdPayments(order.id, { "redirect": mollieRedirect });
+            await deleteCartsId(cartId);
+            window.location.href = redirect;
+        }
+        
+        // sku actions
+        async function loadSkus(cart, skus) {
+            const tableBody = document.querySelector("#skus tbody");
+            tableBody.innerHTML = "";
+            for (const sku of skus) {
+                const tr = document.createElement('tr');
+                tableBody.appendChild(tr);
+        
+                const idTd = document.createElement('td');
+                idTd.textContent = sku.id;
+                tr.appendChild(idTd);
+        
+                const nameTd = document.createElement('td');
+                nameTd.textContent = sku.name;
+                tr.appendChild(nameTd);
+        
+                const selectionTd = document.createElement('td');
+                selectionTd.classList.add('text-end');
+                tr.appendChild(selectionTd);
+                const selectionTdDiv = document.createElement('div');
+                selectionTdDiv.classList.add('form-check', 'd-flex', 'justify-content-end');
+                selectionTd.appendChild(selectionTdDiv);
+                const selectionInput = document.createElement('input');
+                selectionInput.id = `sku-${sku.id}`;
+                selectionInput.classList.add('form-check-input');
+                selectionInput.type = 'radio';
+                selectionInput.name = 'sku-id';
+                selectionInput.value = `${sku.id}`;
+                selectionTdDiv.appendChild(selectionInput);
+            }
+        
+            const addCartItemButton = document.getElementById("add-cart-item");
+            addCartItemButton.dataset.cartId = cart.id;
+            addCartItemButton.addEventListener("click", (e) => addCartItem(e));
+        }
+        
+        // initialization
+        async function loadPage() {
+            let cart = (await getCarts()).data[0];
+            if (!cart) {
+                cart = (await postCarts()).data;
+            }
+
+            const cartItems = (await getCartsIdItems(cart.id)).data;
+            const user = (await getUsersId(cart.user_id)).data;
+            const shipmentMethods = (await getShipmentMethods({ "cart_id": cart.id })).data;
+            const skus = (await getSkus()).data;
+            const currency = (await getCurrenciesId(cart.currency_id)).data;
+            const countries = (await getCountries()).data;
+
+            let shipping_id = null;
+            if (cart.shipping_id) {
+                shipping_id = cart.shipping_id;
+            } else if (user.shipping_id) {
+                shipping_id = user.shipping_id;
+            }
+            if (shipping_id !== null) {
+                const shipping = (await getShippingsId(shipping_id)).data;
+                await loadShipping(shipping, countries);
+            }
+
+            let billing_id = null;
+            if (cart.billing_id) {
+                billing_id = cart.billing_id;
+            } else if (user.billing_id) {
+                billing_id = user.billing_id;
+            }
+            if (billing_id !== null) {
+                const billing = (await getBillingsId(billing_id)).data;
+                await loadBilling(billing, countries);
+            }
+
+            await loadCartItems(cartItems, cart, currency);
+            await loadShipmentMethods(shipmentMethods, cart, currency);
+            await loadSkus(cart, skus);
+            await loadAddOrderButton(cart);
+            await initButtons();
+
+            const debounceUpdateShipping = (...args) => debounce(() => updateShipping(...args), 100);
+            const debounceUpdateBilling = (...args) => debounce(() => updateBilling(...args), 100);
+            document.addEventListener('change', async (event) => {
+                if (event.target.matches('.update-shipping')) {
+                    await debounceUpdateShipping(cart, true);
+                } else if (event.target.matches('.update-billing')) {
+                    await debounceUpdateBilling(cart, true);
+                }
+            });
+        }
+        async function reloadPage() {
+            let cart = (await getCarts()).data[0];
+            const cartItems = (await getCartsIdItems(cart.id)).data;
+            const shipmentMethods = (await getShipmentMethods({ "cart_id": cart.id })).data;
+            const currency = (await getCurrenciesId(cart.currency_id)).data;
+            await loadCartItems(cartItems, cart, currency);
+            await loadShipmentMethods(shipmentMethods, cart, currency);
+            await initButtons();
+        }
+
+        document.addEventListener("DOMContentLoaded", loadPage);
+    </script>
+
     <div class="row g-3">
         <!-- button add order -->
         <div class="col-12">
             <div class="d-flex justify-content-between gap-2">
-                <h2 class="mb-0">Add order</h2>
+                <h2 class="mb-0 d-flex align-items-center">
+                    <span class="badge rounded-pill text-bg-dark me-2">BETA</span>
+                    Add order
+                </h2>
                 <div class="btn-toolbar justify-content-end gap-2">
                     <button class="btn btn-primary"
                             data-bs-toggle="modal"
@@ -43,7 +393,7 @@
                     <div class="form-floating">
                         <input required
                                id="shipping-email"
-                               class="form-control copy-billing"
+                               class="form-control update-shipping"
                                type="email"
                                placeholder="Email"
                                autocomplete="email">
@@ -53,7 +403,7 @@
                 <div class="col-12 col-sm-6">
                     <div class="form-floating">
                         <input id="shipping-phone"
-                               class="form-control copy-billing"
+                               class="form-control update-shipping"
                                type="tel"
                                placeholder="Phone"
                                autocomplete="tel">
@@ -64,7 +414,7 @@
                     <div class="form-floating">
                         <input required
                                id="shipping-first-name"
-                               class="form-control copy-billing"
+                               class="form-control update-shipping"
                                type="text"
                                placeholder="First name"
                                autocomplete="given-name">
@@ -75,7 +425,7 @@
                     <div class="form-floating">
                         <input required
                                id="shipping-last-name"
-                               class="form-control copy-billing"
+                               class="form-control update-shipping"
                                type="text"
                                placeholder="First name"
                                autocomplete="family-name">
@@ -86,7 +436,7 @@
                     <div class="form-floating">
                         <input required
                                id="shipping-address"
-                               class="form-control copy-billing"
+                               class="form-control update-shipping"
                                type="text"
                                placeholder="Address"
                                autocomplete="street-address">
@@ -97,7 +447,7 @@
                     <div class="form-floating">
                         <input required
                                id="shipping-city"
-                               class="form-control copy-billing"
+                               class="form-control update-shipping"
                                type="text"
                                placeholder="City"
                                autocomplete="address-level2">
@@ -108,7 +458,7 @@
                     <div class="form-floating">
                         <input required
                                id="shipping-zip-code"
-                               class="form-control copy-billing"
+                               class="form-control update-shipping"
                                type="text"
                                placeholder="Postal code"
                                autocomplete="postal-code">
@@ -118,7 +468,7 @@
                 <div class="col-12 col-sm-4">
                     <div class="form-floating">
                         <input id="shipping-state"
-                               class="form-control copy-billing"
+                               class="form-control update-shipping"
                                type="text"
                                placeholder="State"
                                autocomplete="address-level1">
@@ -129,7 +479,7 @@
                     <div class="form-floating">
                         <select required
                                 id="shipping-country-id"
-                                class="form-select reload-page copy-billing"
+                                class="form-select update-shipping"
                                 autocomplete="country-name">
                             <option selected disabled value="">Make a selection</option>
                         </select>
@@ -142,7 +492,7 @@
         <div class="col-12">
             <h3>Billing</h3>
             <div class="form-check mb-2">
-                <input class="form-check-input"
+                <input class="form-check-input update-shipping update-billing"
                        type="checkbox"
                        id="checkbox-use-shipping-for-billing"
                        data-bs-toggle="collapse"
@@ -158,7 +508,7 @@
                     <div class="form-floating">
                         <input required
                                id="billing-email"
-                               class="form-control"
+                               class="form-control update-billing"
                                type="email"
                                placeholder="Email"
                                autocomplete="email">
@@ -168,7 +518,7 @@
                 <div class="col-12 col-sm-6 collapse-billing show">
                     <div class="form-floating">
                         <input id="billing-phone"
-                               class="form-control"
+                               class="form-control update-billing"
                                type="tel"
                                placeholder="Phone"
                                autocomplete="tel">
@@ -179,7 +529,7 @@
                     <div class="form-floating">
                         <input required
                                id="billing-first-name"
-                               class="form-control"
+                               class="form-control update-billing"
                                type="text"
                                placeholder="First name"
                                autocomplete="given-name">
@@ -190,7 +540,7 @@
                     <div class="form-floating">
                         <input required
                                id="billing-last-name"
-                               class="form-control"
+                               class="form-control update-billing"
                                type="text"
                                placeholder="First name"
                                autocomplete="family-name">
@@ -201,7 +551,7 @@
                     <div class="form-floating">
                         <input required
                                id="billing-address"
-                               class="form-control"
+                               class="form-control update-billing"
                                type="text"
                                placeholder="Address"
                                autocomplete="street-address">
@@ -212,7 +562,7 @@
                     <div class="form-floating">
                         <input required
                                id="billing-city"
-                               class="form-control"
+                               class="form-control update-billing"
                                type="text"
                                placeholder="City"
                                autocomplete="address-level2">
@@ -223,7 +573,7 @@
                     <div class="form-floating">
                         <input required
                                id="billing-zip-code"
-                               class="form-control"
+                               class="form-control update-billing"
                                type="text"
                                placeholder="Postal code"
                                autocomplete="postal-code">
@@ -233,7 +583,7 @@
                 <div class="col-12 col-sm-4 collapse-billing show">
                     <div class="form-floating">
                         <input id="billing-state"
-                               class="form-control"
+                               class="form-control update-billing"
                                type="text"
                                placeholder="State"
                                autocomplete="address-level1">
@@ -244,7 +594,7 @@
                     <div class="form-floating">
                         <select required
                                 id="billing-country-id"
-                                class="form-select reload-page"
+                                class="form-select update-billing"
                                 autocomplete="country-name">
                             <option selected disabled value="">Make a selection</option>
                         </select>
@@ -254,7 +604,7 @@
                 <div class="col-12 col-sm-6">
                     <div class="form-floating">
                         <input id="billing-company"
-                               class="form-control reload-page"
+                               class="form-control update-billing"
                                type="text"
                                placeholder="Company"
                                autocomplete="organization">
@@ -263,7 +613,10 @@
                 </div>
                 <div class="col-12 col-sm-6">
                     <div class="form-floating">
-                        <input id="billing-vat" class="form-control" type="text" placeholder="VAT">
+                        <input id="billing-vat"
+                               class="form-control update-billing"
+                               type="text"
+                               placeholder="VAT">
                         <label for="billing-vat">VAT</label>
                     </div>
                 </div>
