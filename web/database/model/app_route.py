@@ -13,6 +13,6 @@ class AppRoute(Base, Attribute):
     image_url = MC(String(256))
     in_sitemap = MC(Boolean, nullable=False, default=False, server_default="false")
     js_path = MC(String(128))
-    name = MC(String(64), nullable=False)
-    robots = MC(String(256), nullable=False)
+    name = MC(String(64), nullable=True)
+    robots = MC(String(256), nullable=True)
     is_collection = MC(Boolean, nullable=False, default=False, server_default="false")

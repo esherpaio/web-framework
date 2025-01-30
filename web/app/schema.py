@@ -36,7 +36,7 @@ class Schema:
 class SchemaWebPage(Schema):
     def __init__(
         self,
-        title: str,
+        title: str | None = None,
         description: str | None = None,
     ) -> None:
         super().__init__()
