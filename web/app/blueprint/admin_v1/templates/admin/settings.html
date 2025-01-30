@@ -4,7 +4,7 @@
         async function updateSetting() {
             event.preventDefault();
             updateButton(`update-setting`, 1);
-            await patchSetting({
+            await patchSettings({
                 banner: document.getElementById('setting-banner').value,
                 cached_at: null,
             });

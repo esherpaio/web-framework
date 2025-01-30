@@ -40,11 +40,11 @@ function postCartsIdItems(cartId, data, silent = false) {
     const url = `/api/v1/carts/${cartId}/items`;
     return callApi('POST', url, data, 'application/json', silent);
 }
-function patchCartIdItemsId(cartId, cartItemId, data, silent = false) {
+function patchCartsIdItemsId(cartId, cartItemId, data, silent = false) {
     const url = `/api/v1/carts/${cartId}/items/${cartItemId}`;
     return callApi('PATCH', url, data, 'application/json', silent);
 }
-function deleteCartIdItemsId(cartId, cartItemId, silent = false) {
+function deleteCartsIdItemsId(cartId, cartItemId, silent = false) {
     const url = `/api/v1/carts/${cartId}/items/${cartItemId}`;
     return callApi('DELETE', url, null, null, silent);
 }
@@ -156,12 +156,10 @@ function deleteOrdersId(orderId, silent = false) {
     const url = `/api/v1/orders/${orderId}`;
     return callApi('DELETE', url, null, null, silent);
 }
-
 function postOrdersIdPayments(orderId, data, silent = false) {
     const url = `/api/v1/orders/${orderId}/payments`;
     return callApi('POST', url, data, 'application/json', silent);
 }
-
 function postOrdersIdRefunds(orderId, data, silent = false) {
     const url = `/api/v1/orders/${orderId}/refunds`;
     return callApi('POST', url, data, 'application/json', silent);
@@ -263,12 +261,12 @@ function deleteSessions(silent = false) {
     return callApi('DELETE', url, null, 'application/json', silent);
 }
 
-function getSetting(silent = false) {
-    const url = `/api/v1/setting`;
+function getSettings(silent = false) {
+    const url = `/api/v1/settings`;
     return callApi('GET', url, null, null, silent);
 }
-function patchSetting(data, silent = false) {
-    const url = `/api/v1/setting`;
+function patchSettings(data, silent = false) {
+    const url = `/api/v1/settings`;
     return callApi('PATCH', url, data, 'application/json', silent);
 }
 

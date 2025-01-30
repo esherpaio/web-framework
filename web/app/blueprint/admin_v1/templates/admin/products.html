@@ -7,7 +7,7 @@
             await postProducts({
                 name: document.getElementById('product-name').value
             });
-            await patchSetting({ cached_at: null });
+            await patchSettings({ cached_at: null });
             window.location.reload();
         }
     </script>

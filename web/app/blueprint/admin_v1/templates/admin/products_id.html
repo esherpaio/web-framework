@@ -13,14 +13,14 @@
                 consent_required: document.getElementById("product-consent-required").checked,
                 file_url: document.getElementById("product-file-url").value,
             });
-            await patchSetting({ cached_at: null });
+            await patchSettings({ cached_at: null });
             window.location.reload();
         }
         async function deleteProduct(productId) {
             event.preventDefault();
             updateButton(`delete-product`, 1);
             let resp = await deleteProductsId(productId);
-            await patchSetting({ cached_at: null });
+            await patchSettings({ cached_at: null });
             window.location = URL_ADMIN_PRODUCTS;
         }
     </script>
