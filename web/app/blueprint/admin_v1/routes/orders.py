@@ -23,11 +23,11 @@ from web.document.object import gen_invoice, gen_refund
 from web.utils import remove_file
 
 order_status_color_map = {
-    OrderStatusId.PENDING: "text-bg-warning",
-    OrderStatusId.PAID: "text-bg-green",
+    OrderStatusId.PENDING: "text-bg-danger",
+    OrderStatusId.PAID: "text-bg-warning",
     OrderStatusId.IN_PROGRESS: "text-bg-blue",
     OrderStatusId.READY: "text-bg-blue",
-    OrderStatusId.COMPLETED: "text-bg-gray",
+    OrderStatusId.COMPLETED: "text-bg-green",
 }
 
 
