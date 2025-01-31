@@ -14,10 +14,14 @@ async function checkParams() {
 }
 
 async function verifyUser(verificationKey) {
-    let resp = await getVerifications({ key: verificationKey });
+    let resp = await getVerifications({
+        key: verificationKey
+    });
     if (resp && resp.data.length > 0) {
         let verification = resp.data[0];
-        resp = await patchUsersIdActivation(verification.user_id, { verification_key: verificationKey });
+        resp = await patchUsersIdActivation(verification.user_id, {
+            verification_key: verificationKey
+        });
         showMessage(resp.message);
     }
 }
@@ -43,7 +47,9 @@ async function loginUserGoogle(resp) {
     const buttonId = 'button-login-user';
     updateButton(buttonId, 1);
     if (resp && resp.credential) {
-        await postSessionsGoogle({ token_id: resp.credential });
+        await postSessionsGoogle({
+            token_id: resp.credential
+        });
         window.location.href = URL_USER_LOGIN;
     }
     updateButton(buttonId, -1);
@@ -62,7 +68,9 @@ async function registerUser() {
     }, true);
     let message = resp.message;
     if (resp.code == 409) {
-        resp = await getUsers({ email: document.getElementById('register-email').value })
+        resp = await getUsers({
+            email: document.getElementById('register-email').value
+        })
         let user = resp.data.length > 0 ? resp.data[0] : null;
         if (user !== null && !user.is_active) {
             resp = await postUsersIdActivation(user.id);
@@ -79,7 +87,9 @@ async function requestPassword() {
     event.preventDefault();
     const buttonId = 'button-request-password';
     updateButton(buttonId, 1);
-    let resp = await getUsers({ email: document.getElementById('request-email').value });
+    let resp = await getUsers({
+        email: document.getElementById('request-email').value
+    });
     if (resp && resp.data.length > 0) {
         let user = resp.data[0];
         resp = await postUsersIdPassword(user.id);
@@ -92,7 +102,9 @@ async function recoverPassword() {
     event.preventDefault();
     const buttonId = 'button-recover-password';
     updateButton(buttonId, 1);
-    let resp = await getVerifications({ key: verificationKey });
+    let resp = await getVerifications({
+        key: verificationKey
+    });
     if (resp && resp.data.length > 0) {
         let verification = resp.data[0];
         resp = await patchUsersIdPassword(verification.user_id, {
