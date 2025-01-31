@@ -9,6 +9,7 @@ from web.auth import current_user
 from web.config import config
 from web.database import conn
 from web.database.model import Invoice, Order
+from web.locale import current_locale
 
 #
 # Configuration
@@ -22,7 +23,9 @@ from web.database.model import Invoice, Order
 
 @api_v1_bp.post("/orders/<int:order_id>/payments")
 def post_orders_id_payments(order_id: int) -> Response:
-    redirect = json_get("redirect", str, nullable=False)[0]
+    redirect_url = json_get("redirect_url", str, nullable=False)[0]
+    cancel_url = json_get("cancel_url", str, nullable=False)[0]
+    methods, has_methods = json_get("methods", list)
     add_invoice = json_get("add_invoice", bool, nullable=False, default=False)[0]
 
     with conn.begin() as s:
@@ -36,19 +39,21 @@ def post_orders_id_payments(order_id: int) -> Response:
         amount = mollie_amount(order_price_vat, order.currency_code)
         description = f"Order {order.id}"
         is_test = config.MOLLIE_KEY.startswith("test")
-        due_date = (datetime.now(timezone.utc) + timedelta(days=25)).strftime(
-            "%Y-%m-%d"
-        )
-        mollie_payment = Mollie().payments.create(
-            {
-                "amount": amount,
-                "description": description,
-                "redirectUrl": redirect,
-                "webhookUrl": mollie_webhook(),
-                "metadata": {"order_id": order.id, "is_test": is_test},
-                "dueDate": due_date,
-            }
-        )
+        due_date = datetime.now(timezone.utc) + timedelta(days=25)
+        due_date_str = due_date.strftime("%Y-%m-%d")
+        mollie_payment_data = {
+            "amount": amount,
+            "description": description,
+            "redirectUrl": redirect_url,
+            "cancelUrl": cancel_url,
+            "webhookUrl": mollie_webhook(),
+            "metadata": {"order_id": order.id, "is_test": is_test},
+            "dueDate": due_date_str,
+            "locale": current_locale.locale_alt,
+        }
+        if has_methods:
+            mollie_payment_data["method"] = methods
+        mollie_payment = Mollie().payments.create(mollie_payment_data)
 
         # Add invoice
         if add_invoice:
