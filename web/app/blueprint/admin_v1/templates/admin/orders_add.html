@@ -250,6 +250,16 @@
             await updateButton(event.target.id, -1);
             window.location.href = redirectUrl;
         }
+        async function loadCart(cart) {
+            document.getElementById("cart-coupon-code").innerHTML = cart.coupon_code;
+            document.getElementById("cart-vat-percentage").innerHTML = `${cart.vat_percentage}%`;
+            document.getElementById("cart-vat-amount").innerHTML = `${cart.vat_amount} ${cart.currency_code}`;
+            document.getElementById("cart-vat-reverse").innerHTML = cart.vat_reverse;
+            document.getElementById("cart-discount-price").innerHTML = cart.discount_price;
+            document.getElementById("cart-discount-price-vat").innerHTML = cart.discount_price_vat;
+            document.getElementById("cart-total-price").innerHTML = cart.total_price;
+            document.getElementById("cart-total-price-vat").innerHTML = cart.total_price_vat;
+        }
 
         // sku actions
         async function loadSkus(cart, skus) {
@@ -323,6 +333,7 @@
                 await loadBilling(billing, countries);
             }
 
+            await loadCart(cart);
             await loadCartItems(cartItems, cart, currency);
             await loadShipmentMethods(shipmentMethods, cart, currency);
             await loadSkus(cart, skus);
@@ -344,6 +355,7 @@
             const cartItems = (await getCartsIdItems(cart.id)).data;
             const shipmentMethods = (await getShipmentMethods({ "cart_id": cart.id })).data;
             const currency = (await getCurrenciesId(cart.currency_id)).data;
+            await loadCart(cart);
             await loadCartItems(cartItems, cart, currency);
             await loadShipmentMethods(shipmentMethods, cart, currency);
             await initButtons();
@@ -370,7 +382,45 @@
                 </div>
             </div>
         </div>
-        <!-- SKUs -->
+        <!-- Order -->
+        <div class="col-12 col-lg-4">
+            <div class="bg-light rounded-2 p-4 text-break h-100">
+                <h4>Order</h4>
+                <div class="row g-3">
+                    <div class="col fw-semibold">
+                        <span class="d-block">Coupon</span>
+                        <span class="d-block">VAT Percentage</span>
+                        <span class="d-block">VAT Amount</span>
+                        <span class="d-block">VAT Reverse</span>
+                    </div>
+                    <div class="col">
+                        <span id="cart-coupon-code" class="d-block"></span>
+                        <span id="cart-vat-percentage" class="d-block"></span>
+                        <span id="cart-vat-amount" class="d-block"></span>
+                        <span id="cart-vat-reverse" class="d-block"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-lg-4">
+            <div class="bg-light rounded-2 p-4 text-break h-100">
+                <h4>Order</h4>
+                <div class="row g-3">
+                    <div class="col fw-semibold">
+                        <span class="d-block">Discount</span>
+                        <span class="d-block">Discount VAT</span>
+                        <span class="d-block">Total</span>
+                        <span class="d-block">Total VAT</span>
+                    </div>
+                    <div class="col">
+                        <span id="cart-discount-price" class="d-block"></span>
+                        <span id="cart-discount-price-vat" class="d-block"></span>
+                        <span id="cart-total-price" class="d-block"></span>
+                        <span id="cart-total-price-vat" class="d-block"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="col-12">
             <h3>SKUs</h3>
             <div class="table-responsive">

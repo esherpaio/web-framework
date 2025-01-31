@@ -220,7 +220,6 @@
                                 <th>Carrier</th>
                                 <th>Code</th>
                                 <th>Tracking URL</th>
-                                <th class="text-end">Actions</th>
                             </tr>
                         </thead>
                         <tbody class="table-light">
@@ -232,14 +231,6 @@
                                         {% if shipment.url %}
                                             <a href="{{ shipment.url }}" target="_blank" rel="noopener">{{ shipment.url }}</a>
                                         {% endif %}
-                                    </td>
-                                    <td class="text-end">
-                                        <div class="btn-group">
-                                            <a class="btn btn-sm btn-outline-primary"
-                                               href="{{ shipment.url }}"
-                                               target="_blank"
-                                               rel="noopener">Open</a>
-                                        </div>
                                     </td>
                                 </tr>
                             {% endfor %}

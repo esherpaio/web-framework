@@ -56,6 +56,18 @@ class Cart(Base):
     # Properties - pricing
 
     @hybrid_property
+    def currency_code(self) -> str | None:
+        if self.currency:
+            return self.currency.code
+        return None
+
+    @hybrid_property
+    def coupon_code(self) -> str | None:
+        if self.coupon:
+            return self.coupon.code
+        return None
+
+    @hybrid_property
     def vat_percentage(self) -> int:
         return round((self.vat_rate - 1) * 100)
 
