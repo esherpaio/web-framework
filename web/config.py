@@ -101,6 +101,7 @@ class Config(metaclass=Singleton):
         EnvVar("EMAIL_METHOD", str),
         EnvVar("EMAIL_TIMEOUT", int, default=10),
         EnvVar("EMAIL_WORKER", bool, default=False),
+        ConfigVar("EMAIL_MAX_BULK_COUNT", default=100),
         EnvVar("EMAIL_FROM", str),
         EnvVar("EMAIL_TO", str),
         EnvVar("EMAIL_ADMIN", str),

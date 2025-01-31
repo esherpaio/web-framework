@@ -3,9 +3,9 @@ from enum import StrEnum
 from sqlalchemy import null, true
 from werkzeug import Response
 
-from web import config
 from web.api import json_get, json_response
 from web.app.blueprint.api_v1 import api_v1_bp
+from web.config import config
 from web.database import conn
 from web.database.model import User
 from web.i18n import _
@@ -37,7 +37,7 @@ def post_emails() -> Response:
     with conn.begin() as s:
         # Inject emails for bulk email
         if event_id == MailEvent.WEBSITE_BULK:
-            if not config.EMAIL_WORKER:  # type: ignore[attr-defined]
+            if not config.EMAIL_WORKER:
                 return json_response(400, Text.CONTACT_ADMIN)
             if "emails" not in data:
                 users = (
@@ -50,7 +50,7 @@ def post_emails() -> Response:
                     .all()
                 )
                 emails = set(user.email for user in users)
-                if len(emails) > 100:
+                if len(emails) > config.EMAIL_MAX_BULK_COUNT:
                     return json_response(400, Text.TOO_MANY_EMAILS)
                 data["emails"] = list(emails)
 
