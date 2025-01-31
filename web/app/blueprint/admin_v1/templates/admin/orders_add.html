@@ -241,7 +241,7 @@
             const order = (await postOrders(orderData)).data;
             const mollieRedirect = `${location.protocol}//${location.host}`;
             const redirect = `${location.protocol}//${location.host}${URL_ADMIN_ORDERS}/${order.id}`;
-            await postOrdersIdPayments(order.id, { "redirect": mollieRedirect });
+            await postOrdersIdPayments(order.id, { "redirect": mollieRedirect, "add_invoice": true });
             await deleteCartsId(cartId);
             window.location.href = redirect;
         }
