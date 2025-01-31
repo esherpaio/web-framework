@@ -1,5 +1,8 @@
 from datetime import datetime, timedelta, timezone
+from enum import StrEnum
 
+from flask import abort
+from mollie.api.error import UnprocessableEntityError
 from werkzeug import Response
 
 from web.api import ApiText, json_get, json_response
@@ -9,11 +12,18 @@ from web.auth import current_user
 from web.config import config
 from web.database import conn
 from web.database.model import Invoice, Order
+from web.i18n import _
 from web.locale import current_locale
 
 #
 # Configuration
 #
+
+
+class Text(StrEnum):
+    UNSUPPORTED_CURRENCY_BANKTRANSFER = _(
+        "API_ORDER_PAYMENT_UNSUPPORTED_CURRENCY_BANKTRANSFER"
+    )
 
 
 #
@@ -52,7 +62,12 @@ def post_orders_id_payments(order_id: int) -> Response:
         }
         if has_methods:
             mollie_payment_data["method"] = methods
-        mollie_payment = Mollie().payments.create(mollie_payment_data)
+        try:
+            mollie_payment = Mollie().payments.create(mollie_payment_data)
+        except UnprocessableEntityError as error:
+            if error.field == "amount.currency":
+                abort(400, Text.UNSUPPORTED_CURRENCY_BANKTRANSFER)
+            raise error
 
         # Create invoice
         invoice = Invoice(
