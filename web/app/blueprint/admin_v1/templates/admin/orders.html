@@ -69,7 +69,7 @@
                         {% for order in orders %}
                             <tr>
                                 <td>{{ order.id }}</td>
-                                <td>{{ order.created_at|datetime("%x") }}</td>
+                                <td>{{ order.created_at|datetime }}</td>
                                 <td>{{ order.billing.first_name }} {{ order.billing.last_name }}</td>
                                 <td>
                                     <span class="badge {{ order_status_color_map.get(order.status_id, '') }}">{{ order.status.name }}</span>
