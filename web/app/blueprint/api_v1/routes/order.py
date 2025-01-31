@@ -205,7 +205,6 @@ def mail_order(s: Session, data: dict, model: Order) -> None:
 
 
 def cancel_mollie(s: Session, data: dict, model: Order) -> None:
-    # Try to cancel the Mollie payment
     mollie = Mollie().payments.get(model.mollie_id)
     if mollie.is_canceled():
         return
