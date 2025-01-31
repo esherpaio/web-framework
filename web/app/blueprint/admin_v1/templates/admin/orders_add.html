@@ -2,7 +2,7 @@
 {% block admin_body %}
     <script>
         // cart item actions
-        async function loadCartItems(cartItems, cart, currency) {
+        async function loadCartItems(cartItems, cart) {
             const tableBody = document.querySelector("#cart-items tbody");
             tableBody.innerHTML = "";
             for (const cartItem of cartItems) {
@@ -184,7 +184,7 @@
         }
 
         // shipment method actions
-        async function loadShipmentMethods(shipmentMethods, cart, currency) {
+        async function loadShipmentMethods(shipmentMethods, cart) {
             const tableBody = document.querySelector("#shipment-methods tbody");
             tableBody.innerHTML = "";
             for (const shipmentMethod of shipmentMethods) {
@@ -324,8 +324,9 @@
             const shipmentMethods = (await getShipmentMethods({
                 "cart_id": cart.id
             })).data;
-            const skus = (await getSkus()).data;
-            const currency = (await getCurrenciesId(cart.currency_id)).data;
+            const skus = (await getSkus({
+                "is_deleted": false
+            })).data;
             const countries = (await getCountries()).data;
 
             let shipping_id = null;
@@ -351,8 +352,8 @@
             }
 
             await loadCart(cart);
-            await loadCartItems(cartItems, cart, currency);
-            await loadShipmentMethods(shipmentMethods, cart, currency);
+            await loadCartItems(cartItems, cart);
+            await loadShipmentMethods(shipmentMethods, cart);
             await loadSkus(cart, skus);
             await loadAddOrderButton(cart);
             await initButtons();

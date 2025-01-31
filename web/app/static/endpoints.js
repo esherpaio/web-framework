@@ -393,9 +393,9 @@ function postSkus(data, silent = false) {
     return callApi('POST', url, data, 'application/json', silent);
 }
 
-function getSkus(silent = false) {
+function getSkus(data, silent = false) {
     const url = `/api/v1/skus`;
-    return callApi('GET', url, null, null, silent);
+    return callApi('GET', url, data, null, silent);
 }
 
 function patchSkusId(skuId, data, silent = false) {
