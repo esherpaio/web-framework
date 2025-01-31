@@ -79,7 +79,7 @@
                     <div class="col">
                         <span class="d-block">{{ order.id }}</span>
                         <span class="d-block">{{ order.created_at|datetime("%c") }}</span>
-                        <span class="d-block mb-2">{{ order.status.name }}</span>
+                        <span class="d-block mb-2"><span class="badge {{ order_status_color_map.get(order.status_id, '') }}">{{ order.status.name }}</span></span>
                         <span class="d-block">{{ order.shipment_name }}</span>
                         <span class="d-block mb-2">{{ order.shipment_price|price }} {{ order.currency_code }}</span>
                         <span class="d-block">{{ order.coupon_code }}</span>
@@ -219,7 +219,7 @@
                             <tr>
                                 <th>Carrier</th>
                                 <th>Code</th>
-                                <th>URL</th>
+                                <th>Tracking URL</th>
                                 <th class="text-end">Actions</th>
                             </tr>
                         </thead>
@@ -228,7 +228,11 @@
                                 <tr>
                                     <td>{{ shipment.carrier if shipment.carrier }}</td>
                                     <td>{{ shipment.code if shipment.code }}</td>
-                                    <td>{{ shipment.url }}</td>
+                                    <td>
+                                        {% if shipment.url %}
+                                            <a href="{{ shipment.url }}" target="_blank" rel="noopener">{{ shipment.url }}</a>
+                                        {% endif %}
+                                    </td>
                                     <td class="text-end">
                                         <div class="btn-group">
                                             <a class="btn btn-sm btn-outline-primary"

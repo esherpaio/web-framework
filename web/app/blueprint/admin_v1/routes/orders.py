@@ -142,6 +142,7 @@ def orders_id(order_id: int) -> str:
     return render_template(
         "admin/orders_id.html",
         active_menu="orders",
+        order_status_color_map=order_status_color_map,
         order=order_,
         order_lines=order_lines,
         invoices=invoices,

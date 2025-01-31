@@ -2,6 +2,7 @@ from datetime import datetime, timezone
 from typing import Callable, Type
 
 import alembic.config
+from babel.dates import format_datetime
 from flask import Blueprint, Flask
 
 from web import cdn
@@ -181,7 +182,9 @@ class FlaskWeb:
         filters.update(
             {
                 "price": lambda a: f"{a:.{2}f}",
-                "datetime": lambda a, b: a.strftime(b),
+                "datetime": lambda a: format_datetime(
+                    a, locale=current_locale.locale_alt
+                ),
             }
         )
         for name, func in filters.items():
