@@ -26,7 +26,6 @@ def post_orders_id_payments(order_id: int) -> Response:
     redirect_url = json_get("redirect_url", str, nullable=False)[0]
     cancel_url = json_get("cancel_url", str, nullable=False)[0]
     methods, has_methods = json_get("methods", list)
-    add_invoice = json_get("add_invoice", bool, nullable=False, default=False)[0]
 
     with conn.begin() as s:
         # Check if order is in use by the user
@@ -55,16 +54,15 @@ def post_orders_id_payments(order_id: int) -> Response:
             mollie_payment_data["method"] = methods
         mollie_payment = Mollie().payments.create(mollie_payment_data)
 
-        # Add invoice
-        if add_invoice:
-            invoice = Invoice(
-                expires_at=mollie_payment.expires_at,
-                paid_at=mollie_payment.paid_at,
-                order_id=order.id,
-                payment_url=mollie_payment.checkout_url,
-            )
-            s.add(invoice)
-            s.flush()
+        # Create invoice
+        invoice = Invoice(
+            expires_at=mollie_payment.expires_at,
+            paid_at=mollie_payment.paid_at,
+            order_id=order.id,
+            payment_url=mollie_payment.checkout_url,
+        )
+        s.add(invoice)
+        s.flush()
 
         # Update order
         order.mollie_id = mollie_payment.id

@@ -228,7 +228,7 @@
                 shippingPhoneEl.required = shipmentMethod.phone_required;
             }
         }
-        
+
         // order actions
         async function loadAddOrderButton(cart) {
             const addOrderButton = document.getElementById("add-order");
@@ -243,14 +243,14 @@
             await updateBilling(cart);
             const orderData = { 'cart_id': cart.id, 'trigger_mail': false };
             const order = (await postOrders(orderData)).data;
-            const mollieRedirect = `${location.protocol}//${location.host}`;
-            const redirect = `${location.protocol}//${location.host}${URL_ADMIN_ORDERS}/${order.id}`;
-            await postOrdersIdPayments(order.id, { "redirect": mollieRedirect, "add_invoice": true });
+            const baseUrl = `${location.protocol}//${location.host}`;
+            const redirectUrl = `${location.protocol}//${location.host}${URL_ADMIN_ORDERS}/${order.id}`;
+            await postOrdersIdPayments(order.id, { "redirect_url": baseUrl, "cancel_url": baseUrl, "methods": ["banktransfer"] });
             await deleteCartsId(cart.id);
             await updateButton(event.target.id, -1);
-            window.location.href = redirect;
+            window.location.href = redirectUrl;
         }
-        
+
         // sku actions
         async function loadSkus(cart, skus) {
             const tableBody = document.querySelector("#skus tbody");
