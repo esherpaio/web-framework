@@ -1,7 +1,6 @@
 from datetime import datetime, timedelta, timezone
 from enum import StrEnum
 
-from flask import abort
 from mollie.api.error import UnprocessableEntityError
 from werkzeug import Response
 
@@ -66,7 +65,7 @@ def post_orders_id_payments(order_id: int) -> Response:
             mollie_payment = Mollie().payments.create(mollie_payment_data)
         except UnprocessableEntityError as error:
             if error.field == "amount.currency":
-                abort(400, Text.UNSUPPORTED_CURRENCY_BANKTRANSFER)
+                return json_response(400, Text.UNSUPPORTED_CURRENCY_BANKTRANSFER)
             raise error
 
         # Create invoice
