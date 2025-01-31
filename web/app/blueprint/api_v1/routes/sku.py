@@ -28,6 +28,9 @@ class SkuAPI(API):
         Sku.product_id,
         "name",
     }
+    get_filters = {
+        Sku.is_deleted,
+    }
 
 
 #
@@ -66,8 +69,10 @@ def patch_skus_id(sku_id: int) -> Response:
 @authorize(UserRoleLevel.ADMIN)
 def get_skus() -> Response:
     api = SkuAPI()
+    data = api.gen_query_data(api.get_filters)
     with conn.begin() as s:
-        models: list[Sku] = api.list_(s, order_by=Sku.slug)
+        filters = api.gen_query_filters(data)
+        models: list[Sku] = api.list_(s, *filters, order_by=Sku.slug)
         resources = api.gen_resources(s, models)
     return json_response(data=resources)
 
