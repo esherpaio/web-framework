@@ -30,7 +30,7 @@
                 quantityTd.append(quantityTdInput);
         
                 const unitPriceTd = document.createElement('td');
-                unitPriceTd.textContent = `${cartItem.unit_price} ${currency.code}`;
+                unitPriceTd.textContent = `${cartItem.unit_price.toFixed(2)} ${cart.currency_code}`;
                 tr.appendChild(unitPriceTd);
         
                 const selectionTd = document.createElement('td');
@@ -45,7 +45,7 @@
                 selectionButtonDelete.dataset.cartItemId = cartItem.id;
                 selectionButtonDelete.classList.add("btn", "btn-load", "btn-sm", "btn-outline-danger");
                 selectionButtonDelete.addEventListener("click", (e) => deleteCartItem(e));
-                selectionButtonDelete.textContent = "Delete";
+                selectionButtonDelete.textContent = "Remove";
                 selectionTdDiv.append(selectionButtonDelete);
             }
         }
@@ -187,7 +187,7 @@
                 tr.appendChild(nameTd);
         
                 const priceTd = document.createElement('td');
-                priceTd.textContent = `${shipmentMethod.unit_price} ${currency.code}`;
+                priceTd.textContent = `${shipmentMethod.unit_price.toFixed(2)} ${cart.currency_code}`;
                 tr.appendChild(priceTd);
         
                 const selectionTd = document.createElement('td');
@@ -251,14 +251,13 @@
             window.location.href = redirectUrl;
         }
         async function loadCart(cart) {
-            document.getElementById("cart-coupon-code").innerHTML = cart.coupon_code;
-            document.getElementById("cart-vat-percentage").innerHTML = `${cart.vat_percentage}%`;
-            document.getElementById("cart-vat-amount").innerHTML = `${cart.vat_amount} ${cart.currency_code}`;
-            document.getElementById("cart-vat-reverse").innerHTML = cart.vat_reverse;
-            document.getElementById("cart-discount-price").innerHTML = cart.discount_price;
-            document.getElementById("cart-discount-price-vat").innerHTML = cart.discount_price_vat;
-            document.getElementById("cart-total-price").innerHTML = cart.total_price;
-            document.getElementById("cart-total-price-vat").innerHTML = cart.total_price_vat;
+            document.getElementById("cart-coupon-code").innerHTML = cart.coupon_code ? cart.coupon_code : "None";
+            document.getElementById("cart-vat-percentage").innerHTML = cart.vat_percentage;
+            document.getElementById("cart-vat-amount").innerHTML = `${cart.vat_amount.toFixed(2)} ${cart.currency_code}`;
+            document.getElementById("cart-vat-reverse").innerHTML = cart.vat_reverse ? "Yes" : "No";
+            document.getElementById("cart-discount-price").innerHTML = `${cart.discount_price.toFixed(2)} ${cart.currency_code}`;
+            document.getElementById("cart-total-price").innerHTML = `${cart.total_price.toFixed(2)} ${cart.currency_code}`;
+            document.getElementById("cart-total-price-vat").innerHTML = `${cart.total_price_vat.toFixed(2)} ${cart.currency_code}`;
         }
 
         // sku actions
@@ -300,9 +299,7 @@
         // initialization
         async function loadPage() {
             let cart = (await getCarts()).data[0];
-            if (!cart) {
-                cart = (await postCarts()).data;
-            }
+            if (!cart) cart = (await postCarts()).data;
 
             const cartItems = (await getCartsIdItems(cart.id)).data;
             const user = (await getUsersId(cart.user_id)).data;
@@ -383,40 +380,27 @@
             </div>
         </div>
         <!-- Order -->
-        <div class="col-12 col-lg-4">
-            <div class="bg-light rounded-2 p-4 text-break h-100">
-                <h4>Order</h4>
-                <div class="row g-3">
-                    <div class="col fw-semibold">
-                        <span class="d-block">Coupon</span>
-                        <span class="d-block">VAT Percentage</span>
-                        <span class="d-block">VAT Amount</span>
-                        <span class="d-block">VAT Reverse</span>
-                    </div>
-                    <div class="col">
-                        <span id="cart-coupon-code" class="d-block"></span>
-                        <span id="cart-vat-percentage" class="d-block"></span>
-                        <span id="cart-vat-amount" class="d-block"></span>
-                        <span id="cart-vat-reverse" class="d-block"></span>
+        <div class="col-12">
+            <div class="row g-2 d-flex flex-row justify-content-start justify-content-md-center">
+                <div class="col-auto">
+                    <div class="text-bg-primary rounded-3 p-3 d-flex flex-column align-items-center h-100">
+                        <span class="fw-semibold">Total</span>
+                        <span class="fs-4 fw-semibold"><span id="cart-total-price"></span></span>
+                        <span class="small">With VAT: <span id="cart-total-price-vat"></span></span>
                     </div>
                 </div>
-            </div>
-        </div>
-        <div class="col-12 col-lg-4">
-            <div class="bg-light rounded-2 p-4 text-break h-100">
-                <h4>Order</h4>
-                <div class="row g-3">
-                    <div class="col fw-semibold">
-                        <span class="d-block">Discount</span>
-                        <span class="d-block">Discount VAT</span>
-                        <span class="d-block">Total</span>
-                        <span class="d-block">Total VAT</span>
+                <div class="col-auto">
+                    <div class="text-bg-secondary rounded-3 p-3 d-flex flex-column align-items-center h-100">
+                        <span class="fw-semibold">Discount</span>
+                        <span class="fs-4 fw-semibold"><span id="cart-discount-price"></span></span>
+                        <span class="small">Coupon: <span id="cart-coupon-code"></span></span>
                     </div>
-                    <div class="col">
-                        <span id="cart-discount-price" class="d-block"></span>
-                        <span id="cart-discount-price-vat" class="d-block"></span>
-                        <span id="cart-total-price" class="d-block"></span>
-                        <span id="cart-total-price-vat" class="d-block"></span>
+                </div>
+                <div class="col-auto">
+                    <div class="text-bg-secondary rounded-3 p-3 d-flex flex-column align-items-center h-100">
+                        <span class="fw-semibold">VAT <span id="cart-vat-percentage"></span>%</span>
+                        <span class="fs-4 fw-semibold"><span id="cart-vat-amount"></span></span>
+                        <span class="small">Reverse VAT: <span id="cart-vat-reverse"></span></span>
                     </div>
                 </div>
             </div>
