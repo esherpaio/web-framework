@@ -22,7 +22,7 @@ def get_pages(offset: int, limit: int, total: int) -> list[dict[str, Any]]:
 
     # Generate numbers
     numbers = []
-    page_steps = 2
+    page_steps = 3
     page_begin = page - page_steps if page - page_steps > 0 else 1
     page_final = page + page_steps if page + page_steps < page_max else page_max
     for number in range(page_begin, page_final + 1):
