@@ -25,9 +25,9 @@ from web.utils import remove_file
 order_status_color_map = {
     OrderStatusId.PENDING: "text-bg-danger",
     OrderStatusId.PAID: "text-bg-warning",
-    OrderStatusId.IN_PROGRESS: "text-bg-blue",
-    OrderStatusId.READY: "text-bg-blue",
-    OrderStatusId.COMPLETED: "text-bg-green",
+    OrderStatusId.IN_PROGRESS: "text-bg-primary",
+    OrderStatusId.READY: "text-bg-primary",
+    OrderStatusId.COMPLETED: "text-bg-success",
 }
 
 
