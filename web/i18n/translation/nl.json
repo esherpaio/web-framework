@@ -24,6 +24,7 @@
     "API_ORDER_STATE_REQUIRED": "Uw staat is vereist voor dit land.",
     "API_ORDER_STATUS_INVALID": "We kunnen de huidige status niet bijwerken.",
     "API_ORDER_VAT_INVALID": "Uw BTW nummer lijkt ongeldig te zijn. Als u denkt dat dit een fout is, neem dan contact met ons op.",
+    "API_ORDER_CANCEL_NOT_ALLOWED": "Mollie staat niet meer toe om de bestelling te annuleren. Maak een terugbetaling aan.",
     "API_ORDER_VAT_NO_CONNECTION": "We kunnen uw BTW nummer momenteel niet verifiëren. Probeer het over een uur opnieuw.",
     "API_ORDER_VAT_REQUIRED": "Uw BTW nummer is vereist.",
     "API_SESSION_CHECK_ACTIVATION": "Uw account is nog niet geactiveerd.",
