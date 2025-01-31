@@ -10,7 +10,9 @@
                 option_id: optionId,
                 unit_price: parseFloat(document.getElementById('value-unit-price').value),
             });
-            await patchSettings({ cached_at: null });
+            await patchSettings({
+                cached_at: null
+            });
             window.location.reload();
         }
         async function updateValue(valueId, productId) {
@@ -21,14 +23,18 @@
                 order: parseInt(document.getElementById(`value-order-${valueId}`).value),
                 unit_price: parseFloat(document.getElementById(`value-unit-price-${valueId}`).value),
             });
-            await patchSettings({ cached_at: null });
+            await patchSettings({
+                cached_at: null
+            });
             window.location.reload();
         }
         async function deleteValue(valueId, productId) {
             event.preventDefault();
             updateButton(`delete-value`, 1);
             await deleteProductsIdValuesId(productId, valueId);
-            await patchSettings({ cached_at: null });
+            await patchSettings({
+                cached_at: null
+            });
             window.location.reload();
         }
     </script>

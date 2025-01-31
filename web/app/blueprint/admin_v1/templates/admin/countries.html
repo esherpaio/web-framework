@@ -9,7 +9,9 @@
                 state_required: document.getElementById(`country-state-required-${countryId}`).checked,
                 vat_required: document.getElementById(`country-vat-required-${countryId}`).checked,
             });
-            await patchSettings({ cached_at: null });
+            await patchSettings({
+                cached_at: null
+            });
             window.location.reload();
         }
     </script>

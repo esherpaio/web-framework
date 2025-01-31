@@ -9,7 +9,9 @@
                 sku_id: parseInt(document.getElementById(`category-item-sku-id`).value),
                 order: parseInt(document.getElementById(`category-item-order`).value),
             });
-            await patchSettings({ cached_at: null });
+            await patchSettings({
+                cached_at: null
+            });
             window.location.reload();
         }
         async function updateCategoryItem(itemId, categoryId) {
@@ -18,14 +20,18 @@
             await patchCategoriesIdItemsId(categoryId, itemId, {
                 order: parseInt(document.getElementById(`category-item-order-${itemId}`).value)
             });
-            await patchSettings({ cached_at: null });
+            await patchSettings({
+                cached_at: null
+            });
             window.location.reload();
         }
         async function deleteCategoryItem(itemId, categoryId) {
             event.preventDefault();
             updateButton(`delete-category-item`, 1);
             await deleteCategoriesIdItemsId(categoryId, itemId);
-            await patchSettings({ cached_at: null });
+            await patchSettings({
+                cached_at: null
+            });
             window.location.reload();
         }
     </script>

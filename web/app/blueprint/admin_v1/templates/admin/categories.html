@@ -9,7 +9,9 @@
                 name: document.getElementById('category-name').value,
                 order: parseInt(document.getElementById('category-order').value)
             });
-            await patchSettings({ cached_at: null });
+            await patchSettings({
+                cached_at: null
+            });
             window.location.reload();
         }
         async function updateCategory(categoryId) {
@@ -18,14 +20,18 @@
             await patchCategoriesId(categoryId, {
                 order: parseInt(document.getElementById(`category-order-${categoryId}`).value),
             });
-            await patchSettings({ cached_at: null });
+            await patchSettings({
+                cached_at: null
+            });
             window.location.reload();
         }
         async function deleteCategory(categoryId) {
             event.preventDefault();
             updateButton(`delete-category`, 1);
             await deleteCategoriesId(categoryId);
-            await patchSettings({ cached_at: null });
+            await patchSettings({
+                cached_at: null
+            });
             window.location.reload();
         }
     </script>

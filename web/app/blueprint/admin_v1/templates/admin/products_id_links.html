@@ -9,14 +9,18 @@
                 type_id: parseInt(document.getElementById(`link-type-id`).value),
                 sku_id: parseInt(document.getElementById(`link-sku-id`).value),
             });
-            await patchSettings({ cached_at: null });
+            await patchSettings({
+                cached_at: null
+            });
             window.location.reload();
         }
         async function deleteLink(linkId, productId) {
             event.preventDefault();
             updateButton(`delete-link`, 1);
             await deleteProductsIdLinksId(productId, linkId);
-            await patchSettings({ cached_at: null });
+            await patchSettings({
+                cached_at: null
+            });
             window.location.reload();
         }
     </script>

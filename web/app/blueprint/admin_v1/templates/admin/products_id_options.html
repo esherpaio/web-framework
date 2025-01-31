@@ -8,7 +8,9 @@
             await postProductsIdOptions(productId, {
                 name: document.getElementById(`option-name`).value
             });
-            await patchSettings({ cached_at: null });
+            await patchSettings({
+                cached_at: null
+            });
             window.location.reload();
         }
         async function updateOption(optionId, productId) {
@@ -17,14 +19,18 @@
             await patchProductsIdOptionsId(productId, optionId, {
                 order: parseInt(document.getElementById(`option-order-${optionId}`).value),
             });
-            await patchSettings({ cached_at: null });
+            await patchSettings({
+                cached_at: null
+            });
             window.location.reload();
         }
         async function deleteOption(optionId, productId) {
             event.preventDefault();
             updateButton(`delete-option`, 1);
             await deleteProductsIdOptionsId(productId, optionId);
-            await patchSettings({ cached_at: null });
+            await patchSettings({
+                cached_at: null
+            });
             window.location.reload();
         }
     </script>
