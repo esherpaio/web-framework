@@ -1,5 +1,3 @@
-from enum import StrEnum
-
 from flask import render_template, request, send_file
 from sqlalchemy import or_
 from sqlalchemy.orm import contains_eager, joinedload
@@ -24,13 +22,13 @@ from web.database.model import (
 from web.document.object import gen_invoice, gen_refund
 from web.utils import remove_file
 
-
-class OrderStatusColor(StrEnum):
-    PENDING = "text-bg-warning"
-    PAID = "text-bg-green"
-    IN_PROGRESS = "text-bg-blue"
-    READY = "text-bg-blue"
-    COMPLETED = "text-bg-gray"
+order_status_color_map = {
+    OrderStatusId.PENDING: "text-bg-warning",
+    OrderStatusId.PAID: "text-bg-green",
+    OrderStatusId.IN_PROGRESS: "text-bg-blue",
+    OrderStatusId.READY: "text-bg-blue",
+    OrderStatusId.COMPLETED: "text-bg-gray",
+}
 
 
 @admin_v1_bp.get("/admin")
@@ -88,7 +86,7 @@ def orders() -> str:
     return render_template(
         "admin/orders.html",
         active_menu="orders",
-        order_status_color_enum=OrderStatusColor,
+        order_status_color_map=order_status_color_map,
         search=search,
         status_id=status_id,
         orders=orders_,
