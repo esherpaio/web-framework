@@ -9,6 +9,7 @@ from web.app.bootstrap import get_pages
 from web.database import conn
 from web.database.model import (
     Billing,
+    Invoice,
     Order,
     OrderLine,
     OrderStatusId,
@@ -124,6 +125,9 @@ def orders_id(order_id: int) -> str:
             .order_by(OrderLine.id)
             .all()
         )
+        invoices = (
+            s.query(Invoice).filter_by(order_id=order_id).order_by(Invoice.id).all()
+        )
         refunds = s.query(Refund).filter_by(order_id=order_id).order_by(Refund.id).all()
 
     return render_template(
@@ -131,6 +135,7 @@ def orders_id(order_id: int) -> str:
         active_menu="orders",
         order=order_,
         order_lines=order_lines,
+        invoices=invoices,
         refunds=refunds,
         status_ready=OrderStatusId.READY,
     )

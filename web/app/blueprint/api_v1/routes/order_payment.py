@@ -8,7 +8,7 @@ from web.app.blueprint.api_v1 import api_v1_bp
 from web.auth import current_user
 from web.config import config
 from web.database import conn
-from web.database.model import Order
+from web.database.model import Invoice, Order
 
 #
 # Configuration
@@ -23,6 +23,7 @@ from web.database.model import Order
 @api_v1_bp.post("/orders/<int:order_id>/payments")
 def post_orders_id_payments(order_id: int) -> Response:
     redirect = json_get("redirect", str, nullable=False)[0]
+    add_invoice = json_get("add_invoice", bool, nullable=False, default=False)[0]
 
     with conn.begin() as s:
         # Check if order is in use by the user
@@ -48,6 +49,17 @@ def post_orders_id_payments(order_id: int) -> Response:
                 "dueDate": due_date,
             }
         )
+
+        # Add invoice
+        if add_invoice:
+            invoice = Invoice(
+                expires_at=mollie_payment.expires_at,
+                paid_at=mollie_payment.paid_at,
+                order_id=order.id,
+                payment_url=mollie_payment.checkout_url,
+            )
+            s.add(invoice)
+            s.flush()
 
         # Update order
         order.mollie_id = mollie_payment.id

@@ -35,6 +35,7 @@ def mollie_payment() -> Response:
             return json_response(404, ApiText.HTTP_404)
 
         if mollie_payment_.is_paid():
+            order_status_id = order.status_id
             order.status_id = OrderStatusId.PAID
             s.flush()
             if not order.invoice:
@@ -42,9 +43,11 @@ def mollie_payment() -> Response:
                     expires_at=mollie_payment_.expires_at,
                     paid_at=mollie_payment_.paid_at,
                     order_id=order.id,
+                    payment_url=mollie_payment_.checkout_url,
                 )
                 s.add(invoice)
                 s.flush()
+            if order_status_id != OrderStatusId.PAID:
                 mail.trigger_events(
                     s,
                     MailEvent.ORDER_PAID,
