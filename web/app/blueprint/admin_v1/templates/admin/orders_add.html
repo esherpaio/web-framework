@@ -374,10 +374,9 @@
             const shipmentMethods = (await getShipmentMethods({
                 "cart_id": cart.id
             })).data;
-            const currency = (await getCurrenciesId(cart.currency_id)).data;
             await loadCart(cart);
-            await loadCartItems(cartItems, cart, currency);
-            await loadShipmentMethods(shipmentMethods, cart, currency);
+            await loadCartItems(cartItems, cart);
+            await loadShipmentMethods(shipmentMethods, cart);
             await initButtons();
         }
 
