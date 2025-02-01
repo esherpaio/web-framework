@@ -29,12 +29,13 @@ def products() -> str:
         )
     return render_template(
         "admin/products.html",
+        active_menu="products",
         products=products_,
     )
 
 
 @admin_v1_bp.get("/admin/products/<int:product_id>")
-def product(product_id: int) -> str | Response:
+def products_id(product_id: int) -> str | Response:
     with conn.begin() as s:
         product_ = (
             s.query(Product)
@@ -54,14 +55,15 @@ def product(product_id: int) -> str | Response:
             .all()
         )
     return render_template(
-        "admin/product.html",
+        "admin/products_id.html",
+        active_menu="products",
         product=product_,
         shipment_classes=shipment_classes,
     )
 
 
 @admin_v1_bp.get("/admin/products/<int:product_id>/options")
-def product_options(product_id: int) -> str | Response:
+def products_id_options(product_id: int) -> str | Response:
     with conn.begin() as s:
         product_ = (
             s.query(Product)
@@ -82,14 +84,15 @@ def product_options(product_id: int) -> str | Response:
             .all()
         )
     return render_template(
-        "admin/product_options.html",
+        "admin/products_id_options.html",
+        active_menu="products",
         product=product_,
         product_options=product_options,
     )
 
 
 @admin_v1_bp.get("/admin/products/<int:product_id>/options/<int:option_id>")
-def product_option(product_id: int, option_id: int) -> str:
+def products_id_options_id(product_id: int, option_id: int) -> str:
     with conn.begin() as s:
         product_ = s.query(Product).filter_by(id=product_id, is_deleted=False).first()
         product_medias = (
@@ -112,7 +115,8 @@ def product_option(product_id: int, option_id: int) -> str:
             .all()
         )
     return render_template(
-        "admin/product_option.html",
+        "admin/products_id_options_id.html",
+        active_menu="products",
         product=product_,
         product_medias=product_medias,
         option=option,
@@ -121,7 +125,7 @@ def product_option(product_id: int, option_id: int) -> str:
 
 
 @admin_v1_bp.get("/admin/products/<int:product_id>/media")
-def product_media(product_id: int) -> str | Response:
+def products_id_media(product_id: int) -> str | Response:
     with conn.begin() as s:
         product_ = (
             s.query(Product)
@@ -142,14 +146,15 @@ def product_media(product_id: int) -> str | Response:
             .all()
         )
     return render_template(
-        "admin/product_media.html",
+        "admin/products_id_media.html",
+        active_menu="products",
         product=product_,
         product_medias=product_medias,
     )
 
 
 @admin_v1_bp.get("/admin/products/<int:product_id>/links")
-def product_links(product_id: int) -> str | Response:
+def products_id_links(product_id: int) -> str | Response:
     with conn.begin() as s:
         product_ = (
             s.query(Product)
@@ -189,7 +194,8 @@ def product_links(product_id: int) -> str | Response:
             .all()
         )
     return render_template(
-        "admin/product_links.html",
+        "admin/products_id_links.html",
+        active_menu="products",
         product=product_,
         product_links=product_links,
         available_skus=available_skus,
@@ -197,7 +203,7 @@ def product_links(product_id: int) -> str | Response:
 
 
 @admin_v1_bp.get("/admin/products/<int:product_id>/skus")
-def product_skus(product_id: int) -> str | Response:
+def products_id_skus(product_id: int) -> str | Response:
     with conn.begin() as s:
         product_ = (
             s.query(Product)
@@ -222,7 +228,8 @@ def product_skus(product_id: int) -> str | Response:
             .all()
         )
     return render_template(
-        "admin/product_skus.html",
+        "admin/products_id_skus.html",
+        active_menu="products",
         product=product_,
         skus=skus,
     )

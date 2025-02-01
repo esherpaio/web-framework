@@ -38,12 +38,19 @@ class CartAPI(API):
         Cart.shipment_method_id,
         Cart.vat_rate,
         Cart.vat_reverse,
-        "items_count",
-        "subtotal_price_vat",
-        "discount_price_vat",
-        "shipment_price_vat",
-        "total_price_vat",
         "vat_percentage",
+        "vat_amount",
+        "items_count",
+        "currency_code",
+        "coupon_code",
+        "subtotal_price",
+        "subtotal_price_vat",
+        "discount_price",
+        "discount_price_vat",
+        "shipment_price",
+        "shipment_price_vat",
+        "total_price",
+        "total_price_vat",
     }
 
 
@@ -73,6 +80,16 @@ def get_carts() -> Response:
         models: list[Cart] = api.list_(s, *filters, limit=1)
         resources = api.gen_resources(s, models)
     return json_response(data=resources)
+
+
+@api_v1_bp.get("/carts/<int:cart_id>")
+def get_carts_id(cart_id: int) -> Response:
+    api = CartAPI()
+    with conn.begin() as s:
+        filters = {Cart.user_id == current_user.id}
+        model: Cart = api.get(s, cart_id, *filters)
+        resource = api.gen_resource(s, model)
+    return json_response(data=resource)
 
 
 @api_v1_bp.patch("/carts/<int:cart_id>")

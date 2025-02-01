@@ -11,6 +11,7 @@ class Invoice(Base, Attribute):
     expires_at = MC(DateTime(timezone=True))
     number = MC(String(16), nullable=False, unique=True)
     paid_at = MC(DateTime(timezone=True))
+    payment_url = MC(String(256))
 
     order_id = MC(
         ForeignKey("order.id", ondelete="RESTRICT"), nullable=False, unique=True

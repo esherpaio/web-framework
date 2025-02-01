@@ -9,6 +9,7 @@ from web.app.bootstrap import get_pages
 from web.database import conn
 from web.database.model import (
     Billing,
+    Invoice,
     Order,
     OrderLine,
     OrderStatusId,
@@ -20,6 +21,14 @@ from web.database.model import (
 )
 from web.document.object import gen_invoice, gen_refund
 from web.utils import remove_file
+
+order_status_color_map = {
+    OrderStatusId.PENDING: "text-bg-danger",
+    OrderStatusId.PAID: "text-bg-warning",
+    OrderStatusId.IN_PROGRESS: "text-bg-primary",
+    OrderStatusId.READY: "text-bg-primary",
+    OrderStatusId.COMPLETED: "text-bg-success",
+}
 
 
 @admin_v1_bp.get("/admin")
@@ -76,6 +85,8 @@ def orders() -> str:
     pagination = get_pages(offset, limit, orders_len)
     return render_template(
         "admin/orders.html",
+        active_menu="orders",
+        order_status_color_map=order_status_color_map,
         search=search,
         status_id=status_id,
         orders=orders_,
@@ -83,8 +94,16 @@ def orders() -> str:
     )
 
 
+@admin_v1_bp.get("/admin/orders/add")
+def orders_add() -> str | Response:
+    return render_template(
+        "admin/orders_add.html",
+        active_menu="orders",
+    )
+
+
 @admin_v1_bp.get("/admin/orders/<int:order_id>")
-def order(order_id: int) -> str:
+def orders_id(order_id: int) -> str:
     with conn.begin() as s:
         order_ = (
             s.query(Order)
@@ -115,19 +134,25 @@ def order(order_id: int) -> str:
             .order_by(OrderLine.id)
             .all()
         )
+        invoices = (
+            s.query(Invoice).filter_by(order_id=order_id).order_by(Invoice.id).all()
+        )
         refunds = s.query(Refund).filter_by(order_id=order_id).order_by(Refund.id).all()
 
     return render_template(
-        "admin/order.html",
+        "admin/orders_id.html",
+        active_menu="orders",
+        order_status_color_map=order_status_color_map,
         order=order_,
         order_lines=order_lines,
+        invoices=invoices,
         refunds=refunds,
         status_ready=OrderStatusId.READY,
     )
 
 
 @admin_v1_bp.get("/admin/orders/<int:order_id>/invoices/<int:invoice_id>/download")
-def download_invoice(order_id: int, invoice_id: int) -> Response:
+def orders_id_invoices_id_download(order_id: int, invoice_id: int) -> Response:
     with conn.begin() as s:
         order_ = s.query(Order).filter_by(id=order_id).first()
         if not order_ or not order_.invoice:
@@ -142,7 +167,7 @@ def download_invoice(order_id: int, invoice_id: int) -> Response:
 
 
 @admin_v1_bp.get("/admin/orders/<int:order_id>/refunds/<int:refund_id>/download")
-def download_refund(order_id: int, refund_id: int) -> Response:
+def orders_id_refunds_id_download(order_id: int, refund_id: int) -> Response:
     with conn.begin() as s:
         order_ = s.query(Order).filter_by(id=order_id).first()
         refund = s.query(Refund).filter_by(id=refund_id).first()

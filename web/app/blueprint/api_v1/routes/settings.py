@@ -14,7 +14,7 @@ from web.database.model import AppSetting, UserRoleLevel
 #
 
 
-class SettingAPI(API):
+class SettingsAPI(API):
     model = AppSetting
     patch_columns = {
         AppSetting.banner,
@@ -31,20 +31,20 @@ class SettingAPI(API):
 #
 
 
-@api_v1_bp.get("/setting")
+@api_v1_bp.get("/settings")
 @authorize(UserRoleLevel.ADMIN)
-def get_setting() -> Response:
-    api = SettingAPI()
+def get_settings() -> Response:
+    api = SettingsAPI()
     with conn.begin() as s:
         model: AppSetting = api.get(s, None)
         resource = api.gen_resource(s, model)
     return json_response(data=resource)
 
 
-@api_v1_bp.patch("/setting")
+@api_v1_bp.patch("/settings")
 @authorize(UserRoleLevel.ADMIN)
-def patch_setting() -> Response:
-    api = SettingAPI()
+def patch_settings() -> Response:
+    api = SettingsAPI()
     data = api.gen_data(api.patch_columns)
     with conn.begin() as s:
         model: AppSetting = api.get(s, None)

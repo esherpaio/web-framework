@@ -5,6 +5,7 @@ from werkzeug import Response
 
 from web.api import json_get, json_response
 from web.app.blueprint.api_v1 import api_v1_bp
+from web.config import config
 from web.database import conn
 from web.database.model import User
 from web.i18n import _
@@ -19,6 +20,8 @@ class Text(StrEnum):
     CONTACT_SUCCESS = _("API_MAIL_CONTACT_SUCCESS")
     EVENT_ID_INVALID = _("API_MAIL_INVALID_EVENT_ID")
     MAIL_ERROR = _("API_MAIL_ERROR")
+    TOO_MANY_EMAILS = _("API_MAIL_TOO_MANY")
+    CONTACT_ADMIN = _("API_MAIL_CONTACT_ADMIN")
 
 
 #
@@ -33,17 +36,24 @@ def post_emails() -> Response:
 
     with conn.begin() as s:
         # Inject emails for bulk email
-        if event_id == MailEvent.WEBSITE_BULK and "emails" not in data:
-            users = (
-                s.query(User)
-                .filter(
-                    User.is_active == true(),
-                    User.bulk_email == true(),
-                    User.email != null(),
+        if event_id == MailEvent.WEBSITE_BULK:
+            if not config.EMAIL_WORKER:
+                return json_response(400, Text.CONTACT_ADMIN)
+            if "emails" not in data:
+                users = (
+                    s.query(User)
+                    .filter(
+                        User.is_active == true(),
+                        User.bulk_email == true(),
+                        User.email != null(),
+                    )
+                    .all()
                 )
-                .all()
-            )
-            data["emails"] = set(user.email for user in users)
+                emails = set(user.email for user in users)
+                if len(emails) > config.EMAIL_MAX_BULK_COUNT:
+                    return json_response(400, Text.TOO_MANY_EMAILS)
+                data["emails"] = list(emails)
+
         # Trigger email events
         result = mail.trigger_events(s, event_id, **data)
 

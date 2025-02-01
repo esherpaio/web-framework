@@ -25,8 +25,6 @@ from web.database.utils import copy_row
 from web.i18n import _
 from web.mail import MailEvent, mail
 
-from ._common import create_refund
-
 #
 # Configuration
 #
@@ -41,12 +39,14 @@ class Text(StrEnum):
     VAT_REQUIRED = _("API_ORDER_VAT_REQUIRED")
     SHIPMENT_METHOD_REQUIRED = _("API_SHIPMENT_METHOD_REQUIRED")
     SHIPMENT_METHOD_INVALID = _("API_SHIPMENT_METHOD_INVALID")
+    CANCEL_NOT_ALLOWED = _("API_ORDER_CANCEL_NOT_ALLOWED")
 
 
 class OrderAPI(API):
     model = Order
     post_columns = {
         "cart_id",
+        "trigger_mail",
     }
     get_columns = {
         Order.id,
@@ -194,25 +194,21 @@ def set_order_lines(s: Session, data: dict, model: Order) -> None:
 
 
 def mail_order(s: Session, data: dict, model: Order) -> None:
-    mail.trigger_events(
-        s,
-        MailEvent.ORDER_RECEIVED,
-        order_id=model.id,
-        billing_email=model.billing.email,
-        shipping_email=model.shipping.email,
-    )
+    if data.get("trigger_mail", True):
+        mail.trigger_events(
+            s,
+            MailEvent.ORDER_RECEIVED,
+            order_id=model.id,
+            billing_email=model.billing.email,
+            shipping_email=model.shipping.email,
+        )
 
 
 def cancel_mollie(s: Session, data: dict, model: Order) -> None:
-    # Try to cancel the Mollie payment
     mollie = Mollie().payments.get(model.mollie_id)
-    if mollie.is_cancelable:
-        Mollie().payments.delete(model.mollie_id)
-        model.status_id = OrderStatusId.COMPLETED
-
-    # Try to refund the order
-    if model.is_refundable:
-        price = model.remaining_refund_amount
-        price_vat = price * model.vat_rate
-        create_refund(s, mollie, model, price, price_vat)
-        model.status_id = OrderStatusId.COMPLETED
+    if mollie.is_canceled():
+        return
+    if not mollie.is_cancelable:
+        abort(400, Text.CANCEL_NOT_ALLOWED)
+    Mollie().payments.delete(model.mollie_id)
+    model.status_id = OrderStatusId.COMPLETED

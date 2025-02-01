@@ -55,7 +55,7 @@ def post_countries() -> Response:
 def get_countries() -> Response:
     api = CountryAPI()
     with conn.begin() as s:
-        models: list[Country] = api.list_(s)
+        models: list[Country] = api.list_(s, order_by=Country.name)
         resources = api.gen_resources(s, models)
     return json_response(data=resources)
 

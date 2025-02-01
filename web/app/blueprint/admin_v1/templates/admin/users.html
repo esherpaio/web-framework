@@ -42,16 +42,18 @@
                             <th>Email</th>
                             <th>Active</th>
                             <th>Role</th>
+                            <th>Bulk Email</th>
                         </tr>
                     </thead>
                     <tbody class="table-light">
                         {% for user in users %}
                             <tr>
                                 <td>{{ user.id }}</td>
-                                <td>{{ user.created_at|datetime("%x") }}</td>
+                                <td>{{ user.created_at|datetime }}</td>
                                 <td>{{ user.email }}</td>
                                 <td>{{ user.is_active }}</td>
                                 <td>{{ user.role.name }}</td>
+                                <td>{{ user.bulk_email }}</td>
                             </tr>
                         {% endfor %}
                     </tbody>
@@ -60,7 +62,7 @@
         </div>
         {% if pagination|length > 1 %}
             <div class="col-12">
-                <nav aria-label="Page numbers">
+                <nav>
                     <ul class="pagination mb-0">
                         {% for page in pagination %}
                             <li class="page-item {{ page["classes"] }}">

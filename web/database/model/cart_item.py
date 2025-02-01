@@ -50,3 +50,9 @@ class CartItem(Base):
     @hybrid_property
     def total_price_vat(self) -> float:
         return self.total_price * self.cart.vat_rate
+
+    # Properties - SKU
+
+    @hybrid_property
+    def sku_name(self) -> str:
+        return self.sku.name

@@ -33,6 +33,7 @@ def users() -> str:
     pagination = get_pages(offset, limit, users_len)
     return render_template(
         "admin/users.html",
+        active_menu="users",
         search=search,
         users=users_,
         pagination=pagination,
