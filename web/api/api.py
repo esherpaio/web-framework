@@ -210,8 +210,12 @@ class API(Generic[B]):
     @staticmethod
     def update(s: Session, data: dict, model: B) -> None:
         for k, v in data.items():
-            if hasattr(model, k):
+            if not hasattr(model, k):
+                continue
+            try:
                 setattr(model, k, v)
+            except AttributeError:
+                continue
         s.flush()
 
     @staticmethod
