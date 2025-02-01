@@ -191,17 +191,31 @@ class API(Generic[B]):
         *filters: ColumnExpressionArgument[bool],
         limit: int | None = None,
         offset: int | None = None,
+        order_by: InstrumentedAttribute | None = None,
     ) -> list[B]:
         if cls.model is None:
             raise NotImplementedError
-        models = s.query(cls.model).filter(*filters).limit(limit).offset(offset).all()
+        if order_by is None:
+            order_by = cls.model.id
+        models = (
+            s.query(cls.model)
+            .filter(*filters)
+            .order_by(order_by)
+            .limit(limit)
+            .offset(offset)
+            .all()
+        )
         return models
 
     @staticmethod
     def update(s: Session, data: dict, model: B) -> None:
         for k, v in data.items():
-            if hasattr(model, k):
+            if not hasattr(model, k):
+                continue
+            try:
                 setattr(model, k, v)
+            except AttributeError:
+                continue
         s.flush()
 
     @staticmethod

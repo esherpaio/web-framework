@@ -22,5 +22,6 @@ def shipment_zones() -> str:
 
     return render_template(
         "admin/shipment_zones.html",
+        active_menu="shipments",
         shipment_zones=shipment_zones_,
     )

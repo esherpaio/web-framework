@@ -90,7 +90,11 @@ def args_get(
     column: InstrumentedAttribute | None = None,
 ) -> tuple[Any, bool]:
     """Get a value from the request args."""
-    value = request.args.get(key, default, type_)
+    if type_ is bool:
+        type_func = lambda value: value.lower() == "true"  # noqa: E731
+    else:
+        type_func = type_
+    value = request.args.get(key, default, type_func)
     has_key = key in request.args
     _validate(value, type_, nullable, column)
     return value, has_key

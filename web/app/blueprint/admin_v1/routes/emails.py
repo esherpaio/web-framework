@@ -7,19 +7,27 @@ from web.database.model import Email
 from web.mail import MailEvent
 
 
-@admin_v1_bp.get("/admin/email")
-def email() -> str:
+@admin_v1_bp.get("/admin/emails")
+def emails() -> str:
     limit = request.args.get("l", type=int, default=40)
     page = request.args.get("p", type=int, default=1)
     offset = (limit * page) - limit
 
     with conn.begin() as s:
         count = s.query(Email).filter(Email.event_id == MailEvent.WEBSITE_BULK).count()
-        emails = s.query(Email).filter(Email.event_id == MailEvent.WEBSITE_BULK).all()
+        emails_ = (
+            s.query(Email)
+            .filter(Email.event_id == MailEvent.WEBSITE_BULK)
+            .order_by(Email.id.desc())
+            .limit(limit)
+            .offset(offset)
+            .all()
+        )
 
     pagination = get_pages(offset, limit, count)
     return render_template(
-        "admin/email.html",
-        emails=emails,
+        "admin/emails.html",
+        active_menu="emails",
+        emails=emails_,
         pagination=pagination,
     )

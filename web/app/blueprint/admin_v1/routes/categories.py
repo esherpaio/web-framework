@@ -21,12 +21,13 @@ def categories() -> str:
 
     return render_template(
         "admin/categories.html",
+        active_menu="categories",
         categories=categories_,
     )
 
 
 @admin_v1_bp.get("/admin/categories/<int:category_id>")
-def category(category_id: int) -> str | Response:
+def categories_id(category_id: int) -> str | Response:
     with conn.begin() as s:
         category_ = s.query(Category).filter_by(id=category_id).first()
         if not category_:
@@ -61,7 +62,8 @@ def category(category_id: int) -> str | Response:
         )
 
     return render_template(
-        "admin/category.html",
+        "admin/categories_id.html",
+        active_menu="categories",
         category=category_,
         category_items=category_items,
         available_skus=available_skus,

@@ -15,7 +15,9 @@ async function callApi(method, url, data = null, contentType = null, silent = fa
     const timeoutId = setTimeout(() => controller.abort(), 25000);
     let options = {
         body: data,
-        headers: { "Content-Type": contentType },
+        headers: {
+            "Content-Type": contentType
+        },
         method: method,
         signal: controller.signal,
     }

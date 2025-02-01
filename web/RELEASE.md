@@ -1,10 +1,17 @@
 # Changelog
 
+## v2.10.2 (2025-01-31)
+
+- Admin panel improvements
+  - Colored order statuses
+  - Create orders (BETA)
+  - Send mass emails (BETA)
+
 ## v2.10.1 (2025-01-06)
 
 - Various improvements
   - Improved HTML minification
-  - Sensitive data obfuscating in logging
+  - Sensitive data is obfuscating in logging
   - Users will be prompted to set a password if they had previously always signed in using third party platforms
 
 - Bug fixes

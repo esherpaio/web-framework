@@ -33,7 +33,10 @@
     <div class="row g-3">
         <div class="col-12">
             <div class="d-flex justify-content-between gap-2">
-                <h2 class="mb-0">Email</h2>
+                <h2 class="mb-0 d-flex align-items-center">
+                    <span class="badge rounded-pill text-bg-dark me-2">BETA</span>
+                    Emails
+                </h2>
                 <div class="btn-toolbar justify-content-end gap-2">
                     <button class="btn btn-primary"
                             data-bs-toggle="modal"
@@ -59,14 +62,29 @@
                     <script defer>
                         let htmlElement = document.getElementById('html-editor');
                         let htmlOptions = [
-                            [{'header': [1, 2, 3, 4, 5, 6, false]}],
+                            [{
+                                'header': [1, 2, 3, 4, 5, 6, false]
+                            }],
                             ['bold', 'italic', 'underline', 'strike'],
                             ['link'],
-                            [{'list': 'ordered'}, {'list': 'bullet'}],
-                            [{'script': 'sub'}, {'script': 'super'}],
+                            [{
+                                'list': 'ordered'
+                            }, {
+                                'list': 'bullet'
+                            }],
+                            [{
+                                'script': 'sub'
+                            }, {
+                                'script': 'super'
+                            }],
                             ['clean'],
                         ];
-                        htmlEditor = new Quill(htmlElement, {theme: 'snow', modules: {toolbar: htmlOptions}});
+                        htmlEditor = new Quill(htmlElement, {
+                            theme: 'snow',
+                            modules: {
+                                toolbar: htmlOptions
+                            }
+                        });
                     </script>
                 </div>
             </div>
@@ -83,7 +101,7 @@
                 <div class="modal-body">
                     <p class="mb-0">
                         <b>This action is irreversible.</b>
-                        An email will be sent to all users who have signed up for updates.
+                        An email will be sent to all users who have signed up.
                     </p>
                 </div>
                 <div class="modal-footer">

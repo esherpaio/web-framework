@@ -9,7 +9,9 @@
             const files = document.getElementById('media-files').files;
             for (let i = 0; i < files.length; i++) form.append('file', files[i]);
             await postProductsIdMedia(productId, form);
-            await patchSetting({ cached_at: null });
+            await patchSettings({
+                cached_at: null
+            });
             window.location.reload();
         }
         async function updateMedia(mediaId, productId) {
@@ -19,19 +21,23 @@
                 order: parseInt(document.getElementById(`media-order-${mediaId}`).value),
                 description: document.getElementById(`media-description-${mediaId}`).value,
             });
-            await patchSetting({ cached_at: null });
+            await patchSettings({
+                cached_at: null
+            });
             window.location.reload();
         }
         async function deleteMedia(mediaId, productId) {
             event.preventDefault();
             updateButton(`delete-media`, 1);
             await deleteProductsIdMediaId(productId, mediaId);
-            await patchSetting({ cached_at: null });
+            await patchSettings({
+                cached_at: null
+            });
             window.location.reload();
         }
     </script>
 
-    {% include "admin/section/product_nav.html" %}
+    {% include "admin/section/products_nav.html" %}
 
     <div class="row g-3">
         <div class="col-12">

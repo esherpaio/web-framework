@@ -7,7 +7,9 @@
             await postProducts({
                 name: document.getElementById('product-name').value
             });
-            await patchSetting({ cached_at: null });
+            await patchSettings({
+                cached_at: null
+            });
             window.location.reload();
         }
     </script>
@@ -45,7 +47,7 @@
                                 <td class="text-end">
                                     <div class="btn-group">
                                         <a class="btn btn-sm btn-outline-primary"
-                                           href="{{ url_for('admin.product', product_id=x.id) }}">
+                                           href="{{ url_for('admin.products_id', product_id=x.id) }}">
                                             View
                                         </a>
                                     </div>

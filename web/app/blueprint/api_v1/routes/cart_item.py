@@ -37,6 +37,8 @@ class CartItemAPI(API):
         CartItem.id,
         CartItem.quantity,
         CartItem.sku_id,
+        "unit_price",
+        "sku_name",
     }
 
 
@@ -54,6 +56,18 @@ def post_carts_id_items(cart_id: int) -> Response:
         set_cart(s, data, None)
         resource = api.gen_resource(s, model)
     return json_response(message=Text.CART_ITEM_ADDED, data=resource)
+
+
+@api_v1_bp.get("/carts/<int:cart_id>/items")
+def get_carts_id_items(cart_id: int) -> Response:
+    api = CartItemAPI()
+    data = api.gen_path_data()
+    with conn.begin() as s:
+        authorize_cart(s, data, None)
+        filters = {CartItem.cart_id == cart_id}
+        models: list[CartItem] = api.list_(s, *filters)
+        resources = api.gen_resources(s, models)
+    return json_response(data=resources)
 
 
 @api_v1_bp.patch("/carts/<int:cart_id>/items/<int:cart_item_id>")
@@ -75,6 +89,7 @@ def delete_cart_id_items_id(cart_id: int, cart_item_id: int) -> Response:
     api = CartItemAPI()
     data = api.gen_path_data()
     with conn.begin() as s:
+        authorize_cart(s, data, None)
         model: CartItem = api.get(s, cart_item_id)
         api.delete(s, model)
         set_cart(s, data, None)

@@ -47,8 +47,12 @@ class Markdown:
 
 @admin_v1_bp.get("/admin/changelog")
 def changelog() -> str:
-    fp = os.path.join(config.APP_ROOT, "RELEASE.md")
-    with open(fp, "r") as file_:
-        lines = file_.readlines()
-    changelog_html = Markdown(*lines).html
-    return render_template("admin/changelog.html", changelog_html=changelog_html)
+    changelog_fp = os.path.join(config.APP_ROOT, "RELEASE.md")
+    with open(changelog_fp, "r") as file_:
+        changelog_lines = file_.readlines()
+    changelog_html = Markdown(*changelog_lines).html
+    return render_template(
+        "admin/changelog.html",
+        active_menu="changelog",
+        changelog_html=changelog_html,
+    )

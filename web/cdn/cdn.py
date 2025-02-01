@@ -20,6 +20,31 @@ class _SupportsRead(Protocol[_SP]):
 #
 
 
+def filenames(path: str) -> list[str]:
+    folder = os.path.dirname(path)
+    with FTP(
+        config.CDN_HOSTNAME,
+        config.CDN_USERNAME,
+        config.CDN_PASSWORD,
+    ) as ftp:
+        ftp.cwd(folder)
+        filenames = ftp.nlst()
+        return filenames
+
+
+def exists(path: str) -> bool:
+    folder = os.path.dirname(path)
+    filename = os.path.basename(path)
+    with FTP(
+        config.CDN_HOSTNAME,
+        config.CDN_USERNAME,
+        config.CDN_PASSWORD,
+    ) as ftp:
+        ftp.cwd(folder)
+        filenames = ftp.nlst()
+        return filename in filenames
+
+
 def upload(file_: _SupportsRead[bytes], path: str) -> None:
     folder = os.path.dirname(path)
     name = os.path.basename(path)

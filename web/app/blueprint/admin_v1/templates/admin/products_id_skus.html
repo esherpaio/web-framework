@@ -6,7 +6,9 @@
             event.preventDefault();
             updateButton(`create-skus`, 1);
             await postProductsIdSkus(productId);
-            await patchSetting({ cached_at: null });
+            await patchSettings({
+                cached_at: null
+            });
             window.location.reload();
         }
         async function updateSku(skuId) {
@@ -17,19 +19,23 @@
                 stock: parseInt(document.getElementById(`sku-stock-${skuId}`).value),
                 number: document.getElementById(`sku-number-${skuId}`).value || null,
             });
-            await patchSetting({ cached_at: null });
+            await patchSettings({
+                cached_at: null
+            });
             window.location.reload();
         }
         async function deleteSku(skuId) {
             event.preventDefault();
             updateButton(`delete-sku`, 1);
             await deleteSkusId(skuId);
-            await patchSetting({ cached_at: null });
+            await patchSettings({
+                cached_at: null
+            });
             window.location.reload();
         }
     </script>
 
-    {% include "admin/section/product_nav.html" %}
+    {% include "admin/section/products_nav.html" %}
 
     <div class="row g-3">
         <div class="col-12">

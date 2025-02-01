@@ -5,6 +5,7 @@ from version import __version__
 DATA = [
     "*.md",
     "app/blueprint/admin_v1/static/*.css",
+    "app/blueprint/admin_v1/static/*.js",
     "app/blueprint/admin_v1/templates/*.html",
     "app/blueprint/admin_v1/templates/admin/*.html",
     "app/blueprint/admin_v1/templates/admin/section/*.html",
