@@ -111,11 +111,9 @@ class StaticSyncer(Syncer):
                 continue
             present[(resource.__tablename__, resource.id)].append(seed.type)
             cdn_filename = f"{hash_}{out_ext}"
-            if cdn_filename in cdn_filenames:
-                log.info(f"Static resource {seed.id_} is unchanged")
-                continue
             cdn_path = os.path.join("static", cdn_filename)
-            packer.write_cdn(bytes_, cdn_path)
+            if cdn_filename not in cdn_filenames:
+                packer.write_cdn(bytes_, cdn_path)
             with conn.begin() as s:
                 seed.set_attribute(s, resource, cdn_path)
                 log.info(f"Static resource {seed.id_} is updated")
