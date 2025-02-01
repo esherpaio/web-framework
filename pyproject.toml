@@ -22,8 +22,6 @@ quiet=true
 use_gitignore=true
 max_line_length=100
 preserve_blank_lines=true
-format_js=true
-format_css=true
 
 [tool.pytest.ini_options]
 python_files="test_*.py"
