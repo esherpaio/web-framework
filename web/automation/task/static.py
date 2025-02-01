@@ -76,7 +76,10 @@ class StaticSyncer(Syncer):
     SEEDS: list[StaticSeed]
 
     @classmethod
-    def run(cls, s: Session) -> None:
+    def run(
+        cls,
+        s: Session,
+    ) -> None:
         if not config.APP_SYNC_STATIC:
             log.warning("Static syncer is disabled")
             return
@@ -89,8 +92,8 @@ class StaticSyncer(Syncer):
 
     @classmethod
     def get_resources(
-        s: Session,
         cls,
+        s: Session,
     ) -> dict[StaticSeed, AppSetting | AppBlueprint | AppRoute]:
         resources: dict[StaticSeed, AppSetting | AppBlueprint | AppRoute] = {}
         for seed in cls.SEEDS:
@@ -140,8 +143,8 @@ class StaticSyncer(Syncer):
             present_types = present[(resource.__tablename__, resource.id)]
             absent_types = [t for t in list(StaticType) if t not in present_types]
             for absent_type in absent_types:
-                if absent_type == StaticType.JS and resource.js_path:
-                    resource.js_path = None
-                elif absent_type == StaticType.CSS and resource.css_path:
-                    resource.css_path = None
+                if absent_type == StaticType.JS and resource.js_path:  # type: ignore[attr-defined]
+                    resource.js_path = None  # type: ignore[attr-defined]
+                elif absent_type == StaticType.CSS and resource.css_path:  # type: ignore[attr-defined]
+                    resource.css_path = None  # type: ignore[attr-defined]
                 s.flush()
