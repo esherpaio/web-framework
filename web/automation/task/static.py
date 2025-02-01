@@ -73,23 +73,43 @@ class StaticSyncer(Syncer):
         if not config.APP_SYNC_STATIC:
             log.warning("Static syncer is disabled")
             return
+        resources = cls.get_resources()
+        cdn_filenames = cdn.filenames(os.path.join("static", ""))
+        present = cls.set_resources(resources, cdn_filenames)
+        cls.remove_unused(present)
 
-        # Update static resources
-        cdn_filenames = cdn.filenames(os.path.join("static"))
-        compiled_bundles: dict[tuple[str, int], list[StaticType]] = defaultdict(list)
-        for seed in cls.SEEDS:
-            with conn.begin() as s:
+    @classmethod
+    def get_resources(
+        cls,
+    ) -> dict[StaticSeed, AppSetting | AppBlueprint | AppRoute]:
+        resources: dict[StaticSeed, AppSetting | AppBlueprint | AppRoute] = {}
+        with conn.begin() as s:
+            for seed in cls.SEEDS:
                 resource = seed.get_resource(s)
-            if resource is None:
-                log.error(f"Static resource {seed.type}:{seed.endpoint} is not found")
-                continue
+                if resource is None:
+                    log.error(
+                        f"Static resource {seed.type}:{seed.endpoint} is not found"
+                    )
+                    continue
+                resources[seed] = resource
+        return resources
+
+    @classmethod
+    def set_resources(
+        cls,
+        resources: dict[StaticSeed, AppSetting | AppBlueprint | AppRoute],
+        cdn_filenames: list[str],
+    ) -> dict[tuple[str, int], list[StaticType]]:
+        present: dict[tuple[str, int], list[StaticType]] = defaultdict(list)
+        for seed in cls.SEEDS:
+            resource = resources[seed]
             packer = Packer()
             out_ext = packer.validate(seed.bundles)
             compiled, bytes_, hash_ = packer.pack(seed.bundles)
             if not compiled:
                 log.error(f"Static resource {seed.type}:{seed.endpoint} empty result")
                 continue
-            compiled_bundles[(resource.__table__.name, resource.id)].append(seed.type)
+            present[(resource.__tablename__, resource.id)].append(seed.type)
             cdn_filename = f"{hash_}{out_ext}"
             if cdn_filename in cdn_filenames:
                 log.info(f"Static resource {seed.type}:{seed.endpoint} already exists")
@@ -98,15 +118,20 @@ class StaticSyncer(Syncer):
             packer.write_cdn(bytes_, cdn_path)
             with conn.begin() as s:
                 seed.set_attribute(s, resource, cdn_path)
+        return present
 
-        # Remove unused static resources
+    @classmethod
+    def remove_unused(
+        cls,
+        present: dict[tuple[str, int], list[StaticType]],
+    ) -> None:
         with conn.begin() as s:
             for resource in [
                 *s.query(AppSetting).all(),
                 *s.query(AppBlueprint).all(),
                 *s.query(AppRoute).all(),
             ]:
-                present_types = compiled_bundles[(resource.__table__.name, resource.id)]  # type: ignore[attr-defined]
+                present_types = present[(resource.__tablename__, resource.id)]
                 absent_types = [t for t in list(StaticType) if t not in present_types]
                 for absent_type in absent_types:
                     if absent_type == StaticType.JS and resource.js_path:  # type: ignore[attr-defined]
