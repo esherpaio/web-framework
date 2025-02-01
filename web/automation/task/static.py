@@ -36,7 +36,10 @@ class StaticSeed:
 
     @property
     def id_(self) -> str:
-        return f"{self.model.__tablename__}:{self.type}"
+        parts = [self.model.__tablename__, self.type]
+        if self.endpoint:
+            parts.append(self.endpoint)
+        return ":".join(parts)
 
     def get_resource(
         self,
@@ -59,9 +62,11 @@ class StaticSeed:
     ) -> None:
         if self.type == StaticType.JS:
             resource.js_path = cdn_path
+            s.flush()
             return
         if self.type == StaticType.CSS:
             resource.css_path = cdn_path
+            s.flush()
             return
         log.error(f"Static seed type {self.type} is unsupported")
         return
