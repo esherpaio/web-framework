@@ -80,28 +80,31 @@ class StaticSyncer(Syncer):
         if not config.APP_SYNC_STATIC:
             log.warning("Static syncer is disabled")
             return
-        resources = cls.get_resources()
-        cdn_filenames = cdn.filenames(os.path.join("static", ""))
-        present = cls.set_resources(resources, cdn_filenames)
-        cls.remove_unused(present)
+        with conn.begin() as s:
+            resources = cls.get_resources(s)
+            cdn_filenames = cdn.filenames(os.path.join("static", ""))
+            present = cls.set_resources(s, resources, cdn_filenames)
+        with conn.begin() as s:
+            cls.remove_unused(s, present)
 
     @classmethod
     def get_resources(
+        s: Session,
         cls,
     ) -> dict[StaticSeed, AppSetting | AppBlueprint | AppRoute]:
         resources: dict[StaticSeed, AppSetting | AppBlueprint | AppRoute] = {}
-        with conn.begin() as s:
-            for seed in cls.SEEDS:
-                resource = seed.get_resource(s)
-                if resource is None:
-                    log.error(f"Static resource {seed.id_} is not found")
-                    continue
-                resources[seed] = resource
+        for seed in cls.SEEDS:
+            resource = seed.get_resource(s)
+            if resource is None:
+                log.error(f"Static resource {seed.id_} is not found")
+                continue
+            resources[seed] = resource
         return resources
 
     @classmethod
     def set_resources(
         cls,
+        s: Session,
         resources: dict[StaticSeed, AppSetting | AppBlueprint | AppRoute],
         cdn_filenames: list[str],
     ) -> dict[tuple[str, int], list[StaticType]]:
@@ -119,27 +122,26 @@ class StaticSyncer(Syncer):
             cdn_path = os.path.join("static", cdn_filename)
             if cdn_filename not in cdn_filenames:
                 packer.write_cdn(bytes_, cdn_path)
-            with conn.begin() as s:
-                seed.set_attribute(s, resource, cdn_path)
-                log.info(f"Static resource {seed.id_} is updated")
+            seed.set_attribute(s, resource, cdn_path)
+            log.info(f"Static resource {seed.id_} is updated")
         return present
 
     @classmethod
     def remove_unused(
         cls,
+        s: Session,
         present: dict[tuple[str, int], list[StaticType]],
     ) -> None:
-        with conn.begin() as s:
-            for resource in [
-                *s.query(AppSetting).all(),
-                *s.query(AppBlueprint).all(),
-                *s.query(AppRoute).all(),
-            ]:
-                present_types = present[(resource.__tablename__, resource.id)]
-                absent_types = [t for t in list(StaticType) if t not in present_types]
-                for absent_type in absent_types:
-                    if absent_type == StaticType.JS and resource.js_path:
-                        resource.js_path = None
-                    elif absent_type == StaticType.CSS and resource.css_path:
-                        resource.css_path = None
-                    s.flush()
+        for resource in [
+            *s.query(AppSetting).all(),
+            *s.query(AppBlueprint).all(),
+            *s.query(AppRoute).all(),
+        ]:
+            present_types = present[(resource.__tablename__, resource.id)]
+            absent_types = [t for t in list(StaticType) if t not in present_types]
+            for absent_type in absent_types:
+                if absent_type == StaticType.JS and resource.js_path:
+                    resource.js_path = None
+                elif absent_type == StaticType.CSS and resource.css_path:
+                    resource.css_path = None
+                s.flush()
