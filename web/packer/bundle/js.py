@@ -21,8 +21,8 @@ class JsBundle(object):
         return compiled
 
     @staticmethod
-    def _compile(css: str) -> str:
-        return rjsmin.jsmin(css, keep_bang_comments=False) + "\n"
+    def _compile(js: str) -> str:
+        return rjsmin.jsmin(js, keep_bang_comments=False) + "\n"
 
     def iter_paths(self) -> Generator[str, None, None]:
         if os.path.isfile(self._in_path):
