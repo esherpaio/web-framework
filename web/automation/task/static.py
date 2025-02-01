@@ -42,14 +42,14 @@ class StaticSeed:
         self,
         s: Session,
     ) -> AppSetting | AppBlueprint | AppRoute | None:
-        obj: AppSetting | AppBlueprint | AppRoute | None
         if self.model == AppSetting:
-            obj = s.query(AppSetting).first()
-        elif self.model == AppBlueprint:
-            obj = s.query(AppBlueprint).filter_by(endpoint=self.endpoint).first()
-        elif self.model == AppRoute:
-            obj = s.query(AppRoute).filter_by(endpoint=self.endpoint).first()
-        return obj
+            return s.query(AppSetting).first()
+        if self.model == AppBlueprint:
+            return s.query(AppBlueprint).filter_by(endpoint=self.endpoint).first()
+        if self.model == AppRoute:
+            return s.query(AppRoute).filter_by(endpoint=self.endpoint).first()
+        log.error(f"Static seed model {self.model} is unsupported")
+        return None
 
     def set_attribute(
         self,
@@ -57,14 +57,14 @@ class StaticSeed:
         resource: AppSetting | AppBlueprint | AppRoute,
         cdn_path: str,
     ) -> None:
-        if self.type == StaticType.JS and resource.js_path != cdn_path:
+        if self.type == StaticType.JS:
             resource.js_path = cdn_path
-            s.flush()
-        elif self.type == StaticType.CSS and resource.css_path != cdn_path:
+            return
+        if self.type == StaticType.CSS:
             resource.css_path = cdn_path
-            s.flush()
-        else:
-            log.error(f"Static seed type {self.type} unsupported")
+            return
+        log.error(f"Static seed type {self.type} is unsupported")
+        return
 
 
 class StaticSyncer(Syncer):
@@ -107,17 +107,18 @@ class StaticSyncer(Syncer):
             out_ext = packer.validate(seed.bundles)
             compiled, bytes_, hash_ = packer.pack(seed.bundles)
             if not compiled:
-                log.error(f"Static resource {seed.id_} empty result")
+                log.error(f"Static resource {seed.id_} compiled empty")
                 continue
             present[(resource.__tablename__, resource.id)].append(seed.type)
             cdn_filename = f"{hash_}{out_ext}"
             if cdn_filename in cdn_filenames:
-                log.info(f"Static resource {seed.id_} already exists")
+                log.info(f"Static resource {seed.id_} is unchanged")
                 continue
             cdn_path = os.path.join("static", cdn_filename)
             packer.write_cdn(bytes_, cdn_path)
             with conn.begin() as s:
                 seed.set_attribute(s, resource, cdn_path)
+                log.info(f"Static resource {seed.id_} is updated")
         return present
 
     @classmethod
@@ -134,8 +135,8 @@ class StaticSyncer(Syncer):
                 present_types = present[(resource.__tablename__, resource.id)]
                 absent_types = [t for t in list(StaticType) if t not in present_types]
                 for absent_type in absent_types:
-                    if absent_type == StaticType.JS and resource.js_path:  # type: ignore[attr-defined]
-                        resource.js_path = None  # type: ignore[attr-defined]
-                    elif absent_type == StaticType.CSS and resource.css_path:  # type: ignore[attr-defined]
-                        resource.css_path = None  # type: ignore[attr-defined]
+                    if absent_type == StaticType.JS and resource.js_path:
+                        resource.js_path = None
+                    elif absent_type == StaticType.CSS and resource.css_path:
+                        resource.css_path = None
                     s.flush()
