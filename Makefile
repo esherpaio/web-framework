@@ -14,9 +14,9 @@ format_py:
 format_html:
 	djlint . --reformat
 format_js:
-	find . -type f -name '*.js' -not -path '*/.*' -exec js-beautify -r {} \;
+	echo "none";
 format_css:
-	find . -type f -name '*.css' -not -path '*/.*' -exec css-beautify -r {} \;
+	echo "none";
 
 # LINTING
 .PHONY: lint lint_py lint_html

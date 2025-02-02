@@ -22,33 +22,6 @@ quiet=true
 use_gitignore=true
 max_line_length=100
 preserve_blank_lines=true
-format_js=true
-format_css = true
-
-[tool.djlint.js]
-indent_size = 2
-indent_char = " "
-max_preserve_newlines = 1
-preserve_newlines = true
-wrap_line_length = 100
-end_with_newline = true
-brace_style = "collapse,preserve-inline"
-extra_liners = []
-keep_array_indentation = false
-break_chained_methods = false
-indent_scripts = "normal"
-space_before_conditional = true
-unescape_strings = false
-jslint_happy = false
-comma_first = false
-e4x = false
-indent_empty_lines = false
-
-[tool.djlint.css]
-indent = "  "
-openbrace = "end-of-line"
-autosemicolon = true
-newline_between_rules = true
 
 [tool.pytest.ini_options]
 python_files="test_*.py"

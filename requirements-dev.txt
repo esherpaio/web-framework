@@ -8,8 +8,6 @@ alembic~=1.14.1
 pytest~=8.3.4
 
 # formating and linting
-cssbeautifier~=1.15.1
 djlint~=1.36.4
-jsbeautifier~=1.15.1
 mypy==1.14.1
 ruff~=0.9.3
