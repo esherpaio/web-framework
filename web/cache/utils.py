@@ -2,7 +2,7 @@ from web.database import conn
 from web.database.model import (
     AppBlueprint,
     AppRoute,
-    AppSetting,
+    AppSettings,
     Country,
     Currency,
     FileType,
@@ -32,6 +32,6 @@ def cache_common() -> None:
         cache.redirects = s.query(Redirect).order_by(Redirect.url_from.desc()).all()
         cache.regions = s.query(Region).order_by(Region.name).all()
         cache.routes = s.query(AppRoute).all()
-        cache.setting = s.query(AppSetting).first()
+        cache.settings = s.query(AppSettings).first()
         cache.user_roles = s.query(UserRole).order_by(UserRole.name).all()
         # fmt: on

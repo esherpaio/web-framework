@@ -8,7 +8,7 @@ from sqlalchemy.orm import Session
 from web import cdn
 from web.config import config
 from web.database import conn
-from web.database.model import AppBlueprint, AppRoute, AppSetting
+from web.database.model import AppBlueprint, AppRoute, AppSettings
 from web.logger import log
 from web.packer import Packer
 from web.packer.bundle import CssBundle, JsBundle, ScssBundle
@@ -26,12 +26,12 @@ class StaticSeed:
         self,
         type_: StaticType,
         bundles: list[JsBundle | ScssBundle | CssBundle],
-        model: Type[AppSetting | AppBlueprint | AppRoute],
+        model: Type[AppSettings | AppBlueprint | AppRoute],
         endpoint: str = "",
     ) -> None:
         self.type: StaticType = type_
         self.bundles: list[JsBundle | ScssBundle | CssBundle] = bundles
-        self.model: Type[AppSetting | AppBlueprint | AppRoute] = model
+        self.model: Type[AppSettings | AppBlueprint | AppRoute] = model
         self.endpoint: str = endpoint
 
     @property
@@ -44,9 +44,9 @@ class StaticSeed:
     def get_resource(
         self,
         s: Session,
-    ) -> AppSetting | AppBlueprint | AppRoute | None:
-        if self.model == AppSetting:
-            return s.query(AppSetting).first()
+    ) -> AppSettings | AppBlueprint | AppRoute | None:
+        if self.model == AppSettings:
+            return s.query(AppSettings).first()
         if self.model == AppBlueprint:
             return s.query(AppBlueprint).filter_by(endpoint=self.endpoint).first()
         if self.model == AppRoute:
@@ -57,7 +57,7 @@ class StaticSeed:
     def set_attribute(
         self,
         s: Session,
-        resource: AppSetting | AppBlueprint | AppRoute,
+        resource: AppSettings | AppBlueprint | AppRoute,
         cdn_path: str,
     ) -> None:
         if self.type == StaticType.JS:
@@ -94,8 +94,8 @@ class StaticSyncer(Syncer):
     def get_resources(
         cls,
         s: Session,
-    ) -> dict[StaticSeed, AppSetting | AppBlueprint | AppRoute]:
-        resources: dict[StaticSeed, AppSetting | AppBlueprint | AppRoute] = {}
+    ) -> dict[StaticSeed, AppSettings | AppBlueprint | AppRoute]:
+        resources: dict[StaticSeed, AppSettings | AppBlueprint | AppRoute] = {}
         for seed in cls.SEEDS:
             resource = seed.get_resource(s)
             if resource is None:
@@ -108,7 +108,7 @@ class StaticSyncer(Syncer):
     def set_resources(
         cls,
         s: Session,
-        resources: dict[StaticSeed, AppSetting | AppBlueprint | AppRoute],
+        resources: dict[StaticSeed, AppSettings | AppBlueprint | AppRoute],
         cdn_filenames: list[str],
     ) -> dict[tuple[str, int], list[StaticType]]:
         present: dict[tuple[str, int], list[StaticType]] = defaultdict(list)
@@ -126,7 +126,6 @@ class StaticSyncer(Syncer):
             if cdn_filename not in cdn_filenames:
                 packer.write_cdn(bytes_, cdn_path)
             seed.set_attribute(s, resource, cdn_path)
-            log.info(f"Static resource {seed.id_} is updated")
         return present
 
     @classmethod
@@ -136,7 +135,7 @@ class StaticSyncer(Syncer):
         present: dict[tuple[str, int], list[StaticType]],
     ) -> None:
         for resource in [
-            *s.query(AppSetting).all(),
+            *s.query(AppSettings).all(),
             *s.query(AppBlueprint).all(),
             *s.query(AppRoute).all(),
         ]:

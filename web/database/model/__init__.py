@@ -1,7 +1,7 @@
 from ._base import Base
 from .app_blueprint import AppBlueprint
 from .app_route import AppRoute
-from .app_setting import AppSetting
+from .app_settings import AppSettings
 from .article import Article
 from .article_media import ArticleMedia
 from .billing import Billing
@@ -45,7 +45,7 @@ from .verification import Verification
 __all__ = [
     "AppBlueprint",
     "AppRoute",
-    "AppSetting",
+    "AppSettings",
     "Article",
     "ArticleMedia",
     "Base",

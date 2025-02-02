@@ -7,7 +7,7 @@ from web.api import API, json_response
 from web.app.blueprint.api_v1 import api_v1_bp
 from web.auth import authorize
 from web.database import conn
-from web.database.model import AppSetting, UserRoleLevel
+from web.database.model import AppSettings, UserRoleLevel
 
 #
 # Configuration
@@ -15,14 +15,14 @@ from web.database.model import AppSetting, UserRoleLevel
 
 
 class SettingsAPI(API):
-    model = AppSetting
+    model = AppSettings
     patch_columns = {
-        AppSetting.banner,
-        AppSetting.cached_at,
+        AppSettings.banner,
+        AppSettings.cached_at,
     }
     get_columns = {
-        AppSetting.banner,
-        AppSetting.cached_at,
+        AppSettings.banner,
+        AppSettings.cached_at,
     }
 
 
@@ -36,7 +36,7 @@ class SettingsAPI(API):
 def get_settings() -> Response:
     api = SettingsAPI()
     with conn.begin() as s:
-        model: AppSetting = api.get(s, None)
+        model: AppSettings = api.get(s, None)
         resource = api.gen_resource(s, model)
     return json_response(data=resource)
 
@@ -47,7 +47,7 @@ def patch_settings() -> Response:
     api = SettingsAPI()
     data = api.gen_data(api.patch_columns)
     with conn.begin() as s:
-        model: AppSetting = api.get(s, None)
+        model: AppSettings = api.get(s, None)
         set_cache(s, data, model)
         api.update(s, data, model)
         resource = api.gen_resource(s, model)
@@ -59,6 +59,6 @@ def patch_settings() -> Response:
 #
 
 
-def set_cache(s: Session, data: dict, model: AppSetting) -> None:
+def set_cache(s: Session, data: dict, model: AppSettings) -> None:
     if "cached_at" in data:
         data["cached_at"] = datetime.now(timezone.utc).isoformat()

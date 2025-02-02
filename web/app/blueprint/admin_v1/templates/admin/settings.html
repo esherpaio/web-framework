@@ -1,11 +1,11 @@
 {% extends "admin_main.html" %}
 {% block admin_body %}
     <script>
-        async function updateSetting() {
+        async function updateSettings() {
             event.preventDefault();
-            updateButton(`update-setting`, 1);
+            updateButton(`update-settings`, 1);
             await patchSettings({
-                banner: document.getElementById('setting-banner').value,
+                banner: document.getElementById('settings-banner').value,
                 cached_at: null,
             });
             window.location.reload();
@@ -16,9 +16,9 @@
         <div class="col-12">
             <div class="d-flex justify-content-between gap-2">
                 <h2 class="mb-0">Settings</h2>
-                <button id="update-setting"
+                <button id="update-settings"
                         class="btn btn-primary btn-load"
-                        onclick="updateSetting();">Update</button>
+                        onclick="updateSettings();">Update</button>
             </div>
         </div>
         <div class="col-12">
@@ -26,10 +26,10 @@
                 <div class="col-12">
                     <div class="input-group">
                         <span class="input-group-text">Banner</span>
-                        <input id="setting-banner"
+                        <input id="settings-banner"
                                class="form-control mt-0"
                                type="text"
-                               value="{{ setting.banner if setting.banner }}">
+                               value="{{ settings.banner if settings.banner }}">
                     </div>
                 </div>
             </div>

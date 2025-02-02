@@ -4,8 +4,8 @@ from sqlalchemy.orm import mapped_column as MC
 from ._base import Base
 
 
-class AppSetting(Base):
-    __tablename__ = "app_setting"
+class AppSettings(Base):
+    __tablename__ = "app_settings"
 
     banner = MC(String(256))
     cached_at = MC(DateTime(timezone=True))
