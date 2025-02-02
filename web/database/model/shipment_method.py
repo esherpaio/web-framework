@@ -1,3 +1,4 @@
+from decimal import Decimal
 from typing import Any
 
 from sqlalchemy import Boolean, ForeignKey, String
@@ -14,7 +15,9 @@ class ShipmentMethod(Base):
     is_deleted = MC(Boolean, nullable=False, default=False, server_default="false")
     name = MC(String(64), nullable=False)
     phone_required = MC(Boolean, nullable=False, default=False, server_default="false")
-    unit_price = MC(default_price, nullable=False, default=0, server_default="0")
+    unit_price = MC(
+        default_price, nullable=False, default=Decimal("0"), server_default="0"
+    )
 
     class_id = MC(ForeignKey("shipment_class.id", ondelete="RESTRICT"), nullable=False)
     zone_id = MC(ForeignKey("shipment_zone.id", ondelete="RESTRICT"), nullable=False)

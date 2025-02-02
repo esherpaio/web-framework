@@ -1,12 +1,13 @@
 import os
+from decimal import Decimal
 
 from web.pdf.pdf import PDF, Document
 
 DIR = os.path.dirname(os.path.realpath(__file__))
 
 
-def float_to_str(x: float) -> str:
-    return f"{x:.2f}"
+def number_to_str(value: float | int | Decimal) -> str:
+    return f"{value:.2f}"
 
 
 def save_pdf(pdf: Document, pdf_name: str) -> str:

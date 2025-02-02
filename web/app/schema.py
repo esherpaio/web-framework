@@ -3,6 +3,7 @@ import json
 from flask import request
 from markupsafe import Markup
 
+from web.api import JsonEncoder
 from web.app.urls import parse_url
 from web.config import config
 from web.database.model import AppRoute
@@ -29,7 +30,7 @@ class Schema:
     @property
     def tag(self) -> Markup:
         return Markup(
-            f"<script type='application/ld+json'>{json.dumps(self.data)}</script>"
+            f"<script type='application/ld+json'>{json.dumps(self.data, cls=JsonEncoder)}</script>"
         )
 
 

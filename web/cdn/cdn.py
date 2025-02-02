@@ -1,6 +1,6 @@
 import os
 from ftplib import FTP, error_perm
-from typing import Protocol, TypeVar, overload
+from typing import Protocol, TypeVar
 
 from web.config import config
 
@@ -73,18 +73,6 @@ def delete(path: str) -> None:
         except error_perm as error:
             if error.args[0][:3] != "550":
                 raise
-
-
-@overload
-def url(*args: None) -> None: ...
-
-
-@overload
-def url(*args: str) -> str: ...
-
-
-@overload
-def url(*args: str | None) -> str | None: ...
 
 
 def url(*args: str | None) -> str | None:

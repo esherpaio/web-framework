@@ -3,6 +3,8 @@ from enum import StrEnum
 
 from markupsafe import Markup
 
+from web.api import JsonEncoder
+
 #
 # Events
 #
@@ -18,7 +20,7 @@ class Event:
     def js_function(self, name: str, data: dict | None = None) -> str:
         if data is None:
             data = {}
-        return f"gtag('event', '{name}', {json.dumps(data)});"
+        return f"gtag('event', '{name}', {json.dumps(data, cls=JsonEncoder)});"
 
     def js_callable(self, name: str, data: dict | None = None) -> str:
         func = self.js_function(name, data)

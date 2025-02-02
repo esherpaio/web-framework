@@ -16,7 +16,7 @@ from web.pdf.pdf import (
 )
 from web.pdf.toolkit.table.parsing import cells_to_tables
 
-from .._utils import float_to_str, save_pdf
+from .._utils import number_to_str, save_pdf
 from ..object._style import (
     COLOR_DARKGREY,
     COLOR_LIGHTGREY,
@@ -160,7 +160,7 @@ def _build_refund_lines(order: Order, refund: Refund) -> list[FixedColumnWidthTa
     quantity_text = "1"
     quantity_p = TextPG(quantity_text)
     cells.append(TableCell(quantity_p, COLOR_LIGHTGREY))
-    price_text = f"{float_to_str(refund.total_price)} {order.currency_code}"
+    price_text = f"{number_to_str(refund.total_price)} {order.currency_code}"
     price_p = TextPG(price_text)
     cells.append(TableCell(price_p, COLOR_LIGHTGREY))
 
@@ -170,7 +170,9 @@ def _build_refund_lines(order: Order, refund: Refund) -> list[FixedColumnWidthTa
 
     # Subtotal
     subtotal_head_p = BoldPG(_("PDF_SUBTOTAL"), horizontal_alignment=Alignment.RIGHT)
-    subtotal_value_text = f"{float_to_str(refund.subtotal_price)} {order.currency_code}"
+    subtotal_value_text = (
+        f"{number_to_str(refund.subtotal_price)} {order.currency_code}"
+    )
     subtotal_value_p = TextPG(subtotal_value_text)
     cells.append(TableCell(subtotal_head_p, col_span=h_count - 1))
     cells.append(TableCell(subtotal_value_p, col_span=1))
@@ -180,14 +182,14 @@ def _build_refund_lines(order: Order, refund: Refund) -> list[FixedColumnWidthTa
         _("PDF_VAT_PERCENTAGE", vat_percentage=str(order.vat_percentage)),
         horizontal_alignment=Alignment.RIGHT,
     )
-    vat_value_text = f"{float_to_str(refund.vat_amount)} {order.currency_code}"
+    vat_value_text = f"{number_to_str(refund.vat_amount)} {order.currency_code}"
     vat_p = TextPG(vat_value_text)
     cells.append(TableCell(vat_head_p, col_span=h_count - 1))
     cells.append(TableCell(vat_p, col_span=1))
 
     # Total
     total_head_p = BoldPG(_("PDF_TOTAL"), horizontal_alignment=Alignment.RIGHT)
-    total_value_text = f"{float_to_str(refund.total_price_vat)} {order.currency_code}"
+    total_value_text = f"{number_to_str(refund.total_price_vat)} {order.currency_code}"
     total_value_p = TextPG(total_value_text)
     cells.append(TableCell(total_head_p, col_span=h_count - 1))
     cells.append(TableCell(total_value_p, col_span=1))

@@ -1,4 +1,5 @@
 from datetime import datetime, timezone
+from decimal import Decimal
 from typing import Callable
 
 import pyvat
@@ -120,7 +121,7 @@ def get_shipment_methods(
 def get_vat(
     country_code: str,
     is_business: bool,
-) -> tuple[float, bool]:
+) -> tuple[Decimal, bool]:
     """Get VAT information.
 
     Args:
@@ -137,13 +138,13 @@ def get_vat(
     seller = Party(config.BUSINESS_COUNTRY_CODE, True)
     vat = pyvat.get_sale_vat_charge(date, type_, buyer, seller)
     if vat.action == VatChargeAction.charge:
-        vat_rate = int(vat.rate) / 100 + 1
+        vat_rate = (vat.rate / Decimal("100")) + Decimal("1")
         vat_reverse = False
     elif vat.action == VatChargeAction.reverse_charge:
-        vat_rate = 1
+        vat_rate = Decimal("1")
         vat_reverse = False
     elif vat.action == VatChargeAction.no_charge:
-        vat_rate = 1
+        vat_rate = Decimal("1")
         vat_reverse = True
     else:
         raise NotImplementedError(f"Unknown VAT action: {vat.action}")

@@ -1,4 +1,5 @@
 import json
+from decimal import Decimal
 from enum import StrEnum
 from typing import Any
 
@@ -31,8 +32,15 @@ class ApiText(StrEnum):
 
 
 #
-# Functions
+# Functions - responses
 #
+
+
+class JsonEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, Decimal):
+            return str(obj)
+        return super().default(obj)
 
 
 def json_response(
@@ -54,13 +62,49 @@ def json_response(
             "message": message,
             "data": data,
             "links": links,
-        }
+        },
+        cls=JsonEncoder,
     )
     return Response(
         body,
         status=code,
         mimetype="application/json",
     )
+
+
+#
+# Functions - casting
+#
+
+
+def get_cast_func(type_: Any) -> Any:
+    if type_ is bool:
+        return cast_bool
+    elif type_ is Decimal:
+        return cast_decimal
+    else:
+        return type_
+
+
+def cast_bool(value: Any) -> Any:
+    if isinstance(value, bool):
+        return value
+    elif isinstance(value, str):
+        return value.lower() == "true"
+    return value
+
+
+def cast_decimal(value: Any) -> Any:
+    if isinstance(value, (int, float)):
+        return Decimal(str(value))
+    elif isinstance(value, str):
+        return Decimal(value)
+    return value
+
+
+#
+# Functions - getters
+#
 
 
 def json_get(
@@ -72,12 +116,15 @@ def json_get(
 ) -> tuple[Any, bool]:
     """Get a value from the request json."""
     if request.is_json and request.json is not None:
+        cast = get_cast_func(type_)
         value = request.json.get(key, default)
-        data = request.json
+        if value is not None:
+            value = cast(value)
+            type_ = type(value)
+        has_key = key in request.json
     else:
-        value = None
-        data = {}
-    has_key = key in data
+        value = default
+        has_key = False
     _validate(value, type_, nullable, column)
     return value, has_key
 
@@ -90,14 +137,19 @@ def args_get(
     column: InstrumentedAttribute | None = None,
 ) -> tuple[Any, bool]:
     """Get a value from the request args."""
-    if type_ is bool:
-        type_func = lambda value: value.lower() == "true"  # noqa: E731
-    else:
-        type_func = type_
-    value = request.args.get(key, default, type_func)
+    cast = get_cast_func(type_)
+    value = request.args.get(key, default)
+    if value is not None:
+        value = cast(value)
+        type_ = type(value)
     has_key = key in request.args
     _validate(value, type_, nullable, column)
     return value, has_key
+
+
+#
+# Functions - validators
+#
 
 
 def _validate(
