@@ -6,17 +6,13 @@ requirements:
 	pip install -r requirements-dev.txt
 
 # FORMATTING
-.PHONY: format format_py format_html format_js format_css
-format: format_py format_html format_js format_css
+.PHONY: format format_py format_html
+format: format_py format_html
 format_py:
 	ruff check . --fix
 	ruff format .
 format_html:
 	djlint . --reformat
-format_js:
-	echo "none";
-format_css:
-	echo "none";
 
 # LINTING
 .PHONY: lint lint_py lint_html
