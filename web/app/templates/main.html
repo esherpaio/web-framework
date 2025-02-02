@@ -10,10 +10,10 @@
         {% if gtags %}{{ gtags.code }}{% endif %}
         <!-- fonts -->
         <!-- include css -->
-        {% if cache.setting.css_path %}
+        {% if cache.settings.css_path %}
             <link type="text/css"
                   rel="stylesheet"
-                  href="{{ cdn_url(cache.setting.css_path) }}">
+                  href="{{ cdn_url(cache.settings.css_path) }}">
         {% endif %}
         {% for blueprint in cache.blueprints %}
             {% if blueprint.endpoint == request.blueprint and blueprint.css_path %}
@@ -28,8 +28,8 @@
             {% endif %}
         {% endfor %}
         <!-- include js -->
-        {% if cache.setting.js_path %}
-            <script defer src="{{ cdn_url(cache.setting.js_path) }}"></script>
+        {% if cache.settings.js_path %}
+            <script defer src="{{ cdn_url(cache.settings.js_path) }}"></script>
         {% endif %}
         {% for blueprint in cache.blueprints %}
             {% if blueprint.endpoint == request.blueprint and blueprint.js_path %}

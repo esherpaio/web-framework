@@ -1,4 +1,4 @@
-from .app_setting import AppSettingSyncer
+from .app_settings import AppSettingSyncer
 from .cart import CartCleaner
 from .country import CountrySyncer
 from .currency import CurrencySyncer

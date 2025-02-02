@@ -4,7 +4,7 @@ from threading import Thread
 from typing import Callable
 
 from web.database import conn
-from web.database.model import AppSetting
+from web.database.model import AppSettings
 from web.logger import log
 from web.utils import Singleton
 
@@ -38,10 +38,10 @@ class CacheManager(metaclass=Singleton):
         if self._updated_at is None:
             return True
         with conn.begin() as s:
-            setting = s.query(AppSetting).first()
-        if not setting or setting.cached_at is None:
+            settings = s.query(AppSettings).first()
+        if not settings or settings.cached_at is None:
             return False
-        return setting.cached_at > self._updated_at
+        return settings.cached_at > self._updated_at
 
     def update(self, force: bool = False) -> None:
         if not force:
