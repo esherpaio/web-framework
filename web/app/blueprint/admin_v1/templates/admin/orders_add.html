@@ -63,7 +63,7 @@
                 shippingOption.textContent = country.name;
                 shippingSelect.appendChild(shippingOption);
             }
-            const billingSelect = document.getElementById("shipping-country-id");
+            const billingSelect = document.getElementById("billing-country-id");
             billingSelect.options.length = 0;
             for (const country of countries) {
                 const billingOption = document.createElement("option");
@@ -278,7 +278,7 @@
                 billing = (await postBillings(billingData, silent)).data;
             }
             const cartData = { billing_id: billing.id };
-            cart = await patchCartsId(cart.id, cartData, silent);
+            cart = (await patchCartsId(cart.id, cartData, silent)).data;
             await loadCart(cart);
             const shipmentMethods = (await getShipmentMethods({ cart_id: cart.id })).data;
             await loadShipmentMethods(shipmentMethods, cart);
@@ -290,7 +290,7 @@
             const shipmentMethodEl = document.querySelector('input[name="shipment-method-id"]:checked');
             const shipmentMethodId = shipmentMethodEl ? parseInt(shipmentMethodEl.value) : null;
             const cartData = { shipment_method_id: shipmentMethodId };
-            const cart = await patchCartsId(cartId, cartData).data;
+            const cart = (await patchCartsId(cartId, cartData)).data;
             await loadCart(cart);
 
             if (shipmentMethodId !== null) {
