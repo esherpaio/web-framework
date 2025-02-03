@@ -1,5 +1,5 @@
 from decimal import Decimal
-from typing import Any, Type
+from typing import Any, Optional, Type
 
 import emoji
 from sqlalchemy import Numeric, TypeDecorator
@@ -25,8 +25,7 @@ class AutoDecimal(TypeDecorator):
     impl = Numeric
     cache_ok = True
 
-    def process_bind_param(self, value, dialect):
-        """Convert float to Decimal before storing."""
+    def process_bind_param(self, value: Any, dialect: Any) -> Optional[Decimal]:
         if value is None:
             return None
         if isinstance(value, (int, float)):
@@ -35,14 +34,13 @@ class AutoDecimal(TypeDecorator):
             return Decimal(value)
         return value
 
-    def process_result_value(self, value, dialect):
-        """Ensure Decimal is returned."""
+    def process_result_value(self, value: Any, dialect: Any) -> Optional[Decimal]:
         if value is None:
             return None
         return Decimal(value)
 
     @property
-    def python_type(self) -> Type[Any]:
+    def python_type(self) -> Type[Decimal]:
         return Decimal
 
 

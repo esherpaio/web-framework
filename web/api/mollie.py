@@ -1,6 +1,6 @@
 import urllib.parse
 from datetime import datetime, timedelta, timezone
-from decimal import Decimal
+from decimal import ROUND_HALF_UP, Decimal
 
 from mollie.api.client import Client
 from sqlalchemy.orm.session import Session
@@ -58,8 +58,9 @@ def strip_scheme(url: str) -> str:
     return parsed.geturl().replace(scheme, "", 1)
 
 
-def gen_mollie_amount(number: int | float, currency: str) -> dict:
-    return {"value": f"{number:.2f}", "currency": currency}
+def gen_mollie_amount(value: Decimal, currency: str) -> dict:
+    quantized = value.quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+    return {"value": str(quantized), "currency": currency}
 
 
 def gen_mollie_payment_data(

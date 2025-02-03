@@ -32,7 +32,7 @@ class SitemapUrl:
 #
 
 
-def str_to_xml(string: str) -> bytes:
+def text_to_xml(value: str) -> bytes:
     def strip_node(node_: Node) -> None:
         for x in node_.childNodes:
             if x.nodeType == Node.TEXT_NODE:
@@ -42,7 +42,7 @@ def str_to_xml(string: str) -> bytes:
                 strip_node(x)
 
     # Parse to DOM object
-    node = minidom.parseString(string)
+    node = minidom.parseString(value)
     # Remove empty XML elements
     strip_node(node)
     # Make pretty

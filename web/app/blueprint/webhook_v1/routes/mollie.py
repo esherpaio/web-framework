@@ -2,7 +2,7 @@ from flask import request
 from mollie.api.error import NotFoundError
 from werkzeug import Response
 
-from web.api import ApiText, json_response
+from web.api import HttpText, json_response
 from web.api.mollie import Mollie
 from web.app.blueprint.webhook_v1 import webhook_v1_bp
 from web.database import conn
@@ -32,7 +32,7 @@ def mollie_payment() -> Response:
         order_id = mollie_payment_.metadata.get("order_id")
         order = s.query(Order).filter_by(id=order_id).first()
         if not order:
-            return json_response(404, ApiText.HTTP_404)
+            return json_response(404, HttpText.HTTP_404)
 
         if mollie_payment_.is_paid():
             invoice = s.query(Invoice).filter_by(order_id=order_id).first()

@@ -28,10 +28,7 @@ from web.locale import current_locale
 #
 
 
-def predict_cart_info(
-    s: Session,
-    cart: Cart,
-) -> tuple[Shipping | None, Billing | None]:
+def predict_cart_info(s: Session, cart: Cart) -> tuple[Shipping | None, Billing | None]:
     """Predict the most accurate shipping and billing objects.
 
     In the following order: cart -> user -> None.
@@ -60,10 +57,7 @@ def predict_cart_info(
     return shipping, billing
 
 
-def get_shipment_methods(
-    s: Session,
-    cart: Cart,
-) -> list[ShipmentMethod]:
+def get_shipment_methods(s: Session, cart: Cart) -> list[ShipmentMethod]:
     # Get all possible shipping class ids
     shipment_class_ids = []
     for item in cart.items:
@@ -114,14 +108,10 @@ def get_shipment_methods(
         )
     else:
         shipment_methods = []
-    # Return
     return shipment_methods
 
 
-def get_vat(
-    country_code: str,
-    is_business: bool,
-) -> tuple[Decimal, bool]:
+def get_vat(country_code: str, is_business: bool) -> tuple[Decimal, bool]:
     """Get VAT information.
 
     Args:
@@ -156,9 +146,7 @@ def get_vat(
 #
 
 
-def transfer_cart(
-    f: Callable,
-) -> Callable[..., Response]:
+def transfer_cart(f: Callable) -> Callable[..., Response]:
     """Transfer a cart from one session to another.
 
     Useful for when an user logs in or out.

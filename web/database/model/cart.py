@@ -72,7 +72,7 @@ class Cart(Base):
 
     @hybrid_property
     def vat_percentage(self) -> int:
-        return round((self.vat_rate - 1) * 100)
+        return int(round((self.vat_rate - 1) * 100))
 
     @hybrid_property
     def vat_amount(self) -> Decimal:

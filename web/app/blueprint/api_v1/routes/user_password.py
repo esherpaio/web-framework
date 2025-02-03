@@ -3,7 +3,7 @@ from enum import StrEnum
 from werkzeug import Response
 from werkzeug.security import generate_password_hash
 
-from web.api import ApiText, json_get, json_response
+from web.api import HttpText, json_get, json_response
 from web.app.blueprint.api_v1 import api_v1_bp
 from web.database import conn
 from web.database.model import User, Verification
@@ -35,7 +35,7 @@ def post_users_id_password(user_id: int) -> Response:
         # Get user
         user = s.query(User).filter_by(id=user_id).first()
         if user is None:
-            return json_response(404, ApiText.HTTP_404)
+            return json_response(404, HttpText.HTTP_404)
 
         # Recover password
         recover_user_password(s, user)
@@ -53,7 +53,7 @@ def patch_users_id_password(user_id: int) -> Response:
         # Get user
         user = s.query(User).filter_by(id=user_id).first()
         if not user:
-            return json_response(404, ApiText.HTTP_404)
+            return json_response(404, HttpText.HTTP_404)
 
         # Check verification
         verification = s.query(Verification).filter_by(key=verification_key).first()

@@ -40,7 +40,7 @@ def products_id(product_id: int) -> str | Response:
         product_ = (
             s.query(Product)
             .options(
-                joinedload(Product.type),
+                joinedload(Product.type_),
                 joinedload(Product.shipment_class),
             )
             .filter_by(id=product_id, is_deleted=False)
@@ -68,7 +68,7 @@ def products_id_options(product_id: int) -> str | Response:
         product_ = (
             s.query(Product)
             .options(
-                joinedload(Product.type),
+                joinedload(Product.type_),
                 joinedload(Product.shipment_class),
             )
             .filter_by(id=product_id, is_deleted=False)
@@ -97,7 +97,7 @@ def products_id_options_id(product_id: int, option_id: int) -> str:
         product_ = s.query(Product).filter_by(id=product_id, is_deleted=False).first()
         product_medias = (
             s.query(ProductMedia)
-            .options(joinedload(ProductMedia.file))
+            .options(joinedload(ProductMedia.file_))
             .filter_by(product_id=product_id)
             .order_by(ProductMedia.order, ProductMedia.id)
             .all()
@@ -130,7 +130,7 @@ def products_id_media(product_id: int) -> str | Response:
         product_ = (
             s.query(Product)
             .options(
-                joinedload(Product.type),
+                joinedload(Product.type_),
                 joinedload(Product.shipment_class),
             )
             .filter_by(id=product_id, is_deleted=False)
@@ -140,7 +140,7 @@ def products_id_media(product_id: int) -> str | Response:
             return redirect(url_for("admin.products"))
         product_medias = (
             s.query(ProductMedia)
-            .options(joinedload(ProductMedia.file))
+            .options(joinedload(ProductMedia.file_))
             .filter_by(product_id=product_id)
             .order_by(ProductMedia.order, ProductMedia.id)
             .all()
@@ -159,7 +159,7 @@ def products_id_links(product_id: int) -> str | Response:
         product_ = (
             s.query(Product)
             .options(
-                joinedload(Product.type),
+                joinedload(Product.type_),
                 joinedload(Product.shipment_class),
             )
             .filter_by(id=product_id, is_deleted=False)
@@ -170,7 +170,7 @@ def products_id_links(product_id: int) -> str | Response:
         product_links = (
             s.query(ProductLink)
             .options(
-                joinedload(ProductLink.type),
+                joinedload(ProductLink.type_),
                 joinedload(ProductLink.sku),
                 joinedload(ProductLink.sku, Sku.product),
                 joinedload(ProductLink.sku, Sku.details),
@@ -208,7 +208,7 @@ def products_id_skus(product_id: int) -> str | Response:
         product_ = (
             s.query(Product)
             .options(
-                joinedload(Product.type),
+                joinedload(Product.type_),
                 joinedload(Product.shipment_class),
             )
             .filter_by(id=product_id, is_deleted=False)

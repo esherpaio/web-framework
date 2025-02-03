@@ -1,6 +1,6 @@
 from werkzeug import Response
 
-from web.api import ApiText, json_get, json_response
+from web.api import HttpText, json_get, json_response
 from web.app.blueprint.api_v1 import api_v1_bp
 from web.auth import authorize
 from web.database import conn
@@ -28,7 +28,7 @@ def post_shipment_classes() -> Response:
             s.query(ShipmentClass).filter_by(name=name, is_deleted=False).first()
         )
         if shipment_class:
-            return json_response(409, ApiText.HTTP_409)
+            return json_response(409, HttpText.HTTP_409)
 
         # Insert shipment class
         shipment_class = ShipmentClass(name=name, order=order)
@@ -46,7 +46,7 @@ def patch_shipment_classes_id(shipment_class_id: int) -> Response:
         # Get shipment zone
         shipment_zone = s.query(ShipmentClass).filter_by(id=shipment_class_id).first()
         if not shipment_zone:
-            return json_response(404, ApiText.HTTP_404)
+            return json_response(404, HttpText.HTTP_404)
 
         # Update order
         if has_order:
@@ -62,7 +62,7 @@ def delete_shipment_classes_id(shipment_class_id: int) -> Response:
         # Delete shipment class
         shipment_class = s.query(ShipmentClass).filter_by(id=shipment_class_id).first()
         if not shipment_class:
-            return json_response(404, ApiText.HTTP_404)
+            return json_response(404, HttpText.HTTP_404)
         shipment_class.is_deleted = True
 
         # Delete shipment zones

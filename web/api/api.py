@@ -10,7 +10,7 @@ from sqlalchemy.orm.session import Session
 from web.database.model import Base
 from web.logger import log
 
-from .utils import ApiText, args_get, json_get, json_response
+from .utils import HttpText, args_get, json_get, json_response
 
 B = TypeVar("B", bound=Base)
 
@@ -74,7 +74,7 @@ class API(Generic[B]):
             return {}
         request_json = request.json
         if not isinstance(request_json, dict):
-            abort(json_response(400, ApiText.HTTP_400))
+            abort(json_response(400, HttpText.HTTP_400))
         data = {}
         for column in columns:
             key, value = cls.parse_column(request_json, column, json_get)
@@ -147,7 +147,7 @@ class API(Generic[B]):
             filter_ = getattr(cls.model, key) == value
             filters.add(filter_)
         if required and not filters:
-            abort(json_response(400, ApiText.HTTP_400))
+            abort(json_response(400, HttpText.HTTP_400))
         return filters
 
     #
@@ -163,7 +163,7 @@ class API(Generic[B]):
             s.add(model)
         except IntegrityError as e:
             if isinstance(e.orig, UniqueViolation):
-                abort(json_response(409, ApiText.HTTP_409))
+                abort(json_response(409, HttpText.HTTP_409))
             raise e
         s.flush()
 
@@ -180,7 +180,7 @@ class API(Generic[B]):
             filters += (cls.model.id == id_,)
         model = s.query(cls.model).filter(*filters).first()
         if model is None:
-            abort(json_response(404, ApiText.HTTP_404))
+            abort(json_response(404, HttpText.HTTP_404))
         else:
             return model
 

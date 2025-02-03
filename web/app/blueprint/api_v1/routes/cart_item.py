@@ -4,7 +4,7 @@ from flask import abort
 from sqlalchemy.orm.session import Session
 from werkzeug import Response
 
-from web.api import API, ApiText, json_response
+from web.api import API, HttpText, json_response
 from web.app.blueprint.api_v1 import api_v1_bp
 from web.app.cart import get_shipment_methods
 from web.auth import current_user
@@ -109,7 +109,7 @@ def upsert_cart_item(s: Session, data: dict, model: None) -> CartItem:
     filters = {Cart.user_id == current_user.id, Cart.id == cart_id}
     cart = s.query(Cart).filter(*filters).first()
     if cart is None:
-        abort(json_response(404, ApiText.HTTP_404))
+        abort(json_response(404, HttpText.HTTP_404))
     else:
         for cart_item in cart.items:
             if cart_item.sku_id == sku_id:
@@ -148,6 +148,6 @@ def authorize_cart(s: Session, data: dict, model: None) -> Cart:
     filters = {Cart.id == cart_id, Cart.user_id == current_user.id}
     cart = s.query(Cart).filter(*filters).first()
     if cart is None:
-        abort(json_response(404, ApiText.HTTP_404))
+        abort(json_response(404, HttpText.HTTP_404))
     else:
         return cart

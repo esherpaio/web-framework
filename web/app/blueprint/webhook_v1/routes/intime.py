@@ -32,11 +32,8 @@ ORDER_FILTERS = (Order.status_id.in_([OrderStatusId.READY, OrderStatusId.COMPLET
 def response(code: int = 200, data: list | dict | None = None) -> Response:
     if data is None:
         data = {}
-    return Response(
-        json.dumps(data, cls=JsonEncoder),
-        status=code,
-        mimetype="application/json",
-    )
+    value = json.dumps(data, cls=JsonEncoder)
+    return Response(value, status=code, mimetype="application/json")
 
 
 #

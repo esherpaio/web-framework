@@ -2,7 +2,7 @@ import itertools
 
 from werkzeug import Response
 
-from web.api import ApiText, json_response
+from web.api import HttpText, json_response
 from web.app.blueprint.api_v1 import api_v1_bp
 from web.auth import authorize
 from web.automation import sync_after
@@ -31,7 +31,7 @@ def post_skus(product_id: int) -> Response:
         skus = s.query(Sku).filter_by(product_id=product_id).all()
         product = s.query(Product).filter_by(id=product_id).first()
         if product is None:
-            return json_response(404, ApiText.HTTP_404)
+            return json_response(404, HttpText.HTTP_404)
 
         # Generate all possible combinations between value_ids
         value_id_sets = []

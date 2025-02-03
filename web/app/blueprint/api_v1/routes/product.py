@@ -1,6 +1,6 @@
 from werkzeug import Response
 
-from web.api import ApiText, json_get, json_response
+from web.api import HttpText, json_get, json_response
 from web.app.blueprint.api_v1 import api_v1_bp
 from web.auth import authorize
 from web.automation import sync_after
@@ -33,7 +33,7 @@ def post_products() -> Response:
                 product.is_deleted = False
                 return json_response()
             else:
-                return json_response(409, ApiText.HTTP_409)
+                return json_response(409, HttpText.HTTP_409)
 
         # Insert product
         product = Product(type_id=ProductTypeId.PHYSICAL, name=name, unit_price=1)
@@ -58,7 +58,7 @@ def patch_products_id(product_id: int) -> Response:
         # Get product
         product = s.query(Product).filter_by(id=product_id).first()
         if product is None:
-            return json_response(404, ApiText.HTTP_404)
+            return json_response(404, HttpText.HTTP_404)
 
         # Update product
         if has_attributes:
@@ -86,7 +86,7 @@ def delete_products_id(product_id: int) -> Response:
         # Delete product
         product = s.query(Product).filter_by(id=product_id).first()
         if not product:
-            return json_response(404, ApiText.HTTP_404)
+            return json_response(404, HttpText.HTTP_404)
         product.is_deleted = True
 
         # Delete skus

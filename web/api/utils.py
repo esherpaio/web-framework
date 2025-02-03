@@ -16,9 +16,7 @@ from web.i18n import _
 #
 
 
-class ApiText(StrEnum):
-    """Default API response messages."""
-
+class HttpText(StrEnum):
     HTTP_200 = _("API_HTTP_200")
     HTTP_202 = _("API_HTTP_202")
     HTTP_204 = _("API_HTTP_204")
@@ -51,25 +49,16 @@ def json_response(
 ) -> Response:
     """Create a default API response."""
     if message is None:
-        message = ApiText.HTTP_200
+        message = HttpText.HTTP_200
     if data is None:
         data = {}
     if links is None:
         links = {}
-    body = json.dumps(
-        {
-            "code": code,
-            "message": message,
-            "data": data,
-            "links": links,
-        },
+    value = json.dumps(
+        {"code": code, "message": message, "data": data, "links": links},
         cls=JsonEncoder,
     )
-    return Response(
-        body,
-        status=code,
-        mimetype="application/json",
-    )
+    return Response(value, status=code, mimetype="application/json")
 
 
 #

@@ -1,3 +1,4 @@
+from decimal import Decimal
 from typing import Any
 
 from sqlalchemy import ForeignKey, Integer, UniqueConstraint
@@ -37,5 +38,5 @@ class OrderLine(Base):
     # Properties - pricing
 
     @hybrid_property
-    def total_price_vat(self) -> float:
+    def total_price_vat(self) -> Decimal:
         return self.total_price * self.order.vat_rate

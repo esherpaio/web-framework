@@ -17,7 +17,7 @@ async function updateCartCount(cart = undefined) {
 function setCartCount(value) {
     if (!isNaN(value)) {
         setCookie("items_count", value, 365);
-        let element = document.getElementById('navbar-cart-count');
+        let element = document.getElementById("navbar-cart-count");
         if (element) element.innerText = value;
     }
 }

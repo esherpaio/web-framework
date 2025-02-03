@@ -1,3 +1,4 @@
+from decimal import Decimal
 from typing import Any
 
 from sqlalchemy import ForeignKey, String
@@ -30,25 +31,25 @@ class Refund(Base, Attribute):
     # Properties - pricing
 
     @hybrid_property
-    def vat_rate(self) -> float:
+    def vat_rate(self) -> Decimal:
         return self.order.vat_rate
 
     @hybrid_property
     def vat_percentage(self) -> int:
-        return round((self.vat_rate - 1) * 100)
+        return int(round((self.vat_rate - 1) * 100))
 
     @hybrid_property
-    def vat_amount(self) -> float:
+    def vat_amount(self) -> Decimal:
         return self.total_price_vat - self.total_price
 
     @hybrid_property
-    def subtotal_price(self) -> float:
+    def subtotal_price(self) -> Decimal:
         return self.total_price
 
     @hybrid_property
-    def subtotal_price_vat(self) -> float:
+    def subtotal_price_vat(self) -> Decimal:
         return self.total_price * self.vat_rate
 
     @hybrid_property
-    def total_price_vat(self) -> float:
+    def total_price_vat(self) -> Decimal:
         return self.total_price * self.vat_rate

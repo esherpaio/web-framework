@@ -37,7 +37,7 @@ class Product(Base, Attribute):
         "ProductOption", back_populates="product", order_by="ProductOption.order"
     )
     shipment_class = relationship("ShipmentClass")
-    type = relationship("ProductType")
+    type_ = relationship("ProductType")
 
     # Validation
 

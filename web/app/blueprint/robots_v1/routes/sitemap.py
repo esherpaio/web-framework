@@ -6,7 +6,7 @@ from sqlalchemy.orm import joinedload
 
 from web.app.blueprint.robots_v1 import robots_v1_bp
 from web.app.routing import has_argument, is_endpoint
-from web.app.sitemap import Sitemap, SitemapUrl, str_to_xml
+from web.app.sitemap import Sitemap, SitemapUrl, text_to_xml
 from web.cache import cache
 from web.database import conn
 from web.database.model import Article, Category, Sku
@@ -20,7 +20,7 @@ def sitemap() -> Response:
         if rule.endpoint and rule.endpoint.startswith("robots.sitemap_"):
             sitemaps.append(Sitemap(rule.endpoint))
     template = render_template("sitemap_index.xml", sitemaps=sitemaps)
-    response = make_response(str_to_xml(template))
+    response = make_response(text_to_xml(template))
     response.headers["Content-Type"] = "application/xml"
     return response
 
@@ -48,7 +48,7 @@ def sitemap_pages() -> Response:
             urls.append(SitemapUrl(route.endpoint))
 
     template = render_template("sitemap.xml", urls=urls)
-    response = make_response(str_to_xml(template))
+    response = make_response(text_to_xml(template))
     response.headers["Content-Type"] = "application/xml"
     return response
 
@@ -100,6 +100,6 @@ def _generate_sitemap(model: Type[Sku | Article | Category]) -> Response:
             urls.append(SitemapUrl(endpoint, slug=obj.slug))
 
     template = render_template("sitemap.xml", urls=urls)
-    response = make_response(str_to_xml(template))
+    response = make_response(text_to_xml(template))
     response.headers["Content-Type"] = "application/xml"
     return response

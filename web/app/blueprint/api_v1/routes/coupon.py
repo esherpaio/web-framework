@@ -1,6 +1,6 @@
 from werkzeug import Response
 
-from web.api import ApiText, json_get, json_response
+from web.api import HttpText, json_get, json_response
 from web.app.blueprint.api_v1 import api_v1_bp
 from web.auth import authorize
 from web.database import conn
@@ -28,7 +28,7 @@ def post_coupons() -> Response:
         # Check if coupon already exists
         coupon = s.query(Coupon).filter_by(code=code, is_deleted=False).first()
         if coupon:
-            return json_response(409, ApiText.HTTP_409)
+            return json_response(409, HttpText.HTTP_409)
 
         # Insert coupon
         coupon = Coupon(code=code, rate=rate, amount=amount)
@@ -44,7 +44,7 @@ def delete_coupons_id(coupon_id: int) -> Response:
         # Delete coupon
         coupon = s.query(Coupon).filter_by(id=coupon_id).first()
         if not coupon:
-            return json_response(404, ApiText.HTTP_404)
+            return json_response(404, HttpText.HTTP_404)
         coupon.is_deleted = True
 
     return json_response()

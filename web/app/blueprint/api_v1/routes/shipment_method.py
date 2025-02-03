@@ -2,7 +2,7 @@ from sqlalchemy import false, or_
 from sqlalchemy.orm import Session, joinedload
 from werkzeug import Response
 
-from web.api import API, ApiText, json_get, json_response
+from web.api import API, HttpText, json_get, json_response
 from web.app.blueprint.api_v1 import api_v1_bp
 from web.auth import authorize, current_user
 from web.database import conn
@@ -97,7 +97,7 @@ def patch_shipment_methods_id(shipment_method_id: int) -> Response:
             s.query(ShipmentMethod).filter_by(id=shipment_method_id).first()
         )
         if not shipment_method:
-            return json_response(404, ApiText.HTTP_404)
+            return json_response(404, HttpText.HTTP_404)
 
         # Update shipment method
         if has_name:
@@ -119,7 +119,7 @@ def delete_shipment_methods_id(shipment_method_id: int) -> Response:
             s.query(ShipmentMethod).filter_by(id=shipment_method_id).first()
         )
         if shipment_method is None:
-            return json_response(404, ApiText.HTTP_404)
+            return json_response(404, HttpText.HTTP_404)
         shipment_method.is_deleted = True
 
     return json_response()

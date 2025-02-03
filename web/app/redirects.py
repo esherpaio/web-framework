@@ -12,10 +12,10 @@ class Redirector:
             self.init(app)
 
     def init(self, app: Flask) -> None:
-        app.before_request(self.check_redirects)
+        app.before_request(self.redirect)
 
     @staticmethod
-    def check_redirects() -> Response | None:
+    def redirect() -> Response | None:
         for x in cache.redirects:
             if fnmatch.fnmatch(request.url, x.url_from):
                 return redirect(x.url_to, code=301)

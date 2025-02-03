@@ -19,7 +19,7 @@ class ProductLink(Base):
 
     product = relationship("Product")
     sku = relationship("Sku")
-    type = relationship("ProductLinkType")
+    type_ = relationship("ProductLinkType")
 
     # Properties - types
 
