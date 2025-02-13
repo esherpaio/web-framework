@@ -1,5 +1,10 @@
 # Changelog
 
+## v2.10.3 (2025-02-13)
+
+- Bug fixes
+  - Fixed a bug in locale validation that could occur during checkout
+
 ## v2.10.2 (2025-01-31)
 
 - Admin panel improvements

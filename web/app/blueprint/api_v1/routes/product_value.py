@@ -9,7 +9,7 @@ from web.automation import sync_after
 from web.automation.task import SkuSyncer
 from web.database import conn
 from web.database.model import ProductValue, Sku, SkuDetail, UserRoleLevel
-from web.validation import gen_slug
+from web.utils.generators import gen_slug
 
 #
 # Configuration

@@ -13,7 +13,7 @@ from web.database.model import (
     SkuDetail,
     UserRoleLevel,
 )
-from web.validation import gen_slug
+from web.utils.generators import gen_slug
 
 #
 # Configuration

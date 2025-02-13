@@ -5,6 +5,32 @@ from mollie.api.client import Client
 from web.app.urls import url_for
 from web.config import config
 
+DEFAULT_LOCALE = "en_US"
+VALID_LOCALES = [
+    "ca_ES",
+    "da_DK",
+    "de_AT",
+    "de_CH",
+    "de_DE",
+    "en_GB",
+    "en_US",
+    "es_ES",
+    "fi_FI",
+    "fr_BE",
+    "fr_FR",
+    "hu_HU",
+    "is_IS",
+    "it_IT",
+    "lt_LT",
+    "lv_LV",
+    "nb_NO",
+    "nl_BE",
+    "nl_NL",
+    "pl_PL",
+    "pt_PT",
+    "sv_SE",
+]
+
 
 class Mollie(Client):
     def __init__(self) -> None:

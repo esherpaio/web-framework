@@ -5,7 +5,7 @@ from web.app.blueprint.api_v1 import api_v1_bp
 from web.auth import authorize
 from web.database import conn
 from web.database.model import Article, UserRoleLevel
-from web.validation import gen_slug
+from web.utils.generators import gen_slug
 
 #
 # Configuration
