@@ -1,21 +1,5 @@
-import re
-
-from phonenumbers.phonenumberutil import _is_viable_phone_number
-
 OBFUSCATE_PARTIAL: set[str] = {"password"}
 OBFUSCATE_MATCH: set[str] = {"email", "phone", "address", "last_name", "vat"}
-
-
-def is_email(text: str) -> bool:
-    return bool(re.match(r"[^@]+@[^@]+\.[^@]+", text))
-
-
-def is_phone(text: str) -> bool:
-    return _is_viable_phone_number(text)
-
-
-def gen_slug(name: str) -> str:
-    return re.sub(r"[ _]+", "-", re.sub(r"[^\w -]+", "", name)).lower()
 
 
 def obfuscate_data(data: dict | list) -> dict | list:

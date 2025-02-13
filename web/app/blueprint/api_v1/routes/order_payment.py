@@ -5,7 +5,13 @@ from mollie.api.error import UnprocessableEntityError
 from werkzeug import Response
 
 from web.api import ApiText, json_get, json_response
-from web.api.mollie import Mollie, mollie_amount, mollie_webhook
+from web.api.mollie import (
+    DEFAULT_LOCALE,
+    VALID_LOCALES,
+    Mollie,
+    mollie_amount,
+    mollie_webhook,
+)
 from web.app.blueprint.api_v1 import api_v1_bp
 from web.auth import current_user
 from web.config import config
@@ -42,6 +48,10 @@ def post_orders_id_payments(order_id: int) -> Response:
         if not order:
             return json_response(403, ApiText.HTTP_403)
 
+        # Validate locale
+        if current_locale.locale_alt not in VALID_LOCALES:
+            locale = DEFAULT_LOCALE
+
         # Create Mollie payment
         order_price_vat = order.total_price * order.vat_rate
         amount = mollie_amount(order_price_vat, order.currency_code)
@@ -57,7 +67,7 @@ def post_orders_id_payments(order_id: int) -> Response:
             "webhookUrl": mollie_webhook(),
             "metadata": {"order_id": order.id, "is_test": is_test},
             "dueDate": due_date_str,
-            "locale": current_locale.locale_alt,
+            "locale": locale,
         }
         if has_methods:
             mollie_payment_data["method"] = methods

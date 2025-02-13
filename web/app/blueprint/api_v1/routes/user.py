@@ -12,7 +12,7 @@ from web.auth import current_user
 from web.database import conn
 from web.database.model import User, UserRoleId
 from web.i18n import _
-from web.validation import is_email
+from web.utils.validation import is_email
 
 #
 # Configuration

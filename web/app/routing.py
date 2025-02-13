@@ -15,7 +15,7 @@ from web.database.model import AppBlueprint, AppRoute
 from web.error import WebError
 from web.i18n import _
 from web.logger import log
-from web.validation import obfuscate_data
+from web.utils.obfuscation import obfuscate_data
 
 #
 # Routes

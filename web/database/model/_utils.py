@@ -1,7 +1,8 @@
 import emoji
 from sqlalchemy import Numeric
 
-from web.validation import gen_slug, is_email, is_phone
+from web.utils.generators import gen_slug
+from web.utils.validation import is_email, is_phone
 
 from ..errors import (
     DbEmailError,
