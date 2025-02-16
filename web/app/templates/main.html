@@ -24,7 +24,9 @@
         {% endfor %}
         {% for route in cache.routes %}
             {% if route.endpoint == request.endpoint and route.css_path %}
-                <script defer src="{{ cdn_url(route.css_path) }}"></script>
+                <link type="text/css"
+                      rel="stylesheet"
+                      href="{{ cdn_url(route.css_path) }}">
             {% endif %}
         {% endfor %}
         <!-- include js -->
