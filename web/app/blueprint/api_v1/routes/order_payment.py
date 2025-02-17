@@ -48,31 +48,32 @@ def post_orders_id_payments(order_id: int) -> Response:
         if not order:
             return json_response(403, ApiText.HTTP_403)
 
-        # Validate locale
-        if current_locale.locale_alt not in VALID_LOCALES:
-            locale = DEFAULT_LOCALE
-
-        # Create Mollie payment
+        # Generate Mollie data
         order_price_vat = order.total_price * order.vat_rate
-        amount = mollie_amount(order_price_vat, order.currency_code)
-        description = f"Order {order.id}"
-        is_test = config.MOLLIE_KEY.startswith("test")
+        m_amount = mollie_amount(order_price_vat, order.currency_code)
+        m_description = f"Order {order.id}"
+        m_is_test = config.MOLLIE_KEY.startswith("test")
         due_date = datetime.now(timezone.utc) + timedelta(days=25)
-        due_date_str = due_date.strftime("%Y-%m-%d")
-        mollie_payment_data = {
-            "amount": amount,
-            "description": description,
+        m_due_date = due_date.strftime("%Y-%m-%d")
+        m_locale = current_locale.locale_alt
+        if current_locale.locale_alt not in VALID_LOCALES:
+            m_locale = DEFAULT_LOCALE
+        m_data = {
+            "amount": m_amount,
+            "description": m_description,
             "redirectUrl": redirect_url,
             "cancelUrl": cancel_url,
             "webhookUrl": mollie_webhook(),
-            "metadata": {"order_id": order.id, "is_test": is_test},
-            "dueDate": due_date_str,
-            "locale": locale,
+            "metadata": {"order_id": order.id, "is_test": m_is_test},
+            "dueDate": m_due_date,
+            "locale": m_locale,
         }
         if has_methods:
-            mollie_payment_data["method"] = methods
+            m_data["method"] = methods
+
+        # Create Mollie payment
         try:
-            mollie_payment = Mollie().payments.create(mollie_payment_data)
+            m_payment = Mollie().payments.create(m_data)
         except UnprocessableEntityError as error:
             if error.field == "amount.currency":
                 return json_response(400, Text.UNSUPPORTED_CURRENCY_BANKTRANSFER)
@@ -80,18 +81,18 @@ def post_orders_id_payments(order_id: int) -> Response:
 
         # Create invoice
         invoice = Invoice(
-            expires_at=mollie_payment.expires_at,
-            paid_at=mollie_payment.paid_at,
+            expires_at=m_payment.expires_at,
+            paid_at=m_payment.paid_at,
             order_id=order.id,
-            payment_url=mollie_payment.checkout_url,
+            payment_url=m_payment.checkout_url,
         )
         s.add(invoice)
         s.flush()
 
         # Update order
-        order.mollie_id = mollie_payment.id
+        order.mollie_id = m_payment.id
 
-    links = {"payment": mollie_payment.checkout_url}
+    links = {"payment": m_payment.checkout_url}
     return json_response(links=links)
 
 
