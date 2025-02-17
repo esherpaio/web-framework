@@ -3,7 +3,7 @@ from enum import StrEnum
 from werkzeug import Response
 
 from web.api import ApiText, json_get, json_response
-from web.api.mollie import Mollie, mollie_amount
+from web.api.mollie import Mollie, gen_mollie_amount
 from web.app.blueprint.api_v1 import api_v1_bp
 from web.auth import authorize
 from web.database import conn
@@ -64,7 +64,7 @@ def post_orders_id_refund(order_id: int) -> Response:
         # Create Mollie refund
         mollie_payment = Mollie().payments.get(order.mollie_id)
         mollie_refund = mollie_payment.refunds.create(
-            {"amount": mollie_amount(price_vat, order.currency_code)}
+            {"amount": gen_mollie_amount(price_vat, order.currency_code)}
         )
         refund.mollie_id = mollie_refund.id
         s.flush()
