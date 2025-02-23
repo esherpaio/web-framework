@@ -1,8 +1,10 @@
+from decimal import Decimal
+
 from sqlalchemy import false
 from sqlalchemy.orm import contains_eager
 from werkzeug import Response
 
-from web.api import ApiText, json_get, json_response
+from web.api import HttpText, json_get, json_response
 from web.app.blueprint.api_v1 import api_v1_bp
 from web.auth import authorize
 from web.automation import sync_after
@@ -27,7 +29,7 @@ def post_products_id_values(product_id: int) -> Response:
     name, _ = json_get("name", str, nullable=False)
     option_id, _ = json_get("option_id", int, nullable=False)
     order, _ = json_get("order", int)
-    unit_price, _ = json_get("unit_price", int | float, nullable=True)
+    unit_price, _ = json_get("unit_price", Decimal, nullable=True)
 
     with conn.begin() as s:
         # Get or restore product value
@@ -41,7 +43,7 @@ def post_products_id_values(product_id: int) -> Response:
                 product_value.is_deleted = False
                 return json_response()
             else:
-                return json_response(409, ApiText.HTTP_409)
+                return json_response(409, HttpText.HTTP_409)
 
         # Insert product value
         product_value = ProductValue(
@@ -61,13 +63,13 @@ def post_products_id_values(product_id: int) -> Response:
 def patch_products_id_values_id(product_id: int, value_id: int) -> Response:
     media_id, has_media_id = json_get("media_id", int)
     order, has_order = json_get("order", int)
-    unit_price, has_unit_price = json_get("unit_price", int | float)
+    unit_price, has_unit_price = json_get("unit_price", Decimal)
 
     with conn.begin() as s:
         # Get product value
         product_value = s.query(ProductValue).filter_by(id=value_id).first()
         if not product_value:
-            return json_response(404, ApiText.HTTP_404)
+            return json_response(404, HttpText.HTTP_404)
 
         # Update product value
         if has_media_id:
@@ -87,7 +89,7 @@ def delete_products_id_values_id(product_id: int, value_id: int) -> Response:
         # Delete product value
         product_value = s.query(ProductValue).filter_by(id=value_id).first()
         if not product_value:
-            return json_response(404, ApiText.HTTP_404)
+            return json_response(404, HttpText.HTTP_404)
         product_value.is_deleted = True
 
         # Delete skus

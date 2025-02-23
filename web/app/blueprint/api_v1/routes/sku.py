@@ -1,6 +1,6 @@
 from werkzeug import Response
 
-from web.api import API, ApiText, json_get, json_response
+from web.api import API, HttpText, json_get, json_response
 from web.app.blueprint.api_v1 import api_v1_bp
 from web.auth import authorize
 from web.database import conn
@@ -50,7 +50,7 @@ def patch_skus_id(sku_id: int) -> Response:
         # Get sku
         sku = s.query(Sku).filter_by(id=sku_id).first()
         if not sku:
-            return json_response(404, ApiText.HTTP_404)
+            return json_response(404, HttpText.HTTP_404)
 
         # Update sku
         if has_attributes:
@@ -84,7 +84,7 @@ def delete_skus_id(sku_id: int) -> Response:
         # Delete sku
         sku = s.query(Sku).filter_by(id=sku_id).first()
         if not sku:
-            return json_response(404, ApiText.HTTP_404)
+            return json_response(404, HttpText.HTTP_404)
         sku.number = None
         sku.is_deleted = True
 

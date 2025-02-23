@@ -1,12 +1,14 @@
 import os
+from decimal import ROUND_HALF_UP, Decimal
 
 from web.pdf.pdf import PDF, Document
 
 DIR = os.path.dirname(os.path.realpath(__file__))
 
 
-def float_to_str(x: float) -> str:
-    return f"{x:.2f}"
+def format_decimal(value: Decimal) -> str:
+    quantized = value.quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+    return str(quantized)
 
 
 def save_pdf(pdf: Document, pdf_name: str) -> str:

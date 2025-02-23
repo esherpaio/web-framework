@@ -85,7 +85,9 @@ def _send_email_smtp(
         msg.attach(attachment)
     # Send email
     with SMTP(
-        config.SMTP_HOST, port=config.SMTP_PORT, timeout=config.EMAIL_TIMEOUT
+        config.SMTP_HOST,
+        port=config.SMTP_PORT,
+        timeout=config.EMAIL_TIMEOUT,
     ) as smtp:
         smtp.set_debuglevel(False)
         smtp.starttls()

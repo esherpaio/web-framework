@@ -1,6 +1,6 @@
 from werkzeug import Response
 
-from web.api import ApiText, json_get, json_response
+from web.api import HttpText, json_get, json_response
 from web.app.blueprint.api_v1 import api_v1_bp
 from web.auth import authorize
 from web.database import conn
@@ -26,7 +26,7 @@ def post_orders_id_shipments(order_id: int) -> Response:
         # Get order
         order = s.query(Order).filter_by(id=order_id).first()
         if order is None:
-            return json_response(404, ApiText.HTTP_404)
+            return json_response(404, HttpText.HTTP_404)
 
         # Insert shipment
         shipment = Shipment(order_id=order_id, url=url)

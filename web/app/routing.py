@@ -7,7 +7,7 @@ from werkzeug import Response
 from werkzeug.exceptions import HTTPException
 from werkzeug.local import LocalProxy
 
-from web.api import ApiText, json_response
+from web.api import HttpText, json_response
 from web.app.urls import parse_url, url_for
 from web.cache import cache
 from web.config import config
@@ -102,10 +102,10 @@ def handle_backend_error(error: Exception) -> Response:
         if error.translation_key is not None:
             message = _(error.translation_key, **error.translation_kwargs)
         else:
-            message = ApiText.HTTP_500
+            message = HttpText.HTTP_500
     else:
         code = 500
-        message = ApiText.HTTP_500
+        message = HttpText.HTTP_500
     # Log error and return response
     info = [
         "Backend error",

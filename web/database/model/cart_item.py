@@ -1,3 +1,4 @@
+from decimal import Decimal
 from typing import Any
 
 from sqlalchemy import ForeignKey, Integer, UniqueConstraint
@@ -33,22 +34,23 @@ class CartItem(Base):
     # Properties - pricing
 
     @hybrid_property
-    def unit_price(self) -> float:
+    def unit_price(self) -> Decimal:
         unit_price = self.sku.unit_price
         if self.cart.vat_reverse:
-            unit_price *= config.BUSINESS_VAT_RATE
+            vat_rate = Decimal(str(config.BUSINESS_VAT_RATE))
+            unit_price *= vat_rate
         return unit_price * self.cart.currency.rate
 
     @hybrid_property
-    def unit_price_vat(self) -> float:
+    def unit_price_vat(self) -> Decimal:
         return self.unit_price * self.cart.vat_rate
 
     @hybrid_property
-    def total_price(self) -> float:
+    def total_price(self) -> Decimal:
         return self.unit_price * self.quantity
 
     @hybrid_property
-    def total_price_vat(self) -> float:
+    def total_price_vat(self) -> Decimal:
         return self.total_price * self.cart.vat_rate
 
     # Properties - SKU

@@ -2,7 +2,7 @@ import sqlalchemy as sa
 from alembic import op
 from sqlalchemy.dialects import postgresql
 
-revision = "148b7329ae3f"
+revision = "ca2b55066856"
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -39,10 +39,10 @@ def upgrade() -> None:
         sa.Column("description", sa.String(length=256), nullable=True),
         sa.Column("endpoint", sa.String(length=64), nullable=False),
         sa.Column("image_url", sa.String(length=256), nullable=True),
-        sa.Column("in_sitemap", sa.Boolean(), nullable=False),
+        sa.Column("in_sitemap", sa.Boolean(), server_default="false", nullable=False),
         sa.Column("js_path", sa.String(length=128), nullable=True),
-        sa.Column("name", sa.String(length=64), nullable=False),
-        sa.Column("robots", sa.String(length=256), nullable=False),
+        sa.Column("name", sa.String(length=64), nullable=True),
+        sa.Column("robots", sa.String(length=256), nullable=True),
         sa.Column(
             "is_collection", sa.Boolean(), server_default="false", nullable=False
         ),
@@ -64,7 +64,7 @@ def upgrade() -> None:
         sa.UniqueConstraint("endpoint"),
     )
     op.create_table(
-        "app_setting",
+        "app_settings",
         sa.Column("banner", sa.String(length=256), nullable=True),
         sa.Column("cached_at", sa.DateTime(timezone=True), nullable=True),
         sa.Column("css_path", sa.String(length=128), nullable=True),
@@ -876,6 +876,7 @@ def upgrade() -> None:
         sa.Column("expires_at", sa.DateTime(timezone=True), nullable=True),
         sa.Column("number", sa.String(length=16), nullable=False),
         sa.Column("paid_at", sa.DateTime(timezone=True), nullable=True),
+        sa.Column("payment_url", sa.String(length=256), nullable=True),
         sa.Column("order_id", sa.Integer(), nullable=False),
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column(

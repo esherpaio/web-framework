@@ -1,3 +1,4 @@
+from decimal import Decimal
 from typing import Any
 
 from sqlalchemy import Boolean, CheckConstraint, ForeignKey, String
@@ -114,14 +115,9 @@ class Order(Base):
     # Properties - refund
 
     @hybrid_property
-    def remaining_refund_amount(self) -> float:
-        refunded = 0.0
-        for refund in self.refunds:
-            refunded += abs(refund.total_price)
-        remaining = self.total_price - refunded
-        if remaining < 0:
-            remaining = 0.0
-        return remaining
+    def remaining_refund_amount(self) -> Decimal:
+        refunded = sum((abs(x.total_price) for x in self.refunds), Decimal("0.00"))
+        return max(self.total_price - refunded, Decimal("0.00"))
 
     @hybrid_property
     def is_refundable(self) -> bool:
@@ -131,38 +127,38 @@ class Order(Base):
 
     @hybrid_property
     def vat_percentage(self) -> int:
-        return round((self.vat_rate - 1) * 100)
+        return int(round((self.vat_rate - 1) * 100))
 
     @hybrid_property
-    def vat_amount(self) -> float:
+    def vat_amount(self) -> Decimal:
         return self.total_price_vat - self.total_price
 
     @hybrid_property
-    def subtotal_price(self) -> float:
+    def subtotal_price(self) -> Decimal:
         return self._get_price(include_vat=False)
 
     @hybrid_property
-    def subtotal_price_vat(self) -> float:
+    def subtotal_price_vat(self) -> Decimal:
         return self._get_price(include_vat=True)
 
     @hybrid_property
-    def discount_price(self) -> float:
+    def discount_price(self) -> Decimal:
         subtotal = self._get_price(include_vat=False)
         total = self._get_price(include_vat=False, with_coupon=True)
         return total - subtotal
 
     @hybrid_property
-    def discount_price_vat(self) -> float:
+    def discount_price_vat(self) -> Decimal:
         subtotal = self._get_price(include_vat=True)
         total = self._get_price(include_vat=True, with_coupon=True)
         return total - subtotal
 
     @hybrid_property
-    def shipment_price_vat(self) -> float:
+    def shipment_price_vat(self) -> Decimal:
         return self.shipment_price * self.vat_rate
 
     @hybrid_property
-    def total_price_vat(self) -> float:
+    def total_price_vat(self) -> Decimal:
         return self._get_price(include_vat=True, with_coupon=True, with_shipment=True)
 
     # Functions - pricing
@@ -173,27 +169,27 @@ class Order(Base):
         include_vat: bool,
         with_coupon: bool = False,
         with_shipment: bool = False,
-    ) -> float:
-        price_ = 0.0
+    ) -> Decimal:
+        price = Decimal("0.00")
         # Add order lines
         for line in self.lines:
             if include_vat:
-                price_ += line.total_price_vat
+                price += line.total_price_vat
             else:
-                price_ += line.total_price
+                price += line.total_price
         # Add coupon
         if with_coupon:
             if self.coupon_rate:
-                price_ *= self.coupon_rate
+                price *= self.coupon_rate
             if self.coupon_amount:
                 if include_vat:
-                    price_ -= self.coupon_amount * self.vat_rate
+                    price -= self.coupon_amount * self.vat_rate
                 else:
-                    price_ -= self.coupon_amount
+                    price -= self.coupon_amount
         # Add shipment
         if with_shipment:
             if include_vat:
-                price_ += self.shipment_price_vat
+                price += self.shipment_price_vat
             else:
-                price_ += self.shipment_price
-        return price_
+                price += self.shipment_price
+        return price

@@ -1,6 +1,6 @@
 from werkzeug import Response
 
-from web.api import ApiText, json_get, json_response
+from web.api import HttpText, json_get, json_response
 from web.app.blueprint.api_v1 import api_v1_bp
 from web.auth import authorize
 from web.database import conn
@@ -30,7 +30,7 @@ def post_articles() -> Response:
                 article.is_deleted = False
                 return json_response()
             else:
-                return json_response(409, ApiText.HTTP_409)
+                return json_response(409, HttpText.HTTP_409)
 
         # Insert resource
         article = Article(name=name)
@@ -51,7 +51,7 @@ def patch_articles_id(article_id: int) -> Response:
         # Get article
         article = s.query(Article).filter_by(id=article_id).first()
         if article is None:
-            return json_response(404, ApiText.HTTP_404)
+            return json_response(404, HttpText.HTTP_404)
 
         # Update article
         if has_attributes:
@@ -73,7 +73,7 @@ def delete_articles_id(article_id: int) -> Response:
         # Delete article
         article = s.query(Article).filter_by(id=article_id).first()
         if not article:
-            return json_response(404, ApiText.HTTP_404)
+            return json_response(404, HttpText.HTTP_404)
         article.is_deleted = True
 
     return json_response()

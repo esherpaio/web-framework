@@ -1,6 +1,6 @@
 from werkzeug import Response
 
-from web.api import ApiText, json_get, json_response
+from web.api import HttpText, json_get, json_response
 from web.app.blueprint.api_v1 import api_v1_bp
 from web.auth import authorize
 from web.database import conn
@@ -34,7 +34,7 @@ def post_products_id_links(product_id: int) -> Response:
             .first()
         )
         if product_link:
-            return json_response(409, ApiText.HTTP_409)
+            return json_response(409, HttpText.HTTP_409)
 
         # Insert product link
         product_link = ProductLink(
@@ -54,7 +54,7 @@ def delete_products_id_links_id(product_id: int, link_id: int) -> Response:
             s.query(ProductLink).filter_by(id=link_id, product_id=product_id).first()
         )
         if not product_link:
-            return json_response(404, ApiText.HTTP_404)
+            return json_response(404, HttpText.HTTP_404)
         s.delete(product_link)
 
     return json_response()

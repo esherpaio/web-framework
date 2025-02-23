@@ -1,10 +1,10 @@
-from web.api import ApiText
+from web.api import HttpText
 
 
 class AuthError(Exception):
     name = ""
     code = 401
-    message = ApiText.HTTP_401
+    message = HttpText.HTTP_401
 
 
 class NoValueError(AuthError):
@@ -26,4 +26,4 @@ class CSRFError(AuthError):
 class Forbidden(AuthError):
     name = "Forbidden: authorization failed"
     code = 403
-    message = ApiText.HTTP_403
+    message = HttpText.HTTP_403

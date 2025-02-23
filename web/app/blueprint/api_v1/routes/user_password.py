@@ -1,15 +1,18 @@
+import uuid
 from enum import StrEnum
 
+from sqlalchemy.orm import Session
 from werkzeug import Response
 from werkzeug.security import generate_password_hash
 
-from web.api import ApiText, json_get, json_response
+from web.api import HttpText, json_get, json_response
 from web.app.blueprint.api_v1 import api_v1_bp
+from web.app.urls import parse_url, url_for
+from web.config import config
 from web.database import conn
 from web.database.model import User, Verification
 from web.i18n import _
-
-from ._common import recover_user_password
+from web.mail import MailEvent, mail
 
 #
 # Configuration
@@ -35,10 +38,10 @@ def post_users_id_password(user_id: int) -> Response:
         # Get user
         user = s.query(User).filter_by(id=user_id).first()
         if user is None:
-            return json_response(404, ApiText.HTTP_404)
+            return json_response(404, HttpText.HTTP_404)
 
         # Recover password
-        recover_user_password(s, user)
+        recover_user_password(s, {}, user)
 
     return json_response(200, Text.PASSWORD_REQUEST_SEND)
 
@@ -53,7 +56,7 @@ def patch_users_id_password(user_id: int) -> Response:
         # Get user
         user = s.query(User).filter_by(id=user_id).first()
         if not user:
-            return json_response(404, ApiText.HTTP_404)
+            return json_response(404, HttpText.HTTP_404)
 
         # Check verification
         verification = s.query(Verification).filter_by(key=verification_key).first()
@@ -81,3 +84,25 @@ def patch_users_id_password(user_id: int) -> Response:
 #
 # Functions
 #
+
+
+def recover_user_password(s: Session, data: dict, model: User) -> None:
+    # Insert verification
+    key = str(uuid.uuid4())
+    verification = Verification(user_id=model.id, key=key)
+    s.add(verification)
+    s.flush()
+
+    # Send email
+    reset_url = parse_url(
+        config.ENDPOINT_PASSWORD,
+        _func=url_for,
+        _external=True,
+        verification_key=verification.key,
+    )
+    mail.trigger_events(
+        s,
+        MailEvent.USER_REQUEST_PASSWORD,
+        email=model.email,
+        reset_url=reset_url,
+    )

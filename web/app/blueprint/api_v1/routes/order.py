@@ -5,7 +5,7 @@ from pyvat import is_vat_number_format_valid
 from sqlalchemy.orm.session import Session
 from werkzeug import Response
 
-from web.api import API, ApiText, json_response
+from web.api import API, HttpText, json_response
 from web.api.mollie import Mollie
 from web.app.blueprint.api_v1 import api_v1_bp
 from web.app.cart import get_shipment_methods
@@ -111,7 +111,7 @@ def get_cart(s: Session, data: dict, model: Order) -> None:
     filters = {Cart.id == cart_id, Cart.user_id == current_user.id}
     cart = s.query(Cart).filter(*filters).first()
     if cart is None:
-        abort(json_response(404, ApiText.HTTP_404))
+        abort(json_response(404, HttpText.HTTP_404))
     g.cart = cart
 
 

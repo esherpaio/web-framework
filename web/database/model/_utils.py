@@ -1,5 +1,8 @@
+from decimal import Decimal
+from typing import Any, Optional, Type
+
 import emoji
-from sqlalchemy import Numeric
+from sqlalchemy import Numeric, TypeDecorator
 
 from web.utils.generators import gen_slug
 from web.utils.validation import is_email, is_phone
@@ -17,9 +20,33 @@ from ..errors import (
 # Types
 #
 
-default_price = Numeric(10, 4, asdecimal=False)
-default_vat = Numeric(4, 2, asdecimal=False)
-default_rate = Numeric(10, 4, asdecimal=False)
+
+class AutoDecimal(TypeDecorator):
+    impl = Numeric
+    cache_ok = True
+
+    def process_bind_param(self, value: Any, dialect: Any) -> Optional[Decimal]:
+        if value is None:
+            return None
+        if isinstance(value, (int, float)):
+            return Decimal(str(value))
+        if isinstance(value, str):
+            return Decimal(value)
+        return value
+
+    def process_result_value(self, value: Any, dialect: Any) -> Optional[Decimal]:
+        if value is None:
+            return None
+        return Decimal(value)
+
+    @property
+    def python_type(self) -> Type[Decimal]:
+        return Decimal
+
+
+default_price = AutoDecimal(10, 2, asdecimal=True)
+default_vat = AutoDecimal(4, 3, asdecimal=True)
+default_rate = AutoDecimal(12, 6, asdecimal=True)
 
 
 #

@@ -1,8 +1,9 @@
+from decimal import Decimal
 from enum import StrEnum
 
 from werkzeug import Response
 
-from web.api import ApiText, json_get, json_response
+from web.api import HttpText, json_get, json_response
 from web.api.mollie import Mollie, gen_mollie_amount
 from web.app.blueprint.api_v1 import api_v1_bp
 from web.auth import authorize
@@ -31,13 +32,13 @@ class Text(StrEnum):
 @api_v1_bp.post("/orders/<int:order_id>/refunds")
 @authorize(UserRoleLevel.ADMIN)
 def post_orders_id_refund(order_id: int) -> Response:
-    price, _ = json_get("total_price", int | float, nullable=False)
+    price, _ = json_get("total_price", Decimal, nullable=False)
 
     with conn.begin() as s:
         # Get order
         order = s.query(Order).filter_by(id=order_id).first()
         if not order:
-            return json_response(404, ApiText.HTTP_404)
+            return json_response(404, HttpText.HTTP_404)
 
         # Check if an invoice exists
         if not order.invoice:
