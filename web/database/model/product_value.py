@@ -1,3 +1,4 @@
+from decimal import Decimal
 from typing import Any
 
 from sqlalchemy import Boolean, ForeignKey, Integer, String, UniqueConstraint
@@ -16,7 +17,9 @@ class ProductValue(Base):
     name = MC(String(64), nullable=False)
     order = MC(Integer)
     slug = MC(String(64), nullable=False)
-    unit_price = MC(default_price, nullable=False, default=0, server_default="0")
+    unit_price = MC(
+        default_price, nullable=False, default=Decimal("0.00"), server_default="0.00"
+    )
 
     media_id = MC(ForeignKey("product_media.id", ondelete="SET NULL"))
     option_id = MC(ForeignKey("product_option.id", ondelete="CASCADE"), nullable=False)

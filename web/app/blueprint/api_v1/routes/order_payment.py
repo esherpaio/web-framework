@@ -3,7 +3,7 @@ from enum import StrEnum
 from mollie.api.error import UnprocessableEntityError
 from werkzeug import Response
 
-from web.api import ApiText, json_get, json_response
+from web.api import HttpText, json_get, json_response
 from web.api.mollie import Mollie, gen_mollie_payment_data
 from web.app.blueprint.api_v1 import api_v1_bp
 from web.auth import current_user
@@ -37,7 +37,7 @@ def post_orders_id_payments(order_id: int) -> Response:
         # Check if order is in use by the user
         order = s.query(Order).filter_by(user_id=current_user.id, id=order_id).first()
         if not order:
-            return json_response(403, ApiText.HTTP_403)
+            return json_response(403, HttpText.HTTP_403)
 
         # Create Mollie payment
         mollie_payment_data = gen_mollie_payment_data(

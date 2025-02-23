@@ -2,7 +2,7 @@ from flask import abort
 from sqlalchemy.orm.session import Session
 from werkzeug import Response
 
-from web.api import API, ApiText, json_response
+from web.api import API, HttpText, json_response
 from web.app.blueprint.api_v1 import api_v1_bp
 from web.auth import current_user
 from web.database import conn
@@ -118,4 +118,4 @@ def val_order(s: Session, data: dict, model: Shipping) -> None:
     filters = {Order.shipping_id == model.id}
     order = s.query(Order).filter(*filters).first()
     if order is not None:
-        abort(json_response(403, ApiText.HTTP_403))
+        abort(json_response(403, HttpText.HTTP_403))

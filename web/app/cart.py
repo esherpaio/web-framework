@@ -1,4 +1,5 @@
 from datetime import datetime, timezone
+from decimal import Decimal
 from typing import Callable
 
 import pyvat
@@ -27,10 +28,7 @@ from web.locale import current_locale
 #
 
 
-def predict_cart_info(
-    s: Session,
-    cart: Cart,
-) -> tuple[Shipping | None, Billing | None]:
+def predict_cart_info(s: Session, cart: Cart) -> tuple[Shipping | None, Billing | None]:
     """Predict the most accurate shipping and billing objects.
 
     In the following order: cart -> user -> None.
@@ -59,10 +57,7 @@ def predict_cart_info(
     return shipping, billing
 
 
-def get_shipment_methods(
-    s: Session,
-    cart: Cart,
-) -> list[ShipmentMethod]:
+def get_shipment_methods(s: Session, cart: Cart) -> list[ShipmentMethod]:
     # Get all possible shipping class ids
     shipment_class_ids = []
     for item in cart.items:
@@ -113,14 +108,10 @@ def get_shipment_methods(
         )
     else:
         shipment_methods = []
-    # Return
     return shipment_methods
 
 
-def get_vat(
-    country_code: str,
-    is_business: bool,
-) -> tuple[float, bool]:
+def get_vat(country_code: str, is_business: bool) -> tuple[Decimal, bool]:
     """Get VAT information.
 
     Args:
@@ -137,13 +128,13 @@ def get_vat(
     seller = Party(config.BUSINESS_COUNTRY_CODE, True)
     vat = pyvat.get_sale_vat_charge(date, type_, buyer, seller)
     if vat.action == VatChargeAction.charge:
-        vat_rate = int(vat.rate) / 100 + 1
+        vat_rate = (vat.rate / Decimal("100")) + Decimal("1")
         vat_reverse = False
     elif vat.action == VatChargeAction.reverse_charge:
-        vat_rate = 1
+        vat_rate = Decimal("1")
         vat_reverse = False
     elif vat.action == VatChargeAction.no_charge:
-        vat_rate = 1
+        vat_rate = Decimal("1")
         vat_reverse = True
     else:
         raise NotImplementedError(f"Unknown VAT action: {vat.action}")
@@ -155,9 +146,7 @@ def get_vat(
 #
 
 
-def transfer_cart(
-    f: Callable,
-) -> Callable[..., Response]:
+def transfer_cart(f: Callable) -> Callable[..., Response]:
     """Transfer a cart from one session to another.
 
     Useful for when an user logs in or out.

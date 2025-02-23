@@ -15,4 +15,4 @@ class ProductMedia(Base):
     file_id = MC(ForeignKey("file.id", ondelete="CASCADE"), nullable=False)
 
     product = relationship("Product", back_populates="medias")
-    file = relationship("File")
+    file_ = relationship("File")

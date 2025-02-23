@@ -179,22 +179,15 @@ class FlaskWeb:
             )
         )
 
-        filters.update(
-            {
-                "price": lambda a: f"{a:.{2}f}",
-                "datetime": lambda a: format_datetime(
-                    a, locale=current_locale.locale_alt
-                ),
-            }
+        filters["price"] = lambda x: f"{x:.{2}f}"
+        filters["datetime"] = lambda x: format_datetime(
+            x,
+            locale=current_locale.locale_alt,
         )
         for name, func in filters.items():
             app.add_template_filter(func, name=name)
 
-        globals_.update(
-            {
-                "cdn_url": cdn.url,
-                "url_for": url_for,
-            }
-        )
+        globals_["cdn_url"] = cdn.url
+        globals_["url_for"] = url_for
         for name, func in globals_.items():
             app.add_template_global(func, name=name)

@@ -36,5 +36,5 @@ class Coupon(Base):
     @hybrid_property
     def percentage(self) -> int | None:
         if self.rate:
-            return round(abs((self.rate * 100) - 100))
+            return int(round((self.rate - 1) * 100))
         return None

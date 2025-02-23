@@ -5,11 +5,11 @@
         async function loadCart(cart) {
             document.getElementById("cart-coupon-code").innerHTML = cart.coupon_code ? cart.coupon_code : "None";
             document.getElementById("cart-vat-percentage").innerHTML = cart.vat_percentage;
-            document.getElementById("cart-vat-amount").innerHTML = `${cart.vat_amount.toFixed(2)} ${cart.currency_code}`;
+            document.getElementById("cart-vat-amount").innerHTML = `${cart.vat_amount} ${cart.currency_code}`;
             document.getElementById("cart-vat-reverse").innerHTML = cart.vat_reverse ? "Yes" : "No";
-            document.getElementById("cart-discount-price").innerHTML = `${cart.discount_price.toFixed(2)} ${cart.currency_code}`;
-            document.getElementById("cart-total-price").innerHTML = `${cart.total_price.toFixed(2)} ${cart.currency_code}`;
-            document.getElementById("cart-total-price-vat").innerHTML = `${cart.total_price_vat.toFixed(2)} ${cart.currency_code}`;
+            document.getElementById("cart-discount-price").innerHTML = `${cart.discount_price} ${cart.currency_code}`;
+            document.getElementById("cart-total-price").innerHTML = `${cart.total_price} ${cart.currency_code}`;
+            document.getElementById("cart-total-price-vat").innerHTML = `${cart.total_price_vat} ${cart.currency_code}`;
         }
         async function loadCartItems(cartItems, cart) {
             const tableBody = document.querySelector("#cart-items tbody");
@@ -35,7 +35,7 @@
                 quantityTdInput.addEventListener("change", (e) => updateCartItemQuantity(e));
                 quantityTd.append(quantityTdInput);
                 const unitPriceTd = document.createElement("td");
-                unitPriceTd.textContent = `${cartItem.unit_price.toFixed(2)} ${cart.currency_code}`;
+                unitPriceTd.textContent = `${cartItem.unit_price} ${cart.currency_code}`;
                 tr.appendChild(unitPriceTd);
                 const selectionTd = document.createElement("td");
                 selectionTd.classList.add("text-end");
@@ -118,7 +118,7 @@
                 nameTd.textContent = shipmentMethod.name;
                 tr.appendChild(nameTd);
                 const priceTd = document.createElement("td");
-                priceTd.textContent = `${shipmentMethod.unit_price.toFixed(2)} ${cart.currency_code}`;
+                priceTd.textContent = `${shipmentMethod.unit_price} ${cart.currency_code}`;
                 tr.appendChild(priceTd);
                 const selectionTd = document.createElement("td");
                 selectionTd.classList.add("text-end");

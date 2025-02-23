@@ -2,7 +2,7 @@ from sqlalchemy import false
 from sqlalchemy.orm import contains_eager
 from werkzeug import Response
 
-from web.api import ApiText, json_get, json_response
+from web.api import HttpText, json_get, json_response
 from web.app.blueprint.api_v1 import api_v1_bp
 from web.auth import authorize
 from web.database import conn
@@ -43,7 +43,7 @@ def post_products_id_options(product_id: int) -> Response:
                 product_option.is_deleted = False
                 return json_response()
             else:
-                return json_response(409, ApiText.HTTP_409)
+                return json_response(409, HttpText.HTTP_409)
 
         # Insert product option
         product_option = ProductOption(product_id=product_id, name=name, order=order)
@@ -65,7 +65,7 @@ def patch_products_id_options_id(product_id: int, option_id: int) -> Response:
             .first()
         )
         if not product_option:
-            return json_response(404, ApiText.HTTP_404)
+            return json_response(404, HttpText.HTTP_404)
 
         # Update product option
         if has_order:
@@ -85,7 +85,7 @@ def delete_products_id_options_id(product_id: int, option_id: int) -> Response:
             .first()
         )
         if not product_option:
-            return json_response(404, ApiText.HTTP_404)
+            return json_response(404, HttpText.HTTP_404)
         product_option.is_deleted = True
         s.flush()
 

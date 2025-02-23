@@ -1,3 +1,4 @@
+from decimal import Decimal
 from typing import Any
 
 from flask import abort
@@ -5,7 +6,7 @@ from sqlalchemy.orm.session import Session
 from sqlalchemy.orm.util import has_identity
 from werkzeug import Response
 
-from web.api import API, ApiText, json_response
+from web.api import API, HttpText, json_response
 from web.app.blueprint.api_v1 import api_v1_bp
 from web.app.cart import get_shipment_methods, get_vat
 from web.auth import current_user
@@ -197,7 +198,7 @@ def set_shipment(s: Session, data: dict, model: Cart) -> None:
         model.shipment_price = shipment_method.unit_price * model.currency.rate
     else:
         model.shipment_method_id = None
-        model.shipment_price = 0
+        model.shipment_price = Decimal("0.00")
 
     s.flush()
     if has_identity(model):
@@ -214,7 +215,7 @@ def set_coupon(s: Session, data: dict, model: Cart) -> None:
                 s.query(Coupon).filter_by(code=coupon_code, is_deleted=False).first()
             )
             if coupon is None:
-                abort(json_response(400, ApiText.HTTP_400))
+                abort(json_response(400, HttpText.HTTP_400))
             else:
                 coupon_id = coupon.id
         model.coupon_id = coupon_id

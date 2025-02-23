@@ -1,3 +1,4 @@
+from decimal import Decimal
 from enum import IntEnum
 from typing import Any
 
@@ -13,7 +14,7 @@ class Currency(Base):
     __tablename__ = "currency"
 
     code = MC(String(3), nullable=False, unique=True)
-    rate = MC(default_rate, nullable=False, default=1, server_default="1")
+    rate = MC(default_rate, nullable=False, default=Decimal("1"), server_default="1")
     symbol = MC(String(3), nullable=False)
 
     # Validation

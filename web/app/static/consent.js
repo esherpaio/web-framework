@@ -1,8 +1,8 @@
 async function initConsent() {
-    if (!getCookie('consent')) {
+    if (!getCookie("consent")) {
         const modalOptions = {
-            backdrop: 'static',
-            keyboard: false
+            backdrop: "static",
+            keyboard: false,
         };
         const modal = new bootstrap.Modal(`#modal-consent`, modalOptions);
         modal.show();
@@ -10,8 +10,8 @@ async function initConsent() {
 }
 
 function setConsent(value) {
-    setCookie('consent', value, 365);
-    const modalElement = document.getElementById('modal-consent');
+    setCookie("consent", value, 365);
+    const modalElement = document.getElementById("modal-consent");
     const modal = bootstrap.Modal.getInstance(modalElement);
     if (modal) modal.hide();
 }

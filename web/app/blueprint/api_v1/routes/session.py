@@ -14,7 +14,7 @@ from web.database import conn
 from web.database.model import User, UserRoleId
 from web.i18n import _
 
-from ._common import recover_user_password
+from .user_password import recover_user_password
 
 #
 # Configuration
@@ -51,7 +51,7 @@ def post_sessions() -> Response:
         return json_response(400, Text.CHECK_ACTIVATION)
     if not user.password_hash:
         with conn.begin() as s:
-            recover_user_password(s, user)
+            recover_user_password(s, {}, user)
         return json_response(400, Text.CHECK_PASSWORD)
     if not check_password_hash(user.password_hash, password):
         return json_response(400, Text.CHECK_DETAILS)

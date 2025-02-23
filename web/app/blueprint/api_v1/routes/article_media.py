@@ -6,7 +6,7 @@ from werkzeug import Response
 from werkzeug.utils import secure_filename
 
 from web import cdn
-from web.api import ApiText, json_get, json_response
+from web.api import HttpText, json_get, json_response
 from web.app.blueprint.api_v1 import api_v1_bp
 from web.auth import authorize
 from web.config import config
@@ -30,7 +30,7 @@ def post_articles_id_media(article_id: int) -> Response:
         # Get article
         article = s.query(Article).filter_by(id=article_id).first()
         if not article:
-            return json_response(404, ApiText.HTTP_404)
+            return json_response(404, HttpText.HTTP_404)
 
         # Generate sequence number
         sequence = 1
@@ -42,7 +42,7 @@ def post_articles_id_media(article_id: int) -> Response:
                 .first()
             )
             if last_media:
-                match = re.search(r"(\d+)\.\w+$", last_media.file.path)
+                match = re.search(r"(\d+)\.\w+$", last_media.file_.path)
                 if match is not None:
                     sequence = int(match.group(1))
 
@@ -95,10 +95,10 @@ def patch_articles_id_media_id(article_id: int, media_id: int) -> Response:
             s.query(ArticleMedia).filter_by(id=media_id, article_id=article_id).first()
         )
         if not article_media:
-            return json_response(404, ApiText.HTTP_404)
+            return json_response(404, HttpText.HTTP_404)
         file_ = s.query(File).filter_by(id=article_media.file_id).first()
         if not file_:
-            return json_response(404, ApiText.HTTP_404)
+            return json_response(404, HttpText.HTTP_404)
 
         # Update article media and file
         if has_order:
@@ -118,10 +118,10 @@ def delete_articles_id_media_id(article_id: int, media_id: int) -> Response:
             s.query(ArticleMedia).filter_by(id=media_id, article_id=article_id).first()
         )
         if not article_media:
-            return json_response(404, ApiText.HTTP_404)
+            return json_response(404, HttpText.HTTP_404)
         file_ = s.query(File).filter_by(id=article_media.file_id).first()
         if not file_:
-            return json_response(404, ApiText.HTTP_404)
+            return json_response(404, HttpText.HTTP_404)
 
         # Delete file from CDN
         cdn.delete(file_.path)

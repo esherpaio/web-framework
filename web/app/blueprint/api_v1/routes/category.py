@@ -1,6 +1,6 @@
 from werkzeug import Response
 
-from web.api import ApiText, json_get, json_response
+from web.api import HttpText, json_get, json_response
 from web.app.blueprint.api_v1 import api_v1_bp
 from web.auth import authorize
 from web.database import conn
@@ -31,7 +31,7 @@ def post_categories() -> Response:
                 category.is_deleted = False
                 return json_response()
             else:
-                return json_response(409, ApiText.HTTP_409)
+                return json_response(409, HttpText.HTTP_409)
 
         # Insert category
         category = Category(name=name, order=order)
@@ -50,7 +50,7 @@ def patch_categories_id(category_id: int) -> Response:
         # Get category
         category = s.query(Category).filter_by(id=category_id, is_deleted=False).first()
         if not category:
-            return json_response(404, ApiText.HTTP_404)
+            return json_response(404, HttpText.HTTP_404)
 
         # Update category
         if has_attributes:
@@ -68,7 +68,7 @@ def delete_categories_id(category_id: int) -> Response:
         # Delete category
         category = s.query(Category).filter_by(id=category_id, is_deleted=False).first()
         if not category:
-            return json_response(404, ApiText.HTTP_404)
+            return json_response(404, HttpText.HTTP_404)
         category.is_deleted = True
 
     return json_response()

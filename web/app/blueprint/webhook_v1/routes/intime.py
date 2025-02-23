@@ -4,7 +4,7 @@ from sqlalchemy import false, null
 from sqlalchemy.orm import joinedload
 from werkzeug import Response
 
-from web.api import json_get
+from web.api import JsonEncoder, json_get
 from web.app.blueprint.webhook_v1 import webhook_v1_bp
 from web.auth import authorize
 from web.database import conn
@@ -32,11 +32,8 @@ ORDER_FILTERS = (Order.status_id.in_([OrderStatusId.READY, OrderStatusId.COMPLET
 def response(code: int = 200, data: list | dict | None = None) -> Response:
     if data is None:
         data = {}
-    return Response(
-        json.dumps(data),
-        status=code,
-        mimetype="application/json",
-    )
+    value = json.dumps(data, cls=JsonEncoder)
+    return Response(value, status=code, mimetype="application/json")
 
 
 #

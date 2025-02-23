@@ -3,7 +3,7 @@ from enum import StrEnum
 
 from werkzeug import Response
 
-from web.api import ApiText, json_get, json_response
+from web.api import HttpText, json_get, json_response
 from web.app.blueprint.api_v1 import api_v1_bp
 from web.app.urls import parse_url, url_for
 from web.config import config
@@ -34,7 +34,7 @@ def post_users_id_activation(user_id: int) -> Response:
         # Get user
         user = s.query(User).filter_by(id=user_id).first()
         if not user:
-            return json_response(404, ApiText.HTTP_404)
+            return json_response(404, HttpText.HTTP_404)
 
         # Insert verification
         verification_key = str(uuid.uuid4())
@@ -67,7 +67,7 @@ def patch_users_id_activation(user_id: int) -> Response:
         # Get user
         user = s.query(User).filter_by(id=user_id).first()
         if not user:
-            return json_response(404, ApiText.HTTP_404)
+            return json_response(404, HttpText.HTTP_404)
 
         # Check verification
         verification = s.query(Verification).filter_by(key=verification_key).first()

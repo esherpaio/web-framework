@@ -56,14 +56,14 @@
                 {% for x in product_medias %}
                     <div class="col-12 col-sm-6 col-md-4 col-xl-3">
                         <div class="card">
-                            {% if x.file.is_image %}
+                            {% if x.file_.is_image %}
                                 <img class="card-img-top bg-light border-bottom"
-                                     src="{{ cdn_url(x.file.path) }}?class=medium"
-                                     alt="{{ x.file.description if x.file.description }}"
+                                     src="{{ cdn_url(x.file_.path) }}?class=medium"
+                                     alt="{{ x.file_.description if x.file_.description }}"
                                      loading="lazy">
-                            {% elif x.file.is_video %}
+                            {% elif x.file_.is_video %}
                                 <video controls muted class="card-img-top bg-light border-bottom">
-                                    <source src="{{ cdn_url(x.file.path) }}">
+                                    <source src="{{ cdn_url(x.file_.path) }}">
                                 </video>
                             {% endif %}
                             <div class="card-body">
@@ -73,7 +73,7 @@
                                                class="form-control form-control-sm"
                                                type="text"
                                                placeholder="Description"
-                                               value="{{ x.file.description if x.file.description }}">
+                                               value="{{ x.file_.description if x.file_.description }}">
                                     </div>
                                     <div class="col-12">
                                         <input id="media-order-{{ x.id }}"

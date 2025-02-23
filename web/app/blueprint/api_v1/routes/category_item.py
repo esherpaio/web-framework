@@ -1,6 +1,6 @@
 from werkzeug import Response
 
-from web.api import ApiText, json_get, json_response
+from web.api import HttpText, json_get, json_response
 from web.app.blueprint.api_v1 import api_v1_bp
 from web.auth import authorize
 from web.database import conn
@@ -31,7 +31,7 @@ def post_categories_id_items(category_id: int) -> Response:
             .first()
         )
         if category_item:
-            return json_response(409, ApiText.HTTP_409)
+            return json_response(409, HttpText.HTTP_409)
 
         # Insert category item
         category_item = CategoryItem(
@@ -56,7 +56,7 @@ def patch_categories_id_items_id(category_id: int, item_id: int) -> Response:
             s.query(CategoryItem).filter_by(id=item_id, category_id=category_id).first()
         )
         if not category_item:
-            return json_response(404, ApiText.HTTP_404)
+            return json_response(404, HttpText.HTTP_404)
 
         # Update category item
         if has_order:
@@ -74,7 +74,7 @@ def delete_categories_id_items_id(category_id: int, item_id: int) -> Response:
             s.query(CategoryItem).filter_by(id=item_id, category_id=category_id).first()
         )
         if not category_item:
-            return json_response(404, ApiText.HTTP_404)
+            return json_response(404, HttpText.HTTP_404)
         s.delete(category_item)
 
     return json_response()

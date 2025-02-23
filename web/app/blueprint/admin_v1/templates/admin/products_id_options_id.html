@@ -80,9 +80,9 @@
                                     <select id="value-media-id-{{ value.id }}" class="form-select form-select-sm">
                                         <option>None</option>
                                         {% for media in product_medias %}
-                                            {% if media.file.description %}
+                                            {% if media.file_.description %}
                                                 <option {{ 'selected' if value.media_id == media.id }} value="{{ media.id }}">
-                                                    {{ media.file.description }}
+                                                    {{ media.file_.description }}
                                                 </option>
                                             {% endif %}
                                         {% endfor %}
