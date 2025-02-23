@@ -61,10 +61,10 @@ class Product(Base, Attribute):
 
     @hybrid_property
     def images(self) -> list[ProductMedia]:
-        medias = [x for x in self.medias if x.file.is_image]
+        medias = [x for x in self.medias if x.file_.is_image]
         return sorted(medias, key=none_attrgetter("order"))
 
     @hybrid_property
     def videos(self) -> list[ProductMedia]:
-        medias = [x for x in self.medias if x.file.is_video]
+        medias = [x for x in self.medias if x.file_.is_video]
         return sorted(medias, key=none_attrgetter("order"))

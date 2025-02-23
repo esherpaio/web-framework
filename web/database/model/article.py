@@ -41,13 +41,13 @@ class Article(Base, Attribute):
     @hybrid_property
     def images(self) -> list[ArticleMedia]:
         return sorted(
-            [x for x in self.medias if x.file.is_image],
+            [x for x in self.medias if x.file_.is_image],
             key=none_attrgetter("order"),
         )
 
     @hybrid_property
     def videos(self) -> list[ArticleMedia]:
         return sorted(
-            [x for x in self.medias if x.file.is_video],
+            [x for x in self.medias if x.file_.is_video],
             key=none_attrgetter("order"),
         )
