@@ -1,4 +1,3 @@
-import urllib.parse
 from datetime import datetime, timedelta, timezone
 from decimal import ROUND_HALF_UP, Decimal
 
@@ -9,6 +8,7 @@ from web.app.urls import url_for
 from web.config import config
 from web.database.model import Order
 from web.locale import current_locale
+from web.utils.modifiers import replace_domain
 
 LOCALES = [
     "ca_ES",
@@ -45,17 +45,8 @@ class Mollie(Client):
 def get_mollie_webhook_url() -> str | None:
     url = url_for("webhook_v1.mollie_payment", _external=True, _scheme="https")
     if config.LOCALHOST:
-        localhost = strip_scheme(config.LOCALHOST)
-        parsed = urllib.parse.urlparse(url)
-        replaced = parsed._replace(netloc=localhost)
-        url = urllib.parse.urlunparse(replaced)
+        url = replace_domain(url, config.LOCALHOST)
     return url
-
-
-def strip_scheme(url: str) -> str:
-    parsed = urllib.parse.urlparse(url)
-    scheme = f"{parsed.scheme}://"
-    return parsed.geturl().replace(scheme, "", 1)
 
 
 def gen_mollie_amount(value: Decimal, currency: str) -> dict:
