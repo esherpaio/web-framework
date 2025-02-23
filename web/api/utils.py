@@ -1,5 +1,5 @@
 import json
-from decimal import Decimal
+from decimal import ROUND_HALF_UP, Decimal
 from enum import StrEnum
 from typing import Any
 
@@ -37,7 +37,8 @@ class HttpText(StrEnum):
 class JsonEncoder(json.JSONEncoder):
     def default(self, obj):
         if isinstance(obj, Decimal):
-            return str(obj)
+            quantized = obj.quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+            return str(quantized)
         return super().default(obj)
 
 
