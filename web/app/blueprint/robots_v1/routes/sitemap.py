@@ -6,11 +6,12 @@ from sqlalchemy.orm import joinedload
 
 from web.app.blueprint.robots_v1 import robots_v1_bp
 from web.app.routing import has_argument, is_endpoint
-from web.app.sitemap import Sitemap, SitemapUrl, text_to_xml
+from web.app.sitemap import Sitemap, SitemapUrl
 from web.cache import cache
 from web.database import conn
 from web.database.model import Article, Category, Sku
 from web.locale import gen_locale
+from web.utils.modifiers import text_to_xml
 
 
 @robots_v1_bp.route("/sitemap.xml")
