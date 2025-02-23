@@ -18,7 +18,7 @@ class ProductValue(Base):
     order = MC(Integer)
     slug = MC(String(64), nullable=False)
     unit_price = MC(
-        default_price, nullable=False, default=Decimal("0"), server_default="0"
+        default_price, nullable=False, default=Decimal("0.00"), server_default="0.00"
     )
 
     media_id = MC(ForeignKey("product_media.id", ondelete="SET NULL"))

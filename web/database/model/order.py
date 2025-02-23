@@ -170,26 +170,26 @@ class Order(Base):
         with_coupon: bool = False,
         with_shipment: bool = False,
     ) -> Decimal:
-        price_ = Decimal("0")
+        price = Decimal("0.00")
         # Add order lines
         for line in self.lines:
             if include_vat:
-                price_ += line.total_price_vat
+                price += line.total_price_vat
             else:
-                price_ += line.total_price
+                price += line.total_price
         # Add coupon
         if with_coupon:
             if self.coupon_rate:
-                price_ *= self.coupon_rate
+                price *= self.coupon_rate
             if self.coupon_amount:
                 if include_vat:
-                    price_ -= self.coupon_amount * self.vat_rate
+                    price -= self.coupon_amount * self.vat_rate
                 else:
-                    price_ -= self.coupon_amount
+                    price -= self.coupon_amount
         # Add shipment
         if with_shipment:
             if include_vat:
-                price_ += self.shipment_price_vat
+                price += self.shipment_price_vat
             else:
-                price_ += self.shipment_price
-        return price_
+                price += self.shipment_price
+        return price

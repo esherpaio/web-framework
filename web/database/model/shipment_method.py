@@ -16,7 +16,7 @@ class ShipmentMethod(Base):
     name = MC(String(64), nullable=False)
     phone_required = MC(Boolean, nullable=False, default=False, server_default="false")
     unit_price = MC(
-        default_price, nullable=False, default=Decimal("0"), server_default="0"
+        default_price, nullable=False, default=Decimal("0.00"), server_default="0.00"
     )
 
     class_id = MC(ForeignKey("shipment_class.id", ondelete="RESTRICT"), nullable=False)

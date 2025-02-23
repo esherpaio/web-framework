@@ -1,3 +1,4 @@
+from decimal import Decimal
 from typing import Any
 
 from flask import abort
@@ -197,7 +198,7 @@ def set_shipment(s: Session, data: dict, model: Cart) -> None:
         model.shipment_price = shipment_method.unit_price * model.currency.rate
     else:
         model.shipment_method_id = None
-        model.shipment_price = 0
+        model.shipment_price = Decimal("0.00")
 
     s.flush()
     if has_identity(model):
