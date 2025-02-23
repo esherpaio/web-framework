@@ -1,9 +1,22 @@
+# ACTIVATE
+.PHONY: activate
+activate:
+	python3 -m venv .venv
+	@echo "Run 'source .venv/bin/activate' manually"
+
 # REQUIREMENTS
 .PHONY: requirements
 requirements:
 	pip install --upgrade pip
 	pip install -r requirements.txt
 	pip install -r requirements-dev.txt
+
+# DATABASE
+.PHONY: migrations migrate
+migrations:
+	alembic check || alembic revision --autogenerate -m ""
+migrate:
+	alembic upgrade head
 
 # FORMATTING
 .PHONY: format format_py format_html
@@ -24,14 +37,7 @@ lint_py:
 lint_html:
 	djlint . --check
 
-## TESTING
+# TESTING
 .PHONY: test
 test:
 	pytest .
-
-## DATABASE
-.PHONY: migrations migrate
-migrations:
-	alembic check || alembic revision --autogenerate -m ""
-migrate:
-	alembic upgrade head
