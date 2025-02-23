@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from sqlalchemy import false
 from sqlalchemy.orm import contains_eager
 from werkzeug import Response
@@ -27,7 +29,7 @@ def post_products_id_values(product_id: int) -> Response:
     name, _ = json_get("name", str, nullable=False)
     option_id, _ = json_get("option_id", int, nullable=False)
     order, _ = json_get("order", int)
-    unit_price, _ = json_get("unit_price", int | float, nullable=True)
+    unit_price, _ = json_get("unit_price", Decimal, nullable=True)
 
     with conn.begin() as s:
         # Get or restore product value
@@ -61,7 +63,7 @@ def post_products_id_values(product_id: int) -> Response:
 def patch_products_id_values_id(product_id: int, value_id: int) -> Response:
     media_id, has_media_id = json_get("media_id", int)
     order, has_order = json_get("order", int)
-    unit_price, has_unit_price = json_get("unit_price", int | float)
+    unit_price, has_unit_price = json_get("unit_price", Decimal)
 
     with conn.begin() as s:
         # Get product value

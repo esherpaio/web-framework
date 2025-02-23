@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from werkzeug import Response
 
 from web.api import HttpText, json_get, json_response
@@ -52,7 +54,7 @@ def patch_products_id(product_id: int) -> Response:
     shipment_class_id, has_shipment_class_id = json_get("shipment_class_id", int)
     summary, has_summary = json_get("summary", str)
     type_id, has_type_id = json_get("type_id", int)
-    unit_price, has_unit_price = json_get("unit_price", int | float)
+    unit_price, has_unit_price = json_get("unit_price", Decimal)
 
     with conn.begin() as s:
         # Get product

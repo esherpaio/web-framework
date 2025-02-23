@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from sqlalchemy import false, or_
 from sqlalchemy.orm import Session, joinedload
 from werkzeug import Response
@@ -48,7 +50,7 @@ def post_shipment_methods() -> Response:
     class_id, _ = json_get("class_id", int, nullable=False)
     name, _ = json_get("name", str, nullable=False)
     phone_required, _ = json_get("phone_required", bool, default=False)
-    unit_price, _ = json_get("unit_price", int | float, nullable=False)
+    unit_price, _ = json_get("unit_price", Decimal, nullable=False)
     zone_id, _ = json_get("zone_id", int, nullable=False)
 
     with conn.begin() as s:
@@ -89,7 +91,7 @@ def get_shipment_methods_id(shipment_method_id: int) -> Response:
 def patch_shipment_methods_id(shipment_method_id: int) -> Response:
     name, has_name = json_get("name", str)
     phone_required, has_phone_required = json_get("phone_required", bool)
-    unit_price, has_unit_price = json_get("unit_price", int | float)
+    unit_price, has_unit_price = json_get("unit_price", Decimal)
 
     with conn.begin() as s:
         # Get shipment method

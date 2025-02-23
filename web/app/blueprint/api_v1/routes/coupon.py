@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from werkzeug import Response
 
 from web.api import HttpText, json_get, json_response
@@ -19,7 +21,7 @@ from web.database.model import Coupon, UserRoleLevel
 @api_v1_bp.post("/coupons")
 @authorize(UserRoleLevel.ADMIN)
 def post_coupons() -> Response:
-    amount, _ = json_get("amount", int | float)
+    amount, _ = json_get("amount", Decimal)
     code, _ = json_get("code", str, nullable=False)
     percentage, _ = json_get("percentage", int)
     rate = abs(percentage / 100 - 1) if percentage else None
