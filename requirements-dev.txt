@@ -9,5 +9,5 @@ pytest~=8.3.4
 
 # formating and linting
 djlint~=1.36.4
-mypy==1.14.1
-ruff~=0.9.3
+mypy==1.15.0
+ruff~=0.9.7
