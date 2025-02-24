@@ -21,7 +21,7 @@ class StaticVar:
 class EnvVar:
     def __init__(self, key: str, type_: Any, default: Any = None) -> None:
         self.key = key
-        self.type = type_
+        self.type_ = type_
         self.default = default
 
     @cached_property
@@ -29,14 +29,14 @@ class EnvVar:
         return self.parse(os.getenv(self.key, self.default))
 
     def parse(self, value: str) -> Any:
-        if self.type is str:
+        if self.type_ is str:
             return value
-        if self.type is int:
+        if self.type_ is int:
             try:
                 return int(value)
             except (ValueError, TypeError):
                 pass
-        if self.type is bool:
+        if self.type_ is bool:
             return value in ["true", "1"]
 
 

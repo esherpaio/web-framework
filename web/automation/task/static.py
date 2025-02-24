@@ -29,14 +29,14 @@ class StaticSeed:
         model: Type[AppSettings | AppBlueprint | AppRoute],
         endpoint: str = "",
     ) -> None:
-        self.type: StaticType = type_
+        self.type_: StaticType = type_
         self.bundles: list[JsBundle | ScssBundle | CssBundle] = bundles
         self.model: Type[AppSettings | AppBlueprint | AppRoute] = model
         self.endpoint: str = endpoint
 
     @property
     def id_(self) -> str:
-        parts = [self.model.__tablename__, self.type]
+        parts = [self.model.__tablename__, self.type_]
         if self.endpoint:
             parts.append(self.endpoint)
         return ":".join(parts)
@@ -60,15 +60,15 @@ class StaticSeed:
         resource: AppSettings | AppBlueprint | AppRoute,
         cdn_path: str,
     ) -> None:
-        if self.type == StaticType.JS:
+        if self.type_ == StaticType.JS:
             resource.js_path = cdn_path
             s.flush()
             return
-        if self.type == StaticType.CSS:
+        if self.type_ == StaticType.CSS:
             resource.css_path = cdn_path
             s.flush()
             return
-        log.error(f"Static seed type {self.type} is unsupported")
+        log.error(f"Static seed type {self.type_} is unsupported")
         return
 
 
@@ -120,7 +120,7 @@ class StaticSyncer(Syncer):
             if not compiled:
                 log.error(f"Static resource {seed.id_} compiled empty")
                 continue
-            present[(resource.__tablename__, resource.id)].append(seed.type)
+            present[(resource.__tablename__, resource.id)].append(seed.type_)
             cdn_filename = f"{hash_}{out_ext}"
             cdn_path = os.path.join("static", cdn_filename)
             if cdn_filename not in cdn_filenames:
