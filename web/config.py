@@ -71,6 +71,7 @@ class Config(metaclass=Singleton):
         EnvVar("APP_SYNC_EXTERNAL", bool, default=False),
         EnvVar("APP_SYNC_STATIC", bool, default=True),
         EnvVar("APP_SYNC_TIMEOUT", int, default=10),
+        EnvVar("APP_PORT", int, default=5001),
         # Auth
         EnvVar("AUTH_JWT_SECRET", str),
         EnvVar("AUTH_JWT_EXPIRES_S", int, default=86400),
