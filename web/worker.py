@@ -12,6 +12,7 @@ class Worker:
     TASKS: list[Type[Automator]] = []
 
     def __init__(self, interval: int = 300) -> None:
+        log.info("Initializing worker")
         self.scheduler = sched.scheduler(time.time, time.sleep)
         interval = config.WORKER_INTERVAL_S
         if not isinstance(interval, int):
