@@ -17,7 +17,7 @@ class Worker:
         interval = config.WORKER_INTERVAL_S
         if not isinstance(interval, int):
             raise ValueError(f"Invalid interval {interval}")
-        elif not 30 < interval < 3600:
+        elif not 30 <= interval <= 3600:
             raise ValueError("Invalid must be between 30 and 3600 seconds")
         self.interval = interval
         self.set_tasks()
@@ -34,7 +34,7 @@ class Worker:
                 with conn.begin() as s:
                     task.run(s)
             except Exception as e:
-                log.error(f"Error running task {task.__name__}: {e}", exc_info=True)
+                log.error(f"Error running task {task.__name__}: {e}")
         self.scheduler.enter(self.interval, 1, self.job)
 
     def start(self) -> None:
