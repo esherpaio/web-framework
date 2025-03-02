@@ -71,7 +71,7 @@ class Mail(metaclass=Singleton):
             status_id = EmailStatusId.QUEUED
 
             # Send immediately if not using worker
-            if _email or not config.EMAIL_WORKER:
+            if _email or not config.WORKER_ENABLED:
                 try:
                     result = event(s, **kwargs)
                 except Exception:

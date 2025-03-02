@@ -71,6 +71,9 @@ class Config(metaclass=Singleton):
         EnvVar("APP_SYNC_EXTERNAL", bool, default=False),
         EnvVar("APP_SYNC_STATIC", bool, default=True),
         EnvVar("APP_SYNC_TIMEOUT", int, default=10),
+        # Worker
+        EnvVar("WORKER_ENABLED", bool, default=False),
+        EnvVar("WORKER_INTERVAL_S", int, default=300),
         # Auth
         EnvVar("AUTH_JWT_SECRET", str),
         EnvVar("AUTH_JWT_EXPIRES_S", int, default=86400),
@@ -100,7 +103,6 @@ class Config(metaclass=Singleton):
         # Email configuration
         EnvVar("EMAIL_METHOD", str),
         EnvVar("EMAIL_TIMEOUT", int, default=10),
-        EnvVar("EMAIL_WORKER", bool, default=False),
         ConfigVar("EMAIL_MAX_BULK_COUNT", default=100),
         EnvVar("EMAIL_FROM", str),
         EnvVar("EMAIL_TO", str),
