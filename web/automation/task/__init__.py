@@ -2,6 +2,7 @@ from .app_settings import AppSettingSyncer
 from .cart import CartCleaner
 from .country import CountrySyncer
 from .currency import CurrencySyncer
+from .email import EmailWorker
 from .email_status import EmailStatusSyncer
 from .file_type import FileTypeSyncer
 from .order_status import OrderStatusSyncer
@@ -19,6 +20,7 @@ __all__ = [
     "CountrySyncer",
     "CurrencySyncer",
     "EmailStatusSyncer",
+    "EmailWorker",
     "FileTypeSyncer",
     "OrderStatusSyncer",
     "ProductLinkeTypeSyncer",

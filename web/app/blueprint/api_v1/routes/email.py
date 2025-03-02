@@ -37,7 +37,7 @@ def post_emails() -> Response:
     with conn.begin() as s:
         # Inject emails for bulk email
         if event_id == MailEvent.WEBSITE_BULK:
-            if not config.EMAIL_WORKER:
+            if not config.WORKER_ENABLED:
                 return json_response(400, Text.CONTACT_ADMIN)
             if "emails" not in data:
                 users = (
