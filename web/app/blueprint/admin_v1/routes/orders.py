@@ -19,7 +19,9 @@ from web.database.model import (
     Sku,
     SkuDetail,
 )
-from web.document.object import gen_invoice, gen_refund
+from web.document import get_pdf_path
+from web.document.object import gen_invoice_pdf, gen_refund_pdf
+from web.i18n import _
 from web.utils import remove_file
 
 order_status_color_map = {
@@ -157,7 +159,11 @@ def orders_id_invoices_id_download(order_id: int, invoice_id: int) -> Response:
         order_ = s.query(Order).filter_by(id=order_id).first()
         if not order_ or not order_.invoice:
             return json_response(404, HttpText.HTTP_404)
-        pdf_name, pdf_path = gen_invoice(s, order_, order_.invoice)
+        invoice = order_.invoice
+        pdf = gen_invoice_pdf(s, order_, invoice)
+        pdf_name = _("PDF_INVOICE_FILENAME", invoice_number=invoice.number)
+        pdf_path = get_pdf_path(pdf_name)
+        pdf.output(pdf_path)
     remove_file(pdf_path, delay_s=20)
     return send_file(
         pdf_path,
@@ -173,7 +179,11 @@ def orders_id_refunds_id_download(order_id: int, refund_id: int) -> Response:
         refund = s.query(Refund).filter_by(id=refund_id).first()
         if not order_ or not order_.invoice or not refund:
             return json_response(404, HttpText.HTTP_404)
-        pdf_name, pdf_path = gen_refund(s, order_, order_.invoice, refund)
+        invoice = order_.invoice
+        pdf = gen_refund_pdf(s, order_, invoice, refund)
+        pdf_name = _("PDF_REFUND_FILENAME", refund_number=refund.number)
+        pdf_path = get_pdf_path(pdf_name)
+        pdf.output(pdf_path)
     remove_file(pdf_path, delay_s=20)
     return send_file(
         pdf_path,

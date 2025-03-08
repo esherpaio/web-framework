@@ -2,7 +2,8 @@ from sqlalchemy.orm import Session
 
 from web.config import config
 from web.database.model import Invoice, Order, Refund
-from web.document.object import gen_invoice, gen_refund
+from web.document import get_pdf_path
+from web.document.object import gen_invoice_pdf, gen_refund_pdf
 from web.i18n import _
 from web.mail import render_email, send_email
 from web.utils import remove_file
@@ -37,7 +38,10 @@ def mail_order_paid(
     # Generate invoice
     order = s.query(Order).filter_by(id=order_id).one()
     invoice = s.query(Invoice).filter_by(order_id=order_id).one()
-    pdf_name, pdf_path = gen_invoice(s, order, invoice)
+    pdf = gen_invoice_pdf(s, order, invoice)
+    pdf_name = _("PDF_INVOICE_FILENAME", invoice_number=invoice.number)
+    pdf_path = get_pdf_path(pdf_name)
+    pdf.output(pdf_path)
     remove_file(pdf_path, delay_s=20)
     # Generate and send email
     subject = _(
@@ -86,7 +90,10 @@ def mail_order_refunded(
     order = s.query(Order).filter_by(id=order_id).one()
     invoice = s.query(Invoice).filter_by(order_id=order_id).one()
     refund = s.query(Refund).filter_by(id=refund_id).one()
-    pdf_name, pdf_path = gen_refund(s, order, invoice, refund)
+    pdf = gen_refund_pdf(s, order, invoice, refund)
+    pdf_name = _("PDF_REFUND_FILENAME", refund_number=refund.number)
+    pdf_path = get_pdf_path(pdf_name)
+    pdf.output(pdf_path)
     remove_file(pdf_path, delay_s=20)
     # Generate and send email
     subject = _(
