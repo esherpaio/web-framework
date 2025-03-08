@@ -16,13 +16,9 @@ DATA = [
     "app/blueprint/robots_v1/templates/*.xml",
     "app/static/*.js",
     "app/templates/*.html",
+    "document/font/*.ttf",
     "i18n/translation/*.json",
     "mail/template/*.html",
-    "pdf/pdf/canvas/font/composite_font/cmaps/*",
-    "pdf/pdf/canvas/font/simple_font/afm/*.afm",
-    "pdf/pdf/canvas/font/simple_font/ttf/*.ttf",
-    "pdf/pdf/canvas/layout/hyphenation/resources/*.json",
-    "pdf/pdf/canvas/lipsum/resources/*.json",
 ]
 
 

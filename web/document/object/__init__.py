@@ -1,7 +1,7 @@
-from .invoice import gen_invoice
-from .refund import gen_refund
+from .invoice import gen_invoice_pdf
+from .refund import gen_refund_pdf
 
 __all__ = [
-    "gen_invoice",
-    "gen_refund",
+    "gen_invoice_pdf",
+    "gen_refund_pdf",
 ]

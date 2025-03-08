@@ -1,220 +1,183 @@
-from decimal import Decimal
 from itertools import zip_longest
 
+from fpdf import FPDF
+from fpdf.enums import TableBordersLayout, XPos, YPos
 from sqlalchemy.orm import Session
 
 from web.config import config
 from web.database.model import Invoice, Order
 from web.i18n import _
-from web.pdf.pdf import (
-    Alignment,
-    Document,
-    FixedColumnWidthTable,
-    Image,
-    Page,
-    SingleColumnLayout,
-)
-from web.pdf.toolkit.table.parsing import cells_to_tables
 
-from .._utils import format_decimal, save_pdf
-from ..object._style import (
+from .._style import (
     COLOR_DARKGREY,
-    COLOR_LIGHTGREY,
-    BoldPG,
-    HeadPG,
-    TableCell,
-    TextPG,
-    TitlePG,
+    COLOR_TEXT,
+    COLOR_WHITE,
+    FONT_NAME,
+    FONT_SIZE_NORMAL,
+    FONT_SIZE_TITLE,
+    FirstRowFillMode,
+    add_fonts,
 )
+from .._utils import format_decimal
 
 
-def gen_invoice(s: Session, order: Order, invoice: Invoice) -> tuple[str, str]:
-    pdf = Document()
-    page = Page()
-    pdf.add_page(page)
-    margin = Decimal(30)
-    layout = SingleColumnLayout(page, margin, margin)
+def gen_invoice_pdf(
+    s: Session,
+    order: Order,
+    invoice: Invoice,
+) -> FPDF:
+    pdf = FPDF(orientation="portrait", unit="mm", format="A4")
+    add_fonts(pdf)
+    pdf.set_auto_page_break(auto=True, margin=30)
+    pdf.add_page()
 
-    image = Image(config.WEBSITE_LOGO_URL, height=Decimal(35))
-    image.force_load_image()
-    image.set_width_from_height()
-    layout.add(image)
-    layout.add(TitlePG(_("PDF_INVOICE")))
-    layout.add(_build_order_info(order, invoice))
+    pdf.image(config.WEBSITE_LOGO_URL, x="L", h=15, keep_aspect_ratio=True)
 
-    for num, table in enumerate(_build_order_lines(order)):
-        if num > 0:
-            page = Page()
-            pdf.add_page(page)
-            layout = SingleColumnLayout(page, margin, margin)
-        layout.add(table)
+    pdf.ln(6)
+    pdf.set_text_color(*COLOR_TEXT)
+    pdf.set_font(FONT_NAME, "B", size=FONT_SIZE_TITLE)
+    pdf.cell(text=_("PDF_INVOICE"), new_x=XPos.LMARGIN, new_y=YPos.NEXT, align="L")
 
-    pdf_name = _("PDF_INVOICE_FILENAME", invoice_number=invoice.number)
-    pdf_path = save_pdf(pdf, pdf_name)
-    return pdf_name, pdf_path
+    pdf.ln(6)
+    info_data = _get_invoice_info_table_data(s, order, invoice)
+    with pdf.table(
+        line_height=5,
+        text_align=("LEFT", "LEFT", "RIGHT", "LEFT"),
+        col_widths=(32, 32, 21, 15),
+        borders_layout=TableBordersLayout.NONE,
+        first_row_as_headings=False,
+    ) as table:
+        for info_row in info_data:
+            row = table.row()
+            for info_value_num, info_value in enumerate(info_row):
+                font_style = "B" if info_value_num == 2 else ""
+                pdf.set_font(FONT_NAME, font_style, size=FONT_SIZE_NORMAL)
+                row.cell(info_value)
+
+    pdf.ln(6)
+    pdf.set_font(FONT_NAME, "", size=FONT_SIZE_NORMAL)
+    lines_data = _get_invoice_lines_table_data(s, order, invoice)
+    with pdf.table(
+        line_height=6,
+        text_align=("LEFT", "LEFT", "LEFT"),
+        col_widths=(70, 15, 15),
+        borders_layout=TableBordersLayout.NONE,
+        cell_fill_mode=FirstRowFillMode(),
+        cell_fill_color=COLOR_DARKGREY,
+    ) as table:
+        for lines_row_num, lines_row in enumerate(lines_data):
+            text_color = COLOR_WHITE if lines_row_num == 0 else COLOR_TEXT
+            pdf.set_text_color(*text_color)
+            row = table.row()
+            for lines_value in lines_row:
+                row.cell(lines_value)
+
+    pdf.ln(6)
+    pdf.set_text_color(*COLOR_TEXT)
+    summary_data = _get_invoice_summary_table_data(s, order, invoice)
+    with pdf.table(
+        line_height=6,
+        text_align=("LEFT", "LEFT"),
+        col_widths=(85, 15),
+        borders_layout=TableBordersLayout.NONE,
+        first_row_as_headings=False,
+    ) as table:
+        for summary_row in summary_data:
+            row = table.row()
+            for summary_value_num, summary_value in enumerate(summary_row):
+                font_style = "B" if summary_value_num == 0 else ""
+                pdf.set_font(FONT_NAME, font_style, size=FONT_SIZE_NORMAL)
+                row.cell(summary_value)
+
+    pdf.ln(6)
+    pdf.cell(w=0, text=_("PDF_NOTE"), align="R")
+
+    return pdf
 
 
-def _build_order_info(order: Order, invoice: Invoice) -> FixedColumnWidthTable:
-    # Left 1 column
-    left_items = []
+def _get_invoice_info_table_data(
+    s: Session,
+    order: Order,
+    invoice: Invoice,
+) -> list[tuple[str]]:
+    first = []
     if order.billing.company:
-        left_items.append(TextPG(order.billing.company))
-    left_items.append(TextPG(order.billing.full_name))
-    left_items.append(TextPG(order.billing.address))
-    left_items.append(TextPG(f"{order.billing.zip_code} {order.billing.city}"))
+        first.append(order.billing.company)
+    first.append(order.billing.full_name)
+    first.append(order.billing.address)
+    first.append(f"{order.billing.zip_code} {order.billing.city}")
     if order.billing.state:
-        left_items.append(TextPG(order.billing.state))
-    left_items.append(TextPG(order.billing.country.name))
-    left_items.append(TextPG(order.billing.email))
+        first.append(order.billing.state)
+    first.append(order.billing.country.name)
+    first.append(order.billing.email)
 
-    # Middle 1 column
-    middle_items = [
-        TextPG(config.BUSINESS_NAME),
-        TextPG(config.BUSINESS_STREET),
-        TextPG(f"{config.BUSINESS_ZIP_CODE} {config.BUSINESS_CITY}"),
-        TextPG(config.BUSINESS_COUNTRY),
-        TextPG(_("PDF_CC_NUMBER", cc=config.BUSINESS_CC)),
-        TextPG(_("PDF_VAT_NUMBER", vat=config.BUSINESS_VAT)),
+    second = [
+        config.BUSINESS_NAME,
+        config.BUSINESS_STREET,
+        f"{config.BUSINESS_ZIP_CODE} {config.BUSINESS_CITY}",
+        config.BUSINESS_COUNTRY,
+        _("PDF_CC_NUMBER", cc=config.BUSINESS_CC),
+        _("PDF_VAT_NUMBER", vat=config.BUSINESS_VAT),
     ]
 
-    # Right 2 columns
-    right_groups = [
-        [
-            BoldPG(_("PDF_ORDER_ID"), horizontal_alignment=Alignment.RIGHT),
-            TextPG(str(order.id)),
-        ],
-        [
-            BoldPG(_("PDF_ORDER_DATE"), horizontal_alignment=Alignment.RIGHT),
-            TextPG(order.created_at.strftime("%Y-%m-%d")),
-        ],
-        [
-            BoldPG(_("PDF_INVOICE_NUMBER"), horizontal_alignment=Alignment.RIGHT),
-            TextPG(invoice.number),
-        ],
-        [
-            BoldPG(_("PDF_INVOICE_DATE"), horizontal_alignment=Alignment.RIGHT),
-            TextPG(invoice.created_at.strftime("%Y-%m-%d")),
-        ],
+    third = [
+        _("PDF_ORDER_ID"),
+        _("PDF_ORDER_DATE"),
+        _("PDF_INVOICE_NUMBER"),
+        _("PDF_INVOICE_DATE"),
     ]
 
-    # Create the table
-    row_count = max(len(left_items), len(middle_items), len(right_groups))
-    column_widths = [Decimal(4), Decimal(4), Decimal(2), Decimal(2)]
-    table = FixedColumnWidthTable(
-        number_of_rows=row_count, number_of_columns=4, column_widths=column_widths
-    )
+    fourth = [
+        str(order.id),
+        order.created_at.strftime("%Y-%m-%d"),
+        invoice.number,
+        invoice.created_at.strftime("%Y-%m-%d"),
+    ]
 
-    # Append all the rows
-    combined = list(zip_longest(left_items, middle_items, right_groups))
-    for le, mi, ri in combined:
-        if le is not None:
-            table.add(le)
-        else:
-            table.add(TextPG(" "))
-        if mi is not None:
-            table.add(mi)
-        else:
-            table.add(TextPG(" "))
-        if ri is not None:
-            for r_item in ri:
-                table.add(r_item)
-        else:
-            table.add(TextPG(" "))
-            table.add(TextPG(" "))
-
-    # Finish the table
-    table.set_padding_on_all_cells(Decimal(0), Decimal(2), Decimal(2), Decimal(2))
-    table.no_borders()
-    return table
+    return list(zip_longest(first, second, third, fourth, fillvalue=""))  # type: ignore[arg-type]
 
 
-def _build_order_lines(order: Order) -> list[FixedColumnWidthTable]:
-    cells = []
-    h_texts = [_("PDF_DESCRIPTION"), _("PDF_QUANTITY"), _("PDF_PRICE")]
-    h_widths = [Decimal(64), Decimal(10), Decimal(16)]
-    h_count = len(h_texts)
+def _get_invoice_lines_table_data(
+    s: Session,
+    order: Order,
+    invoice: Invoice,
+) -> list[list[str]]:
+    data = [[_("PDF_DESCRIPTION"), _("PDF_QUANTITY"), _("PDF_PRICE")]]
+    for order_line in order.lines:
+        data.append(
+            [
+                order_line.sku.name,
+                str(order_line.quantity),
+                f"{format_decimal(order_line.total_price)} {order.currency_code}",
+            ]
+        )
+    return data
 
-    # Headers
-    for h_text in h_texts:
-        h_paragraph = HeadPG(h_text)
-        h_cell = TableCell(h_paragraph, background_color=COLOR_DARKGREY)
-        cells.append(h_cell)
 
-    # Order lines
-    for num, order_line in enumerate(order.lines):
-        background_color = COLOR_LIGHTGREY if num % 2 else None
-        name_text = f"{order_line.sku.name}"
-        name_p = TextPG(name_text)
-        cells.append(TableCell(name_p, background_color=background_color))
-        quantity_text = f"{order_line.quantity}"
-        quantity_p = TextPG(quantity_text)
-        cells.append(TableCell(quantity_p, background_color=background_color))
-        price_text = f"{format_decimal(order_line.total_price)} {order.currency_code}"
-        price_p = TextPG(price_text)
-        cells.append(TableCell(price_p, background_color=background_color))
-
-    # Empty line
-    empty_p = TextPG(" ")
-    cells.append(TableCell(empty_p, col_span=h_count))
-
-    # Subtotal
-    subtotal_head_p = BoldPG(_("PDF_ITEMS"))
-    subtotal_value_text = (
-        f"{format_decimal(order.subtotal_price)} {order.currency_code}"
-    )
-    subtotal_value_p = TextPG(subtotal_value_text)
-    cells.append(TableCell(subtotal_head_p, col_span=h_count - 1))
-    cells.append(TableCell(subtotal_value_p, col_span=1))
-
-    # Discount
-    subtotal_head_p = BoldPG(_("PDF_DISCOUNT"))
-    subtotal_value_text = (
-        f"{format_decimal(order.discount_price)} {order.currency_code}"
-    )
-    subtotal_value_p = TextPG(subtotal_value_text)
-    cells.append(TableCell(subtotal_head_p, col_span=h_count - 1))
-    cells.append(TableCell(subtotal_value_p, col_span=1))
-
-    # Shipment
-    subtotal_head_p = BoldPG(_("PDF_SHIPMENT"))
-    subtotal_value_text = (
-        f"{format_decimal(order.shipment_price)} {order.currency_code}"
-    )
-    subtotal_value_p = TextPG(subtotal_value_text)
-    cells.append(TableCell(subtotal_head_p, col_span=h_count - 1))
-    cells.append(TableCell(subtotal_value_p, col_span=1))
-
-    # VAT
-    vat_head_p = BoldPG(
-        _("PDF_VAT_PERCENTAGE", vat_percentage=str(order.vat_percentage))
-    )
-    vat_value_text = f"{format_decimal(order.vat_amount)} {order.currency_code}"
-    vat_p = TextPG(vat_value_text)
-    cells.append(TableCell(vat_head_p, col_span=h_count - 1))
-    cells.append(TableCell(vat_p, col_span=1))
-
-    # Total
-    total_head_p = BoldPG(_("PDF_TOTAL"))
-    total_value_text = f"{format_decimal(order.total_price_vat)} {order.currency_code}"
-    total_value_p = TextPG(total_value_text)
-    cells.append(TableCell(total_head_p, col_span=h_count - 1))
-    cells.append(TableCell(total_value_p, col_span=1))
-
-    # Empty line
-    empty_p = TextPG(" ")
-    cells.append(TableCell(empty_p, col_span=h_count))
-
-    # Note
-    note_1_text = _("PDF_NOTE")
-    note_1_p = TextPG(note_1_text, horizontal_alignment=Alignment.RIGHT)
-    cells.append(TableCell(note_1_p, col_span=h_count))
-
-    return cells_to_tables(
-        cells,  # type: ignore[arg-type]
-        h_count,
-        h_widths,
-        first_row_count=30,
-        other_row_count=42,
-        first_top_margin=Decimal(24),
-        other_top_margin=Decimal(0),
-    )
+def _get_invoice_summary_table_data(
+    s: Session,
+    order: Order,
+    invoice: Invoice,
+) -> list[list[str]]:
+    return [
+        [
+            _("PDF_ITEMS"),
+            f"{format_decimal(order.subtotal_price)} {order.currency_code}",
+        ],
+        [
+            _("PDF_DISCOUNT"),
+            f"{format_decimal(order.discount_price)} {order.currency_code}",
+        ],
+        [
+            _("PDF_SHIPMENT"),
+            f"{format_decimal(order.shipment_price)} {order.currency_code}",
+        ],
+        [
+            _("PDF_VAT_PERCENTAGE", vat_percentage=str(order.vat_percentage)),
+            f"{format_decimal(order.vat_amount)} {order.currency_code}",
+        ],
+        [
+            _("PDF_TOTAL"),
+            f"{format_decimal(order.total_price_vat)} {order.currency_code}",
+        ],
+    ]
