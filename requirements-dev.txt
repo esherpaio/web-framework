@@ -1,13 +1,13 @@
 # building
-setuptools~=75.8.0
+setuptools~=75.8.2
 
 # migrations
-alembic~=1.14.1
+alembic~=1.15.1
 
 # testing
-pytest~=8.3.4
+pytest~=8.3.5
 
 # formating and linting
 djlint~=1.36.4
 mypy==1.15.0
-ruff~=0.9.7
+ruff~=0.9.10
