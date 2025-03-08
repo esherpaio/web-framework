@@ -22,10 +22,6 @@ from .event import (
 )
 
 
-class MailError(Exception):
-    pass
-
-
 class MailEvent(StrEnum):
     ORDER_PAID = "order.paid"
     ORDER_RECEIVED = "order.received"
