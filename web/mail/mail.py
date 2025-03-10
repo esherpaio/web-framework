@@ -16,9 +16,6 @@ class Mail(metaclass=Singleton):
     def __init__(self) -> None:
         self.events: dict[MailEvent | str, list[Callable]] = {}
 
-    def set_events(self, events: dict[MailEvent | str, list[Callable]]) -> None:
-        self.events = events
-
     @classmethod
     def get_events(cls, event_id: MailEvent | str) -> list[Callable]:
         events = cls.events.get(event_id, [])

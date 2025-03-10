@@ -160,6 +160,7 @@ class Web:
 
         if events:
             log.info(f"Updating {len(events)} mail events")
+            mail.events.update(MAIL_EVENTS)
             mail.events.update(events)
 
     def setup_flask(self, app: Flask, blueprints: list[Blueprint]) -> None:
