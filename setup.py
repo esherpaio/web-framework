@@ -14,7 +14,7 @@ DATA = [
     "app/blueprint/auth_v1/templates/auth/*.html",
     "app/blueprint/robots_v1/templates/*.txt",
     "app/blueprint/robots_v1/templates/*.xml",
-    "app/static/*.js",
+    "app/javascript/*.js",
     "app/templates/*.html",
     "document/font/*.ttf",
     "i18n/translation/*.json",
