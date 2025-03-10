@@ -13,8 +13,7 @@ from .enum import MailEvent
 
 
 class Mail(metaclass=Singleton):
-    def __init__(self) -> None:
-        self.events: dict[MailEvent | str, list[Callable]] = {}
+    events: dict[MailEvent | str, list[Callable]] = {}
 
     @classmethod
     def get_events(cls, event_id: MailEvent | str) -> list[Callable]:
