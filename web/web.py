@@ -63,7 +63,7 @@ class Web:
         if jinja_globals is None:
             jinja_globals = {}
         if mail_events is None:
-            mail_events = MAIL_EVENTS
+            mail_events = {}
         if automation_tasks is None:
             automation_tasks = []
 
@@ -158,9 +158,9 @@ class Web:
         else:
             log.warning("No email method configured")
 
+        mail.events.update(MAIL_EVENTS)
         if events:
             log.info(f"Updating {len(events)} mail events")
-            mail.events.update(MAIL_EVENTS)
             mail.events.update(events)
 
     def setup_flask(self, app: Flask, blueprints: list[Blueprint]) -> None:
