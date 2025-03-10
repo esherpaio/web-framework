@@ -4,13 +4,14 @@ from typing import Callable
 
 import brotli
 from flask import Flask, Response, make_response, request
+from werkzeug.datastructures import Headers
 
 from web.cache import cache
 from web.config import config
 from web.logger import log
 from web.utils import Singleton
 
-from .enums import Encoding, Minification, get_encoding, get_minification
+from .enum import Encoding, Minification
 from .object import minify_html
 
 
@@ -45,6 +46,14 @@ class Optimizer(metaclass=Singleton):
         encoded = minified.encode(cls.ENCODING)
         response.set_data(encoded)
 
+    @staticmethod
+    def get_minification(mimetype: str | None) -> Minification | None:
+        if mimetype is None:
+            return None
+        if mimetype.endswith("html"):
+            return Minification.html
+        return None
+
     #
     # Compression
     #
@@ -69,6 +78,19 @@ class Optimizer(metaclass=Singleton):
         # set data
         log.debug(f"Optimizer compressed {request.full_path}")
         response.set_data(compressed_data)
+
+    @staticmethod
+    def get_encoding(headers: Headers) -> Encoding | None:
+        if headers is None:
+            return None
+        encoding = headers.get("Accept-Encoding", "").lower()
+        if "br" in encoding:
+            return Encoding.brotli
+        if "deflate" in encoding:
+            return Encoding.deflate
+        if "gzip" in encoding:
+            return Encoding.gzip
+        return None
 
     @staticmethod
     def get_compress_level(encoding: Encoding | None) -> int | None:
@@ -145,7 +167,7 @@ class Optimizer(metaclass=Singleton):
     def cache(self, f: Callable) -> Callable[..., Response]:
         def wrap(*args, **kwargs) -> Response:
             if config.APP_OPTIMIZE:
-                encoding = get_encoding(request.headers)
+                encoding = self.get_encoding(request.headers)
                 response = self.get_cache(encoding)
                 if response is not None:
                     self.set_headers(response, encoding)
@@ -166,8 +188,8 @@ class Optimizer(metaclass=Singleton):
         if "Content-Encoding" in response.headers:
             return response
         # choose encoding and minification
-        encoding = get_encoding(request.headers)
-        minification = get_minification(response.mimetype)
+        encoding = self.get_encoding(request.headers)
+        minification = self.get_minification(response.mimetype)
         if encoding is None and minification is None:
             return response
         # handle response

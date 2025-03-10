@@ -1,10 +1,10 @@
 from flask import render_template, request
 
 from web.app.blueprint.admin_v1 import admin_v1_bp
-from web.app.bootstrap import get_pages
+from web.app.blueprint.admin_v1.utils import get_pages
 from web.database import conn
 from web.database.model import Email
-from web.mail import MailEvent
+from web.mail.enum import MailEvent
 
 
 @admin_v1_bp.get("/admin/emails")

@@ -6,7 +6,8 @@ from sqlalchemy.orm.session import Session
 from werkzeug import Response
 from werkzeug.security import generate_password_hash
 
-from web.api import API, json_response
+from web.api import API
+from web.api.response import json_response
 from web.app.blueprint.api_v1 import api_v1_bp
 from web.auth import current_user
 from web.database import conn

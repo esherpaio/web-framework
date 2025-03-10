@@ -28,12 +28,8 @@ from web.locale import current_locale
 #
 
 
-def predict_cart_info(s: Session, cart: Cart) -> tuple[Shipping | None, Billing | None]:
-    """Predict the most accurate shipping and billing objects.
-
-    In the following order: cart -> user -> None.
-    Useful for pre-filling forms on a frontend.
-    """
+def predict_shipping(s: Session, cart: Cart) -> Shipping | None:
+    """Get the most accurate shipping object."""
     # Get user
     if current_user and current_user.id:
         user = s.query(User).filter_by(id=current_user.id).first()
@@ -46,6 +42,16 @@ def predict_cart_info(s: Session, cart: Cart) -> tuple[Shipping | None, Billing 
         shipping = s.query(Shipping).filter_by(id=user.shipping_id).first()
     else:
         shipping = None
+    return shipping
+
+
+def predict_billing(s: Session, cart: Cart) -> Billing | None:
+    """Get the most accurate billing object."""
+    # Get user
+    if current_user and current_user.id:
+        user = s.query(User).filter_by(id=current_user.id).first()
+    else:
+        user = None
     # Get billing
     if cart and cart.billing_id:
         billing = s.query(Billing).filter_by(id=cart.billing_id).first()
@@ -53,8 +59,7 @@ def predict_cart_info(s: Session, cart: Cart) -> tuple[Shipping | None, Billing 
         billing = s.query(Billing).filter_by(id=user.billing_id).first()
     else:
         billing = None
-    # Return
-    return shipping, billing
+    return billing
 
 
 def get_shipment_methods(s: Session, cart: Cart) -> list[ShipmentMethod]:
@@ -165,6 +170,7 @@ def transfer_cart(f: Callable) -> Callable[..., Response]:
             if prev_cart is not None:
                 s.query(Cart).filter_by(user_id=curr_user_id).delete()
                 prev_cart.user_id = curr_user_id
+                s.flush()
 
         return resp
 

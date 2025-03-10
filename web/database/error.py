@@ -6,8 +6,6 @@ from web.error import WebError
 
 
 class DbError(WebError):
-    """Base class for database errors."""
-
     pass
 
 

@@ -4,9 +4,10 @@ from flask import abort
 from sqlalchemy.orm.session import Session
 from werkzeug import Response
 
-from web.api import API, HttpText, json_response
+from web.api import API
+from web.api.checkout import get_shipment_methods
+from web.api.response import HttpText, json_response
 from web.app.blueprint.api_v1 import api_v1_bp
-from web.app.cart import get_shipment_methods
 from web.auth import current_user
 from web.database import conn
 from web.database.model import Cart, CartItem

@@ -1,23 +1,9 @@
 import os
 from ftplib import FTP, error_perm
-from typing import Protocol, TypeVar
 
 from web.config import config
 
-#
-# Types
-#
-
-_SP = TypeVar("_SP", covariant=True)
-
-
-class _SupportsRead(Protocol[_SP]):
-    def read(self, __length: int = ...) -> _SP: ...
-
-
-#
-# Functions
-#
+from .type import _SupportsRead
 
 
 def filenames(path: str) -> list[str]:

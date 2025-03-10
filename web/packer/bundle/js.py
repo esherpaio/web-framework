@@ -4,7 +4,7 @@ from typing import Generator
 import rjsmin
 
 
-class JsBundle(object):
+class JsBundle:
     ENCODING = "utf-8"
     IN_EXTS = [".js"]
     OUT_EXT = ".js"

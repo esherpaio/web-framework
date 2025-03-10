@@ -3,8 +3,9 @@ from enum import StrEnum
 from mollie.api.error import UnprocessableEntityError
 from werkzeug import Response
 
-from web.api import HttpText, json_get, json_response
+from web.api import json_get
 from web.api.mollie import Mollie, gen_mollie_payment_data
+from web.api.response import HttpText, json_response
 from web.app.blueprint.api_v1 import api_v1_bp
 from web.auth import current_user
 from web.database import conn

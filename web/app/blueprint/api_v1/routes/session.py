@@ -5,9 +5,10 @@ from google.oauth2 import id_token
 from werkzeug import Response
 from werkzeug.security import check_password_hash
 
-from web.api import json_get, json_response
+from web.api import json_get
+from web.api.checkout import transfer_cart
+from web.api.response import json_response
 from web.app.blueprint.api_v1 import api_v1_bp
-from web.app.cart import transfer_cart
 from web.auth import jwt_login, jwt_logout
 from web.config import config
 from web.database import conn
