@@ -2,7 +2,7 @@ import os
 
 from fpdf import FPDF
 
-from ._utils import DIR
+from .utils import DIR
 
 FONT_NAME = "NotoSans"
 FONT_SIZE_NORMAL = 10

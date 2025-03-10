@@ -1,9 +1,5 @@
 from typing import Any
 
-#
-# Classes
-#
-
 
 class Cache(dict):
     """A simple in-memory cache mechanism."""
@@ -17,9 +13,5 @@ class Cache(dict):
     def __delattr__(self, key: str) -> None:
         del self[key]
 
-
-#
-# Variables
-#
 
 cache = Cache()

@@ -6,8 +6,8 @@ from babel.dates import format_datetime
 from flask import Blueprint, Flask
 
 from web import cdn
-from web.app.redirects import Redirector
-from web.app.routing import handle_error
+from web.app.error import handle_error
+from web.app.redirector import Redirector
 from web.app.urls import url_for
 from web.auth import Auth, current_user
 from web.automation import Automator, task
@@ -17,15 +17,32 @@ from web.database import conn
 from web.i18n import translator
 from web.locale import LocaleManager, current_locale
 from web.logger import log
-from web.mail import MailEvent, mail
+from web.mail import MailEvent, event, mail
 from web.optimizer import optimizer
+
+#
+# Defaults
+#
+
+
+MAIL_EVENTS: dict[MailEvent | str, list[Callable]] = {
+    MailEvent.ORDER_PAID: [event.mail_order_paid],
+    MailEvent.ORDER_RECEIVED: [event.mail_order_received],
+    MailEvent.ORDER_REFUNDED: [event.mail_order_refunded],
+    MailEvent.ORDER_SHIPPED: [event.mail_order_shipped],
+    MailEvent.USER_REQUEST_PASSWORD: [event.mail_user_password],
+    MailEvent.USER_REQUEST_VERIFICATION: [event.mail_user_verification],
+    MailEvent.WEBSITE_CONTACT: [event.mail_contact_business],
+    MailEvent.WEBSITE_BULK: [event.mail_bulk],
+}
+
 
 #
 # Classes
 #
 
 
-class FlaskWeb:
+class Web:
     def __init__(
         self,
         app: Flask | None = None,
@@ -46,7 +63,7 @@ class FlaskWeb:
         if jinja_globals is None:
             jinja_globals = {}
         if mail_events is None:
-            mail_events = {}
+            mail_events = MAIL_EVENTS
         if automation_tasks is None:
             automation_tasks = []
 

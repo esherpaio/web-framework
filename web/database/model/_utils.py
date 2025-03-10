@@ -7,7 +7,7 @@ from sqlalchemy import Numeric, TypeDecorator
 from web.utils.generators import gen_slug
 from web.utils.validation import is_email, is_phone
 
-from ..errors import (
+from ..error import (
     DbEmailError,
     DbMaxLengthError,
     DbMaxNumberError,

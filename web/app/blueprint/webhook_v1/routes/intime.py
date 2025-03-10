@@ -4,7 +4,8 @@ from sqlalchemy import false, null
 from sqlalchemy.orm import joinedload
 from werkzeug import Response
 
-from web.api import JsonEncoder, json_get
+from web.api import json_get
+from web.api.response import JsonEncoder
 from web.app.blueprint.webhook_v1 import webhook_v1_bp
 from web.auth import authorize
 from web.database import conn
@@ -17,7 +18,8 @@ from web.database.model import (
     Sku,
     UserRoleLevel,
 )
-from web.mail import MailEvent, mail
+from web.mail import mail
+from web.mail.enum import MailEvent
 
 #
 # Helpers

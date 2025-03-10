@@ -2,12 +2,13 @@ from flask import request
 from mollie.api.error import NotFoundError
 from werkzeug import Response
 
-from web.api import HttpText, json_response
 from web.api.mollie import Mollie
+from web.api.response import HttpText, json_response
 from web.app.blueprint.webhook_v1 import webhook_v1_bp
 from web.database import conn
 from web.database.model import Invoice, Order, OrderStatusId
-from web.mail import MailEvent, mail
+from web.mail import mail
+from web.mail.enum import MailEvent
 
 
 @webhook_v1_bp.post("/mollie/payment")

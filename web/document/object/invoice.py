@@ -8,7 +8,7 @@ from web.config import config
 from web.database.model import Invoice, Order
 from web.i18n import _
 
-from .._style import (
+from ..style import (
     COLOR_DARKGREY,
     COLOR_TEXT,
     COLOR_WHITE,
@@ -18,7 +18,7 @@ from .._style import (
     FirstRowFillMode,
     add_fonts,
 )
-from .._utils import format_decimal
+from ..utils import format_decimal
 
 
 def gen_invoice_pdf(

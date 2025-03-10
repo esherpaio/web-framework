@@ -10,7 +10,8 @@ from sqlalchemy.orm.session import Session
 from web.database.model import Base
 from web.logger import log
 
-from .utils import HttpText, args_get, json_get, json_response
+from .request import args_get, json_get
+from .response import HttpText, json_response
 
 B = TypeVar("B", bound=Base)
 

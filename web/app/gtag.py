@@ -3,7 +3,7 @@ from enum import StrEnum
 
 from markupsafe import Markup
 
-from web.api import JsonEncoder
+from web.api.response import JsonEncoder
 
 #
 # Events

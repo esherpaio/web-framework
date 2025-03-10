@@ -2,7 +2,7 @@ from flask import render_template, request
 from sqlalchemy.orm import joinedload
 
 from web.app.blueprint.admin_v1 import admin_v1_bp
-from web.app.bootstrap import get_pages
+from web.app.blueprint.admin_v1.utils import get_pages
 from web.database import conn
 from web.database.model import User
 

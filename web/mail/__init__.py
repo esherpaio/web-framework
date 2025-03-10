@@ -1,5 +1,7 @@
-from .base import render_email, send_email
-from .mail import MailEvent, mail
+from .enum import MailEvent
+from .mail import mail
+from .render import render_email
+from .send import send_email
 
 __all__ = [
     "mail",

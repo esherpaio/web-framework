@@ -5,10 +5,11 @@ from pyvat import is_vat_number_format_valid
 from sqlalchemy.orm.session import Session
 from werkzeug import Response
 
-from web.api import API, HttpText, json_response
+from web.api import API
+from web.api.checkout import get_shipment_methods
 from web.api.mollie import Mollie
+from web.api.response import HttpText, json_response
 from web.app.blueprint.api_v1 import api_v1_bp
-from web.app.cart import get_shipment_methods
 from web.auth import authorize, current_user
 from web.database import conn
 from web.database.model import (
@@ -23,7 +24,8 @@ from web.database.model import (
 )
 from web.database.utils import copy_row
 from web.i18n import _
-from web.mail import MailEvent, mail
+from web.mail import mail
+from web.mail.enum import MailEvent
 
 #
 # Configuration

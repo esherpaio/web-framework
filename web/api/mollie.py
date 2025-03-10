@@ -64,6 +64,7 @@ def gen_mollie_payment_data(
     order_price_vat = order.total_price * order.vat_rate
     amount = gen_mollie_amount(order_price_vat, order.currency_code)
     description = f"Order {order.id}"
+    webhook_url = get_mollie_webhook_url()
     due_date = datetime.now(timezone.utc) + timedelta(days=25)
     due_data_str = due_date.strftime("%Y-%m-%d")
     data = {
@@ -71,7 +72,7 @@ def gen_mollie_payment_data(
         "description": description,
         "redirectUrl": redirect_url,
         "cancelUrl": cancel_url,
-        "webhookUrl": get_mollie_webhook_url(),
+        "webhookUrl": webhook_url,
         "metadata": {"order_id": order.id},
         "dueDate": due_data_str,
     }

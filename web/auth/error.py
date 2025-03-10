@@ -1,4 +1,4 @@
-from web.api import HttpText
+from web.api.response import HttpText
 
 
 class AuthError(Exception):

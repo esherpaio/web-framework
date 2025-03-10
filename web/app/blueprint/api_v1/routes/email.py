@@ -3,13 +3,15 @@ from enum import StrEnum
 from sqlalchemy import null, true
 from werkzeug import Response
 
-from web.api import json_get, json_response
+from web.api import json_get
+from web.api.response import json_response
 from web.app.blueprint.api_v1 import api_v1_bp
 from web.config import config
 from web.database import conn
 from web.database.model import User
 from web.i18n import _
-from web.mail import MailEvent, mail
+from web.mail import mail
+from web.mail.enum import MailEvent
 
 #
 # Configuration

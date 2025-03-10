@@ -3,8 +3,8 @@ import os
 from flask import Blueprint
 from werkzeug import Response
 
+from web.app.javascript import js_bundle
 from web.app.meta import Meta
-from web.app.static import js_bundle
 from web.auth import authorize_user
 from web.automation.task import StaticSeed, StaticType
 from web.database.model import AppBlueprint, UserRoleLevel

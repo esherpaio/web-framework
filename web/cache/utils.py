@@ -19,6 +19,7 @@ from .cache import cache
 
 
 def cache_common() -> None:
+    # TODO(Stan): move to package level on initiating classes
     with conn.begin() as s:
         # fmt: off
         cache.blueprints = s.query(AppBlueprint).all()

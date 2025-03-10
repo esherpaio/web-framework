@@ -5,8 +5,9 @@ from web.database.model import Invoice, Order, Refund
 from web.document import get_pdf_path
 from web.document.object import gen_invoice_pdf, gen_refund_pdf
 from web.i18n import _
-from web.mail import render_email, send_email
 from web.utils import remove_file
+
+from .. import render_email, send_email
 
 
 def mail_order_received(

@@ -1,28 +1,12 @@
-import os
 from email.mime.application import MIMEApplication
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-from enum import StrEnum
 from smtplib import SMTP
-
-import jinja2
 
 from web.config import config
 from web.logger import log
 
-
-class MailMethod(StrEnum):
-    SMTP = "SMTP"
-
-
-def render_email(name: str = "default", **attrs) -> str:
-    dir_ = os.path.dirname(os.path.realpath(__file__))
-    loader = jinja2.FileSystemLoader(dir_)
-    environment = jinja2.Environment(loader=loader)
-    fp = os.path.join("template", f"{name}.html")
-    attrs.update({"config": config})
-    html = environment.get_template(fp).render(attrs)
-    return html
+from .enum import MailMethod
 
 
 def send_email(
