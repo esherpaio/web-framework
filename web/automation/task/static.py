@@ -79,7 +79,7 @@ class StaticProcessor(Processor):
     def run(cls) -> None:
         cls.log_start()
         if not config.APP_SYNC_STATIC:
-            log.warning("Static syncer is disabled")
+            log.warning("Static processor is disabled")
             return
         with conn.begin() as s:
             resources = cls.get_resources(s)
