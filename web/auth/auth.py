@@ -9,7 +9,7 @@ from flask import Flask, current_app, g, redirect, request
 from sqlalchemy.orm import joinedload
 from werkzeug import Response
 
-from web.api.response import json_response
+from web.api import json_response
 from web.app.urls import parse_url, url_for
 from web.config import config
 from web.database import conn

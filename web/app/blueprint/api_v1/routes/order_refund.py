@@ -3,9 +3,8 @@ from enum import StrEnum
 
 from werkzeug import Response
 
-from web.api import json_get
-from web.api.mollie import Mollie, gen_mollie_amount
-from web.api.response import HttpText, json_response
+from web.api import HttpText, json_get, json_response
+from web.api.utils.mollie import Mollie
 from web.app.blueprint.api_v1 import api_v1_bp
 from web.auth import authorize
 from web.database import conn
@@ -51,7 +50,8 @@ def post_orders_id_refund(order_id: int) -> Response:
             return json_response(404, Text.PAYMENT_INCOMPLETE)
 
         # Check if Mollie allows a refund
-        mollie_payment = Mollie().payments.get(order.mollie_id)
+        mollie = Mollie()
+        mollie_payment = mollie.payments.get(order.mollie_id)
         if not mollie_payment.can_be_refunded():
             return json_response(404, Text.REFUND_NOT_ALLOWED)
 
@@ -65,9 +65,9 @@ def post_orders_id_refund(order_id: int) -> Response:
         s.flush()
 
         # Create Mollie refund
-        mollie_payment = Mollie().payments.get(order.mollie_id)
+        mollie_payment = mollie.payments.get(order.mollie_id)
         mollie_refund = mollie_payment.refunds.create(
-            {"amount": gen_mollie_amount(price_vat, order.currency_code)}
+            {"amount": mollie.gen_amount(price_vat, order.currency_code)}
         )
         refund.mollie_id = mollie_refund.id
         s.flush()

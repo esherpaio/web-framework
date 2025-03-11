@@ -7,7 +7,7 @@ from sqlalchemy.orm.exc import NoResultFound
 from werkzeug import Response
 from werkzeug.exceptions import HTTPException
 
-from web.api.response import HttpText, json_response
+from web.api import HttpText, json_response
 from web.app.urls import parse_url, url_for
 from web.config import config
 from web.error import WebError

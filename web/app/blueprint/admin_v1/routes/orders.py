@@ -3,7 +3,7 @@ from sqlalchemy import or_
 from sqlalchemy.orm import contains_eager, joinedload
 from werkzeug import Response
 
-from web.api.response import HttpText, json_response
+from web.api import HttpText, json_response
 from web.app.blueprint.admin_v1 import admin_v1_bp
 from web.app.blueprint.admin_v1.utils import get_pages
 from web.database import conn

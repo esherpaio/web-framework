@@ -5,10 +5,9 @@ from pyvat import is_vat_number_format_valid
 from sqlalchemy.orm.session import Session
 from werkzeug import Response
 
-from web.api import API
-from web.api.checkout import get_shipment_methods
-from web.api.mollie import Mollie
-from web.api.response import HttpText, json_response
+from web.api import API, HttpText, json_response
+from web.api.utils.cart import get_shipment_methods
+from web.api.utils.mollie import Mollie
 from web.app.blueprint.api_v1 import api_v1_bp
 from web.auth import authorize, current_user
 from web.database import conn
@@ -207,10 +206,11 @@ def mail_order(s: Session, data: dict, model: Order) -> None:
 
 
 def cancel_mollie(s: Session, data: dict, model: Order) -> None:
-    mollie = Mollie().payments.get(model.mollie_id)
-    if mollie.is_canceled():
+    mollie = Mollie()
+    mollie_payment = mollie.payments.get(model.mollie_id)
+    if mollie_payment.is_canceled():
         return
-    if not mollie.is_cancelable:
+    if not mollie_payment.is_cancelable:
         abort(400, Text.CANCEL_NOT_ALLOWED)
-    Mollie().payments.delete(model.mollie_id)
+    mollie.payments.delete(model.mollie_id)
     model.status_id = OrderStatusId.COMPLETED

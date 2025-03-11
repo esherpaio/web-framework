@@ -2,8 +2,8 @@ from flask import request
 from mollie.api.error import NotFoundError
 from werkzeug import Response
 
-from web.api.mollie import Mollie
-from web.api.response import HttpText, json_response
+from web.api import HttpText, json_response
+from web.api.utils.mollie import Mollie
 from web.app.blueprint.webhook_v1 import webhook_v1_bp
 from web.database import conn
 from web.database.model import Invoice, Order, OrderStatusId
@@ -24,8 +24,9 @@ def mollie_payment() -> Response:
     if not mollie_payment_id:
         return json_response()
 
+    mollie = Mollie()
     try:
-        mollie_payment_ = Mollie().payments.get(mollie_payment_id)
+        mollie_payment_ = mollie.payments.get(mollie_payment_id)
     except NotFoundError:
         return json_response()
 

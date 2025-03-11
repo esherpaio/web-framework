@@ -2,7 +2,8 @@ import itertools
 
 from werkzeug import Response
 
-from web.api.response import HttpText, json_response
+from web.api import HttpText, json_response
+from web.api.utils.sku import get_sku_unit_price
 from web.app.blueprint.api_v1 import api_v1_bp
 from web.auth import authorize
 from web.database import conn
@@ -45,15 +46,14 @@ def post_skus(product_id: int) -> Response:
                 .order_by(ProductValue.id)
                 .all()
             )
-            unit_price = product.unit_price + sum(x.unit_price for x in values)
             sku = next((x for x in skus if x.value_ids == sorted(value_ids)), None)
             if sku is not None:
                 log.info("Restoring SKU %d", sku.id)
                 sku.is_deleted = False
-                sku.unit_price = unit_price
             else:
                 slug_parts = [product.name, *(x.name for x in values)]
                 slug = gen_slug("-".join(slug_parts))
+                unit_price = get_sku_unit_price(product, values)
                 sku = Sku(
                     product_id=product_id,
                     slug=slug,

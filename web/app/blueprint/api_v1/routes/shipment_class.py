@@ -1,7 +1,6 @@
 from werkzeug import Response
 
-from web.api import json_get
-from web.api.response import HttpText, json_response
+from web.api import HttpText, json_get, json_response
 from web.app.blueprint.api_v1 import api_v1_bp
 from web.auth import authorize
 from web.database import conn

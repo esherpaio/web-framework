@@ -2,12 +2,10 @@ from decimal import Decimal
 
 from werkzeug import Response
 
-from web.api import json_get
-from web.api.response import HttpText, json_response
+from web.api import HttpText, json_get, json_response
+from web.api.utils.sku import set_sku_unit_prices
 from web.app.blueprint.api_v1 import api_v1_bp
 from web.auth import authorize
-from web.automation import sync_after
-from web.automation.task import SkuProcessor
 from web.database import conn
 from web.database.model import CategoryItem, Product, ProductTypeId, Sku, UserRoleLevel
 from web.utils.generators import gen_slug
@@ -24,22 +22,25 @@ from web.utils.generators import gen_slug
 
 @api_v1_bp.post("/products")
 @authorize(UserRoleLevel.ADMIN)
-@sync_after(SkuProcessor)
 def post_products() -> Response:
     name, _ = json_get("name", str, nullable=False)
+    unit_price, _ = json_get("unit_price", Decimal, nullable=True, default=1)
 
     with conn.begin() as s:
         # Get or restore product
         product = s.query(Product).filter_by(slug=gen_slug(name)).first()
         if product:
             if product.is_deleted:
-                product.is_deleted = False
                 return json_response()
             else:
                 return json_response(409, HttpText.HTTP_409)
 
         # Insert product
-        product = Product(type_id=ProductTypeId.PHYSICAL, name=name, unit_price=1)
+        product = Product(
+            type_id=ProductTypeId.PHYSICAL,
+            name=name,
+            unit_price=unit_price,
+        )
         s.add(product)
 
     return json_response()
@@ -47,7 +48,6 @@ def post_products() -> Response:
 
 @api_v1_bp.patch("/products/<int:product_id>")
 @authorize(UserRoleLevel.ADMIN)
-@sync_after(SkuProcessor)
 def patch_products_id(product_id: int) -> Response:
     attributes, has_attributes = json_get("attributes", dict, default={})
     file_url, has_file_url = json_get("file_url", str)
@@ -74,6 +74,7 @@ def patch_products_id(product_id: int) -> Response:
             product.summary = summary
         if has_unit_price:
             product.unit_price = unit_price
+            set_sku_unit_prices(s, product_ids=[product.id])
         if has_consent_required:
             product.consent_required = consent_required
         if has_file_url:

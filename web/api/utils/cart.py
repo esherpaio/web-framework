@@ -1,16 +1,10 @@
-from datetime import datetime, timezone
-from decimal import Decimal
 from typing import Callable
 
-import pyvat
-from pyvat import ItemType, Party, VatChargeAction
-from sqlalchemy import or_
+from sqlalchemy import false, or_
 from sqlalchemy.orm import Session
-from sqlalchemy.sql.expression import false
 from werkzeug import Response
 
 from web.auth import current_user
-from web.config import config
 from web.database import conn
 from web.database.model import (
     Billing,
@@ -22,10 +16,6 @@ from web.database.model import (
     User,
 )
 from web.locale import current_locale
-
-#
-# Functions
-#
 
 
 def predict_shipping(s: Session, cart: Cart) -> Shipping | None:
@@ -116,46 +106,8 @@ def get_shipment_methods(s: Session, cart: Cart) -> list[ShipmentMethod]:
     return shipment_methods
 
 
-def get_vat(country_code: str, is_business: bool) -> tuple[Decimal, bool]:
-    """Get VAT information.
-
-    Args:
-        country_code: ISO 3166-1 alpha-2 country code.
-        is_business: Whether it is a business.
-
-    Returns:
-        vat_rate: The VAT rate.
-        vat_reverse: Whether the VAT is reverse charged.
-    """
-    date = datetime.now(timezone.utc).date()
-    type_ = ItemType.generic_electronic_service
-    buyer = Party(country_code, is_business)
-    seller = Party(config.BUSINESS_COUNTRY_CODE, True)
-    vat = pyvat.get_sale_vat_charge(date, type_, buyer, seller)
-    if vat.action == VatChargeAction.charge:
-        vat_rate = (vat.rate / Decimal("100")) + Decimal("1")
-        vat_reverse = False
-    elif vat.action == VatChargeAction.reverse_charge:
-        vat_rate = Decimal("1")
-        vat_reverse = False
-    elif vat.action == VatChargeAction.no_charge:
-        vat_rate = Decimal("1")
-        vat_reverse = True
-    else:
-        raise NotImplementedError(f"Unknown VAT action: {vat.action}")
-    return vat_rate, vat_reverse
-
-
-#
-# Decorators
-#
-
-
 def transfer_cart(f: Callable) -> Callable[..., Response]:
-    """Transfer a cart from one session to another.
-
-    Useful for when an user logs in or out.
-    """
+    """Transfer a cart from one session to another."""
 
     def wrap(*args, **kwargs) -> Response:
         with conn.begin() as s:
