@@ -22,7 +22,9 @@ class Sku(Base, Attribute):
     product_id = MC(ForeignKey("product.id", ondelete="RESTRICT"), nullable=False)
     route_id = MC(ForeignKey("app_route.id", ondelete="SET NULL"))
 
-    details = relationship("SkuDetail", back_populates="sku")
+    details = relationship(
+        "SkuDetail", back_populates="sku", order_by="SkuDetail.option_id"
+    )
     product = relationship("Product", viewonly=True)
     route = relationship("AppRoute")
 
