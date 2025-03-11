@@ -6,7 +6,7 @@ from werkzeug import Response
 from web.app.javascript import js_bundle
 from web.app.meta import Meta
 from web.auth import authorize_user
-from web.automation.task import StaticSeed, StaticType
+from web.automation.task import StaticJob, StaticType
 from web.database.model import AppBlueprint, UserRoleLevel
 from web.packer.bundle import CssBundle
 
@@ -19,18 +19,16 @@ admin_v1_bp = Blueprint(
     static_folder=os.path.join(_dir, "static"),
     static_url_path="/admin/static",
 )
-admin_v1_css_bundle = CssBundle(os.path.join(_dir, "static", "admin_v1.css"))
-admin_v1_js_bundle = js_bundle
-admin_v1_seeds = [
-    StaticSeed(
+admin_v1_static_jobs = [
+    StaticJob(
         type_=StaticType.CSS,
-        bundles=[admin_v1_css_bundle],
+        bundles=[CssBundle(os.path.join(_dir, "static", "admin_v1.css"))],
         model=AppBlueprint,
         endpoint="admin",
     ),
-    StaticSeed(
+    StaticJob(
         type_=StaticType.JS,
-        bundles=[admin_v1_js_bundle],
+        bundles=[js_bundle],
         model=AppBlueprint,
         endpoint="admin",
     ),

@@ -87,14 +87,14 @@ class TestBilling:
     def test_delete_country(self, post_country, client, admin) -> None:
         country_id = post_country.json["data"]["id"]
         resp = client.delete(f"/api/v1/countries/{country_id}", headers={**admin})
-        assert resp.status_code == 500
+        assert resp.status_code == 409
 
     def test_delete_currency(self, post_currency, client, admin) -> None:
         currency_id = post_currency.json["data"]["id"]
         resp = client.delete(f"/api/v1/currencies/{currency_id}", headers={**admin})
-        assert resp.status_code == 500
+        assert resp.status_code == 409
 
     def test_delete_region(self, post_region, client, admin) -> None:
         region_id = post_region.json["data"]["id"]
         resp = client.delete(f"/api/v1/regions/{region_id}", headers={**admin})
-        assert resp.status_code == 500
+        assert resp.status_code == 409

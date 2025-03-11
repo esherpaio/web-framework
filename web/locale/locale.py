@@ -1,9 +1,13 @@
+from datetime import datetime
 from functools import cached_property
+
+from babel.dates import format_datetime
 
 from web.cache import cache
 from web.config import config
 from web.database.model import Country, Currency, Language
 
+from .error import CountryNotFoundError, CurrencyNotFoundError, LanguageNotFoundError
 from .utils import gen_locale, get_cookie_locale, get_route_locale, match_locale
 
 
@@ -53,28 +57,37 @@ class Locale:
         country_code = country_code.upper()
         return language_code, country_code
 
+    #
+    # Objects
+    #
+
     @cached_property
-    def country(self) -> Country | None:
+    def country(self) -> Country:
         _, country_code = self.locale_info
         for country in cache.countries:  # type: ignore[attr-defined]
             if country.code == country_code:
                 return country
-        return None
+        raise CountryNotFoundError
 
     @cached_property
-    def currency(self) -> Currency | None:
-        if self.country is None:
-            return None
+    def currency(self) -> Currency:
         currency_id = self.country.currency_id
         for currency in cache.currencies:  # type: ignore[attr-defined]
             if currency.id == currency_id:
                 return currency
-        return None
+        raise CurrencyNotFoundError
 
     @cached_property
-    def language(self) -> Language | None:
+    def language(self) -> Language:
         language_code, _ = self.locale_info
         for language in cache.languages:  # type: ignore[attr-defined]
             if language.code == language_code:
                 return language
-        return None
+        raise LanguageNotFoundError
+
+    #
+    # Functions
+    #
+
+    def format_datetime(self, datetime_: datetime) -> None:
+        format_datetime(datetime_, locale=self.locale_alt)

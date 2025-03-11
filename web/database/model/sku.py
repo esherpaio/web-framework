@@ -38,8 +38,7 @@ class Sku(Base, Attribute):
     @hybrid_property
     def name(self) -> str:
         parts = [self.product.name]
-        for detail in self.details:
-            parts.append(detail.value.name)
+        parts.extend(detail.value.name for detail in self.details)
         return " ".join(parts)
 
     # Properties - details

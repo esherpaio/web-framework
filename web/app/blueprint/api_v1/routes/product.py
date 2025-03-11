@@ -7,7 +7,7 @@ from web.api.response import HttpText, json_response
 from web.app.blueprint.api_v1 import api_v1_bp
 from web.auth import authorize
 from web.automation import sync_after
-from web.automation.task import SkuSyncer
+from web.automation.task import SkuProcessor
 from web.database import conn
 from web.database.model import CategoryItem, Product, ProductTypeId, Sku, UserRoleLevel
 from web.utils.generators import gen_slug
@@ -24,7 +24,7 @@ from web.utils.generators import gen_slug
 
 @api_v1_bp.post("/products")
 @authorize(UserRoleLevel.ADMIN)
-@sync_after(SkuSyncer)
+@sync_after(SkuProcessor)
 def post_products() -> Response:
     name, _ = json_get("name", str, nullable=False)
 
@@ -47,7 +47,7 @@ def post_products() -> Response:
 
 @api_v1_bp.patch("/products/<int:product_id>")
 @authorize(UserRoleLevel.ADMIN)
-@sync_after(SkuSyncer)
+@sync_after(SkuProcessor)
 def patch_products_id(product_id: int) -> Response:
     attributes, has_attributes = json_get("attributes", dict, default={})
     file_url, has_file_url = json_get("file_url", str)

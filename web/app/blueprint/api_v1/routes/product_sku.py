@@ -5,8 +5,6 @@ from werkzeug import Response
 from web.api.response import HttpText, json_response
 from web.app.blueprint.api_v1 import api_v1_bp
 from web.auth import authorize
-from web.automation import sync_after
-from web.automation.task import SkuSyncer
 from web.database import conn
 from web.database.model import Product, ProductValue, Sku, SkuDetail, UserRoleLevel
 from web.logger import log
@@ -24,7 +22,6 @@ from web.utils.generators import gen_slug
 
 @api_v1_bp.post("/products/<int:product_id>/skus")
 @authorize(UserRoleLevel.ADMIN)
-@sync_after(SkuSyncer)
 def post_skus(product_id: int) -> Response:
     with conn.begin() as s:
         # Get product and skus
@@ -42,32 +39,27 @@ def post_skus(product_id: int) -> Response:
         value_id_groups = list(itertools.product(*value_id_sets))
 
         for value_ids in value_id_groups:
-            for sku in skus:
-                # Skip if sku already exists
-                if sku.value_ids == sorted(value_ids):
-                    log.info("Restoring SKU %d", sku.id)
-                    sku.is_deleted = False
-                    break
+            values = (
+                s.query(ProductValue)
+                .filter(ProductValue.id.in_(value_ids))
+                .order_by(ProductValue.id)
+                .all()
+            )
+            unit_price = product.unit_price + sum(x.unit_price for x in values)
+            sku = next((x for x in skus if x.value_ids == sorted(value_ids)), None)
+            if sku is not None:
+                log.info("Restoring SKU %d", sku.id)
+                sku.is_deleted = False
+                sku.unit_price = unit_price
             else:
-                # Generate slug
-                values = (
-                    s.query(ProductValue)
-                    .filter(ProductValue.id.in_(value_ids))
-                    .order_by(ProductValue.id)
-                    .all()
-                )
-                slug_parts = [product.name]
-                for value in values:
-                    slug_parts.append(value.name)
+                slug_parts = [product.name, *(x.name for x in values)]
                 slug = gen_slug("-".join(slug_parts))
-
-                # Insert objects
                 sku = Sku(
                     product_id=product_id,
                     slug=slug,
                     stock=1,
                     is_visible=True,
-                    unit_price=0,
+                    unit_price=unit_price,
                 )
                 s.add(sku)
                 s.flush()

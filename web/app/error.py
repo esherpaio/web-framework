@@ -1,5 +1,7 @@
 import logging
 
+import psycopg2.errors
+import sqlalchemy.exc
 from flask import redirect, request
 from sqlalchemy.orm.exc import NoResultFound
 from werkzeug import Response
@@ -32,15 +34,17 @@ def handle_frontend_error(error: Exception) -> Response:
         code = 404
     else:
         code = None
+
     # Determine log level
     if code is None or code >= 500:
         level = logging.ERROR
     else:
         level = logging.WARNING
+
     # Log error and redirect
-    info = ["Frontend error", f"HTTP {code} {request.method} {request.full_path}"]
+    info = ["Frontend error", f"{request.method} {request.full_path}"]
     exc_info = True if level >= logging.ERROR else False
-    log.log(level, " - ".join(info), exc_info=exc_info)
+    log.log(level, " | ".join(info), exc_info=exc_info)
     url = parse_url(config.ENDPOINT_ERROR, _func=url_for)
     return redirect(url, code=302)
 
@@ -54,17 +58,26 @@ def handle_backend_error(error: Exception) -> Response:
             message = _(error.translation_key, **error.translation_kwargs)
         else:
             message = HttpText.HTTP_500
+    elif isinstance(error, sqlalchemy.exc.IntegrityError):
+        if isinstance(error.orig, psycopg2.errors.ForeignKeyViolation):
+            code = 409
+            message = HttpText.HTTP_409
+        else:
+            code = 500
+            message = HttpText.HTTP_500
     else:
         code = 500
         message = HttpText.HTTP_500
+
     # Log error and return response
     info = [
         "Backend error",
-        f"HTTP {code} {request.method} {request.full_path}",
+        f"{request.method} {request.full_path}",
         f"message {message}",
     ]
     if request.is_json:
         data = obfuscate_data(request.get_json())
         info.append(f"data {data}")
-    log.error(" - ".join(info), exc_info=True)
+    exc_info = code >= 500
+    log.error(" | ".join(info), exc_info=exc_info)
     return json_response(code, message)

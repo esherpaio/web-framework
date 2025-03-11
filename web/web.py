@@ -2,7 +2,6 @@ from datetime import datetime, timezone
 from typing import Callable, Type
 
 import alembic.config
-from babel.dates import format_datetime
 from flask import Blueprint, Flask
 
 from web import cdn
@@ -13,12 +12,12 @@ from web.auth import Auth, current_user
 from web.automation import Automator, task
 from web.cache import cache, cache_common, cache_manager
 from web.config import config
-from web.database import conn
 from web.i18n import translator
 from web.locale import LocaleManager, current_locale
 from web.logger import log
 from web.mail import MailEvent, mail
 from web.optimizer import optimizer
+from web.utils.generators import format_decimal
 
 
 class Web:
@@ -105,19 +104,18 @@ class Web:
         default_tasks = [
             task.UserCleaner,
             task.CartCleaner,
-            task.AppSettingSyncer,
-            task.EmailStatusSyncer,
-            task.FileTypeSyncer,
-            task.OrderStatusSyncer,
-            task.ProductLinkeTypeSyncer,
-            task.ProductTypeSyncer,
-            task.UserRoleSyncer,
+            task.AppSettingSeedSyncer,
+            task.EmailStatusSeedSyncer,
+            task.FileTypeSeedSyncer,
+            task.OrderStatusSeedSyncer,
+            task.ProductLinkeTypeSeedSyncer,
+            task.ProductTypeSeedSyncer,
+            task.UserRoleSeedSyncer,
         ]
         all_tasks = default_tasks + tasks
         log.info(f"Running {len(all_tasks)} tasks")
-        for _task in all_tasks:
-            with conn.begin() as s:
-                _task.run(s)
+        for task_ in all_tasks:
+            task_.run()
 
         # Run database hook
         if hook is not None:
@@ -175,11 +173,8 @@ class Web:
             )
         )
 
-        filters["price"] = lambda x: f"{x:.{2}f}"
-        filters["datetime"] = lambda x: format_datetime(
-            x,
-            locale=current_locale.locale_alt,
-        )
+        filters["price"] = format_decimal
+        filters["datetime"] = current_locale.format_datetime
         for name, func in filters.items():
             app.add_template_filter(func, name=name)
 

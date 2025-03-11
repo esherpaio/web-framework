@@ -6,7 +6,7 @@ from flask.testing import FlaskClient
 
 from web.app.blueprint.api_v1 import api_v1_bp
 from web.app.blueprint.webhook_v1 import webhook_v1_bp
-from web.automation import Syncer
+from web.automation import SeedSyncer
 from web.cache import cache_manager
 from web.database.client import engine
 from web.database.model import Base, User, UserRoleId
@@ -37,7 +37,7 @@ def drop_tables() -> None:
 #
 
 
-class UserSyncer(Syncer):
+class UserSeedSyncer(SeedSyncer):
     MODEL = User
     KEY = "api_key"
     SEEDS = [
@@ -70,7 +70,7 @@ class UserSyncer(Syncer):
 def create_app() -> Flask:
     app = Flask(__name__)
     app.testing = True
-    Web(app, blueprints=[api_v1_bp, webhook_v1_bp], automation_tasks=[UserSyncer])
+    Web(app, blueprints=[api_v1_bp, webhook_v1_bp], automation_tasks=[UserSeedSyncer])
     cache_manager.pause()
     return app
 

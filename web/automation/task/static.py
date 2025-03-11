@@ -13,7 +13,7 @@ from web.logger import log
 from web.packer import Packer
 from web.packer.bundle import CssBundle, JsBundle, ScssBundle
 
-from ..syncer import Syncer
+from ..automator import Processor
 
 
 class StaticType(StrEnum):
@@ -21,7 +21,7 @@ class StaticType(StrEnum):
     CSS = "css"
 
 
-class StaticSeed:
+class StaticJob:
     def __init__(
         self,
         type_: StaticType,
@@ -51,7 +51,7 @@ class StaticSeed:
             return s.query(AppBlueprint).filter_by(endpoint=self.endpoint).first()
         if self.model == AppRoute:
             return s.query(AppRoute).filter_by(endpoint=self.endpoint).first()
-        log.error(f"Static seed model {self.model} is unsupported")
+        log.error(f"Static job model {self.model} is unsupported")
         return None
 
     def set_attribute(
@@ -68,18 +68,16 @@ class StaticSeed:
             resource.css_path = cdn_path
             s.flush()
             return
-        log.error(f"Static seed type {self.type_} is unsupported")
+        log.error(f"Static job type {self.type_} is unsupported")
         return
 
 
-class StaticSyncer(Syncer):
-    SEEDS: list[StaticSeed]
+class StaticProcessor(Processor):
+    JOBS: list[StaticJob]
 
     @classmethod
-    def run(
-        cls,
-        s: Session,
-    ) -> None:
+    def run(cls) -> None:
+        cls.log_start()
         if not config.APP_SYNC_STATIC:
             log.warning("Static syncer is disabled")
             return
@@ -88,48 +86,48 @@ class StaticSyncer(Syncer):
             cdn_filenames = cdn.filenames(os.path.join("static", ""))
             present = cls.set_resources(s, resources, cdn_filenames)
         with conn.begin() as s:
-            cls.remove_unused(s, present)
+            cls.del_resources(s, present)
 
     @classmethod
     def get_resources(
         cls,
         s: Session,
-    ) -> dict[StaticSeed, AppSettings | AppBlueprint | AppRoute]:
-        resources: dict[StaticSeed, AppSettings | AppBlueprint | AppRoute] = {}
-        for seed in cls.SEEDS:
-            resource = seed.get_resource(s)
+    ) -> dict[StaticJob, AppSettings | AppBlueprint | AppRoute]:
+        resources: dict[StaticJob, AppSettings | AppBlueprint | AppRoute] = {}
+        for job in cls.JOBS:
+            resource = job.get_resource(s)
             if resource is None:
-                log.error(f"Static resource {seed.id_} is not found")
+                log.error(f"Static job {job.id_} resource is not found")
                 continue
-            resources[seed] = resource
+            resources[job] = resource
         return resources
 
     @classmethod
     def set_resources(
         cls,
         s: Session,
-        resources: dict[StaticSeed, AppSettings | AppBlueprint | AppRoute],
+        resources: dict[StaticJob, AppSettings | AppBlueprint | AppRoute],
         cdn_filenames: list[str],
     ) -> dict[tuple[str, int], list[StaticType]]:
         present: dict[tuple[str, int], list[StaticType]] = defaultdict(list)
-        for seed in cls.SEEDS:
-            resource = resources[seed]
+        for job in cls.JOBS:
+            resource = resources[job]
             packer = Packer()
-            out_ext = packer.validate(seed.bundles)
-            compiled, bytes_, hash_ = packer.pack(seed.bundles)
+            out_ext = packer.validate(job.bundles)
+            compiled, bytes_, hash_ = packer.pack(job.bundles)
             if not compiled:
-                log.error(f"Static resource {seed.id_} compiled empty")
+                log.error(f"Static job {job.id_} compiled empty")
                 continue
-            present[(resource.__tablename__, resource.id)].append(seed.type_)
+            present[(resource.__tablename__, resource.id)].append(job.type_)
             cdn_filename = f"{hash_}{out_ext}"
             cdn_path = os.path.join("static", cdn_filename)
             if cdn_filename not in cdn_filenames:
                 packer.write_cdn(bytes_, cdn_path)
-            seed.set_attribute(s, resource, cdn_path)
+            job.set_attribute(s, resource, cdn_path)
         return present
 
     @classmethod
-    def remove_unused(
+    def del_resources(
         cls,
         s: Session,
         present: dict[tuple[str, int], list[StaticType]],

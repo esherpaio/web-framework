@@ -3,20 +3,23 @@ from datetime import datetime, timedelta, timezone
 from sqlalchemy import null, or_
 from sqlalchemy.orm import Session
 
+from web.database import conn
 from web.database.model import Email, EmailStatusId
 from web.logger import log
 from web.mail import mail
 
-from ..automator import Automator
+from ..automator import Processor
 
 
-class EmailWorker(Automator):
+class EmailProcessor(Processor):
     @classmethod
-    def run(cls, s: Session) -> None:
-        cls.send_emails(s, max_weeks=4)
+    def run(cls) -> None:
+        cls.log_start()
+        with conn.begin() as s:
+            cls.send_email(s, max_weeks=4)
 
     @staticmethod
-    def send_emails(s: Session, max_weeks: int = 4) -> None:
+    def send_email(s: Session, max_weeks: int = 4) -> Email | None:
         email = (
             s.query(Email)
             .filter(
@@ -33,6 +36,7 @@ class EmailWorker(Automator):
             .first()
         )
         if email is None:
-            return
+            return None
         log.info(f"Triggering email event {email.event_id} for user {email.user_id}")
         mail.trigger_events(s, email.event_id, _email=email, **email.data)
+        return email

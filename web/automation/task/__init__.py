@@ -1,35 +1,36 @@
-from .app_settings import AppSettingSyncer
+from .app_settings import AppSettingSeedSyncer
 from .cart import CartCleaner
-from .country import CountrySyncer
-from .currency import CurrencySyncer
-from .email import EmailWorker
-from .email_status import EmailStatusSyncer
-from .file_type import FileTypeSyncer
-from .order_status import OrderStatusSyncer
-from .product_link_type import ProductLinkeTypeSyncer
-from .product_type import ProductTypeSyncer
-from .region import RegionSyncer
-from .sku import SkuSyncer
-from .static import StaticSeed, StaticSyncer, StaticType
+from .country import CountryApiSyncer
+from .currency import CurrencyApiSyncer, CurrencySeedSyncer
+from .email import EmailProcessor
+from .email_status import EmailStatusSeedSyncer
+from .file_type import FileTypeSeedSyncer
+from .order_status import OrderStatusSeedSyncer
+from .product_link_type import ProductLinkeTypeSeedSyncer
+from .product_type import ProductTypeSeedSyncer
+from .region import RegionApiSyncer
+from .sku import SkuProcessor
+from .static import StaticJob, StaticProcessor, StaticType
 from .user import UserCleaner
-from .user_role import UserRoleSyncer
+from .user_role import UserRoleSeedSyncer
 
 __all__ = [
-    "AppSettingSyncer",
+    "AppSettingSeedSyncer",
     "CartCleaner",
-    "CountrySyncer",
-    "CurrencySyncer",
-    "EmailStatusSyncer",
-    "EmailWorker",
-    "FileTypeSyncer",
-    "OrderStatusSyncer",
-    "ProductLinkeTypeSyncer",
-    "ProductTypeSyncer",
-    "RegionSyncer",
-    "SkuSyncer",
-    "StaticSeed",
-    "StaticSyncer",
+    "CountryApiSyncer",
+    "CurrencyApiSyncer",
+    "CurrencySeedSyncer",
+    "EmailStatusSeedSyncer",
+    "EmailProcessor",
+    "FileTypeSeedSyncer",
+    "OrderStatusSeedSyncer",
+    "ProductLinkeTypeSeedSyncer",
+    "ProductTypeSeedSyncer",
+    "RegionApiSyncer",
+    "SkuProcessor",
+    "StaticJob",
+    "StaticProcessor",
     "StaticType",
     "UserCleaner",
-    "UserRoleSyncer",
+    "UserRoleSeedSyncer",
 ]

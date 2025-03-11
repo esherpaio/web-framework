@@ -1,8 +1,6 @@
 from ._bp import (
     admin_v1_bp,
-    admin_v1_css_bundle,
-    admin_v1_js_bundle,
-    admin_v1_seeds,
+    admin_v1_static_jobs,
 )
 from .routes import (
     categories,
@@ -21,9 +19,7 @@ from .routes import (
 
 __all__ = [
     "admin_v1_bp",
-    "admin_v1_css_bundle",
-    "admin_v1_js_bundle",
-    "admin_v1_seeds",
+    "admin_v1_static_jobs",
     "categories",
     "changelog",
     "countries",

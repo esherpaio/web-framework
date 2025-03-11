@@ -28,7 +28,17 @@ class _DbFieldMixin:
 
 
 #
-# Exceptions
+# Database exceptions
+#
+
+
+class ForeignKeyViolationError(WebError):
+    code = 409
+    translation_key = "API_HTTP_409"
+
+
+#
+# Validation exceptions
 #
 
 

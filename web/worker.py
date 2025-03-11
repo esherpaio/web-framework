@@ -4,7 +4,6 @@ from typing import Callable, Type
 
 from web.automation import Automator
 from web.config import config
-from web.database import conn
 from web.i18n import translator
 from web.logger import log
 from web.mail import MailEvent, mail
@@ -60,9 +59,7 @@ class Worker:
     def _run(self) -> None:
         for task in self.tasks:
             try:
-                log.info(f"Running task {task.__name__}")
-                with conn.begin() as s:
-                    task.run(s)
+                task.run()
             except Exception as e:
                 log.error(f"Error running task {task.__name__}: {e}")
         self.scheduler.enter(self.interval_s, 1, self._run)

@@ -9,7 +9,7 @@ from web.api.response import HttpText, json_response
 from web.app.blueprint.api_v1 import api_v1_bp
 from web.auth import authorize
 from web.automation import sync_after
-from web.automation.task import SkuSyncer
+from web.automation.task import SkuProcessor
 from web.database import conn
 from web.database.model import ProductValue, Sku, SkuDetail, UserRoleLevel
 from web.utils.generators import gen_slug
@@ -60,7 +60,7 @@ def post_products_id_values(product_id: int) -> Response:
 
 @api_v1_bp.patch("/products/<int:product_id>/values/<int:value_id>")
 @authorize(UserRoleLevel.ADMIN)
-@sync_after(SkuSyncer)
+@sync_after(SkuProcessor)
 def patch_products_id_values_id(product_id: int, value_id: int) -> Response:
     media_id, has_media_id = json_get("media_id", int)
     order, has_order = json_get("order", int)
