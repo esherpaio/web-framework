@@ -57,8 +57,8 @@ def post_orders_id_payments(order_id: int) -> Response:
             "metadata": {"order_id": order.id},
             "dueDate": due_data_str,
         }
-        if current_locale.locale_alt in mollie.supported_locales:
-            mollie_payment_data["locale"] = current_locale.locale_alt
+        if current_locale.locale_posix in mollie.supported_locales:
+            mollie_payment_data["locale"] = current_locale.locale_posix
         if methods:
             mollie_payment_data["method"] = methods
 
