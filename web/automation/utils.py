@@ -1,9 +1,8 @@
 from typing import Any, Callable, Type
 
 from web.config import config
-from web.database import conn
 
-from .syncer import Syncer
+from .automator import Automator
 
 
 def external_sync(f: Callable) -> Callable[..., None]:
@@ -17,12 +16,11 @@ def external_sync(f: Callable) -> Callable[..., None]:
 
 
 def sync_before(
-    syncer: Type[Syncer],
+    syncer: Type[Automator],
 ) -> Callable[[Callable[..., Any]], Callable[..., Any]]:
     def decorate(f: Callable) -> Callable[..., Any]:
         def wrap(*args, **kwargs) -> Any:
-            with conn.begin() as s:
-                syncer().run(s)
+            syncer().run()
             return f(*args, **kwargs)
 
         wrap.__name__ = f.__name__
@@ -32,13 +30,12 @@ def sync_before(
 
 
 def sync_after(
-    syncer: Type[Syncer],
+    syncer: Type[Automator],
 ) -> Callable[[Callable[..., Any]], Callable[..., Any]]:
     def decorate(f: Callable) -> Callable[..., Any]:
         def wrap(*args, **kwargs) -> Any:
             result = f(*args, **kwargs)
-            with conn.begin() as s:
-                syncer().run(s)
+            syncer().run()
             return result
 
         wrap.__name__ = f.__name__

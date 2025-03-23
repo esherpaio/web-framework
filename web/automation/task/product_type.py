@@ -1,10 +1,10 @@
-from web.automation.seed import product_type_seeds
+from web.automation.fixture import product_type_seeds
 from web.database.model import ProductType
 
-from .. import Syncer
+from ..automator import SeedSyncer
 
 
-class ProductTypeSyncer(Syncer):
+class ProductTypeSeedSyncer(SeedSyncer):
     MODEL = ProductType
     KEY = "id"
     SEEDS = product_type_seeds

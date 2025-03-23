@@ -1,12 +1,13 @@
-from sqlalchemy.orm import Session
-
+from web.database import conn
 from web.database.model import AppSettings
 
-from ..syncer import Syncer
+from ..automator import SeedSyncer
 
 
-class AppSettingSyncer(Syncer):
+class AppSettingSeedSyncer(SeedSyncer):
     @classmethod
-    def run(cls, s: Session) -> None:
-        if s.query(AppSettings).count() == 0:
-            s.add(AppSettings())
+    def run(cls) -> None:
+        cls.log_start()
+        with conn.begin() as s:
+            if s.query(AppSettings).count() == 0:
+                s.add(AppSettings())

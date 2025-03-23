@@ -1,15 +1,15 @@
-from sqlalchemy.orm import Session, joinedload
+from sqlalchemy.orm import joinedload
 
 from web.database import conn
 from web.database.model import Sku, SkuDetail
 
-from ..syncer import Syncer
+from ..automator import Processor
 
 
-class SkuSyncer(Syncer):
+class SkuProcessor(Processor):
     @classmethod
-    def run(cls, s: Session) -> None:
-        # Query all skus
+    def run(cls) -> None:
+        cls.log_start()
         with conn.begin() as s:
             skus = (
                 s.query(Sku)
@@ -20,12 +20,9 @@ class SkuSyncer(Syncer):
                 )
                 .all()
             )
-
-            # Iterate over skus
-            # Calculate the unit price
             for sku in skus:
-                unit_price = sku.product.unit_price
-                for sku_detail in sku.details:
-                    unit_price += sku_detail.value.unit_price
+                unit_price = sku.product.unit_price + sum(
+                    x.value.unit_price for x in sku.details
+                )
                 sku.unit_price = unit_price
                 s.flush()

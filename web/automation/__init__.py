@@ -1,6 +1,4 @@
-from .automator import Automator
-from .cleaner import Cleaner
-from .syncer import Syncer
+from .automator import ApiSyncer, Automator, Cleaner, Processor, SeedSyncer
 from .utils import external_sync, sync_after, sync_before
 
 __all__ = [
@@ -9,5 +7,7 @@ __all__ = [
     "external_sync",
     "sync_after",
     "sync_before",
-    "Syncer",
+    "ApiSyncer",
+    "SeedSyncer",
+    "Processor",
 ]

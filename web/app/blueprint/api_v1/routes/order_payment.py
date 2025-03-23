@@ -1,16 +1,17 @@
+from datetime import datetime, timedelta, timezone
 from enum import StrEnum
 
 from mollie.api.error import UnprocessableEntityError
 from werkzeug import Response
 
-from web.api import json_get
-from web.api.mollie import Mollie, gen_mollie_payment_data
-from web.api.response import HttpText, json_response
+from web.api import HttpText, json_get, json_response
+from web.api.utils.mollie import Mollie
 from web.app.blueprint.api_v1 import api_v1_bp
 from web.auth import current_user
 from web.database import conn
 from web.database.model import Invoice, Order
 from web.i18n import _
+from web.locale import current_locale
 
 #
 # Configuration
@@ -40,16 +41,29 @@ def post_orders_id_payments(order_id: int) -> Response:
         if not order:
             return json_response(403, HttpText.HTTP_403)
 
-        # Create Mollie payment
-        mollie_payment_data = gen_mollie_payment_data(
-            s,
-            order,
-            redirect_url,
-            cancel_url,
-            methods,
-        )
+        mollie = Mollie()
+        order_price_vat = order.total_price * order.vat_rate
+        amount = mollie.gen_amount(order_price_vat, order.currency_code)
+        description = f"Order {order.id}"
+        webhook_url = mollie.webhook_url
+        due_date = datetime.now(timezone.utc) + timedelta(days=25)
+        due_data_str = due_date.strftime("%Y-%m-%d")
+        mollie_payment_data = {
+            "amount": amount,
+            "description": description,
+            "redirectUrl": redirect_url,
+            "cancelUrl": cancel_url,
+            "webhookUrl": webhook_url,
+            "metadata": {"order_id": order.id},
+            "dueDate": due_data_str,
+        }
+        if current_locale.locale_posix in mollie.supported_locales:
+            mollie_payment_data["locale"] = current_locale.locale_posix
+        if methods:
+            mollie_payment_data["method"] = methods
+
         try:
-            mollie_payment = Mollie().payments.create(mollie_payment_data)
+            mollie_payment = mollie.payments.create(mollie_payment_data)
         except UnprocessableEntityError as error:
             if error.field == "amount.currency":
                 return json_response(400, Text.UNSUPPORTED_CURRENCY_BANKTRANSFER)

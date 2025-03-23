@@ -1,10 +1,10 @@
-from web.automation.seed import user_role_seeds
+from web.automation.fixture import user_role_seeds
 from web.database.model import UserRole
 
-from ..syncer import Syncer
+from ..automator import SeedSyncer
 
 
-class UserRoleSyncer(Syncer):
+class UserRoleSeedSyncer(SeedSyncer):
     MODEL = UserRole
     KEY = "id"
     SEEDS = user_role_seeds

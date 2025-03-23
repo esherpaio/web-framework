@@ -1,10 +1,10 @@
-from web.automation.seed import order_status_seeds
+from web.automation.fixture import order_status_seeds
 from web.database.model import OrderStatus
 
-from .. import Syncer
+from ..automator import SeedSyncer
 
 
-class OrderStatusSyncer(Syncer):
+class OrderStatusSeedSyncer(SeedSyncer):
     MODEL = OrderStatus
     KEY = "id"
     SEEDS = order_status_seeds

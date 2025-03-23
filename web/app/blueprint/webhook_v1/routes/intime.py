@@ -4,8 +4,7 @@ from sqlalchemy import false, null
 from sqlalchemy.orm import joinedload
 from werkzeug import Response
 
-from web.api import json_get
-from web.api.response import JsonEncoder
+from web.api import JsonEncoder, json_get
 from web.app.blueprint.webhook_v1 import webhook_v1_bp
 from web.auth import authorize
 from web.database import conn

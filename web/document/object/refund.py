@@ -42,7 +42,7 @@ def gen_refund_pdf(
     pdf.ln(6)
     info_data = _get_refund_info_table_data(s, order, invoice, refund)
     with pdf.table(
-        line_height=5,
+        line_height=6,
         text_align=("LEFT", "LEFT", "RIGHT", "LEFT"),
         col_widths=(32, 32, 21, 15),
         borders_layout=TableBordersLayout.NONE,

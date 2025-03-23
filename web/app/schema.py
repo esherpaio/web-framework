@@ -3,7 +3,7 @@ import json
 from flask import request
 from markupsafe import Markup
 
-from web.api.response import JsonEncoder
+from web.api import JsonEncoder
 from web.app.urls import parse_url
 from web.config import config
 from web.database.model import AppRoute
