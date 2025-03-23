@@ -1,5 +1,9 @@
 # Changelog
 
+## v2.10.6 (2025-03-23)
+
+- Support for ARIA (accessibility features)
+
 ## v2.10.3 (2025-02-13)
 
 - Bug fixes
