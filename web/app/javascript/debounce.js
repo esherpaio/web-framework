@@ -12,12 +12,23 @@ const debounce = (callback, time) => {
 
 const throttle = (callback, delay) => {
     let shouldWait = false;
+    let waitingArgs = null;
+    const timeoutFunc = () => {
+        if (waitingArgs == null) {
+            shouldWait = false;
+        } else {
+            callback(...waitingArgs);
+            waitingArgs = null;
+            setTimeout(timeoutFunc, delay);
+        }
+    };
     return (...args) => {
-        if (shouldWait) return;
+        if (shouldWait) {
+            waitingArgs = args;
+            return;
+        }
         callback(...args);
         shouldWait = true;
-        setTimeout(() => {
-            shouldWait = false;
-        }, delay);
+        setTimeout(timeoutFunc, delay);
     };
 };
