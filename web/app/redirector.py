@@ -1,9 +1,11 @@
 import fnmatch
 
-from flask import Flask, redirect, request
+from flask import Flask, request
 from werkzeug import Response
 
 from web.cache import cache
+
+from .urls import redirect_with_query
 
 
 class Redirector:
@@ -18,5 +20,5 @@ class Redirector:
     def redirect() -> Response | None:
         for x in cache.redirects:
             if fnmatch.fnmatch(request.url, x.url_from):
-                return redirect(x.url_to, code=301)
+                return redirect_with_query(x.url_to, code=301)
         return None

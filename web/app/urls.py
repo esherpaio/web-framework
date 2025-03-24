@@ -1,7 +1,10 @@
 from typing import Any, Callable
+from urllib.parse import parse_qsl, urlencode, urlparse, urlunparse
 
+from flask import redirect, request
 from flask import url_for as _url_for
 from requests.models import PreparedRequest
+from werkzeug import Response
 
 from web.config import config
 
@@ -53,3 +56,13 @@ def url_for(
         _external=_external,
         **values,
     )
+
+
+def redirect_with_query(new_url: str, code: int = 302) -> Response:
+    new_parsed = urlparse(new_url)
+    new_params = dict(parse_qsl(new_parsed.query))
+    in_params = dict(parse_qsl(request.query_string.decode()))
+    params = {**new_params, **in_params}
+    query = urlencode(params, doseq=True)
+    url = urlunparse(new_parsed._replace(query=query))
+    return redirect(url, code=code)

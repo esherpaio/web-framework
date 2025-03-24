@@ -1,7 +1,7 @@
-from flask import Flask, redirect, request
+from flask import Flask, request
 from werkzeug import Response
 
-from web.app.urls import url_for
+from web.app.urls import redirect_with_query, url_for
 from web.utils import Singleton
 
 from .proxy import current_locale
@@ -28,7 +28,7 @@ class LocaleManager(metaclass=Singleton):
         if lacks_locale(request.endpoint, request.view_args):
             request.view_args["_locale"] = current_locale.locale
             url = url_for(request.endpoint, **request.view_args)
-            return redirect(url, code=301)
+            return redirect_with_query(url, code=301)
         return None
 
     @staticmethod
