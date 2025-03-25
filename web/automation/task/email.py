@@ -15,11 +15,13 @@ class EmailProcessor(Processor):
     @classmethod
     def run(cls) -> None:
         cls.log_start()
-        with conn.begin() as s:
-            cls.send_email(s, max_weeks=4)
+        has_sent: bool = True
+        while has_sent:
+            with conn.begin() as s:
+                has_sent = cls.send_email(s, max_weeks=4)
 
     @staticmethod
-    def send_email(s: Session, max_weeks: int = 4) -> Email | None:
+    def send_email(s: Session, max_weeks: int = 4) -> bool:
         email = (
             s.query(Email)
             .filter(
@@ -36,7 +38,7 @@ class EmailProcessor(Processor):
             .first()
         )
         if email is None:
-            return None
+            return False
         log.info(f"Triggering email event {email.event_id} for user {email.user_id}")
         mail.trigger_events(s, email.event_id, _email=email, **email.data)
-        return email
+        return True
