@@ -20,8 +20,9 @@ class Event:
     def js_function(self, name: str, data: dict | None = None) -> str:
         if data is None:
             data = {}
+        data["event"] = name
         value = json.dumps(data, cls=JsonEncoder)
-        return f"gtag('event', '{name}', {value});"
+        return f"dataLayer.push({value});"
 
     def js_callable(self, name: str, data: dict | None = None) -> str:
         func = self.js_function(name, data)
