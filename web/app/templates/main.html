@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html class="h-100" lang="{{ current_locale.language.code }}">
     <head>
+        <!-- google tag manager -->
         <!-- meta tags -->
         {% for tag in meta.tags %}{{ tag }}{% endfor %}
-        <!-- google tag manager -->
         <!-- json-ld schema -->
         {% for schema in schemas %}{{ schema.tag }}{% endfor %}
         <!-- gtags -->
