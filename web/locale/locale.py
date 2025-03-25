@@ -116,5 +116,5 @@ class Locale:
     # Functions
     #
 
-    def format_datetime(self, datetime_: datetime) -> None:
-        format_datetime(datetime_, locale=self.locale_posix)
+    def format_datetime(self, datetime_: datetime) -> str:
+        return format_datetime(datetime_, locale=self.locale_posix)
