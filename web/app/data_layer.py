@@ -6,17 +6,17 @@ from markupsafe import Markup
 from web.api import JsonEncoder
 
 #
-# Events
+# Triggers
 #
 
 
-class EventTrigger(StrEnum):
-    ON_LOAD = "load"
-    ON_CLICK = "click"
-    ON_SUBMIT = "submit"
+class On(StrEnum):
+    LOAD = "load"
+    CLICK = "click"
+    SUBMIT = "submit"
 
 
-class Event:
+class By:
     def js_function(self, name: str, data: dict | None = None) -> str:
         if data is None:
             data = {}
@@ -32,50 +32,50 @@ class Event:
         raise NotImplementedError
 
 
-class EventByWindow(Event):
-    def __init__(self, trigger: EventTrigger) -> None:
-        self.trigger = trigger
+class ByWindow(By):
+    def __init__(self, on: On) -> None:
+        self.on = on
 
     def js_listener(self, name: str, data: dict | None = None) -> str:
         func = self.js_function(name, data)
         return Markup(func)
 
 
-class EventById(Event):
-    def __init__(self, trigger: EventTrigger, id_: str) -> None:
-        self.trigger = trigger
+class ById(By):
+    def __init__(self, on: On, id_: str) -> None:
+        self.on = on
         self.id_ = id_
 
     def js_listener(self, name: str, data: dict | None = None) -> str:
         call = self.js_callable(name, data)
         return Markup(
-            f"document.getElementById('{self.id_}').addEventListener('{self.trigger}', {call});"
+            f"document.getElementById('{self.id_}').addEventListener('{self.on}', {call});"
         )
 
 
-class EventByClass(Event):
-    def __init__(self, trigger: EventTrigger, class_: str | None = None) -> None:
-        self.trigger = trigger
+class ByClass(By):
+    def __init__(self, on: On, class_: str | None = None) -> None:
+        self.on = on
         self.class_ = class_
 
     def js_listener(self, name: str, data: dict | None = None) -> str:
         if self.class_ is None:
-            class_ = f"gtag-{name}"
+            class_ = f"event-{name}"
         call = self.js_callable(name, data)
         return Markup(
-            f"[...document.getElementsByClassName('{class_}')].forEach((e) => {{ e.addEventListener('{self.trigger}', {call}) }});"
+            f"[...document.getElementsByClassName('{class_}')].forEach((e) => {{ e.addEventListener('{self.on}', {call}) }});"
         )
 
 
 #
-# Google tags
+# Events
 #
 
 
-class Gtag:
+class Event:
     NAME: str
 
-    def __init__(self, by: Event) -> None:
+    def __init__(self, by: By) -> None:
         self.by = by
         self._data: dict = {}
 
@@ -95,8 +95,8 @@ class Gtag:
         return Markup(self.by.js_listener(self.NAME, self.data))
 
 
-class Gtags:
-    def __init__(self, *gtags: Gtag) -> None:
+class Events:
+    def __init__(self, *gtags: Event) -> None:
         self._gtags = gtags
 
     @property
@@ -107,45 +107,45 @@ class Gtags:
         )
 
 
-class GtagSignUp(Gtag):
+class EventSignUp(Event):
     NAME = "sign_up"
 
 
-class GtagLogin(Gtag):
+class EventLogin(Event):
     NAME = "login"
 
 
-class GtagViewItemList(Gtag):
+class EventViewItemList(Event):
     NAME = "view_item_list"
 
 
-class GtagViewItem(Gtag):
+class EventViewItem(Event):
     NAME = "view_item"
 
 
-class GtagAddToCart(Gtag):
+class EventAddToCart(Event):
     NAME = "add_to_cart"
 
 
-class GtagViewCart(Gtag):
+class EventViewCart(Event):
     NAME = "view_cart"
 
 
-class GtagRemoveFromCart(Gtag):
+class EventRemoveFromCart(Event):
     NAME = "remove_from_cart"
 
 
-class GtagBeginCheckout(Gtag):
+class EventBeginCheckout(Event):
     NAME = "begin_checkout"
 
 
-class GtagAddShippingInfo(Gtag):
+class EventAddShippingInfo(Event):
     NAME = "add_shipping_info"
 
 
-class GtagAddPaymentInfo(Gtag):
+class EventAddPaymentInfo(Event):
     NAME = "add_payment_info"
 
 
-class GtagPurchase(Gtag):
+class EventPurchase(Event):
     NAME = "purchase"
