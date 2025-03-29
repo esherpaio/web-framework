@@ -13,7 +13,7 @@ def upgrade() -> None:
         "cart",
         "vat_rate",
         existing_type=sa.NUMERIC(precision=4, scale=3),
-        server_default=None,
+        server_default=sa.text("null"),
         existing_nullable=False,
     )
     # ### end Alembic commands ###
