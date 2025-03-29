@@ -6,8 +6,8 @@
         {% for tag in meta.tags %}{{ tag }}{% endfor %}
         <!-- json-ld schema -->
         {% for schema in schemas %}{{ schema.tag }}{% endfor %}
-        <!-- gtags -->
-        {% if gtags %}{{ gtags.code }}{% endif %}
+        <!-- events -->
+        {% if events %}{{ events.code }}{% endif %}
         <!-- fonts -->
         <!-- include css -->
         {% if cache.settings.css_path %}

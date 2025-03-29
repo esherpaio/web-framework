@@ -7,5 +7,5 @@ from web.app.data_layer import ByClass, EventLogin, Events, On
 @auth_v1_bp.get("/login")
 @auth_v1_bp.get("/<string:_locale>/login")
 def login(_locale: str) -> str:
-    gtags = Events(EventLogin(ByClass(On.SUBMIT)))
-    return render_template("auth/login.html", gtags=gtags)
+    events = Events(EventLogin(ByClass(On.SUBMIT)))
+    return render_template("auth/login.html", events=events)

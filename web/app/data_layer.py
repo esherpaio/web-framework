@@ -96,12 +96,22 @@ class Event:
 
 
 class Events:
-    def __init__(self, *gtags: Event) -> None:
-        self._gtags = gtags
+    def __init__(self, *events: Event) -> None:
+        self._events = events
+
+    def __bool__(self) -> bool:
+        return bool(self._events)
+
+    def __add__(self, other: "Events") -> "Events":
+        return Events(*(self._events + other._events))
+
+    def __iadd__(self, other: "Events") -> "Events":
+        self._events += other._events
+        return self
 
     @property
     def code(self) -> Markup:
-        codes = " \n".join([x.code for x in self._gtags])
+        codes = " \n".join([x.code for x in self._events])
         return Markup(
             f"<script>window.addEventListener('load', () => {{ {codes} }});</script>"
         )
