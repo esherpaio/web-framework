@@ -26,7 +26,7 @@ class By:
 
     def js_callable(self, name: str, data: dict | None = None) -> str:
         func = self.js_function(name, data)
-        return f"function (e) {{ {func} }}"
+        return f"function (event) {{ {func} }}"
 
     def js_listener(self, *args, **kwargs) -> str:
         raise NotImplementedError
@@ -63,7 +63,7 @@ class ByClass(By):
             class_ = f"event-{name}"
         call = self.js_callable(name, data)
         return Markup(
-            f"[...document.getElementsByClassName('{class_}')].forEach((e) => {{ e.addEventListener('{self.on}', {call}) }});"
+            f"[...document.getElementsByClassName('{class_}')].forEach((element) => {{ element.addEventListener('{self.on}', {call}) }});"
         )
 
 
@@ -113,7 +113,7 @@ class Events:
     def code(self) -> Markup:
         codes = " \n".join([x.code for x in self._events])
         return Markup(
-            f"<script>window.addEventListener('load', () => {{ {codes} }});</script>"
+            f"<script>window.addEventListener('load', (event) => {{ {codes} }});</script>"
         )
 
 
