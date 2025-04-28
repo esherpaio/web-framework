@@ -118,7 +118,7 @@ class API(Generic[B]):
             elif isinstance(attr, str):
                 key, value = attr, getattr(model, attr)
             else:
-                log.warning(f"Unknown attribute: {attr}")
+                log.warning(f"Unknown attribute {attr} for model {model}")
                 continue
             data[key] = value
         return data

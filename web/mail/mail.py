@@ -19,7 +19,7 @@ class Mail(metaclass=Singleton):
     def get_events(cls, event_id: MailEvent | str) -> list[Callable]:
         events = cls.events.get(event_id, [])
         if not events:
-            log.error(f"Event {event_id} not found")
+            log.error(f"Mail event {event_id} not found")
         return events
 
     @classmethod

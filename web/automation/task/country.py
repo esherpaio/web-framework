@@ -46,7 +46,7 @@ class CountryApiSyncer(ApiSyncer):
                     region_name = resource["region"]
                     currency_codes = list(resource["currencies"].keys())
                 except KeyError as error:
-                    log.error(error)
+                    log.error(error, exc_info=True)
                     continue
                 # Get currency, fallback to USD
                 for currency in currencies:
@@ -58,7 +58,7 @@ class CountryApiSyncer(ApiSyncer):
                 try:
                     region = next(x for x in regions if x.name == region_name)
                 except StopIteration as error:
-                    log.error(error)
+                    log.error(error, exc_info=True)
                     continue
                 # Update or insert country
                 country = next((x for x in countries if x.code == country_code), None)

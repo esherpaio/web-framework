@@ -34,7 +34,7 @@ class CurrencyApiSyncer(ApiSyncer):
                     timeout=config.APP_SYNC_TIMEOUT,
                 )
             except RequestException as error:
-                log.error(error)
+                log.error(error, exc_info=True)
                 return
             # Load currencies
             currencies = s.query(Currency).all()

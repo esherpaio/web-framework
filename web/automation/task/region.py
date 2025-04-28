@@ -27,7 +27,7 @@ class RegionApiSyncer(ApiSyncer):
                 )
                 resources = response.json()
             except RequestException as error:
-                log.error(error)
+                log.error(error, exc_info=True)
                 return
             # Load regions
             regions = s.query(Region).all()
@@ -35,7 +35,7 @@ class RegionApiSyncer(ApiSyncer):
             try:
                 region_names = set(x["region"] for x in resources)
             except KeyError as error:
-                log.error(error)
+                log.error(error, exc_info=True)
                 return
             # Insert regions
             for region_name in region_names:
