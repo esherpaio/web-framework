@@ -77,26 +77,26 @@ class StaticProcessor(Processor):
 
     @classmethod
     def run(cls) -> None:
-        print(1)
+        log.info("1")
         cls.log_start()
-        print(2)
+        log.info("2")
         if not config.APP_SYNC_STATIC:
             log.warning("Static processor is disabled")
             return
-        print(3)
+        log.info("3")
         with conn.begin() as s:
             resources = cls.get_resources(s)
-            print(4)
-            print(resources)
+            log.info("4")
+            log.info(f"{resources}")
             cdn_filenames = cdn.filenames(os.path.join("static", ""))
-            print(5)
-            print(cdn_filenames)
+            log.info("5")
+            log.info(f"{cdn_filenames}")
             present = cls.set_resources(s, resources, cdn_filenames)
-            print(6)
-            print(present)
+            log.info("6")
+            log.info(present)
         with conn.begin() as s:
             cls.del_resources(s, present)
-        print(7)
+        log.info(f"7")
 
     @classmethod
     def get_resources(
