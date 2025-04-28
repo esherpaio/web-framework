@@ -77,26 +77,17 @@ class StaticProcessor(Processor):
 
     @classmethod
     def run(cls) -> None:
-        log.info("1")
         cls.log_start()
-        log.info("2")
         if not config.APP_SYNC_STATIC:
             log.warning("Static processor is disabled")
             return
-        log.info("3")
         with conn.begin() as s:
             resources = cls.get_resources(s)
-            log.info("4")
-            log.info(f"{resources}")
             cdn_filenames = cdn.filenames(os.path.join("static", ""))
-            log.info("5")
-            log.info(f"{cdn_filenames}")
             present = cls.set_resources(s, resources, cdn_filenames)
-            log.info("6")
             log.info(present)
         with conn.begin() as s:
             cls.del_resources(s, present)
-        log.info(f"7")
 
     @classmethod
     def get_resources(
@@ -119,21 +110,28 @@ class StaticProcessor(Processor):
         resources: dict[StaticJob, AppSettings | AppBlueprint | AppRoute],
         cdn_filenames: list[str],
     ) -> dict[tuple[str, int], list[StaticType]]:
+        log.info("1")
         present: dict[tuple[str, int], list[StaticType]] = defaultdict(list)
         for job in cls.JOBS:
             resource = resources[job]
             packer = Packer()
+            log.info("2")
             out_ext = packer.validate(job.bundles)
+            log.info("3")
             compiled, bytes_, hash_ = packer.pack(job.bundles)
             if not compiled:
                 log.error(f"Static job {job.id_} compiled empty")
                 continue
+            log.info("4")
             present[(resource.__tablename__, resource.id)].append(job.type_)
             cdn_filename = f"{hash_}{out_ext}"
             cdn_path = os.path.join("static", cdn_filename)
+            log.info("5")
             if cdn_filename not in cdn_filenames:
                 packer.write_cdn(bytes_, cdn_path)
+            log.info("6")
             job.set_attribute(s, resource, cdn_path)
+            log.info("7")
         return present
 
     @classmethod
