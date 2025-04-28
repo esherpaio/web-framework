@@ -47,9 +47,9 @@ class StaticJob:
     ) -> AppSettings | AppBlueprint | AppRoute | None:
         if self.model == AppSettings:
             return s.query(AppSettings).first()
-        if self.model == AppBlueprint:
+        elif self.model == AppBlueprint:
             return s.query(AppBlueprint).filter_by(endpoint=self.endpoint).first()
-        if self.model == AppRoute:
+        elif self.model == AppRoute:
             return s.query(AppRoute).filter_by(endpoint=self.endpoint).first()
         log.error(f"Static job model {self.model} is unsupported")
         return None
@@ -60,16 +60,12 @@ class StaticJob:
         resource: AppSettings | AppBlueprint | AppRoute,
         cdn_path: str,
     ) -> None:
-        if self.type_ == StaticType.JS:
+        if self.type_ is StaticType.JS:
             resource.js_path = cdn_path
-            s.flush()
-            return
-        if self.type_ == StaticType.CSS:
+        elif self.type_ is StaticType.CSS:
             resource.css_path = cdn_path
-            s.flush()
-            return
-        log.error(f"Static job type {self.type_} is unsupported")
-        return
+        else:
+            log.error(f"Static job type {self.type_} is unsupported")
 
 
 class StaticProcessor(Processor):
@@ -85,7 +81,7 @@ class StaticProcessor(Processor):
             resources = cls.get_resources(s)
             cdn_filenames = cdn.filenames(os.path.join("static", ""))
             present = cls.set_resources(s, resources, cdn_filenames)
-            log.info(present)
+            s.flush()
         with conn.begin() as s:
             cls.del_resources(s, present)
 
@@ -110,28 +106,21 @@ class StaticProcessor(Processor):
         resources: dict[StaticJob, AppSettings | AppBlueprint | AppRoute],
         cdn_filenames: list[str],
     ) -> dict[tuple[str, int], list[StaticType]]:
-        log.info("1")
         present: dict[tuple[str, int], list[StaticType]] = defaultdict(list)
         for job in cls.JOBS:
             resource = resources[job]
             packer = Packer()
-            log.info("2")
             out_ext = packer.validate(job.bundles)
-            log.info("3")
             compiled, bytes_, hash_ = packer.pack(job.bundles)
             if not compiled:
                 log.error(f"Static job {job.id_} compiled empty")
                 continue
-            log.info("4")
             present[(resource.__tablename__, resource.id)].append(job.type_)
             cdn_filename = f"{hash_}{out_ext}"
             cdn_path = os.path.join("static", cdn_filename)
-            log.info("5")
             if cdn_filename not in cdn_filenames:
                 packer.write_cdn(bytes_, cdn_path)
-            log.info("6")
             job.set_attribute(s, resource, cdn_path)
-            log.info("7")
         return present
 
     @classmethod
