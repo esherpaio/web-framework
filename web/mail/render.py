@@ -5,11 +5,12 @@ import jinja2
 from web.config import config
 
 
-def render_email(name: str = "default", **attrs) -> str:
-    dir_ = os.path.dirname(os.path.realpath(__file__))
+def render_email(template: str = "default", dir_: str | None = None, **attrs) -> str:
+    if dir_ is None:
+        dir_ = os.path.join(os.path.dirname(os.path.realpath(__file__)), "template")
+    fn = f"{template}.html"
     loader = jinja2.FileSystemLoader(dir_)
     environment = jinja2.Environment(loader=loader)
-    fp = os.path.join("template", f"{name}.html")
     attrs.update({"config": config})
-    html = environment.get_template(fp).render(attrs)
+    html = environment.get_template(fn).render(attrs)
     return html
