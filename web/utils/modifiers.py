@@ -1,6 +1,18 @@
+import re
 import urllib.parse
+from urllib.parse import urlparse, urlunparse
 from xml.dom import minidom
 from xml.dom.minidom import Node
+
+_SCHEME_RE = re.compile(r"^[a-zA-Z][a-zA-Z0-9+.-]*://")
+
+
+def normalize_url(url: str, scheme: str = "https") -> str:
+    url = url.strip()
+    if not _SCHEME_RE.match(url):
+        url = f"{scheme}://{url}"
+    parts = urlparse(url)
+    return urlunparse(parts)
 
 
 def strip_scheme(url: str) -> str:
