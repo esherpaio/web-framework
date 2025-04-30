@@ -6,7 +6,6 @@ function runAfterConditions(callback, cookieName, seconds = 20, scrollPercent = 
     const runCallback = () => {
         if (timeMet && scrollMet) {
             if (!getCookie(cookieName)) {
-                setCookie(cookieName, "true", 365);
                 callback();
             }
             window.removeEventListener("scroll", throttledOnScroll);
