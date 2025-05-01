@@ -23,7 +23,7 @@ class Worker:
 
         app = Flask(__name__)
         app.add_url_rule("/", view_func=lambda: "Alive")
-        self.app = app
+        app.run("0.0.0.0", 8080)
 
         self.setup_i18n(translations_dir)
         self.setup_mail(mail_events)
