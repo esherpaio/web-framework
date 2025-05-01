@@ -3,8 +3,6 @@ import signal
 import time
 from typing import Callable, Type
 
-from flask import Flask
-
 from web.automation import Automator
 from web.config import config
 from web.i18n import translator
@@ -20,10 +18,6 @@ class Worker:
         automation_tasks: list[Type[Automator]] | None = None,
     ) -> None:
         log.info("Initializing worker")
-
-        app = Flask(__name__)
-        app.add_url_rule("/", view_func=lambda: "Alive")
-        app.run("0.0.0.0", 8080)
 
         self.setup_i18n(translations_dir)
         self.setup_mail(mail_events)
