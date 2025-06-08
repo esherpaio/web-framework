@@ -166,6 +166,8 @@ class Web:
         app.context_processor(
             lambda: dict(
                 now=datetime.now(timezone.utc),
+                datetime=datetime,
+                timezone=timezone,
                 cache=cache,
                 config=config,
                 current_user=current_user,
