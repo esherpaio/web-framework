@@ -1,22 +1,22 @@
 # Changelog
 
-## v2.10.6 (2025-03-23)
+## v0.10.6 (2025-03-23)
 
 - Support for ARIA (accessibility features)
 
-## v2.10.3 (2025-02-13)
+## v0.10.3 (2025-02-13)
 
 - Bug fixes
   - Fixed a bug in locale validation that could occur during checkout
 
-## v2.10.2 (2025-01-31)
+## v0.10.2 (2025-01-31)
 
 - Admin panel improvements
   - Colored order statuses
   - Create orders (BETA)
   - Send mass emails (BETA)
 
-## v2.10.1 (2025-01-06)
+## v0.10.1 (2025-01-06)
 
 - Various improvements
   - Improved HTML minification
@@ -28,12 +28,12 @@
   - Fixed an incorrect redirect in the admin panel that could occur after removing a product
   - Fixed a bug in displaying product HTML that was triggered by specifc HTML content
 
-## v2.10.0 (2024-10-08)
+## v0.10.0 (2024-10-08)
 
 - Support Google tags for conversion tracking
 - Updated schema.org JSON-LD for web crawlers
 
-## v2.9.0 (2024-09-03)
+## v0.9.0 (2024-09-03)
 
 - Security improvements
   - Implementation of JSON Web Tokens
