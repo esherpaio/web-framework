@@ -1,5 +1,0 @@
-User-agent: *
-{% for url in disallow_urls %}
-Disallow: {{ url }}
-{% endfor %}
-Sitemap: {{ sitemap_url }}
