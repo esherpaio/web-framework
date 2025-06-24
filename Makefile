@@ -1,11 +1,11 @@
 .PHONY: activate
 activate:
 	python3 -m venv .venv
-	@echo "Run 'source .venv/bin/activate' manually"
 
 .PHONY: requirements
 requirements:
 	pip install --upgrade pip
+	pip freeze | grep '^web-' | sed 's/ @.*//' | xargs -r pip uninstall -y
 	pip install -r requirements.txt
 	pip install -r requirements-dev.txt
 
