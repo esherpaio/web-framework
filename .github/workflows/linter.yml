@@ -1,6 +1,7 @@
 name: Linter
-
-on: [ push, pull_request ]
+on: [push, pull_request]
+permissions:
+  contents: read
 
 jobs:
   lint:
@@ -15,7 +16,7 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-          cache: 'pip'
+          cache: "pip"
       - name: Install dependencies
         run: make requirements
       - name: Run linters
