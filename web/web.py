@@ -21,68 +21,6 @@ from web.utils.generators import format_decimal
 
 
 class Web:
-    def __init__(
-        self,
-        app: Flask | None = None,
-        blueprints: list[Blueprint] | None = None,
-        jinja_filters: dict[str, Callable] | None = None,
-        jinja_globals: dict[str, Callable] | None = None,
-        mail_events: dict[MailEvent | str, list[Callable]] | None = None,
-        translations_dir: str | None = None,
-        automation_tasks: list[Type[Automator]] | None = None,
-        db_migrate: bool = False,
-        db_hook: Callable | None = None,
-        cache_hook: Callable | None = None,
-    ) -> None:
-        if blueprints is None:
-            blueprints = []
-        if jinja_filters is None:
-            jinja_filters = {}
-        if jinja_globals is None:
-            jinja_globals = {}
-        if mail_events is None:
-            mail_events = {}
-        if automation_tasks is None:
-            automation_tasks = []
-
-        if app is not None:
-            self.init(
-                app,
-                blueprints,
-                jinja_filters,
-                jinja_globals,
-                mail_events,
-                translations_dir,
-                automation_tasks,
-                db_migrate,
-                db_hook,
-                cache_hook,
-            )
-
-    def init(
-        self,
-        app: Flask,
-        blueprints: list[Blueprint],
-        jinja_filters: dict[str, Callable],
-        jinja_globals: dict[str, Callable],
-        mail_events: dict[MailEvent | str, list[Callable]],
-        translations_dir: str | None,
-        automation_tasks: list[Type[Automator]],
-        db_migrate: bool,
-        db_hook: Callable | None,
-        cache_hook: Callable | None,
-    ) -> None:
-        self.setup_i18n(translations_dir)
-        self.setup_database(db_migrate, automation_tasks, db_hook)
-        self.setup_cache(cache_hook)
-        self.setup_mail(mail_events)
-        self.setup_flask(app, blueprints)
-        self.setup_jinja(app, jinja_filters, jinja_globals)
-
-    #
-    # Setup
-    #
-
     def setup_i18n(self, dir_: str | None) -> None:
         if dir_ is None:
             return
@@ -160,9 +98,14 @@ class Web:
     def setup_jinja(
         self,
         app: Flask,
-        filters: dict[str, Callable],
-        globals_: dict[str, Callable],
+        filters: dict[str, Callable] | None = None,
+        globals_: dict[str, Callable] | None = None,
     ) -> None:
+        if filters is None:
+            filters = {}
+        if globals_ is None:
+            globals_ = {}
+
         app.context_processor(
             lambda: dict(
                 now=datetime.now(timezone.utc),
