@@ -3,9 +3,9 @@ import contextlib
 import pytest
 from flask import Flask
 from flask.testing import FlaskClient
+from web_bp_api import api_bp
+from web_bp_webhook import webhook_bp
 
-from web.app.blueprint.api_v1 import api_v1_bp
-from web.app.blueprint.webhook_v1 import webhook_v1_bp
 from web.automation import SeedSyncer
 from web.cache import cache_manager
 from web.database.client import engine
@@ -69,8 +69,12 @@ class UserSeedSyncer(SeedSyncer):
 
 def create_app() -> Flask:
     app = Flask(__name__)
+    web = Web()
+    web.setup_database(True, [UserSeedSyncer])
+    web.setup_cache()
+    web.setup_flask(app, [api_bp, webhook_bp])
+    web.setup_jinja(app)
     app.testing = True
-    Web(app, blueprints=[api_v1_bp, webhook_v1_bp], automation_tasks=[UserSeedSyncer])
     cache_manager.pause()
     return app
 
