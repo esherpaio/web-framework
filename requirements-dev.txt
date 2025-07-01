@@ -6,6 +6,7 @@ alembic~=1.16.2
 
 # testing
 pytest~=8.4.1
+pytest-cov~=6.2.1
 
 # formating and linting
 djlint~=1.36.4
