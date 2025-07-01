@@ -24,6 +24,7 @@ jobs:
 
   test:
     runs-on: ubuntu-latest
+    needs: lint
     env:
       APP_CONFIG: ${{ github.workspace }}/config.json
       APP_LOG_LEVEL: DEBUG
