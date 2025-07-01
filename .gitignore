@@ -56,6 +56,12 @@ coverage.xml
 .hypothesis/
 .pytest_cache/
 
+# CI/CD artifacts
+test-results.xml
+benchmark-results.json
+safety-report.json
+pip-audit-report.json
+
 # Translations
 *.mo
 *.pot
