@@ -1,0 +1,88 @@
+name: Workflow
+on: [push, pull_request]
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.12"]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: "pip"
+      - name: Install dependencies
+        run: make requirements
+      - name: Run linters
+        run: make lint
+
+  test:
+    runs-on: ubuntu-latest
+    env:
+      APP_CONFIG: ${{ github.workspace }}/config.json
+      APP_LOG_LEVEL: DEBUG
+      APP_DEBUG: true
+      APP_URL_SCHEME: http
+      APP_OPTIMIZE: false
+      APP_SYNC_STATIC: true
+      APP_SYNC_EXTERNAL: true
+      APP_SYNC_TIMEOUT: 10
+      WORKER_ENABLED: false
+      WORKER_INTERVAL_S: 300
+      AUTH_JWT_SECRET: secret
+      AUTH_JWT_EXPIRES_S: 604800
+      AUTH_JWT_ALLOW_GUEST: true
+      AUTH_JWT_DECODE_LEEWAY_S: 60
+      EMAIL_METHOD: SMTP
+      EMAIL_TIMEOUT: 10
+      EMAIL_FROM: contact@esherpa.io
+      EMAIL_TO: contact@esherpa.io
+      EMAIL_ADMIN: contact@esherpa.io
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/web_test
+      SMTP_HOST: smtp.gmail.com
+      SMTP_USERNAME: contact@esherpa.io
+      SMTP_PORT: 587
+    strategy:
+      matrix:
+        python-version: ["3.12"]
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: postgres
+          POSTGRES_DB: web_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: "pip"
+      - name: Install dependencies
+        run: pip install -r requirements.txt -r requirements-dev.txt
+      - name: Run database migrations
+        run: alembic upgrade head
+      - name: Run unit tests
+        run: pytest . --verbose --tb=short --durations=10
+      - name: Upload test results
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: test-results-${{ matrix.python-version }}
+          path: .pytest_cache/test-results.xml
+          retention-days: 30
