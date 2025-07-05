@@ -1,6 +1,8 @@
-.PHONY: activate
+.PHONY: activate commit
 activate:
 	python3 -m venv .venv
+commit:
+	git rev-parse --short HEAD
 
 .PHONY: requirements
 requirements:
