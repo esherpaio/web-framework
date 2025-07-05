@@ -1,21 +1,20 @@
 import importlib
 import os
 from decimal import Decimal
-from typing import Any, Protocol, TypeVar
+from typing import Any, Literal, Protocol
 
 from dotenv import load_dotenv
 
-from web.error import ConfigError
-
-T = TypeVar("T")
+LogLevel = Literal["CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG", "NOTSET"]
+UrlScheme = Literal["http", "https"]
 
 
 class ConfigProtocol(Protocol):
     APP_ROOT: str
-    APP_LOG_LEVEL: str
+    APP_LOG_LEVEL: LogLevel
     APP_DEBUG: bool
     APP_DEBUG_PORT: int
-    APP_URL_SCHEME: str
+    APP_URL_SCHEME: UrlScheme
     APP_OPTIMIZE: bool
     APP_SYNC_EXTERNAL: bool
     APP_SYNC_STATIC: bool
@@ -34,20 +33,19 @@ class ConfigProtocol(Protocol):
     AUTH_CSRF_COOKIE_NAME: str
     AUTH_CSRF_METHODS: list[str]
 
-    ENDPOINT_HOME: str | None
-    ENDPOINT_ERROR: str | None
-    ENDPOINT_LOGIN: str | None
-    ENDPOINT_PASSWORD_RECOVERY: str | None
+    ENDPOINT_HOME: str
+    ENDPOINT_ERROR: str
+    ENDPOINT_LOGIN: str
+    ENDPOINT_PASSWORD_RECOVERY: str
 
     DATABASE_URL: str
-    LOCALHOST_URL: str | None
-    MOLLIE_KEY: str | None
-    GOOGLE_KEY: str | None
-    GOOGLE_CLIENT_ID: str | None
-    GOOGLE_PLACE_ID: str | None
+    LOCALHOST_URL: str
+    MOLLIE_KEY: str
+    GOOGLE_KEY: str
+    GOOGLE_CLIENT_ID: str
+    GOOGLE_PLACE_ID: str
     INTIME_INTEGRATION: bool
 
-    CDN_ENABLED: bool
     CDN_URL: str
     CDN_HOSTNAME: str
     CDN_USERNAME: str
@@ -60,39 +58,39 @@ class ConfigProtocol(Protocol):
     EMAIL_METHOD: str
     EMAIL_TIMEOUT_S: int
     EMAIL_MAX_RECIPIENTS: int
-    EMAIL_FROM: str | None
-    EMAIL_TO: str | None
-    EMAIL_ADMIN: str | None
-    SMTP_HOSTNAME: str | None
+    EMAIL_FROM: str
+    EMAIL_TO: str
+    EMAIL_ADMIN: str
+    SMTP_HOSTNAME: str
     SMTP_PORT: int
-    SMTP_USERNAME: str | None
-    SMTP_PASSWORD: str | None
+    SMTP_USERNAME: str
+    SMTP_PASSWORD: str
 
-    WEBSITE_NAME: str | None
-    WEBSITE_COUNTRY_CODE: str | None
-    WEBSITE_LANGUAGE_CODE: str | None
-    WEBSITE_FAVICON_URL: str | None
-    WEBSITE_LOGO_URL: str | None
-    WEBSITE_HEX_COLOR: str | None
+    WEBSITE_NAME: str
+    WEBSITE_COUNTRY_CODE: str
+    WEBSITE_LANGUAGE_CODE: str
+    WEBSITE_FAVICON_URL: str
+    WEBSITE_LOGO_URL: str
+    WEBSITE_HEX_COLOR: str
 
-    BUSINESS_NAME: str | None
-    BUSINESS_EMAIL: str | None
-    BUSINESS_CC: str | None
-    BUSINESS_VAT: str | None
+    BUSINESS_NAME: str
+    BUSINESS_EMAIL: str
+    BUSINESS_CC: str
+    BUSINESS_VAT: str
     BUSINESS_VAT_RATE: Decimal
     BUSINESS_VAT_REVERSE_CHARGE: bool
-    BUSINESS_STREET: str | None
-    BUSINESS_CITY: str | None
-    BUSINESS_ZIP_CODE: str | None
-    BUSINESS_COUNTRY: str | None
-    BUSINESS_COUNTRY_CODE: str | None
+    BUSINESS_STREET: str
+    BUSINESS_CITY: str
+    BUSINESS_ZIP_CODE: str
+    BUSINESS_COUNTRY: str
+    BUSINESS_COUNTRY_CODE: str
 
-    SOCIAL_DISCORD: str | None
-    SOCIAL_FACEBOOK: str | None
-    SOCIAL_INSTAGRAM: str | None
-    SOCIAL_PINTEREST: str | None
-    SOCIAL_TWITTER: str | None
-    SOCIAL_YOUTUBE: str | None
+    SOCIAL_DISCORD: str
+    SOCIAL_FACEBOOK: str
+    SOCIAL_INSTAGRAM: str
+    SOCIAL_PINTEREST: str
+    SOCIAL_TWITTER: str
+    SOCIAL_YOUTUBE: str
 
 
 class Config:
@@ -113,13 +111,10 @@ class Config:
         self._config = config
 
     def _validate(self, config: ConfigProtocol) -> None:
-        if getattr(config, "CDN_ENABLED", False):
-            for key in ("CDN_URL", "CDN_HOSTNAME", "CDN_USERNAME", "CDN_PASSWORD"):
-                if getattr(config, key, None) is None:
-                    raise ConfigError(key)
+        pass
 
 
-def get_env_var(key: str, type_: Any, default: Any = None) -> Any:
+def env_var(key: str, type_: Any, default: Any = None) -> Any:
     value = os.getenv(key, default)
     if type_ is str:
         return value
