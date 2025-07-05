@@ -31,7 +31,7 @@ class CurrencyApiSyncer(ApiSyncer):
                 resource = requests.request(
                     "GET",
                     cls.API_URL,
-                    timeout=config.APP_SYNC_TIMEOUT,
+                    timeout=config.APP_SYNC_TIMEOUT_S,
                 )
             except RequestException as error:
                 log.error(error, exc_info=True)
