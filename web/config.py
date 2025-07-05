@@ -103,7 +103,7 @@ class Config:
         module_path = os.environ["APP_CONFIG_MODULE"]
         config = cast(ConfigProtocol, importlib.import_module(module_path))
         self._validate(config)
-        return config
+        self._config = config
 
     def _validate(self, config: ConfigProtocol) -> None:
         if config.CDN_ENABLED:
