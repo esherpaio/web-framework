@@ -1,9 +1,13 @@
 import importlib
 import os
 from decimal import Decimal
-from typing import Any, Protocol, cast
+from typing import Any, Protocol, TypeVar
+
+from dotenv import load_dotenv
 
 from web.error import ConfigError
+
+T = TypeVar("T")
 
 
 class ConfigProtocol(Protocol):
@@ -44,10 +48,10 @@ class ConfigProtocol(Protocol):
     INTIME_INTEGRATION: bool
 
     CDN_ENABLED: bool
-    CDN_URL: str | None
-    CDN_HOSTNAME: str | None
-    CDN_USERNAME: str | None
-    CDN_PASSWORD: str | None
+    CDN_URL: str
+    CDN_HOSTNAME: str
+    CDN_USERNAME: str
+    CDN_PASSWORD: str
     CDN_AUTO_NAMING: bool
     CDN_IMAGE_EXTS: list[str]
     CDN_AUDIO_EXTS: list[str]
@@ -94,6 +98,9 @@ class ConfigProtocol(Protocol):
 class Config:
     _config: ConfigProtocol | None = None
 
+    def __init__(self) -> None:
+        load_dotenv(override=True)
+
     def __getattr__(self, name: str) -> Any:
         if self._config is None:
             self._setup()
@@ -101,20 +108,15 @@ class Config:
 
     def _setup(self) -> None:
         module_path = os.environ["APP_CONFIG_MODULE"]
-        config = cast(ConfigProtocol, importlib.import_module(module_path))
+        config = importlib.import_module(module_path)
         self._validate(config)
         self._config = config
 
     def _validate(self, config: ConfigProtocol) -> None:
-        if config.CDN_ENABLED:
-            if not config.CDN_URL:
-                raise ConfigError("CDN_URL")
-            if not config.CDN_HOSTNAME:
-                raise ConfigError("CDN_HOSTNAME")
-            if not config.CDN_USERNAME:
-                raise ConfigError("CDN_USERNAME")
-            if not config.CDN_PASSWORD:
-                raise ConfigError("CDN_PASSWORD")
+        if getattr(config, "CDN_ENABLED", False):
+            for key in ("CDN_URL", "CDN_HOSTNAME", "CDN_USERNAME", "CDN_PASSWORD"):
+                if getattr(config, key, None) is None:
+                    raise ConfigError(key)
 
 
 def get_env_var(key: str, type_: Any, default: Any = None) -> Any:
