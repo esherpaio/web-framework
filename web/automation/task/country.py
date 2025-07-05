@@ -23,7 +23,7 @@ class CountryApiSyncer(ApiSyncer):
                 response = requests.request(
                     "GET",
                     cls.API_URL,
-                    timeout=config.APP_SYNC_TIMEOUT,
+                    timeout=config.APP_SYNC_TIMEOUT_S,
                 )
                 resources = response.json()
             except RequestException as error:

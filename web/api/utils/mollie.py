@@ -15,8 +15,8 @@ class Mollie(Client):
     @property
     def webhook_url(self) -> str:
         url = url_for("webhook_v1.mollie_payment", _external=True, _scheme="https")
-        if config.LOCALHOST:
-            url = replace_domain(url, config.LOCALHOST)
+        if config.LOCALHOST_URL:
+            url = replace_domain(url, config.LOCALHOST_URL)
         return url
 
     @property

@@ -33,7 +33,7 @@ jobs:
       APP_OPTIMIZE: false
       APP_SYNC_STATIC: true
       APP_SYNC_EXTERNAL: true
-      APP_SYNC_TIMEOUT: 10
+      APP_SYNC_TIMEOUT_S: 10
       WORKER_ENABLED: false
       WORKER_INTERVAL_S: 300
       AUTH_JWT_SECRET: secret
@@ -41,12 +41,12 @@ jobs:
       AUTH_JWT_ALLOW_GUEST: true
       AUTH_JWT_DECODE_LEEWAY_S: 60
       EMAIL_METHOD: SMTP
-      EMAIL_TIMEOUT: 10
+      EMAIL_TIMEOUT_S: 10
       EMAIL_FROM: contact@esherpa.io
       EMAIL_TO: contact@esherpa.io
       EMAIL_ADMIN: contact@esherpa.io
       DATABASE_URL: postgresql://postgres:postgres@localhost:5432/web_test
-      SMTP_HOST: smtp.gmail.com
+      SMTP_HOSTNAME: smtp.gmail.com
       SMTP_USERNAME: contact@esherpa.io
       SMTP_PORT: 587
     strategy:
