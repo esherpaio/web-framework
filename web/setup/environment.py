@@ -123,6 +123,7 @@ class Config:
 
     def _setup(self) -> None:
         module_path = os.getenv("SUMMIT_CONFIG_MODULE", "config")
+        print(module_path)
         config_ = importlib.import_module(module_path)
         self._validate(config_)
         self._config = config_
