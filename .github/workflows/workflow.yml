@@ -27,24 +27,24 @@ jobs:
     needs: lint
     env:
       APP_CONFIG: ${{ github.workspace }}/config.json
-      APP_LOG_LEVEL: DEBUG
-      APP_DEBUG: true
-      APP_URL_SCHEME: http
-      APP_OPTIMIZE: false
-      APP_SYNC_STATIC: true
-      APP_SYNC_EXTERNAL: true
-      APP_SYNC_TIMEOUT_S: 10
+      LOG_LEVEL: DEBUG
+      DEBUG: true
+      URL_SCHEME: http
+      OPTIMIZER_ENABLED: false
+      AUTOMATE_STATIC: true
+      AUTOMATE_EXTERNAL: true
+      AUTOMATE_TIMEOUT_S: 10
       WORKER_ENABLED: false
       WORKER_INTERVAL_S: 300
       AUTH_JWT_SECRET: secret
       AUTH_JWT_EXPIRES_S: 604800
       AUTH_JWT_ALLOW_GUEST: true
       AUTH_JWT_DECODE_LEEWAY_S: 60
-      EMAIL_METHOD: SMTP
-      EMAIL_TIMEOUT_S: 10
-      EMAIL_FROM: contact@esherpa.io
-      EMAIL_TO: contact@esherpa.io
-      EMAIL_ADMIN: contact@esherpa.io
+      MAIL_METHOD: SMTP
+      MAIL_TIMEOUT_S: 10
+      MAIL_SENDER: contact@esherpa.io
+      MAIL_RECEIVER: contact@esherpa.io
+      MAIL_ADMIN: contact@esherpa.io
       DATABASE_URL: postgresql://postgres:postgres@localhost:5432/web_test
       SMTP_HOSTNAME: smtp.gmail.com
       SMTP_USERNAME: contact@esherpa.io

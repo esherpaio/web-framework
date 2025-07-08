@@ -9,10 +9,10 @@ from werkzeug.exceptions import HTTPException
 
 from web.api import HttpText, json_response
 from web.app.urls import parse_url, url_for
-from web.config import config
 from web.error import WebError
 from web.i18n import _
 from web.logger import log
+from web.setup import settings
 from web.utils.obfuscation import obfuscate_data
 
 
@@ -45,7 +45,7 @@ def handle_frontend_error(error: Exception) -> Response:
     info = ["Frontend error", f"{request.method} {request.full_path}"]
     exc_info = True if level >= logging.ERROR else False
     log.log(level, " | ".join(info), exc_info=exc_info)
-    url = parse_url(config.ENDPOINT_ERROR, _func=url_for)
+    url = parse_url(settings.ENDPOINT_ERROR, _func=url_for)
     return redirect(url, code=302)
 
 

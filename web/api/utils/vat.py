@@ -4,7 +4,7 @@ from decimal import Decimal
 import pyvat
 from pyvat import ItemType, Party, VatChargeAction
 
-from web.config import config
+from web.setup import settings
 
 
 def get_vat(country_code: str, is_business: bool) -> tuple[Decimal, bool]:
@@ -21,7 +21,7 @@ def get_vat(country_code: str, is_business: bool) -> tuple[Decimal, bool]:
     date = datetime.now(timezone.utc).date()
     type_ = ItemType.generic_electronic_service
     buyer = Party(country_code, is_business)
-    seller = Party(config.BUSINESS_COUNTRY_CODE, True)
+    seller = Party(settings.BUSINESS_COUNTRY_CODE, True)
     vat = pyvat.get_sale_vat_charge(date, type_, buyer, seller)
     if vat.action == VatChargeAction.charge:
         vat_rate = (vat.rate / Decimal("100")) + Decimal("1")

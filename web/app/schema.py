@@ -5,9 +5,9 @@ from markupsafe import Markup
 
 from web.api import JsonEncoder
 from web.app.urls import parse_url
-from web.config import config
 from web.database.model import AppRoute
 from web.locale import current_locale, url_for_locale
+from web.setup import settings
 
 
 class Schema:
@@ -53,7 +53,7 @@ class SchemaWebsite(Schema):
     def __init__(self) -> None:
         super().__init__()
         home_url = parse_url(
-            config.ENDPOINT_HOME,
+            settings.ENDPOINT_HOME,
             _func=url_for_locale,
             _external=True,
             _locale=current_locale.locale,
@@ -62,8 +62,8 @@ class SchemaWebsite(Schema):
             "@context": "https://schema.org",
             "@type": "WebSite",
             "url": home_url,
-            "name": config.WEBSITE_NAME,
-            "inLanguage": config.WEBSITE_LANGUAGE_CODE,
+            "name": settings.META_WEBSITE_NAME,
+            "inLanguage": current_locale.language_code,
         }
 
 
@@ -71,25 +71,25 @@ class SchemaOrganization(Schema):
     def __init__(self) -> None:
         super().__init__()
         home_url = parse_url(
-            config.ENDPOINT_HOME,
+            settings.ENDPOINT_HOME,
             _func=url_for_locale,
             _external=True,
             _locale=current_locale.locale,
         )
         social_urls = [
-            config.SOCIAL_DISCORD,
-            config.SOCIAL_FACEBOOK,
-            config.SOCIAL_INSTAGRAM,
-            config.SOCIAL_PINTEREST,
-            config.SOCIAL_TWITTER,
-            config.SOCIAL_YOUTUBE,
+            settings.SOCIAL_DISCORD,
+            settings.SOCIAL_FACEBOOK,
+            settings.SOCIAL_INSTAGRAM,
+            settings.SOCIAL_PINTEREST,
+            settings.SOCIAL_TWITTER,
+            settings.SOCIAL_YOUTUBE,
         ]
         self.data = {
             "@context": "https://schema.org/Corporation",
             "@type": "Corporation",
-            "name": config.WEBSITE_NAME,
+            "name": settings.META_WEBSITE_NAME,
             "url": home_url,
-            "logo": config.WEBSITE_FAVICON_URL,
+            "logo": settings.META_FAVICON_URL,
             "sameAs": [x for x in social_urls if x],
         }
 
@@ -135,7 +135,7 @@ class SchemaProduct(Schema):
             "name": name,
             "brand": {
                 "@type": "Brand",
-                "name": config.BUSINESS_NAME,
+                "name": settings.META_BRAND_NAME,
             },
             "offers": {
                 "@type": "Offer",
@@ -166,7 +166,7 @@ def gen_schemas(
     if schemas is None:
         schemas = []
     if isinstance(route, AppRoute):
-        if route.endpoint == config.ENDPOINT_HOME:
+        if route.endpoint == settings.ENDPOINT_HOME:
             schemas.append(SchemaWebsite())
             schemas.append(SchemaOrganization())
         schemas.append(SchemaWebPage(route.name, route.description))

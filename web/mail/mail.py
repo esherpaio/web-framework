@@ -4,9 +4,9 @@ from typing import Callable
 from sqlalchemy.orm import Session
 
 from web.auth import current_user
-from web.config import config
 from web.database.model import Email, EmailStatusId
 from web.logger import log
+from web.setup import settings
 from web.utils import Singleton
 
 from .enum import MailEvent
@@ -37,14 +37,14 @@ class Mail(metaclass=Singleton):
             status_id = EmailStatusId.QUEUED
 
             # Send immediately if not using worker
-            if _email or not config.WORKER_ENABLED:
+            if _email or not settings.WORKER_ENABLED:
                 try:
                     result = event(s, **kwargs)
                 except Exception:
                     result = False
                     all_result = False
                     log.error(
-                        f"Error sending {config.EMAIL_METHOD} email", exc_info=True
+                        f"Error sending {settings.MAIL_METHOD} email", exc_info=True
                     )
                 if result:
                     status_id = EmailStatusId.SENT

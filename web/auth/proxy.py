@@ -4,10 +4,10 @@ from flask import g
 from sqlalchemy.orm import joinedload
 from werkzeug.local import LocalProxy
 
-from web.config import config
 from web.database import conn
 from web.database.model import User, UserRoleId
 from web.logger import log
+from web.setup import settings
 
 from .enum import AuthType, G
 
@@ -39,7 +39,7 @@ def _get_proxy_user() -> User | None:
     # Insert a new guest user
     auth_type = g.get(G.AUTH_TYPE, None)
     if (
-        config.AUTH_JWT_ALLOW_GUEST
+        settings.AUTH_JWT_ALLOW_GUEST
         and user is None
         and auth_type in [AuthType.NONE, AuthType.JWT]
     ):

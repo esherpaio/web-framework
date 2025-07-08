@@ -3,9 +3,9 @@ import os
 
 from flask import has_request_context
 
-from web.config import config
 from web.locale import current_locale
 from web.logger import log
+from web.setup import settings
 from web.utils import Singleton
 
 
@@ -52,8 +52,8 @@ class Translator(metaclass=Singleton):
                 log.error("Unable to get language from locale")
             else:
                 return language.code
-        if config.WEBSITE_LANGUAGE_CODE:
-            return config.WEBSITE_LANGUAGE_CODE
+        if settings.LOCALE_LANGUAGE_CODE:
+            return settings.LOCALE_LANGUAGE_CODE
         return self.fallback_language_code
 
     def translate_strict(self, key: str, **kwargs) -> str | None:

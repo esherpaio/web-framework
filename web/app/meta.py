@@ -5,8 +5,9 @@ from typing import Generator
 from flask import has_request_context, request
 from markupsafe import Markup
 
-from web.config import config
 from web.database.model import AppRoute
+from web.locale import current_locale
+from web.setup import settings
 
 
 class MetaTag(StrEnum):
@@ -60,8 +61,8 @@ class Meta:
     @property
     def title(self) -> str:
         if self._title:
-            return f"{self._title} • {config.WEBSITE_NAME}"
-        return config.WEBSITE_NAME
+            return f"{self._title} • {settings.META_WEBSITE_NAME}"
+        return settings.META_WEBSITE_NAME
 
     @property
     def description(self) -> str | None:
@@ -71,15 +72,15 @@ class Meta:
     def image_url(self) -> str:
         if self._image_url:
             return self._image_url
-        return config.WEBSITE_LOGO_URL
+        return settings.META_LOGO_URL
 
     @property
     def favicon_url(self) -> str:
-        return config.WEBSITE_FAVICON_URL
+        return settings.META_FAVICON_URL
 
     @property
     def hex_color(self) -> str:
-        return config.WEBSITE_HEX_COLOR
+        return settings.META_COLOR_HEX
 
     @property
     def robots(self) -> str:
@@ -95,22 +96,22 @@ class Meta:
 
     @property
     def locale(self) -> str | None:
-        if config.WEBSITE_LANGUAGE_CODE and config.WEBSITE_COUNTRY_CODE:
-            return f"{config.WEBSITE_LANGUAGE_CODE}_{config.WEBSITE_COUNTRY_CODE}"
+        if current_locale.language_code and current_locale.country_code:
+            return f"{current_locale.language_code}_{current_locale.country_code}"
         return None
 
     @property
     def website_name(self) -> str:
-        return config.WEBSITE_NAME
+        return settings.META_WEBSITE_NAME
 
     @property
     def facebook_url(self) -> str | None:
-        return config.SOCIAL_FACEBOOK
+        return settings.SOCIAL_FACEBOOK
 
     @property
     def twitter_at(self) -> str | None:
-        if config.SOCIAL_TWITTER:
-            match = re.match(r"^.*twitter\.com/(.*)$", config.SOCIAL_TWITTER)
+        if settings.SOCIAL_TWITTER:
+            match = re.match(r"^.*twitter\.com/(.*)$", settings.SOCIAL_TWITTER)
             if match:
                 return f"@{match.group(1)}"
         return None

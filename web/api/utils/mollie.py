@@ -3,20 +3,24 @@ from decimal import ROUND_HALF_UP, Decimal
 from mollie.api.client import Client
 
 from web.app.urls import url_for
-from web.config import config
+from web.logger import log
+from web.setup import settings
 from web.utils.modifiers import replace_domain
 
 
 class Mollie(Client):
     def __init__(self) -> None:
         super().__init__()
-        self.set_api_key(config.MOLLIE_KEY)
+        if settings.MOLLIE_API_KEY is not None:
+            self.set_api_key(settings.MOLLIE_API_KEY)
+        else:
+            log.warning("Mollie API key is not set")
 
     @property
     def webhook_url(self) -> str:
         url = url_for("webhook_v1.mollie_payment", _external=True, _scheme="https")
-        if config.LOCALHOST_URL:
-            url = replace_domain(url, config.LOCALHOST_URL)
+        if settings.LOCALHOST_URL:
+            url = replace_domain(url, settings.LOCALHOST_URL)
         return url
 
     @property

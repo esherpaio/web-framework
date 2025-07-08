@@ -11,12 +11,12 @@ from web.app.urls import url_for
 from web.auth import Auth, current_user
 from web.automation import Automator, task
 from web.cache import cache, cache_common, cache_manager
-from web.config import config
 from web.i18n import translator
 from web.locale import LocaleManager, current_locale
 from web.logger import log
 from web.mail import MailEvent, mail
 from web.optimizer import optimizer
+from web.setup import settings
 from web.utils.generators import format_decimal
 
 
@@ -68,8 +68,8 @@ class Web:
         cache_manager.update(force=True)
 
     def setup_mail(self, events: dict[MailEvent | str, list[Callable]]) -> None:
-        if config.EMAIL_METHOD:
-            log.info(f"Configuring email method {config.EMAIL_METHOD}")
+        if settings.MAIL_METHOD:
+            log.info(f"Configuring email method {settings.MAIL_METHOD}")
         else:
             log.warning("No email method configured")
 
@@ -78,8 +78,8 @@ class Web:
             mail.events.update(events)
 
     def setup_flask(self, app: Flask, blueprints: list[Blueprint]) -> None:
-        app.config["PREFERRED_URL_SCHEME"] = config.APP_URL_SCHEME
-        if config.APP_DEBUG:
+        app.config["PREFERRED_URL_SCHEME"] = settings.URL_SCHEME
+        if settings.DEBUG:
             log.info("Enabling Flask debug mode")
             app.debug = True
         app.register_error_handler(Exception, handle_error)
@@ -89,7 +89,7 @@ class Web:
             app.register_blueprint(blueprint)
 
         Auth(app)
-        if config.APP_OPTIMIZE:
+        if settings.OPTIMIZER_ENABLED:
             log.info("Enabling optimizer")
             optimizer.init(app)
         LocaleManager(app)
@@ -112,7 +112,7 @@ class Web:
                 datetime=datetime,
                 timezone=timezone,
                 cache=cache,
-                config=config,
+                config=settings,
                 current_user=current_user,
                 current_locale=current_locale,
             )

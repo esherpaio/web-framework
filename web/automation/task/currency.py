@@ -4,10 +4,10 @@ import requests
 from requests import RequestException
 
 from web.automation.fixture import currency_seeds
-from web.config import config
 from web.database import conn
 from web.database.model import Currency
 from web.logger import log
+from web.setup import settings
 
 from ..automator import ApiSyncer, SeedSyncer
 from ..utils import external_sync
@@ -31,7 +31,7 @@ class CurrencyApiSyncer(ApiSyncer):
                 resource = requests.request(
                     "GET",
                     cls.API_URL,
-                    timeout=config.APP_SYNC_TIMEOUT_S,
+                    timeout=settings.AUTOMATE_TIMEOUT_S,
                 )
             except RequestException as error:
                 log.error(error, exc_info=True)

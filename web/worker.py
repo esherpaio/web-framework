@@ -5,10 +5,10 @@ import time
 from typing import Callable, Type
 
 from web.automation import Automator
-from web.config import config
 from web.i18n import translator
 from web.logger import log
 from web.mail import MailEvent, mail
+from web.setup import settings
 
 
 class Worker:
@@ -21,7 +21,7 @@ class Worker:
     ) -> None:
         log.info("Initializing worker")
         self.start_delay_s = start_delay_s
-        self.interval_s = config.WORKER_INTERVAL_S
+        self.interval_s = settings.WORKER_INTERVAL_S
 
         self.setup_i18n(translations_dir)
         self.setup_mail(mail_events)
@@ -49,8 +49,8 @@ class Worker:
         translator.load_dir(dir_)
 
     def setup_mail(self, events: dict[MailEvent | str, list[Callable]] | None) -> None:
-        if config.EMAIL_METHOD:
-            log.info(f"Configuring email method {config.EMAIL_METHOD}")
+        if settings.MAIL_METHOD:
+            log.info(f"Configuring email method {settings.MAIL_METHOD}")
         else:
             log.warning("No email method configured")
 

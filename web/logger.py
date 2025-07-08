@@ -1,7 +1,7 @@
 import logging
 from logging import Handler, LogRecord
 
-from web.config import config
+from web.setup import settings
 
 #
 # Formatters
@@ -34,17 +34,22 @@ class HtmlFormatter(logging.Formatter):
 class MailHandler(Handler):
     def __init__(self) -> None:
         super().__init__()
-        self.setLevel(logging.ERROR)
+        self.setLevel(settings.MAIL_LOG_LEVEL)
         self.setFormatter(HtmlFormatter())
 
     def emit(self, record: LogRecord) -> None:
         from web.mail import send_email
 
+        if settings.MAIL_LOG_PREFIX is None:
+            subject = "Website error"
+        else:
+            subject = f"{settings.MAIL_LOG_PREFIX} website error"
+
         try:
             send_email(
-                subject=f"{config.WEBSITE_NAME} website error",
+                subject=subject,
                 html=self.format(record),
-                to=[config.EMAIL_ADMIN],
+                to=[settings.MAIL_ADMIN],
             )
         except (KeyboardInterrupt, SystemExit):
             raise
@@ -59,11 +64,11 @@ class MailHandler(Handler):
 
 def _get_logger(name: str) -> logging.Logger:
     base = logging.getLogger(name)
-    base.setLevel(config.APP_LOG_LEVEL)
+    base.setLevel(settings.LOG_LEVEL)
     stream = logging.StreamHandler()
     stream.setFormatter(PlainFormatter())
     base.addHandler(stream)
-    if not config.APP_DEBUG and config.EMAIL_METHOD == "SMTP" and config.EMAIL_ADMIN:
+    if not settings.MAIL_LOG_ENABLED and settings.MAIL_ADMIN:
         mail = MailHandler()
         base.addHandler(mail)
     return base

@@ -1,13 +1,13 @@
 from typing import Any, Callable, Type
 
-from web.config import config
+from web.setup import settings
 
 from .automator import Automator
 
 
 def external_sync(f: Callable) -> Callable[..., None]:
     def wrap(*args, **kwargs) -> None:
-        if not config.APP_SYNC_EXTERNAL:
+        if not settings.AUTOMATE_EXTERNAL:
             return
         return f(*args, **kwargs)
 

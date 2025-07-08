@@ -6,12 +6,12 @@ from typing import Type
 from sqlalchemy.orm import Session
 
 from web import cdn
-from web.config import config
 from web.database import conn
 from web.database.model import AppBlueprint, AppRoute, AppSettings
 from web.logger import log
 from web.packer import Packer
 from web.packer.bundle import CssBundle, JsBundle, ScssBundle
+from web.setup import settings
 
 from ..automator import Processor
 
@@ -74,7 +74,7 @@ class StaticProcessor(Processor):
     @classmethod
     def run(cls) -> None:
         cls.log_start()
-        if not config.APP_SYNC_STATIC:
+        if not settings.AUTOMATE_STATIC:
             log.warning("Static processor is disabled")
             return
         with conn.begin() as s:
