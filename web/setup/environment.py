@@ -14,7 +14,6 @@ CsrfMethods = Literal["POST", "PUT", "PATCH", "DELETE"]
 class _Protocol(Protocol):
     BASE_DIR: str
     DEBUG: bool
-    DEBUG_PORT: int
     LOG_LEVEL: LogLevel
     URL_SCHEME: UrlScheme
 

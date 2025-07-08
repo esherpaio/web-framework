@@ -10,7 +10,6 @@ from web.setup import env_var
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DEBUG = True
-DEBUG_PORT = 5000
 LOG_LEVEL = "DEBUG"
 URL_SCHEME = "https"
 
