@@ -78,6 +78,6 @@ def handle_backend_error(error: Exception) -> Response:
     if request.is_json:
         data = obfuscate_data(request.get_json())
         info.append(f"data {data}")
-    exc_info = code >= 500
+    exc_info = code >= 400
     log.error(" | ".join(info), exc_info=exc_info)
     return json_response(code, message)

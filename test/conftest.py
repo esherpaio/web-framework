@@ -1,7 +1,4 @@
 import contextlib
-import os
-
-os.environ["SUMMIT_CONFIG_MODULE"] = "test.config"
 
 import pytest
 from flask import Flask

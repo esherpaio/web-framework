@@ -9,36 +9,36 @@ from web.setup import env_var
 #
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-DEBUG = env_var("DEBUG", bool, default=False)
-DEBUG_PORT = env_var("DEBUG_PORT", int, default=5000)
-LOG_LEVEL = env_var("LOG_LEVEL", str, default="INFO")
-URL_SCHEME = env_var("URL_SCHEME", str, default="https")
+DEBUG = True
+DEBUG_PORT = 5000
+LOG_LEVEL = "DEBUG"
+URL_SCHEME = "https"
 
-WORKER_ENABLED = env_var("WORKER_ENABLED", bool, default=False)
+WORKER_ENABLED = False
 WORKER_INTERVAL_S = 300
 
-DATABASE_URL = env_var("DATABASE_URL", str)
-LOCALHOST_URL = env_var("LOCALHOST_URL", str)
+DATABASE_URL = "postgresql://postgres:postgres@localhost:5432/web_test"
+LOCALHOST_URL = None
 
 ENDPOINT_HOME = None
 ENDPOINT_ERROR = None
 ENDPOINT_LOGIN = None
 ENDPOINT_PASSWORD_RECOVERY = None
 
-LOCALE_LANGUAGE_CODE = None
-LOCALE_COUNTRY_CODE = None
+LOCALE_LANGUAGE_CODE = "nl"
+LOCALE_COUNTRY_CODE = "NL"
 
-AUTOMATE_EXTERNAL = env_var("AUTOMATE_EXTERNAL", bool, default=False)
-AUTOMATE_STATIC = env_var("AUTOMATE_STATIC", bool, default=False)
+AUTOMATE_EXTERNAL = True
+AUTOMATE_STATIC = True
 AUTOMATE_TIMEOUT_S = 10
-OPTIMIZER_ENABLED = env_var("OPTIMIZER_ENABLED", bool, default=False)
+OPTIMIZER_ENABLED = True
 
 #
 # Authentication
 # NOTE: keep the secret key used in production secret
 #
 
-AUTH_JWT_SECRET = env_var("AUTH_JWT_SECRET", str)
+AUTH_JWT_SECRET = "secret"
 AUTH_JWT_ALLOW_GUEST = False
 AUTH_JWT_EXPIRES_S = 3600
 AUTH_JWT_COOKIE = "access_token"
@@ -60,14 +60,14 @@ MAIL_TIMEOUT_S = 10
 MAIL_MAX_RECEIVERS = 100
 MAIL_SENDER = env_var("MAIL_SENDER", str)
 MAIL_RECEIVER = env_var("MAIL_RECEIVER", str)
-MAIL_ADMIN = None
+MAIL_ADMIN = env_var("MAIL_ADMIN", str)
 
-MAIL_LOG_ENABLED = env_var("MAIL_LOG_ENABLED", bool, default=False)
+MAIL_LOG_ENABLED = False
 MAIL_LOG_LEVEL = "ERROR"
 MAIL_LOG_PREFIX = "Summit"
 
 SMTP_HOSTNAME = env_var("SMTP_HOSTNAME", str)
-SMTP_PORT = env_var("SMTP_PORT", int)
+SMTP_PORT = 587
 SMTP_USERNAME = env_var("SMTP_USERNAME", str)
 SMTP_PASSWORD = env_var("SMTP_PASSWORD", str)
 
@@ -89,11 +89,11 @@ FTP_PASSWORD = env_var("FTP_PASSWORD", str)
 # Integrations
 #
 
-GOOGLE_API_KEY = env_var("GOOGLE_API_KEY", str)
-GOOGLE_CLIENT_ID = env_var("GOOGLE_CLIENT_ID", str)
-GOOGLE_PLACE_ID = env_var("GOOGLE_PLACE_ID", str)
+GOOGLE_API_KEY = None
+GOOGLE_CLIENT_ID = None
+GOOGLE_PLACE_ID = None
 
-MOLLIE_API_KEY = env_var("MOLLIE_API_KEY", str)
+MOLLIE_API_KEY = None
 
 INTIME_ENABLED = False
 
