@@ -1,7 +1,8 @@
-import os
 import sched
 import signal
 import time
+from threading import Event, Thread
+from types import FrameType
 from typing import Callable, Type
 
 from web.automation import Automator
@@ -12,29 +13,20 @@ from web.setup import config
 
 
 class Worker:
-    def __init__(
-        self,
-        start_delay_s: int = 30,
-        mail_events: dict[MailEvent | str, list[Callable]] | None = None,
-        translations_dir: str | None = None,
-        automation_tasks: list[Type[Automator]] | None = None,
-    ) -> None:
+    def __init__(self, start_delay_s: int = 0, stop_timeout_s: int = 5) -> None:
         log.info("Initializing worker")
-        self.start_delay_s = start_delay_s
-        self.interval_s = config.WORKER_INTERVAL_S
+        self._scheduler = sched.scheduler(time.time, time.sleep)
+        self._thread: Thread | None = None
+        self._stop_event = Event()
+        self._tasks: list[Type[Automator]] = []
+        self._start_delay_s = start_delay_s
+        self._stop_timeout_s = stop_timeout_s
+        self._interval_s = config.WORKER_INTERVAL_S
 
-        self.setup_i18n(translations_dir)
-        self.setup_mail(mail_events)
+        signal.signal(signal.SIGTERM, self._signal)
+        signal.signal(signal.SIGINT, self._signal)
 
-        if automation_tasks is None:
-            automation_tasks = []
-        self.tasks = automation_tasks
-
-        self.scheduler = sched.scheduler(time.time, time.sleep)
-        signal.signal(signal.SIGTERM, self._signal_exit)
-        signal.signal(signal.SIGINT, self._signal_exit)
-
-    def _signal_exit(self, signum, *args) -> None:
+    def _signal(self, signum: int, frame: FrameType | None) -> None:
         log.info(f"Worker received signal {signum}")
         self.stop()
 
@@ -58,30 +50,54 @@ class Worker:
             log.info(f"Updating {len(events)} mail events")
             mail.events.update(events)
 
+    def setup_tasks(self, tasks: list[Type[Automator]]) -> None:
+        if not tasks:
+            log.warning("No automation tasks configured")
+            return
+
+        log.info(f"Adding {len(tasks)} automation tasks")
+        self._tasks = tasks
+
     #
-    # Loop
+    # Worker
     #
 
+    def start(self) -> None:
+        if self._thread is not None and self._thread.is_alive():
+            log.warning("Worker is already running")
+            return
+
+        log.info("Starting worker")
+        self._stop_event.clear()
+        self._thread = Thread(target=self._run_scheduler, daemon=True)
+        self._thread.start()
+
+    def _run_scheduler(self) -> None:
+        self._scheduler.enter(delay=self._start_delay_s, priority=1, action=self._run)
+        self._scheduler.run()
+
     def _run(self) -> None:
-        for task in self.tasks:
+        for task in self._tasks:
             try:
                 task.run()
             except Exception as e:
                 log.error(f"Error running task {task.__name__}: {e}")
-        self.scheduler.enter(delay=self.interval_s, priority=1, action=self._run)
 
-    def start(self) -> None:
-        self.scheduler.enter(delay=self.start_delay_s, priority=1, action=self._run)
-        try:
-            self.scheduler.run()
-        except (KeyboardInterrupt, SystemExit):
-            log.info("Worker stopped gracefully")
-            os._exit(1)
+        if self._stop_event.is_set():
+            return
+        self._scheduler.enter(delay=self._interval_s, priority=1, action=self._run)
 
     def stop(self) -> None:
-        for event in list(self.scheduler.queue):
+        log.info("Stopping worker")
+        self._stop_event.set()
+
+        for event in list(self._scheduler.queue):
             try:
-                self.scheduler.cancel(event)
+                self._scheduler.cancel(event)
             except ValueError:
                 pass
-        raise SystemExit(0)
+
+        if self._thread is not None and self._thread.is_alive():
+            self._thread.join(timeout=self._stop_timeout_s)
+            if self._thread.is_alive():
+                log.warning("Worker thread did not stop within timeout")
