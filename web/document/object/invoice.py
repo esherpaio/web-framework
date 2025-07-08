@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 
 from web.database.model import Invoice, Order
 from web.i18n import _
-from web.setup import settings
+from web.setup import config
 
 from ..style import (
     COLOR_DARKGREY,
@@ -31,7 +31,7 @@ def gen_invoice_pdf(
     pdf.set_auto_page_break(auto=True, margin=30)
     pdf.add_page()
 
-    pdf.image(settings.BUSINESS_LOGO_URL, x="L", h=15, keep_aspect_ratio=True)
+    pdf.image(config.BUSINESS_LOGO_URL, x="L", h=15, keep_aspect_ratio=True)
 
     pdf.ln(6)
     pdf.set_text_color(*COLOR_TEXT)
@@ -112,12 +112,12 @@ def _get_invoice_info_table_data(
     first.append(order.billing.email)
 
     second = [
-        settings.BUSINESS_NAME,
-        settings.BUSINESS_STREET,
-        f"{settings.BUSINESS_ZIP_CODE} {settings.BUSINESS_CITY}",
-        settings.BUSINESS_COUNTRY,
-        _("PDF_CC_NUMBER", cc=settings.BUSINESS_REGISTRATION_NUMBER),
-        _("PDF_VAT_NUMBER", vat=settings.BUSINESS_VAT_NUMBER),
+        config.BUSINESS_NAME,
+        config.BUSINESS_STREET,
+        f"{config.BUSINESS_ZIP_CODE} {config.BUSINESS_CITY}",
+        config.BUSINESS_COUNTRY,
+        _("PDF_CC_NUMBER", cc=config.BUSINESS_REGISTRATION_NUMBER),
+        _("PDF_VAT_NUMBER", vat=config.BUSINESS_VAT_NUMBER),
     ]
 
     third = [

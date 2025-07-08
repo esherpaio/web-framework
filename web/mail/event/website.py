@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 
 from web.i18n import _
-from web.setup import settings
+from web.setup import config
 
 from .. import render_email, send_email
 
@@ -16,7 +16,7 @@ def mail_contact_business(
     **kwargs,
 ) -> bool:
     subject = _(
-        "MAIL_CONTACT_SUBJECT_BUSINESS", business_name=settings.BUSINESS_NAME, name=name
+        "MAIL_CONTACT_SUBJECT_BUSINESS", business_name=config.BUSINESS_NAME, name=name
     )
     html = render_email(
         title=_("MAIL_CONTACT_TITLE"),
@@ -31,7 +31,7 @@ def mail_contact_business(
             _("MAIL_CONTACT_MESSAGE", message=message),
         ],
     )
-    return send_email(subject, html, to=[settings.MAIL_RECEIVER], reply_to=email)
+    return send_email(subject, html, to=[config.MAIL_RECEIVER], reply_to=email)
 
 
 def mail_contact_customer(
@@ -40,7 +40,7 @@ def mail_contact_customer(
     message: str,
     **kwargs,
 ) -> bool:
-    subject = _("MAIL_CONTACT_SUBJECT_CUSTOMER", business_name=settings.BUSINESS_NAME)
+    subject = _("MAIL_CONTACT_SUBJECT_CUSTOMER", business_name=config.BUSINESS_NAME)
     html = render_email(
         title=_("MAIL_CONTACT_TITLE"),
         paragraphs=[

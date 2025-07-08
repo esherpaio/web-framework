@@ -7,7 +7,7 @@ from markupsafe import Markup
 
 from web.database.model import AppRoute
 from web.locale import current_locale
-from web.setup import settings
+from web.setup import config
 
 
 class MetaTag(StrEnum):
@@ -61,8 +61,8 @@ class Meta:
     @property
     def title(self) -> str:
         if self._title:
-            return f"{self._title} • {settings.META_WEBSITE_NAME}"
-        return settings.META_WEBSITE_NAME
+            return f"{self._title} • {config.META_WEBSITE_NAME}"
+        return config.META_WEBSITE_NAME
 
     @property
     def description(self) -> str | None:
@@ -72,15 +72,15 @@ class Meta:
     def image_url(self) -> str:
         if self._image_url:
             return self._image_url
-        return settings.META_LOGO_URL
+        return config.META_LOGO_URL
 
     @property
     def favicon_url(self) -> str:
-        return settings.META_FAVICON_URL
+        return config.META_FAVICON_URL
 
     @property
     def hex_color(self) -> str:
-        return settings.META_COLOR_HEX
+        return config.META_COLOR_HEX
 
     @property
     def robots(self) -> str:
@@ -102,16 +102,16 @@ class Meta:
 
     @property
     def website_name(self) -> str:
-        return settings.META_WEBSITE_NAME
+        return config.META_WEBSITE_NAME
 
     @property
     def facebook_url(self) -> str | None:
-        return settings.SOCIAL_FACEBOOK
+        return config.SOCIAL_FACEBOOK
 
     @property
     def twitter_at(self) -> str | None:
-        if settings.SOCIAL_TWITTER:
-            match = re.match(r"^.*twitter\.com/(.*)$", settings.SOCIAL_TWITTER)
+        if config.SOCIAL_TWITTER:
+            match = re.match(r"^.*twitter\.com/(.*)$", config.SOCIAL_TWITTER)
             if match:
                 return f"@{match.group(1)}"
         return None

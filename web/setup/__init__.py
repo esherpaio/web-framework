@@ -1,6 +1,6 @@
-from .environment import env_var, settings
+from .environment import config, env_var
 
 __all__ = [
     "env_var",
-    "settings",
+    "config",
 ]

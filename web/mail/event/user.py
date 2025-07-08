@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 
 from web.i18n import _
-from web.setup import settings
+from web.setup import config
 
 from .. import render_email, send_email
 
@@ -12,11 +12,11 @@ def mail_user_verification(
     verification_url: str,
     **kwargs,
 ) -> bool:
-    subject = _("MAIL_WELCOME_SUBJECT", business_name=settings.BUSINESS_NAME)
+    subject = _("MAIL_WELCOME_SUBJECT", business_name=config.BUSINESS_NAME)
     html = render_email(
         title=_("MAIL_WELCOME_TITLE"),
         paragraphs=[
-            _("MAIL_WELCOME_P1", business_name=settings.BUSINESS_NAME),
+            _("MAIL_WELCOME_P1", business_name=config.BUSINESS_NAME),
             _("MAIL_WELCOME_P2", verification_url=verification_url),
             _("MAIL_WELCOME_P3"),
         ],
@@ -30,7 +30,7 @@ def mail_user_password(
     reset_url: str,
     **kwargs,
 ) -> bool:
-    subject = _("MAIL_PASSWORD_SUBJECT", business_name=settings.BUSINESS_NAME)
+    subject = _("MAIL_PASSWORD_SUBJECT", business_name=config.BUSINESS_NAME)
     html = render_email(
         title=_("MAIL_PASSWORD_TITLE"),
         paragraphs=[_("MAIL_PASSWORD_P1"), _("MAIL_PASSWORD_P2", reset_url=reset_url)],

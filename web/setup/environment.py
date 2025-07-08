@@ -110,24 +110,24 @@ class _Protocol(Protocol):
     BUSINESS_COUNTRY_CODE: str
 
 
-class Settings:
-    _settings: _Protocol | None = None
+class Config:
+    _config: _Protocol | None = None
 
     def __init__(self) -> None:
         load_dotenv(override=True)
 
     def __getattr__(self, name: str) -> Any:
-        if self._settings is None:
+        if self._config is None:
             self._setup()
-        return getattr(self._settings, name)
+        return getattr(self._config, name)
 
     def _setup(self) -> None:
-        module_path = os.environ["SUMMIT_SETTINGS_MODULE"]
-        settings_ = importlib.import_module(module_path)
-        self._validate(settings_)
-        self._settings = settings_
+        module_path = os.getenv("SUMMIT_CONFIG_MODULE", "config")
+        config_ = importlib.import_module(module_path)
+        self._validate(config_)
+        self._config = config_
 
-    def _validate(self, settings_: _Protocol) -> None:
+    def _validate(self, config_: _Protocol) -> None:
         pass
 
 
@@ -141,4 +141,4 @@ def env_var(key: str, type_: type[str | int | bool], default: Any = None) -> Any
         return value in ["true", "1"]
 
 
-settings: _Protocol = Settings()
+config: _Protocol = Config()

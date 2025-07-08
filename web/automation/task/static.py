@@ -11,7 +11,7 @@ from web.database.model import AppBlueprint, AppRoute, AppSettings
 from web.logger import log
 from web.packer import Packer
 from web.packer.bundle import CssBundle, JsBundle, ScssBundle
-from web.setup import settings
+from web.setup import config
 
 from ..automator import Processor
 
@@ -74,7 +74,7 @@ class StaticProcessor(Processor):
     @classmethod
     def run(cls) -> None:
         cls.log_start()
-        if not settings.AUTOMATE_STATIC:
+        if not config.AUTOMATE_STATIC:
             log.warning("Static processor is disabled")
             return
         with conn.begin() as s:

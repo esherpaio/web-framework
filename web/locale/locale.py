@@ -5,7 +5,7 @@ from babel.dates import format_datetime
 
 from web.cache import cache
 from web.database.model import Country, Currency, Language
-from web.setup import settings
+from web.setup import config
 
 from .error import CountryNotFoundError, CurrencyNotFoundError, LanguageNotFoundError
 from .utils import gen_locale, get_cookie_locale, get_route_locale, match_locale
@@ -28,9 +28,7 @@ class Locale:
         cookie_locale = get_cookie_locale()
         if cookie_locale:
             locales.append(cookie_locale)
-        web_locale = gen_locale(
-            settings.LOCALE_LANGUAGE_CODE, settings.LOCALE_COUNTRY_CODE
-        )
+        web_locale = gen_locale(config.LOCALE_LANGUAGE_CODE, config.LOCALE_COUNTRY_CODE)
         locales.append(web_locale)
         return locales
 
@@ -60,7 +58,7 @@ class Locale:
         try:
             return self.language.code
         except Exception:
-            return settings.LOCALE_LANGUAGE_CODE
+            return config.LOCALE_LANGUAGE_CODE
 
     @property
     def possible_country_codes(self) -> list[str]:
@@ -76,7 +74,7 @@ class Locale:
         try:
             return self.country.code
         except Exception:
-            return settings.LOCALE_COUNTRY_CODE
+            return config.LOCALE_COUNTRY_CODE
 
     #
     # Objects

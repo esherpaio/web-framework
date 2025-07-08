@@ -3,7 +3,7 @@ import re
 from flask import current_app, has_request_context, request
 
 from web.app.urls import url_for
-from web.setup import settings
+from web.setup import config
 
 
 def get_route_locale() -> str | None:
@@ -58,9 +58,9 @@ def gen_locale(
 ) -> str:
     """Generate a locale."""
     if language_code is None:
-        language_code = settings.LOCALE_LANGUAGE_CODE
+        language_code = config.LOCALE_LANGUAGE_CODE
     if country_code is None:
-        country_code = settings.LOCALE_COUNTRY_CODE
+        country_code = config.LOCALE_COUNTRY_CODE
     return f"{language_code}-{country_code}".lower()
 
 

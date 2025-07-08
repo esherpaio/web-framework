@@ -2,7 +2,7 @@ import os
 
 import jinja2
 
-from web.setup import settings
+from web.setup import config
 
 
 def render_email(template: str = "default", dir_: str | None = None, **attrs) -> str:
@@ -11,6 +11,6 @@ def render_email(template: str = "default", dir_: str | None = None, **attrs) ->
     fn = f"{template}.html"
     loader = jinja2.FileSystemLoader(dir_)
     environment = jinja2.Environment(loader=loader)
-    attrs.update({"config": settings})
+    attrs.update({"config": config})
     html = environment.get_template(fn).render(attrs)
     return html

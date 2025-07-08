@@ -4,7 +4,7 @@ from web.database.model import Invoice, Order, Refund
 from web.document import get_pdf_path
 from web.document.object import gen_invoice_pdf, gen_refund_pdf
 from web.i18n import _
-from web.setup import settings
+from web.setup import config
 from web.utils import remove_file
 
 from .. import render_email, send_email
@@ -18,12 +18,12 @@ def mail_order_received(
     **kwargs,
 ) -> bool:
     subject = _(
-        "MAIL_ORDER_SUBJECT", business_name=settings.BUSINESS_NAME, order_id=order_id
+        "MAIL_ORDER_SUBJECT", business_name=config.BUSINESS_NAME, order_id=order_id
     )
     html = render_email(
         title=_("MAIL_ORDER_TITLE", order_id=order_id),
         paragraphs=[
-            _("MAIL_ORDER_RECEIVED_P1", business_name=settings.BUSINESS_NAME),
+            _("MAIL_ORDER_RECEIVED_P1", business_name=config.BUSINESS_NAME),
             _("MAIL_ORDER_RECEIVED_P2"),
         ],
     )
@@ -46,7 +46,7 @@ def mail_order_paid(
     remove_file(pdf_path, delay_s=20)
     # Generate and send email
     subject = _(
-        "MAIL_ORDER_SUBJECT", business_name=settings.BUSINESS_NAME, order_id=order_id
+        "MAIL_ORDER_SUBJECT", business_name=config.BUSINESS_NAME, order_id=order_id
     )
     html = render_email(
         title=_("MAIL_ORDER_TITLE", order_id=order_id),
@@ -67,7 +67,7 @@ def mail_order_shipped(
     **kwargs,
 ) -> bool:
     subject = _(
-        "MAIL_ORDER_SUBJECT", business_name=settings.BUSINESS_NAME, order_id=order_id
+        "MAIL_ORDER_SUBJECT", business_name=config.BUSINESS_NAME, order_id=order_id
     )
     html = render_email(
         title=_("MAIL_ORDER_TITLE", order_id=order_id),
@@ -98,7 +98,7 @@ def mail_order_refunded(
     remove_file(pdf_path, delay_s=20)
     # Generate and send email
     subject = _(
-        "MAIL_ORDER_SUBJECT", business_name=settings.BUSINESS_NAME, order_id=order_id
+        "MAIL_ORDER_SUBJECT", business_name=config.BUSINESS_NAME, order_id=order_id
     )
     html = render_email(
         title=_("MAIL_ORDER_TITLE", order_id=order_id),
