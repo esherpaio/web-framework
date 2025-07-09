@@ -41,7 +41,6 @@ class Translator(metaclass=Singleton):
             self.translations[fn] = {}
         data = json.loads(data_str)
         if data:
-            log.info(f"Loading translations from {fbn}")
             self.translations[fn].update(data)
         return bool(data)
 
