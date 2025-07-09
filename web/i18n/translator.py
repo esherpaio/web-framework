@@ -33,14 +33,15 @@ class Translator(metaclass=Singleton):
     def load_file(self, fp: str) -> bool:
         with open(fp, "r") as f:
             data_str = f.read()
-        fn, fext = os.path.splitext(os.path.basename(fp))
+        fbn = os.path.basename(fp)
+        fn, fext = os.path.splitext(fbn)
         if fext != ".json":
             return False
         if fn not in self.translations:
             self.translations[fn] = {}
         data = json.loads(data_str)
         if data:
-            log.info(f"Loading translations from {fn}")
+            log.info(f"Loading translations from {fbn}")
             self.translations[fn].update(data)
         return bool(data)
 
