@@ -19,22 +19,30 @@ class Translator(metaclass=Singleton):
         root_dir = os.path.join(cur_dir, "translation")
         self.load_dir(root_dir)
 
-    def load_dir(self, dir_: str) -> None:
+    def load_dir(self, dir_: str) -> int:
+        total = 0
         dir_ = os.path.abspath(dir_)
         for fd, _, fns in os.walk(dir_):
             for fn in fns:
                 fp = os.path.abspath(os.path.join(fd, fn))
-                self.load_file(fp)
+                result = self.load_file(fp)
+                if result:
+                    total += 1
+        return total
 
-    def load_file(self, fp: str) -> None:
+    def load_file(self, fp: str) -> bool:
         with open(fp, "r") as f:
-            data = f.read()
+            data_str = f.read()
         fn, fext = os.path.splitext(os.path.basename(fp))
         if fext != ".json":
-            return
+            return False
         if fn not in self.translations:
             self.translations[fn] = {}
-        self.translations[fn].update(json.loads(data))
+        data = json.loads(data_str)
+        if data:
+            log.info(f"Loading translations from {fn}")
+            self.translations[fn].update(data)
+        return bool(data)
 
     def get_translations(self, language_code: str) -> dict:
         try:

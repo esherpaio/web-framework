@@ -10,7 +10,7 @@ from web.automation import SeedSyncer
 from web.cache import cache_manager
 from web.database.client import engine
 from web.database.model import Base, User, UserRoleId
-from web.web import Web
+from web.server import Server
 
 #
 # Configuration
@@ -69,7 +69,7 @@ class UserSeedSyncer(SeedSyncer):
 
 def create_app() -> Flask:
     app = Flask(__name__)
-    web = Web()
+    web = Server()
     web.setup_database(True, [UserSeedSyncer])
     web.setup_cache()
     web.setup_flask(app, [api_bp, webhook_bp])

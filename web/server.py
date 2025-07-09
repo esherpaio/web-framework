@@ -20,12 +20,14 @@ from web.setup import config
 from web.utils.generators import format_decimal
 
 
-class Web:
+class Server:
     def setup_i18n(self, dir_: str | None) -> None:
         if dir_ is None:
             return
         log.info(f"Loading translations from {dir_}")
-        translator.load_dir(dir_)
+        file_count = translator.load_dir(dir_)
+        if file_count == 0:
+            log.warning(f"No translation files found in {dir_}")
 
     def setup_database(
         self,
@@ -58,7 +60,10 @@ class Web:
         # Run database hook
         if hook is not None:
             log.info("Running database hook")
-            hook()
+            try:
+                hook()
+            except Exception as e:
+                log.error(f"Error running database hook: {e}")
 
     def setup_cache(self, hook: Callable | None = None) -> None:
         cache_manager.add_hook(cache_common)
