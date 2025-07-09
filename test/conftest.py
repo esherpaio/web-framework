@@ -10,7 +10,7 @@ from web.automation import SeedSyncer
 from web.cache import cache_manager
 from web.database.client import engine
 from web.database.model import Base, User, UserRoleId
-from web.server import Server
+from web.setup.server import Server
 
 #
 # Configuration
