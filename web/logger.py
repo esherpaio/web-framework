@@ -36,7 +36,7 @@ class WerkzeugFilter(logging.Filter):
 
 
 class PlainFormatter(logging.Formatter):
-    template = "[%(levelname)s] %(message)s"
+    template = "%(message)s"
 
     def format(self, record: logging.LogRecord) -> str:
         formatter = logging.Formatter(self.template)
@@ -46,7 +46,7 @@ class PlainFormatter(logging.Formatter):
 
 
 class HtmlFormatter(logging.Formatter):
-    template = "[%(levelname)s] %(message)s"
+    template = "%(message)s"
 
     def format(self, record: logging.LogRecord) -> str:
         formatter = logging.Formatter(self.template)
