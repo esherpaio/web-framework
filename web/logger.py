@@ -10,7 +10,7 @@ from web.setup import config
 
 class PlainFormatter(logging.Formatter):
     def format(self, record: logging.LogRecord) -> str:
-        template = "%(message)s"
+        template = "%(levelname)s: %(message)s"
         formatter = logging.Formatter(template)
         return formatter.format(record)
 
