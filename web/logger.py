@@ -5,38 +5,51 @@ from logging import Handler, LogRecord
 from web.setup import config
 
 #
-# Filters
+# Filters and formatters
 #
 
 
+LEVEL_COLORS = {
+    "DEBUG": "\033[90m",
+    "INFO": "",
+    "WARNING": "\033[33m",
+    "ERROR": "\033[31m",
+    "CRITICAL": "\033[41m",
+}
+RESET = "\033[0m"
+
+
 class WerkzeugFilter(logging.Filter):
+    ansi_escape = re.compile(r"\x1B\[[0-?]*[ -/]*[@-~]")
     pattern = re.compile(r'"(\S+)\s+(\S+)[^"]*"\s+(\d{3})')
 
     def filter(self, record: logging.LogRecord) -> bool:
-        match = self.pattern.search(record.getMessage())
+        message = record.getMessage()
+        escaped = self.ansi_escape.sub("", message)
+        match = self.pattern.search(escaped)
         if match:
+            color = LEVEL_COLORS.get(record.levelname, "")
             method, url, status = match.groups()
-            record.msg = f"{method} {url} {status}"
+            record.msg = f"{color}{method} {url} {status}{RESET}"
             record.args = ()
         return True
 
 
-#
-# Formatters
-#
-
-
 class PlainFormatter(logging.Formatter):
+    template = "[%(levelname)s] %(message)s"
+
     def format(self, record: logging.LogRecord) -> str:
-        template = "[%(levelname)s] %(message)s"
-        formatter = logging.Formatter(template)
-        return formatter.format(record)
+        formatter = logging.Formatter(self.template)
+        color = LEVEL_COLORS.get(record.levelname, "")
+        message = formatter.format(record)
+        return f"{color}{message}{RESET}"
 
 
 class HtmlFormatter(logging.Formatter):
+    template = "[%(levelname)s] %(message)s"
+
     def format(self, record: logging.LogRecord) -> str:
-        template = "[%(levelname)s] %(message)s"
-        formatter = logging.Formatter(template)
+        formatter = logging.Formatter(self.template)
         message = formatter.formatMessage(record)
         if record.exc_info:
             exception = self.formatException(record.exc_info)
@@ -58,17 +71,13 @@ class MailHandler(Handler):
     def emit(self, record: LogRecord) -> None:
         from web.mail import send_email
 
-        if config.MAIL_LOG_PREFIX is None:
-            subject = "Website error"
-        else:
-            subject = f"{config.MAIL_LOG_PREFIX} website error"
+        subject_parts = [config.MAIL_LOG_PREFIX, "website error"]
+        subject_parts = [x for x in subject_parts if x]
+        subject = " ".join(subject_parts)
+        html = self.format(record)
 
         try:
-            send_email(
-                subject=subject,
-                html=self.format(record),
-                to=[config.MAIL_ADMIN],
-            )
+            send_email(subject, html, to=[config.MAIL_ADMIN])
         except (KeyboardInterrupt, SystemExit):
             raise
         except Exception:
