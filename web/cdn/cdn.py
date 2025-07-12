@@ -1,6 +1,7 @@
 import os
 from ftplib import FTP, error_perm
 
+from web.logger import log
 from web.setup import config
 
 from .type import _SupportsRead
@@ -14,21 +15,20 @@ def filenames(path: str) -> list[str]:
         config.FTP_PASSWORD,
     ) as ftp:
         ftp.cwd(folder)
-        filenames = ftp.nlst()
-        return filenames
+        return ftp.nlst()
 
 
 def exists(path: str) -> bool:
     folder = os.path.dirname(path)
-    filename = os.path.basename(path)
+    name = os.path.basename(path)
     with FTP(
         config.FTP_HOSTNAME,
         config.FTP_USERNAME,
         config.FTP_PASSWORD,
     ) as ftp:
         ftp.cwd(folder)
-        filenames = ftp.nlst()
-        return filename in filenames
+        names = ftp.nlst()
+        return name in names
 
 
 def upload(file_: _SupportsRead[bytes], path: str) -> None:
@@ -46,6 +46,7 @@ def upload(file_: _SupportsRead[bytes], path: str) -> None:
                 raise
         ftp.cwd(folder)
         ftp.storbinary(f"STOR {name}", file_)
+    log.info(f"Uploaded on FTP: {path}")
 
 
 def delete(path: str) -> None:
@@ -59,6 +60,7 @@ def delete(path: str) -> None:
         except error_perm as error:
             if error.args[0][:3] != "550":
                 raise
+    log.info(f"Deleted on FTP: {path}")
 
 
 def url(*args: str | None) -> str | None:
