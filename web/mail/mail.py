@@ -34,8 +34,6 @@ class Mail(metaclass=Singleton):
         all_result = True
 
         for event in cls.get_events(event_id):
-            status_id = EmailStatusId.QUEUED
-
             # Send immediately if not using worker
             if _email or not config.WORKER_ENABLED:
                 try:
@@ -43,13 +41,12 @@ class Mail(metaclass=Singleton):
                 except Exception:
                     result = False
                     all_result = False
-                    log.error(
-                        f"Error sending {config.MAIL_METHOD} email", exc_info=True
-                    )
                 if result:
                     status_id = EmailStatusId.SENT
                 else:
                     status_id = EmailStatusId.FAILED
+            else:
+                status_id = EmailStatusId.QUEUED
 
             # Save email in database
             if _email is None:
@@ -63,7 +60,13 @@ class Mail(metaclass=Singleton):
             else:
                 _email.updated_at = datetime.now(timezone.utc)
                 _email.status_id = status_id
-                s.flush()
+            s.flush()
+
+            # Log the email event
+            if result:
+                log.info(f"Sent email {_email.id} for event {event_id}")
+            else:
+                log.error(f"Failed to send email {_email.id} for event {event_id}")
 
         return all_result
 
