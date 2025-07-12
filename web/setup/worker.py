@@ -1,3 +1,4 @@
+import logging
 import sched
 import signal
 import time
@@ -7,7 +8,7 @@ from typing import Callable, Type
 
 from web.automation import Automator
 from web.i18n import translator
-from web.logger import log
+from web.logger import WerkzeugFilter, log
 from web.mail import MailEvent, mail
 from web.setup import config
 
@@ -33,6 +34,10 @@ class Worker:
     #
     # Setup
     #
+
+    def setup_logging(self) -> None:
+        log_werkzeug = logging.getLogger("werkzeug")
+        log_werkzeug.addFilter(WerkzeugFilter())
 
     def setup_i18n(self, dir_: str | None) -> None:
         if dir_ is None:

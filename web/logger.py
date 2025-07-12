@@ -1,7 +1,25 @@
 import logging
+import re
 from logging import Handler, LogRecord
 
 from web.setup import config
+
+#
+# Filters
+#
+
+
+class WerkzeugFilter(logging.Filter):
+    pattern = re.compile(r'"(\S+)\s+(\S+)[^"]*"\s+(\d{3})')
+
+    def filter(self, record: logging.LogRecord) -> bool:
+        match = self.pattern.search(record.getMessage())
+        if match:
+            method, url, status = match.groups()
+            record.msg = f"{method} {url} {status}"
+            record.args = ()
+        return True
+
 
 #
 # Formatters
