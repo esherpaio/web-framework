@@ -5,6 +5,8 @@ import time
 from threading import Event, Thread
 from types import FrameType
 from typing import Callable, Type
+from flask import Flask
+from web.app.error import handle_error
 
 from web.automation import Automator
 from web.i18n import translator
@@ -54,6 +56,14 @@ class Worker:
         if events:
             log.info(f"Updating {len(events)} mail events")
             mail.events.update(events)
+
+    def setup_flask(self, app: Flask) -> None:
+        app.config["PREFERRED_URL_SCHEME"] = config.URL_SCHEME
+        if config.DEBUG:
+            log.info("Enabling Flask debug mode")
+            app.debug = True
+        app.register_error_handler(Exception, handle_error)
+        app.add_url_rule("", endpoint="home", view_func=lambda: "OK")
 
     def setup_tasks(self, tasks: list[Type[Automator]]) -> None:
         if not tasks:
@@ -105,4 +115,4 @@ class Worker:
         if self._thread is not None and self._thread.is_alive():
             self._thread.join(timeout=self._stop_timeout_s)
             if self._thread.is_alive():
-                log.warning("Worker thread did not stop within timeout")
+                log.warning("Worker did not stop within timeout")
