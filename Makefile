@@ -1,11 +1,11 @@
-.PHONY: activate commit
-activate:
+.PHONY: venv commit
+venv:
 	python3 -m venv .venv
 commit:
 	git rev-parse --short HEAD
 
-.PHONY: requirements
-requirements:
+.PHONY: packages
+packages:
 	pip install --upgrade pip
 	pip freeze | grep '^web-' | sed 's/ @.*//' | xargs -r pip uninstall -y
 	pip install -r requirements.txt
