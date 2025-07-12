@@ -1,12 +1,12 @@
 import logging
-import sched
+import os
 import signal
 import time
 from threading import Event, Thread
 from types import FrameType
 from typing import Callable, Type
+
 from flask import Flask
-from web.app.error import handle_error
 
 from web.automation import Automator
 from web.i18n import translator
@@ -16,15 +16,13 @@ from web.setup import config
 
 
 class Worker:
-    def __init__(self, start_delay_s: int = 0, stop_timeout_s: int = 5) -> None:
+    def __init__(self) -> None:
         log.info("Initializing worker")
-        self._scheduler = sched.scheduler(time.time, time.sleep)
         self._thread: Thread | None = None
         self._stop_event = Event()
         self._tasks: list[Type[Automator]] = []
-        self._start_delay_s = start_delay_s
-        self._stop_timeout_s = stop_timeout_s
         self._interval_s = config.WORKER_INTERVAL_S
+        self._last_event_time: float | None = None
 
         signal.signal(signal.SIGTERM, self._signal)
         signal.signal(signal.SIGINT, self._signal)
@@ -58,12 +56,7 @@ class Worker:
             mail.events.update(events)
 
     def setup_flask(self, app: Flask) -> None:
-        app.config["PREFERRED_URL_SCHEME"] = config.URL_SCHEME
-        if config.DEBUG:
-            log.info("Enabling Flask debug mode")
-            app.debug = True
-        app.register_error_handler(Exception, handle_error)
-        app.add_url_rule("", endpoint="home", view_func=lambda: "OK")
+        app.add_url_rule("/", endpoint="home", view_func=lambda: "OK")
 
     def setup_tasks(self, tasks: list[Type[Automator]]) -> None:
         if not tasks:
@@ -84,35 +77,33 @@ class Worker:
 
         log.info("Starting worker")
         self._stop_event.clear()
-        self._thread = Thread(target=self._run_scheduler, daemon=True)
+        self._thread = Thread(target=self._start_scheduler)
         self._thread.start()
 
-    def _run_scheduler(self) -> None:
-        self._scheduler.enter(delay=self._start_delay_s, priority=1, action=self._run)
-        self._scheduler.run()
+    def _start_scheduler(self) -> None:
+        while not self._stop_event.is_set():
+            current_time = time.monotonic()
+            if (
+                self._last_event_time is None
+                or self._last_event_time + self._interval_s <= current_time
+            ):
+                self._last_event_time = time.monotonic()
+                self._iterate_tasks()
+            else:
+                self._stop_event.wait(self._interval_s)
 
-    def _run(self) -> None:
+    def _iterate_tasks(self) -> None:
         for task in self._tasks:
+            if self._stop_event.is_set():
+                return
             try:
                 task.run()
             except Exception as e:
                 log.error(f"Error running task {task.__name__}: {e}")
 
-        if self._stop_event.is_set():
-            return
-        self._scheduler.enter(delay=self._interval_s, priority=1, action=self._run)
-
     def stop(self) -> None:
         log.info("Stopping worker")
         self._stop_event.set()
-
-        for event in list(self._scheduler.queue):
-            try:
-                self._scheduler.cancel(event)
-            except ValueError:
-                pass
-
         if self._thread is not None and self._thread.is_alive():
-            self._thread.join(timeout=self._stop_timeout_s)
-            if self._thread.is_alive():
-                log.warning("Worker did not stop within timeout")
+            self._thread.join(timeout=5)
+        os._exit(1)
