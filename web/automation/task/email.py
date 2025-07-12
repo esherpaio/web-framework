@@ -5,7 +5,6 @@ from sqlalchemy.orm import Session
 
 from web.database import conn
 from web.database.model import Email, EmailStatusId
-from web.logger import log
 from web.mail import mail
 
 from ..automator import Processor
@@ -39,6 +38,5 @@ class EmailProcessor(Processor):
         )
         if email is None:
             return False
-        log.info(f"Triggering email event {email.event_id} for user {email.user_id}")
         mail.trigger_events(s, email.event_id, _email=email, **email.data)
         return True

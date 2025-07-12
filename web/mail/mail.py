@@ -62,11 +62,13 @@ class Mail(metaclass=Singleton):
                 _email.status_id = status_id
             s.flush()
 
-            # Log the email event
-            if result:
+            # Log
+            if status_id is EmailStatusId.QUEUED:
+                log.info(f"Queued email {_email.id} for event {event_id}")
+            elif status_id is EmailStatusId.SENT:
                 log.info(f"Sent email {_email.id} for event {event_id}")
-            else:
-                log.error(f"Failed to send email {_email.id} for event {event_id}")
+            elif status_id is EmailStatusId.FAILED:
+                log.warning(f"Failed email {_email.id} for event {event_id}")
 
         return all_result
 
