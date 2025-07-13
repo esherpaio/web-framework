@@ -168,18 +168,21 @@ class API(Generic[B]):
 
     @staticmethod
     def insert(s: Session, data: dict, model: B) -> None:
+        # Set attributes from data
         for k, v in data.items():
             if hasattr(model, k):
                 setattr(model, k, v)
+
+        # Add model to session
         try:
             s.add(model)
+            s.flush()
         except IntegrityError as e:
             if isinstance(e.orig, NotNullViolation):
                 abort(json_response(400, HttpText.HTTP_400))
             if isinstance(e.orig, (UniqueViolation, ForeignKeyViolation)):
                 abort(json_response(409, HttpText.HTTP_409))
             raise e
-        s.flush()
 
     @classmethod
     def get(
