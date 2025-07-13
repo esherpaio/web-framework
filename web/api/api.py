@@ -1,7 +1,7 @@
 from typing import Any, Callable, Generic, TypeVar
 
 from flask import abort, has_request_context, request
-from psycopg2.errors import UniqueViolation
+from psycopg2.errors import ForeignKeyViolation, UniqueViolation
 from sqlalchemy import ColumnExpressionArgument
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.attributes import InstrumentedAttribute
@@ -174,7 +174,7 @@ class API(Generic[B]):
         try:
             s.add(model)
         except IntegrityError as e:
-            if isinstance(e.orig, UniqueViolation):
+            if isinstance(e.orig, (UniqueViolation, ForeignKeyViolation)):
                 abort(json_response(409, HttpText.HTTP_409))
             raise e
         s.flush()
