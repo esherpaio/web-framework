@@ -31,7 +31,7 @@ class API(Generic[B]):
     def validate_request(self) -> None:
         from web.auth import current_user
 
-        if current_user is None:
+        if not current_user:
             abort(json_response(401, HttpText.HTTP_401))
 
     #
