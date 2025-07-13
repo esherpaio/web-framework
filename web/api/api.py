@@ -24,6 +24,17 @@ class API(Generic[B]):
     get_columns: set[InstrumentedAttribute | str] = set()
 
     #
+    # Validation
+    #
+
+    @classmethod
+    def validate_request(self) -> None:
+        from web.auth import current_user
+
+        if current_user is None:
+            abort(json_response(401, HttpText.HTTP_401))
+
+    #
     # Parsing
     #
 
