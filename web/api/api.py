@@ -168,12 +168,10 @@ class API(Generic[B]):
 
     @staticmethod
     def insert(s: Session, data: dict, model: B) -> None:
-        # Set attributes from data
         for k, v in data.items():
             if hasattr(model, k):
                 setattr(model, k, v)
 
-        # Add model to session
         try:
             s.add(model)
             s.flush()
@@ -193,13 +191,13 @@ class API(Generic[B]):
     ) -> B:
         if cls.model is None:
             raise NotImplementedError
+
         if id_ is not None:
             filters += (cls.model.id == id_,)
         model = s.query(cls.model).filter(*filters).first()
         if model is None:
             abort(json_response(404, HttpText.HTTP_404))
-        else:
-            return model
+        return model
 
     @classmethod
     def list_(
