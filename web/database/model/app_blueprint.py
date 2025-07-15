@@ -1,10 +1,10 @@
 from sqlalchemy import Boolean, String
 from sqlalchemy.orm import mapped_column as MC
 
-from ._base import Attribute, Base
+from ._base import Attribute, IntBase
 
 
-class AppBlueprint(Base, Attribute):
+class AppBlueprint(IntBase, Attribute):
     __tablename__ = "app_blueprint"
 
     css_path = MC(String(128))

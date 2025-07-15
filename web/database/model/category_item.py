@@ -2,10 +2,10 @@ from sqlalchemy import CheckConstraint, ForeignKey, Integer, UniqueConstraint
 from sqlalchemy.orm import mapped_column as MC
 from sqlalchemy.orm import relationship
 
-from ._base import Base
+from ._base import IntBase
 
 
-class CategoryItem(Base):
+class CategoryItem(IntBase):
     __tablename__ = "category_item"
     __table_args__ = (
         UniqueConstraint("category_id", "article_id"),

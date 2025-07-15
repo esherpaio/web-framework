@@ -2,10 +2,10 @@ from sqlalchemy import ForeignKey, UniqueConstraint
 from sqlalchemy.orm import mapped_column as MC
 from sqlalchemy.orm import relationship
 
-from ._base import Base
+from ._base import IntBase
 
 
-class SkuDetail(Base):
+class SkuDetail(IntBase):
     __tablename__ = "sku_detail"
     __table_args__ = (UniqueConstraint("sku_id", "value_id"),)
 

@@ -6,11 +6,11 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import mapped_column as MC
 from sqlalchemy.orm import relationship, validates
 
-from ._base import Attribute, Base
+from ._base import Attribute, IntBase
 from ._utils import default_price, val_number
 
 
-class Refund(Base, Attribute):
+class Refund(IntBase, Attribute):
     __tablename__ = "refund"
 
     mollie_id = MC(String(64), unique=True)

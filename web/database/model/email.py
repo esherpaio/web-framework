@@ -4,11 +4,11 @@ from sqlalchemy.ext.mutable import MutableDict
 from sqlalchemy.orm import mapped_column as MC
 from sqlalchemy.orm import relationship
 
-from ._base import Base
+from ._base import IntBase
 from .email_status import EmailStatusId
 
 
-class Email(Base):
+class Email(IntBase):
     __tablename__ = "email"
 
     data = MC(MutableDict.as_mutable(JSONB), nullable=False, server_default="{}")  # type: ignore[arg-type]

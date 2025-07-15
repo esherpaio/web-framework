@@ -3,11 +3,11 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import mapped_column as MC
 from sqlalchemy.orm import relationship
 
-from ._base import Base
+from ._base import IntBase
 from .product_link_type import ProductLinkTypeId
 
 
-class ProductLink(Base):
+class ProductLink(IntBase):
     __tablename__ = "product_link"
     __table_args__ = (UniqueConstraint("product_id", "sku_id", "type_id"),)
 

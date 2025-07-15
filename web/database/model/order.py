@@ -6,7 +6,7 @@ from sqlalchemy.ext.hybrid import hybrid_method, hybrid_property
 from sqlalchemy.orm import mapped_column as MC
 from sqlalchemy.orm import relationship, validates
 
-from ._base import Base
+from ._base import IntBase
 from ._utils import (
     default_price,
     default_rate,
@@ -18,7 +18,7 @@ from ._utils import (
 from .order_status import OrderStatus, OrderStatusId
 
 
-class Order(Base):
+class Order(IntBase):
     __tablename__ = "order"
     __table_args__ = (CheckConstraint("coupon_amount IS NULL OR coupon_rate IS NULL"),)
 

@@ -5,11 +5,11 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import mapped_column as MC
 from sqlalchemy.orm import relationship, validates
 
-from ._base import Attribute, Base
+from ._base import Attribute, IntBase
 from ._utils import default_price, val_number
 
 
-class Sku(Base, Attribute):
+class Sku(IntBase, Attribute):
     __tablename__ = "sku"
 
     is_deleted = MC(Boolean, nullable=False, default=False, server_default="false")

@@ -3,10 +3,10 @@ from enum import IntEnum
 from sqlalchemy import Integer, String
 from sqlalchemy.orm import mapped_column as MC
 
-from ._base import Base
+from ._base import IntBase
 
 
-class OrderStatus(Base):
+class OrderStatus(IntBase):
     __tablename__ = "order_status"
 
     name = MC(String(16), nullable=False)

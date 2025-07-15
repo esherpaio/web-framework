@@ -5,12 +5,12 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import mapped_column as MC
 from sqlalchemy.orm import relationship, validates
 
-from ._base import Attribute, Base
+from ._base import Attribute, IntBase
 from ._utils import get_lower, val_email
 from .user_role import UserRoleId
 
 
-class User(Base, Attribute):
+class User(IntBase, Attribute):
     __tablename__ = "user"
 
     api_key = MC(String(64), unique=True)

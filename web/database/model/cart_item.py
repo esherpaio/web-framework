@@ -8,11 +8,11 @@ from sqlalchemy.orm import relationship, validates
 
 from web.setup import config
 
-from ._base import Base
+from ._base import IntBase
 from ._utils import val_number
 
 
-class CartItem(Base):
+class CartItem(IntBase):
     __tablename__ = "cart_item"
     __table_args__ = (UniqueConstraint("cart_id", "sku_id"),)
 

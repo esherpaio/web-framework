@@ -3,10 +3,10 @@ from enum import IntEnum
 from sqlalchemy import Integer, String
 from sqlalchemy.orm import mapped_column as MC
 
-from ._base import Base
+from ._base import IntBase
 
 
-class UserRole(Base):
+class UserRole(IntBase):
     __tablename__ = "user_role"
 
     level = MC(Integer, nullable=False)

@@ -6,11 +6,11 @@ from sqlalchemy import String
 from sqlalchemy.orm import mapped_column as MC
 from sqlalchemy.orm import validates
 
-from ._base import Base
+from ._base import IntBase
 from ._utils import default_rate, get_upper, val_length, val_number
 
 
-class Currency(Base):
+class Currency(IntBase):
     __tablename__ = "currency"
 
     code = MC(String(3), nullable=False, unique=True)
