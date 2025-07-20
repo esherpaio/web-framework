@@ -22,6 +22,7 @@ class Automator:
 class SeedSyncer(Automator):
     MODEL: Type[Base]
     KEY: str
+    IGNORE_KEYS: list[str] = []
     SEEDS: list[Any]
 
     @classmethod
@@ -41,6 +42,8 @@ class SeedSyncer(Automator):
             row = s.query(cls.MODEL).filter_by(**filters).first()
             if row:
                 for key, value in seed.__dict__.items():
+                    if key in cls.IGNORE_KEYS:
+                        continue
                     if key.startswith("_") or key == cls.KEY:
                         continue
                     setattr(row, key, value)
