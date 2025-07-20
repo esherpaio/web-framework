@@ -1,7 +1,7 @@
 import re
 from typing import Any, Type
 
-from sqlalchemy.orm import Session, make_transient
+from sqlalchemy.orm import Session
 
 from web.database import conn
 from web.database.model import Base
@@ -48,8 +48,7 @@ class SeedSyncer(Automator):
                         continue
                     setattr(row, key, value)
             else:
-                make_transient(seed)
-                s.add(seed)
+                s.merge(seed)
             s.flush()
 
 
