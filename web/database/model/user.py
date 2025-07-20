@@ -20,7 +20,10 @@ class User(IntBase, Attribute):
     password_hash = MC(String(256))
 
     billing_id = MC(ForeignKey("billing.id", ondelete="CASCADE"))
-    role_id = MC(ForeignKey("user_role.id", ondelete="RESTRICT"), nullable=False)
+    role_id = MC(
+        ForeignKey("user_role.id", ondelete="RESTRICT", onupdate="CASCADE"),
+        nullable=False,
+    )
     shipping_id = MC(ForeignKey("shipping.id", ondelete="CASCADE"))
 
     billing = relationship("Billing", foreign_keys=[billing_id])

@@ -1,4 +1,3 @@
-from .currency import currency_seeds
 from .email import mail_events
 from .email_status import email_status_seeds
 from .file_type import file_type_seeds
@@ -8,7 +7,6 @@ from .product_type import product_type_seeds
 from .user_role import user_role_seeds
 
 __all__ = [
-    "currency_seeds",
     "email_status_seeds",
     "file_type_seeds",
     "mail_events",

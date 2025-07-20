@@ -14,7 +14,8 @@ class ProductLink(IntBase):
     product_id = MC(ForeignKey("product.id", ondelete="CASCADE"), nullable=False)
     sku_id = MC(ForeignKey("sku.id", ondelete="CASCADE"), nullable=False)
     type_id = MC(
-        ForeignKey("product_link_type.id", ondelete="RESTRICT"), nullable=False
+        ForeignKey("product_link_type.id", ondelete="RESTRICT", onupdate="CASCADE"),
+        nullable=False,
     )
 
     product = relationship("Product")

@@ -16,6 +16,6 @@ class OrderStatus(StrBase):
 class OrderStatusId(StrEnum):
     PENDING = "pending"
     PAID = "paid"
-    IN_PROGRESS = "in_progress"
+    IN_PROGRESS = "in-progress"
     READY = "ready"
     COMPLETED = "completed"

@@ -12,7 +12,10 @@ class File(IntBase):
     description = MC(String(64))
     path = MC(String(256), nullable=False, unique=True)
 
-    type_id = MC(ForeignKey("file_type.id", ondelete="RESTRICT"), nullable=False)
+    type_id = MC(
+        ForeignKey("file_type.id", ondelete="RESTRICT", onupdate="CASCADE"),
+        nullable=False,
+    )
 
     # Properties - types
 

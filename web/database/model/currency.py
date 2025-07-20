@@ -1,16 +1,15 @@
 from decimal import Decimal
-from enum import StrEnum
 from typing import Any
 
 from sqlalchemy import String
 from sqlalchemy.orm import mapped_column as MC
 from sqlalchemy.orm import validates
 
-from ._base import StrBase
+from ._base import IntBase
 from ._utils import default_rate, get_upper, val_length, val_number
 
 
-class Currency(StrBase):
+class Currency(IntBase):
     __tablename__ = "currency"
 
     code = MC(String(3), nullable=False, unique=True)
@@ -29,8 +28,3 @@ class Currency(StrBase):
     def validate_rate(self, key: str, value: Any) -> Any:
         val_number(key, value, min_=0)
         return value
-
-
-class CurrencyId(StrEnum):
-    EUR = "eur"
-    USD = "usd"

@@ -27,7 +27,10 @@ class Product(IntBase, Attribute):
     unit_price = MC(default_price, nullable=False)
 
     shipment_class_id = MC(ForeignKey("shipment_class.id", ondelete="RESTRICT"))
-    type_id = MC(ForeignKey("product_type.id", ondelete="RESTRICT"), nullable=False)
+    type_id = MC(
+        ForeignKey("product_type.id", ondelete="RESTRICT", onupdate="CASCADE"),
+        nullable=False,
+    )
 
     links = relationship("ProductLink", back_populates="product")
     medias = relationship(

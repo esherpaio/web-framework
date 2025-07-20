@@ -35,7 +35,10 @@ class Order(IntBase):
 
     billing_id = MC(ForeignKey("billing.id", ondelete="RESTRICT"), nullable=False)
     shipping_id = MC(ForeignKey("shipping.id", ondelete="RESTRICT"), nullable=False)
-    status_id = MC(ForeignKey("order_status.id", ondelete="RESTRICT"), nullable=False)
+    status_id = MC(
+        ForeignKey("order_status.id", ondelete="RESTRICT", onupdate="CASCADE"),
+        nullable=False,
+    )
     user_id = MC(ForeignKey("user.id", ondelete="RESTRICT"), nullable=False)
 
     billing = relationship("Billing")
