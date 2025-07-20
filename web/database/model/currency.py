@@ -1,16 +1,16 @@
 from decimal import Decimal
-from enum import IntEnum
+from enum import StrEnum
 from typing import Any
 
 from sqlalchemy import String
 from sqlalchemy.orm import mapped_column as MC
 from sqlalchemy.orm import validates
 
-from ._base import IntBase
+from ._base import StrBase
 from ._utils import default_rate, get_upper, val_length, val_number
 
 
-class Currency(IntBase):
+class Currency(StrBase):
     __tablename__ = "currency"
 
     code = MC(String(3), nullable=False, unique=True)
@@ -31,6 +31,6 @@ class Currency(IntBase):
         return value
 
 
-class CurrencyId(IntEnum):
-    EUR = 1
-    USD = 2
+class CurrencyId(StrEnum):
+    EUR = "eur"
+    USD = "usd"

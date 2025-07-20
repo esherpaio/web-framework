@@ -1,19 +1,19 @@
-from enum import IntEnum
+from enum import StrEnum
 
 from sqlalchemy import Integer, String
 from sqlalchemy.orm import mapped_column as MC
 
-from ._base import IntBase
+from ._base import StrBase
 
 
-class EmailStatus(IntBase):
+class EmailStatus(StrBase):
     __tablename__ = "email_status"
 
     name = MC(String(16), nullable=False)
     order = MC(Integer)
 
 
-class EmailStatusId(IntEnum):
-    QUEUED = 1
-    SENT = 2
-    FAILED = 3
+class EmailStatusId(StrEnum):
+    QUEUED = "queued"
+    SENT = "sent"
+    FAILED = "failed"

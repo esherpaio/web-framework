@@ -1,21 +1,21 @@
-from enum import IntEnum
+from enum import StrEnum
 
 from sqlalchemy import Integer, String
 from sqlalchemy.orm import mapped_column as MC
 
-from ._base import IntBase
+from ._base import StrBase
 
 
-class OrderStatus(IntBase):
+class OrderStatus(StrBase):
     __tablename__ = "order_status"
 
     name = MC(String(16), nullable=False)
     order = MC(Integer)
 
 
-class OrderStatusId(IntEnum):
-    PENDING = 1
-    PAID = 2
-    IN_PROGRESS = 3
-    READY = 4
-    COMPLETED = 5
+class OrderStatusId(StrEnum):
+    PENDING = "pending"
+    PAID = "paid"
+    IN_PROGRESS = "in_progress"
+    READY = "ready"
+    COMPLETED = "completed"

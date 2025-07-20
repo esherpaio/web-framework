@@ -1,16 +1,16 @@
-from enum import IntEnum
+from enum import StrEnum
 
 from sqlalchemy import String
 from sqlalchemy.orm import mapped_column as MC
 
-from ._base import IntBase
+from ._base import StrBase
 
 
-class ProductType(IntBase):
+class ProductType(StrBase):
     __tablename__ = "product_type"
 
     name = MC(String(16), nullable=False, unique=True)
 
 
-class ProductTypeId(IntEnum):
-    PHYSICAL = 1
+class ProductTypeId(StrEnum):
+    PHYSICAL = "physical"
