@@ -1,10 +1,10 @@
 import contextlib
 
 import pytest
+from bp_api import api_bp
+from bp_webhook import webhook_bp
 from flask import Flask
 from sqlalchemy import text
-from web_bp_api import api_bp
-from web_bp_webhook import webhook_bp
 
 import test.config as config
 from web.cache import cache_manager
