@@ -2,7 +2,7 @@
 setuptools~=80.9.0
 
 # migrations
-alembic~=1.16.2
+alembic~=1.16.4
 
 # testing
 pytest~=8.4.1
@@ -10,11 +10,11 @@ pytest-cov~=6.2.1
 
 # formating and linting
 djlint~=1.36.4
-mypy==1.16.1
-ruff~=0.12.0
+mypy==1.17.1
+ruff~=0.12.9
 
 # blueprints
-git+https://github.com/esherpaio/web-blueprint-admin.git#a89de66
-git+https://github.com/esherpaio/web-blueprint-api.git@refactor
-git+https://github.com/esherpaio/web-blueprint-auth.git#a2dc568
-git+https://github.com/esherpaio/web-blueprint-index.git#9886ec0
+git+https://github.com/esherpaio/web-blueprint-admin.git@673a7b5
+git+https://github.com/esherpaio/web-blueprint-api.git@758310c
+git+https://github.com/esherpaio/web-blueprint-auth.git@3f9f402
+git+https://github.com/esherpaio/web-blueprint-index.git@c4c6634

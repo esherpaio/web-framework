@@ -1,21 +1,16 @@
-.PHONY: venv commit
+.PHONY: venv
 venv:
 	python3 -m venv .venv
-commit:
-	git rev-parse --short HEAD
 
 .PHONY: packages
 packages:
 	pip install --upgrade pip
-	pip freeze | grep '^web-' | sed 's/ @.*//' | xargs -r pip uninstall -y
 	pip install -r requirements.txt
 	pip install -r requirements-dev.txt
 
 .PHONY: migrations migrate
 migrations:
 	alembic check || alembic revision --autogenerate -m ""
-migrate:
-	alembic upgrade head
 
 .PHONY: format format_py format_html
 format: format_py format_html

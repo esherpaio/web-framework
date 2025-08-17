@@ -27,5 +27,5 @@ preserve_blank_lines = true
 [tool.pytest.ini_options]
 python_files = "test_*.py"
 addopts = "--maxfail=1"
-faulthandler_timeout = 5
+faulthandler_timeout = 30
 cache_dir = ".cache/pytest"
