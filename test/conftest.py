@@ -2,113 +2,62 @@ import contextlib
 
 import pytest
 from flask import Flask
-from flask.testing import FlaskClient
+from sqlalchemy import text
 from web_bp_api import api_bp
 from web_bp_webhook import webhook_bp
 
-from web.automation import SeedSyncer
+import test.config as config
 from web.cache import cache_manager
 from web.database.client import engine
-from web.database.model import Base, User, UserRoleId
+from web.database.model import Base
+from web.logger import log
 from web.setup.server import Server
 
-#
-# Configuration
-#
+from .tasks import UserSeedSyncer
 
-pytest_plugins = ["test.fixtures.models"]
+pytest_plugins = []
 
 
-def pytest_configure(*args) -> None:
-    drop_tables()
-
-
-def drop_tables() -> None:
+@pytest.fixture(scope="function", autouse=True)
+def drop_tables():
+    log.debug("Dropping all tables")
     meta = Base.metadata
     with contextlib.closing(engine.connect()) as conn:
-        trans = conn.begin()
+        s = conn.begin()
+        conn.execute(text("SET session_replication_role = 'replica'"))
         for table in reversed(meta.sorted_tables):
-            conn.execute(table.delete())
-        trans.commit()
+            conn.execute(
+                text(f'TRUNCATE TABLE "{table.name}" RESTART IDENTITY CASCADE')
+            )
+        conn.execute(text("SET session_replication_role = 'origin'"))
+        s.commit()
+    engine.dispose()
 
 
-#
-# Syncers
-#
-
-
-class UserSeedSyncer(SeedSyncer):
-    MODEL = User
-    KEY = "api_key"
-    SEEDS = [
-        User(
-            api_key="guest",
-            email="guest@enlarge-online.nl",
-            is_active=True,
-            role_id=UserRoleId.GUEST,
-        ),
-        User(
-            api_key="user",
-            email="user@enlarge-online.nl",
-            is_active=True,
-            role_id=UserRoleId.USER,
-        ),
-        User(
-            api_key="admin",
-            email="admin@enlarge-online.nl",
-            is_active=True,
-            role_id=UserRoleId.ADMIN,
-        ),
-    ]
-
-
-#
-# Flask
-#
-
-
-def create_app() -> Flask:
+@pytest.fixture(scope="function", autouse=True)
+def client(drop_tables):
     app = Flask(__name__)
     web = Server()
-    web.setup_database(True, [UserSeedSyncer])
+    web.setup_database(False, [UserSeedSyncer])
     web.setup_cache()
     web.setup_flask(app, [api_bp, webhook_bp])
     web.setup_jinja(app)
     app.testing = True
     cache_manager.pause()
-    return app
-
-
-@pytest.fixture(scope="module", autouse=True)
-def update_cache() -> None:
-    cache_manager.update(force=True)
-
-
-@pytest.fixture(scope="session")
-def app() -> Flask:
-    return create_app()
-
-
-@pytest.fixture(scope="session")
-def client(app) -> FlaskClient:
     return app.test_client()
 
 
-#
-# Authentication
-#
+@pytest.fixture(scope="function", autouse=True)
+def clear_cookies(client):
+    log.debug("Clearing cookies")
+    if client._cookies is not None:
+        client._cookies.clear()
 
 
-@pytest.fixture(scope="session")
-def guest() -> dict[str, str]:
-    return {"Authorization": "Bearer guest"}
+@pytest.fixture
+def patch_config(monkeypatch):
+    def _patch(**kwargs):
+        for key, value in kwargs.items():
+            monkeypatch.setattr(config, key, value)
 
-
-@pytest.fixture(scope="session")
-def user() -> dict[str, str]:
-    return {"Authorization": "Bearer user"}
-
-
-@pytest.fixture(scope="session")
-def admin() -> dict[str, str]:
-    return {"Authorization": "Bearer admin"}
+    return _patch
