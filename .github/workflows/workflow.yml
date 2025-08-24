@@ -45,13 +45,14 @@ jobs:
           TIMESTAMP=$(date +%Y%m%d)
           for f in bundles/*; do
             base=$(basename "$f")
+            remote_name=${base// /%20}
             # Ensure directory exists, then CWD into it; TYPE I = binary
             curl --ssl-reqd --ftp-pasv \
                 --connect-timeout 30 --max-time 1800 \
                 --retry 6 --retry-delay 10 --retry-max-time 0 \
                 --user "${FTP_USERNAME}:${FTP_PASSWORD}" \
                 --quote "MKD backups" --quote "CWD backups" --quote "TYPE I" \
-                -T "$f" "ftp://${FTP_HOSTNAME}:${FTP_PORT}/${base}"
+                -T "$f" "ftp://${FTP_HOSTNAME}:${FTP_PORT}/${remote_name}"
           done
 
           echo "Listing /backups:"
