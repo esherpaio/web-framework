@@ -32,27 +32,14 @@ jobs:
           sudo apt-get update
           sudo apt-get install zip
           zip -r archive.zip *
-      - name: Upload to Google Drive
-        uses: adityak74/google-drive-upload-git-action@main
+      - name: Upload file
+        uses: tomasbkk/action-ftp-upload@v1.0
         with:
-          credentials: ${{ secrets.GOOGLE_API_CREDENTIALS }}
-          filename: "archive.zip"
-          folderId: "1jZj_u_0Q6mx9K27HzZsFD9Zkn01WA7Sq"
-          name: "backup.zip"
-          overwrite: "true"
-      # - name: Make directories
-      #   run: |
-      #     mkdir -p w/x/y
-      #     date +%s > w/x/y/z
-      # - name: Mirror directories
-      #   uses: adityak74/google-drive-upload-git-action@main
-      #   with:
-      #     credentials: ${{ secrets.GOOGLE_API_CREDENTIALS }}
-      #     filename: w/x/y/z
-      #     folderId: "1jZj_u_0Q6mx9K27HzZsFD9Zkn01WA7Sq"
-      #     overwrite: "true"
-      #     mirrorDirectoryStructure: "true"
-
+          user: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          host: ${{ secrets.FTP_HOSTNAME }}
+          src: archive.zip
+          dest: archive.zip
 
   # test:
   #   runs-on: ubuntu-latest
