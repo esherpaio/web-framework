@@ -25,22 +25,27 @@ jobs:
   backup:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-      - name: Archive repository
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+      - name: Install rclone
+        run: sudo apt-get update && sudo apt-get install -y rclone
+      - name: Create bundle
         run: |
-          sudo apt-get update
-          sudo apt-get install zip
-          mkdir backup
-          zip -r backup/archive.zip *
-      - name: Upload ftp
-        uses: sebastianpopp/ftp-action@releases/v2
-        with:
-          host: ${{ secrets.FTP_HOSTNAME }}
-          user: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          localDir: "backup"
-          remoteDir: "backup"
+          TS=$(date +%F)
+          mkdir -p bundles
+          git bundle create "bundles/${{ github.event.repository.name }}-$TS.bundle" --all
+          sha256sum bundles/* > bundles/SHA256SUMS
+      - name: Upload bundle
+        env:
+          FTPS_HOST: ${{ secrets.FTPS_HOSTNAME }}
+          FTPS_PORT: 21
+          FTPS_USER: ${{ secrets.FTPS_USERNAME }}
+          FTPS_PASS: ${{ secrets.FTPS_PASSWORD }}
+        run: |
+          TS=$(date +%F)
+          rclone -vv copy bundles \
+            ":ftp,host=${FTPS_HOST},port=${FTPS_PORT:-21},user=${FTPS_USER},pass=${FTPS_PASS},explicit_tls=true:/backups/git/${{ github.repository }}-$TS" \
+            --transfers=4 --checkers=8 --immutable
 
   # test:
   #   runs-on: ubuntu-latest
