@@ -42,9 +42,12 @@ jobs:
           FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
           FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
         run: |
+          set -euo pipefail
           TS=$(date +%F)
+          [ -n "${FTP_HOSTNAME}" ] && [ -n "${FTP_USERNAME}" ] && [ -n "${FTP_PASSWORD}" ] || { echo "FTP secrets missing"; exit 2; }
+          PASS_OBS=$(rclone obscure "${FTP_PASSWORD}")
           rclone -vv copy bundles \
-            ":ftp,host=${FTP_HOSTNAME},port=${FTP_PORT},user=${FTP_USERNAME},pass=${FTP_PASSWORD},explicit_tls=true:/backups/git/${{ github.repository }}-$TS" \
+            ":ftp,host=${FTP_HOSTNAME},port=${FTP_PORT},user=${FTP_USERNAME},pass=${PASS_OBS},explicit_tls=true:/backups/git/${{ github.repository }}-$TS" \
             --transfers=4 --checkers=8 --immutable
 
   # test:
