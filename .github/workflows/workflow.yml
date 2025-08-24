@@ -21,6 +21,38 @@ jobs:
         run: make packages
       - name: Run linters
         run: make lint
+  
+  backup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Archive repository
+        run: |
+          sudo apt-get update
+          sudo apt-get install zip
+          zip -r archive.zip *
+      - name: Upload to Google Drive
+        uses: adityak74/google-drive-upload-git-action@main
+        with:
+          credentials: ${{ secrets.GOOGLE_API_CREDENTIALS }}
+          filename: "archive.zip"
+          folderId: "1jZj_u_0Q6mx9K27HzZsFD9Zkn01WA7Sq"
+          name: "backup.zip"
+          overwrite: "true"
+      # - name: Make directories
+      #   run: |
+      #     mkdir -p w/x/y
+      #     date +%s > w/x/y/z
+      # - name: Mirror directories
+      #   uses: adityak74/google-drive-upload-git-action@main
+      #   with:
+      #     credentials: ${{ secrets.GOOGLE_API_CREDENTIALS }}
+      #     filename: w/x/y/z
+      #     folderId: "1jZj_u_0Q6mx9K27HzZsFD9Zkn01WA7Sq"
+      #     overwrite: "true"
+      #     mirrorDirectoryStructure: "true"
+
 
   # test:
   #   runs-on: ubuntu-latest
