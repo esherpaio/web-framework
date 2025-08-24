@@ -32,8 +32,8 @@ jobs:
         run: |
           TIMESTAMP=$(date +%Y%m%d)
           mkdir -p bundles
-          git bundle create "bundles/${TIMESTAMP} ${{ github.event.repository.name }}.bundle" --all
-          sha256sum "bundles/${TIMESTAMP} ${{ github.event.repository.name }}.bundle" > "bundles/${TIMESTAMP} ${{ github.event.repository.name }}.sha256"
+          git bundle create "bundles/${TIMESTAMP}_${{ github.event.repository.name }}.bundle" --all
+          sha256sum "bundles/${TIMESTAMP}_${{ github.event.repository.name }}.bundle" > "bundles/${TIMESTAMP}_${{ github.event.repository.name }}.sha256"
       - name: Upload bundle via plain FTP (curl)
         env:
           FTP_HOSTNAME: ${{ secrets.FTP_HOSTNAME }}   # storage.bunnycdn.com
@@ -45,13 +45,12 @@ jobs:
 
           for f in bundles/*; do
             base=$(basename "$f")
-            remote_name=${base// /%20}
             curl --ftp-pasv \
                  --connect-timeout 30 --max-time 1800 \
                  --retry 6 --retry-delay 10 --retry-max-time 0 \
                  --user "${FTP_USERNAME}:${FTP_PASSWORD}" \
                  --ftp-create-dirs \
-                 -T "$f" "ftp://${FTP_HOSTNAME}:21/backups/$remote_name"
+                 -T "$f" "ftp://${FTP_HOSTNAME}:21/backups/$base"
           done
 
           echo "Listing /backups over plain FTP:"
