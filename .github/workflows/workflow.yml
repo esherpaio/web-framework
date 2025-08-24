@@ -70,7 +70,7 @@ jobs:
 
           for f in bundles/*; do
             base=$(basename "$f")
-            curl --ftp-pasv \
+            curl --ssl-reqd --ftp-pasv --disable-epsv \
                  --connect-timeout 30 --max-time 1800 \
                  --retry 6 --retry-delay 10 --retry-max-time 0 \
                  --user "${FTP_USERNAME}:${FTP_PASSWORD}" \
@@ -79,7 +79,7 @@ jobs:
           done
 
           echo "Listing /backups over plain FTP:"
-          curl --ftp-pasv \
+          curl --ssl-reqd --ftp-pasv --disable-epsv \
                --user "${FTP_USERNAME}:${FTP_PASSWORD}" \
                "ftp://${FTP_HOSTNAME}:21/backups/" -l
 
