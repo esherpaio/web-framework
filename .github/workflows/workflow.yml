@@ -32,8 +32,8 @@ jobs:
         run: |
           TIMESTAMP=$(date +%Y%m%d)
           mkdir -p bundles
-          git bundle create "bundles/${TIMESTAMP}_${{ github.event.repository.name }}.bundle" --all
-          sha256sum "bundles/${TIMESTAMP}_${{ github.event.repository.name }}.bundle" > "bundles/${TIMESTAMP}_${{ github.event.repository.name }}.sha256"
+          git bundle create "bundles/${TIMESTAMP}_${{ github.event.repository.name }}.txt" --all
+          sha256sum "bundles/${TIMESTAMP}_${{ github.event.repository.name }}.txt" > "bundles/${TIMESTAMP}_${{ github.event.repository.name }}.sha256"
       - name: Upload bundle via plain FTP (curl)
         env:
           FTP_HOSTNAME: ${{ secrets.FTP_HOSTNAME }}   # storage.bunnycdn.com
