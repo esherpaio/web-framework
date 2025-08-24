@@ -32,15 +32,16 @@ jobs:
           sudo apt-get update
           sudo apt-get install zip
           mkdir dist
-          zip -r dist/archive.zip *
+          zip -r backup/archive.zip *
       - name: Upload archive
         uses: nerdoza/action-simple-file-upload@v2
         with:
           user: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           host: ${{ secrets.FTP_HOSTNAME }}
-          src: dist/archive.zip
-          dest: dist/archive.zip
+          src: backup/archive.zip
+          dest: backup/archive.zip
+          verbose: true
 
   # test:
   #   runs-on: ubuntu-latest
