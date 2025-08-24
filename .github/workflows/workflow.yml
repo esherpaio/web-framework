@@ -6,7 +6,6 @@ permissions:
 jobs:
   lint:
     runs-on: ubuntu-latest
-    needs: lint
     strategy:
       matrix:
         python-version: ["3.12"]
@@ -24,6 +23,8 @@ jobs:
         run: make lint
   backup:
     runs-on: ubuntu-latest
+    needs: lint
+    if: github.ref == 'refs/heads/main'
     strategy:
       matrix:
         python-version: ["3.12"]
