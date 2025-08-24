@@ -31,7 +31,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install zip
-          mkdir dist
+          mkdir backup
           zip -r backup/archive.zip *
       - name: Upload archive
         uses: nerdoza/action-simple-file-upload@v2
