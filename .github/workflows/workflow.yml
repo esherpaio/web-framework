@@ -46,20 +46,18 @@ jobs:
           for f in bundles/*; do
             base=$(basename "$f")
             remote_name=${base// /%20}
-            # Ensure directory exists, then CWD into it; TYPE I = binary
-            curl --ssl-reqd --ftp-pasv \
+            curl --ssl-reqd --ftp-pasv --disable-epsv \
                 --connect-timeout 30 --max-time 1800 \
                 --retry 6 --retry-delay 10 --retry-max-time 0 \
                 --user "${FTP_USERNAME}:${FTP_PASSWORD}" \
-                --quote "MKD backups" --quote "CWD backups" --quote "TYPE I" \
-                -T "$f" "ftp://${FTP_HOSTNAME}:${FTP_PORT}/${remote_name}"
+                --ftp-create-dirs \
+                -T "$f" "ftp://${FTP_HOSTNAME}:${FTP_PORT}/backups/${remote_name}"
           done
 
-          echo "Listing /backups:"
-          curl -v --ssl-reqd --ftp-pasv \
-              --user "${FTP_USERNAME}:${FTP_PASSWORD}" \
-              --quote "CWD backups" \
-              "ftp://${FTP_HOSTNAME}:${FTP_PORT}/" -l
+          echo "Listing /backups:";
+          curl -v --ssl-reqd --ftp-pasv --disable-epsv \
+               --user "${FTP_USERNAME}:${FTP_PASSWORD}" \
+               "ftp://${FTP_HOSTNAME}:${FTP_PORT}/backups/" -l
 
   # test:
   #   runs-on: ubuntu-latest
