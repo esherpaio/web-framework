@@ -32,8 +32,8 @@ jobs:
         run: |
           TIMESTAMP=$(date +%Y%m%d)
           mkdir -p bundles
-          git bundle create "bundles/${TIMESTAMP}_${{ github.event.repository.name }}.bundle" --all
-          sha256sum bundles/* > bundles/SHA256SUMS
+          git bundle create "bundles/${TIMESTAMP} ${{ github.event.repository.name }}.bundle" --all
+          sha256sum "bundles/${TIMESTAMP} ${{ github.event.repository.name }}.bundle" > "bundles/${TIMESTAMP} ${{ github.event.repository.name }}.sha256"
       - name: Upload bundle via FTPS (curl)
         env:
           FTP_HOSTNAME: ${{ secrets.FTP_HOSTNAME }}
@@ -43,14 +43,16 @@ jobs:
         run: |
           set -euo pipefail
           TIMESTAMP=$(date +%Y%m%d)
-          REMOTE_DIR="backups"
+          REMOTE_DIR="${FTP_USERNAME}/backups"
           for f in bundles/*; do
+            base=$(basename "$f")
+            remote_name=$(printf '%s' "$base" | sed 's/ /%20/g')
             curl --ssl-reqd --ftp-pasv --ftp-method nocwd --disable-epsv \
                  --connect-timeout 30 --max-time 1800 \
                  --retry 6 --retry-delay 10 --retry-max-time 0 \
                  --user "${FTP_USERNAME}:${FTP_PASSWORD}" \
                  --ftp-create-dirs \
-                 -T "$f" "ftp://${FTP_HOSTNAME}:${FTP_PORT}/${REMOTE_DIR}/${TIMESTAMP}_${GITHUB_REPOSITORY##*/}"
+                 -T "$f" "ftp://${FTP_HOSTNAME}:${FTP_PORT}/${REMOTE_DIR}/${remote_name}"
           done
 
           echo "Listing remote dir: ${REMOTE_DIR}";
