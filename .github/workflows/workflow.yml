@@ -39,7 +39,7 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           host: ${{ secrets.FTP_HOSTNAME }}
           src: archive.zip
-          dest: archive.zip
+          dest: /archive.zip
 
   # test:
   #   runs-on: ubuntu-latest
