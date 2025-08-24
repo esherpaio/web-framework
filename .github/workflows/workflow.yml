@@ -32,8 +32,8 @@ jobs:
           sudo apt-get update
           sudo apt-get install zip
           zip -r archive.zip *
-      - name: Upload file
-        uses: tomasbkk/action-ftp-upload@v1.0
+      - name: Upload archive
+        uses: nerdoza/action-simple-file-upload@v2
         with:
           user: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
