@@ -27,8 +27,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with: { fetch-depth: 0 }
-      - name: Install rclone
-        run: sudo apt-get update && sudo apt-get install -y rclone
+      - name: Install latest rclone
+        run: curl -fsSL https://rclone.org/install.sh | sudo bash
       - name: Create bundle
         run: |
           TS=$(date +%F)
@@ -44,11 +44,17 @@ jobs:
         run: |
           set -euo pipefail
           TS=$(date +%F)
-          [ -n "${FTP_HOSTNAME}" ] && [ -n "${FTP_USERNAME}" ] && [ -n "${FTP_PASSWORD}" ] || { echo "FTP secrets missing"; exit 2; }
           PASS_OBS=$(rclone obscure "${FTP_PASSWORD}")
+          # create the remote dir first (helps some servers)
+          rclone mkdir ":ftp,host=${FTP_HOSTNAME},port=${FTP_PORT},user=${FTP_USERNAME},pass=${PASS_OBS},explicit_tls=true,disable_tls13=true:backups/git/${{ github.repository }}-$TS"
+          # upload with conservative concurrency/timeouts
           rclone -vv copy bundles \
-            ":ftp,host=${FTP_HOSTNAME},port=${FTP_PORT},user=${FTP_USERNAME},pass=${PASS_OBS},explicit_tls=true:/backups/git/${{ github.repository }}-$TS" \
-            --transfers=4 --checkers=8 --immutable
+            ":ftp,host=${FTP_HOSTNAME},port=${FTP_PORT},user=${FTP_USERNAME},pass=${PASS_OBS},explicit_tls=true,disable_tls13=true:/backups/git/${{ github.repository }}-$TS" \
+            --transfers 1 --checkers 1 \
+            --ftp-concurrency 1 \
+            --timeout 10m --contimeout 30s \
+            --retries 3 --low-level-retries 20 --retries-sleep 10s \
+            --immutable
 
   # test:
   #   runs-on: ubuntu-latest
