@@ -45,12 +45,13 @@ jobs:
 
           for f in bundles/*; do
             base=$(basename "$f")
+            remote_name=${base// /%20}
             curl --ftp-pasv \
                  --connect-timeout 30 --max-time 1800 \
                  --retry 6 --retry-delay 10 --retry-max-time 0 \
                  --user "${FTP_USERNAME}:${FTP_PASSWORD}" \
                  --ftp-create-dirs \
-                 -T "$f" "ftp://${FTP_HOSTNAME}:21/backups/$base"
+                 -T "$f" "ftp://${FTP_HOSTNAME}:21/backups/$remote_name"
           done
 
           echo "Listing /backups over plain FTP:"
