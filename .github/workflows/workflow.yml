@@ -43,15 +43,20 @@ jobs:
         run: |
           set -euo pipefail
           TIMESTAMP=$(date +%F)
-          REMOTE_DIR="backups/${GITHUB_REPOSITORY}-${TIMESTAMP}"
+          REMOTE_DIR="backups/git/${GITHUB_REPOSITORY}-${TIMESTAMP}"
           for f in bundles/*; do
-            curl --ftp-ssl --ssl-reqd --ftp-pasv --ftp-method nocwd \
+            curl --ssl-reqd --ftp-pasv --ftp-method nocwd --disable-epsv \
                  --connect-timeout 30 --max-time 1800 \
                  --retry 6 --retry-delay 10 --retry-max-time 0 \
                  --user "${FTP_USERNAME}:${FTP_PASSWORD}" \
                  --ftp-create-dirs \
                  -T "$f" "ftp://${FTP_HOSTNAME}:${FTP_PORT}/${REMOTE_DIR}/$(basename "$f")"
           done
+
+          echo "Listing remote dir: ${REMOTE_DIR}";
+          curl -v --ssl-reqd --ftp-pasv --disable-epsv --ftp-method nocwd \
+               --user "${FTP_USERNAME}:${FTP_PASSWORD}" \
+               "ftp://${FTP_HOSTNAME}:${FTP_PORT}/${REMOTE_DIR}/" -l
 
   # test:
   #   runs-on: ubuntu-latest
