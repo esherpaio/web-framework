@@ -55,7 +55,6 @@ jobs:
           rclone -vv copy bundles \
             ":ftp,host=${FTP_HOSTNAME},port=${PORT},user=${FTP_USERNAME},pass=${PASS_OBS},explicit_tls=true,disable_tls13=true,disable_mlsd=true:/backups/git/${{ github.repository }}-$TS" \
             --transfers 1 --checkers 1 --ftp-concurrency 1 \
-            --ftp-set-modtime=false \
             --timeout 30m --contimeout 30s \
             --retries 6 --low-level-retries 30 --retries-sleep 10s \
             --immutable
