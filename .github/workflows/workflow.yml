@@ -10,60 +10,26 @@ jobs:
       matrix:
         python-version: ["3.12"]
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: ${{ matrix.python-version }}
-          cache: "pip"
-      - name: Install dependencies
-        run: make packages
-      - name: Run linters
-        run: make lint
-  
-  backup:
-    runs-on: ubuntu-latest
-    steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+        with: { fetch-depth: 0 }
       - name: Create bundle
         run: |
           TIMESTAMP=$(date +%Y%m%d)
           mkdir -p bundles
-          git bundle create "bundles/${TIMESTAMP}_${{ github.event.repository.name }}.txt" --all
-          sha256sum "bundles/${TIMESTAMP}_${{ github.event.repository.name }}.txt" > "bundles/${TIMESTAMP}_${{ github.event.repository.name }}.sha256"
-      - name: Debug FTP session
-        env:
-          FTP_HOSTNAME: ${{ secrets.FTP_HOSTNAME }}
-          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
-          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+          git bundle create "bundles/${TIMESTAMP}_${{ github.event.repository.name }}.bundle" --all
+      - name: Upload via curl
         run: |
           set -euo pipefail
-          curl -v -u "${FTP_USERNAME}:${FTP_PASSWORD}" \
+          for f in bundles/*; do
+            base=$(basename "$f")
+            curl -v -u "${{ secrets.FTP_USERNAME }}:${{ secrets.FTP_PASSWORD }}" \
+              --ssl-reqd --ftp-pasv --disable-epsv --ftp-create-dirs \
+              -T "$f" "ftp://${{ secrets.FTP_HOSTNAME }}:21/backups/$base"
+          done
+          echo "List /backups:"
+          curl -u "${{ secrets.FTP_USERNAME }}:${{ secrets.FTP_PASSWORD }}" \
             --ssl-reqd --ftp-pasv --disable-epsv \
-            --quote PWD \
-            "ftp://${FTP_HOSTNAME}:21/" -l || true
-
-      - name: Upload bundle to /backups (curl FTPS)
-        env:
-          FTP_HOSTNAME: ${{ secrets.FTP_HOSTNAME }}
-          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
-          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
-        run: |
-          set -euo pipefail
-          TIMESTAMP=$(date +%Y%m%d)
-          FILE="bundles/${TIMESTAMP}_${{ github.event.repository.name }}.txt"
-          echo "Uploading $FILE to /backups via FTPS..."
-          curl -v -u "${FTP_USERNAME}:${FTP_PASSWORD}" \
-               --ssl-reqd --ftp-pasv --disable-epsv \
-               --ftp-create-dirs \
-               -T "$FILE" "ftp://${FTP_HOSTNAME}:21/backups/$(basename "$FILE")"
-          echo "Listing /backups after upload:"
-          curl -u "${FTP_USERNAME}:${FTP_PASSWORD}" \
-               --ssl-reqd --ftp-pasv --disable-epsv \
-               "ftp://${FTP_HOSTNAME}:21/backups/" -l || true
+            "ftp://${{ secrets.FTP_HOSTNAME }}:21/backups/" -l || true
 
   # test:
   #   runs-on: ubuntu-latest
