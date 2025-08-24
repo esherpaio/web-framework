@@ -33,15 +33,14 @@ jobs:
           sudo apt-get install zip
           mkdir backup
           zip -r backup/archive.zip *
-      - name: Upload archive
-        uses: nerdoza/action-simple-file-upload@v2
+      - name: Upload ftp
+        uses: genietim/ftp-action@releases/v4
         with:
+          host: ${{ secrets.FTP_HOSTNAME }}
           user: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          host: ${{ secrets.FTP_HOSTNAME }}
-          src: backup/archive.zip
-          dest: backup/archive.zip
-          verbose: true
+          localDir: "backup"
+          remoteDir: "backup"
 
   # test:
   #   runs-on: ubuntu-latest
