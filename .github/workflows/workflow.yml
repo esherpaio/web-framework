@@ -30,24 +30,24 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with: { fetch-depth: 0 }
+      - name: Bypass triggers
+        run: |
+          echo "set man-db/auto-update false" | debconf-communicate
+          dpkg-reconfigure man-db
       - name: Create bundle
         run: |
           TIMESTAMP=$(date +%Y%m%d)
           mkdir -p bundles
           git bundle create "bundles/${TIMESTAMP}_${{ github.event.repository.name }}.bundle" --all
-      - name: Upload via curl
+      - name: Upload via lftp
         run: |
-          set -euo pipefail
+          sudo apt-get update && sudo apt-get install -y lftp
           for f in bundles/*; do
+            [ -f "$f" ] || { echo "No bundle files found"; exit 1; }
             base=$(basename "$f")
-            curl -v -u "${{ secrets.FTP_USERNAME }}:${{ secrets.FTP_PASSWORD }}" \
-              --ssl-reqd --ftp-pasv --disable-epsv --ftp-create-dirs \
-              -T "$f" "ftp://${{ secrets.FTP_HOSTNAME }}:21/backups/$base"
+            echo "Uploading $f -> /backups/$base"
+            lftp -u "${{ secrets.FTP_USERNAME }},${{ secrets.FTP_PASSWORD }}" ftp://${{ secrets.FTP_HOSTNAME }}:21 -e "set ftp:passive-mode true; set ftp:ssl-allow true; set ftp:ssl-force false; set ftp:ssl-auth TLS; set net:max-retries 2; set net:persist-retries 0; set net:timeout 20; set cmd:trace true; cd backups; put $f -o $base; bye"
           done
-          echo "List /backups:"
-          curl -u "${{ secrets.FTP_USERNAME }}:${{ secrets.FTP_PASSWORD }}" \
-            --ssl-reqd --ftp-pasv --disable-epsv \
-            "ftp://${{ secrets.FTP_HOSTNAME }}:21/backups/" -l || true
 
   # test:
   #   runs-on: ubuntu-latest
