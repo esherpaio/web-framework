@@ -14,7 +14,9 @@ class ShipmentMethod(IntBase):
 
     is_deleted = MC(Boolean, nullable=False, default=False, server_default="false")
     name = MC(String(64), nullable=False)
-    phone_required = MC(Boolean, nullable=False, default=False, server_default="false")
+    requires_billing_phone = MC(
+        Boolean, nullable=False, default=False, server_default="false"
+    )
     unit_price = MC(
         default_price, nullable=False, default=Decimal("0.00"), server_default="0.00"
     )
