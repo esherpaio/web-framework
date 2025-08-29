@@ -14,9 +14,13 @@ class Country(IntBase):
     code = MC(String(2), nullable=False, unique=True)
     in_sitemap = MC(Boolean, nullable=False, default=False, server_default="false")
     name = MC(String(64), nullable=False, unique=True)
-    state_required = MC(Boolean, nullable=False, default=False, server_default="false")
-    vat_required = MC(Boolean, nullable=False, default=False, server_default="false")
-    is_active = MC(Boolean, nullable=False, default=True, server_default="true")
+    requires_billing_state = MC(
+        Boolean, nullable=False, default=False, server_default="false"
+    )
+    requires_billing_vat = MC(
+        Boolean, nullable=False, default=False, server_default="false"
+    )
+    allows_shipping = MC(Boolean, nullable=False, default=True, server_default="true")
 
     currency_id = MC(ForeignKey("currency.id", ondelete="RESTRICT"), nullable=False)
     region_id = MC(ForeignKey("region.id", ondelete="RESTRICT"), nullable=False)
