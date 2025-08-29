@@ -4,11 +4,11 @@ from sqlalchemy import Boolean, ForeignKey, String
 from sqlalchemy.orm import mapped_column as MC
 from sqlalchemy.orm import relationship, validates
 
-from ._base import Base
+from ._base import IntBase
 from ._utils import get_upper, val_length
 
 
-class Country(Base):
+class Country(IntBase):
     __tablename__ = "country"
 
     code = MC(String(2), nullable=False, unique=True)

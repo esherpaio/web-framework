@@ -7,12 +7,12 @@ from sqlalchemy.orm import relationship, validates
 
 from web.utils import none_attrgetter
 
-from ._base import Attribute, Base
+from ._base import Attribute, IntBase
 from ._utils import get_slug
 from .article_media import ArticleMedia
 
 
-class Article(Base, Attribute):
+class Article(IntBase, Attribute):
     __tablename__ = "article"
 
     is_deleted = MC(Boolean, nullable=False, default=False, server_default="false")

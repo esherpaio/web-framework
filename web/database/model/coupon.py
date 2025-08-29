@@ -5,11 +5,11 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import mapped_column as MC
 from sqlalchemy.orm import validates
 
-from ._base import Base
+from ._base import IntBase
 from ._utils import default_price, default_rate, get_upper, val_length, val_number
 
 
-class Coupon(Base):
+class Coupon(IntBase):
     __tablename__ = "coupon"
     __table_args__ = (CheckConstraint("amount IS NULL OR rate IS NULL"),)
 

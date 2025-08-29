@@ -5,12 +5,11 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import mapped_column as MC
 from sqlalchemy.orm import relationship, validates
 
-from web.database.model import Base
-
+from ._base import IntBase
 from ._utils import get_lower, get_text, val_email, val_length, val_phone
 
 
-class Billing(Base):
+class Billing(IntBase):
     __tablename__ = "billing"
 
     address = MC(String(128), nullable=False)

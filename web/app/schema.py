@@ -5,9 +5,9 @@ from markupsafe import Markup
 
 from web.api import JsonEncoder
 from web.app.urls import parse_url
-from web.config import config
 from web.database.model import AppRoute
 from web.locale import current_locale, url_for_locale
+from web.setup import config
 
 
 class Schema:
@@ -62,8 +62,8 @@ class SchemaWebsite(Schema):
             "@context": "https://schema.org",
             "@type": "WebSite",
             "url": home_url,
-            "name": config.WEBSITE_NAME,
-            "inLanguage": config.WEBSITE_LANGUAGE_CODE,
+            "name": config.META_WEBSITE_NAME,
+            "inLanguage": current_locale.language_code,
         }
 
 
@@ -87,9 +87,9 @@ class SchemaOrganization(Schema):
         self.data = {
             "@context": "https://schema.org/Corporation",
             "@type": "Corporation",
-            "name": config.WEBSITE_NAME,
+            "name": config.META_WEBSITE_NAME,
             "url": home_url,
-            "logo": config.WEBSITE_FAVICON_URL,
+            "logo": config.META_FAVICON_URL,
             "sameAs": [x for x in social_urls if x],
         }
 
@@ -135,7 +135,7 @@ class SchemaProduct(Schema):
             "name": name,
             "brand": {
                 "@type": "Brand",
-                "name": config.BUSINESS_NAME,
+                "name": config.META_BRAND_NAME,
             },
             "offers": {
                 "@type": "Offer",

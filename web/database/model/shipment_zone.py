@@ -2,10 +2,10 @@ from sqlalchemy import Boolean, CheckConstraint, ForeignKey, Integer
 from sqlalchemy.orm import mapped_column as MC
 from sqlalchemy.orm import relationship
 
-from ._base import Base
+from ._base import IntBase
 
 
-class ShipmentZone(Base):
+class ShipmentZone(IntBase):
     __tablename__ = "shipment_zone"
     __table_args__ = (CheckConstraint("country_id IS NULL OR region_id IS NULL"),)
 

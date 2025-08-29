@@ -1,10 +1,10 @@
 from sqlalchemy import Boolean, String
 from sqlalchemy.orm import mapped_column as MC
 
-from ._base import Attribute, Base
+from ._base import Attribute, IntBase
 
 
-class AppRoute(Base, Attribute):
+class AppRoute(IntBase, Attribute):
     __tablename__ = "app_route"
 
     css_path = MC(String(128))

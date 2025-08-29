@@ -9,10 +9,10 @@ from werkzeug.exceptions import HTTPException
 
 from web.api import HttpText, json_response
 from web.app.urls import parse_url, url_for
-from web.config import config
 from web.error import WebError
 from web.i18n import _
 from web.logger import log
+from web.setup import config
 from web.utils.obfuscation import obfuscate_data
 
 
@@ -78,6 +78,6 @@ def handle_backend_error(error: Exception) -> Response:
     if request.is_json:
         data = obfuscate_data(request.get_json())
         info.append(f"data {data}")
-    exc_info = code >= 500
+    exc_info = code >= 400
     log.error(" | ".join(info), exc_info=exc_info)
     return json_response(code, message)

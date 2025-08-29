@@ -5,11 +5,11 @@ from sqlalchemy import Boolean, ForeignKey, String
 from sqlalchemy.orm import mapped_column as MC
 from sqlalchemy.orm import relationship, validates
 
-from ._base import Base
+from ._base import IntBase
 from ._utils import default_price, val_number
 
 
-class ShipmentMethod(Base):
+class ShipmentMethod(IntBase):
     __tablename__ = "shipment_method"
 
     is_deleted = MC(Boolean, nullable=False, default=False, server_default="false")

@@ -5,12 +5,12 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import mapped_column as MC
 from sqlalchemy.orm import relationship, validates
 
-from ._base import Attribute, Base
+from ._base import Attribute, IntBase
 from ._utils import get_lower, val_email
 from .user_role import UserRoleId
 
 
-class User(Base, Attribute):
+class User(IntBase, Attribute):
     __tablename__ = "user"
 
     api_key = MC(String(64), unique=True)
@@ -20,7 +20,10 @@ class User(Base, Attribute):
     password_hash = MC(String(256))
 
     billing_id = MC(ForeignKey("billing.id", ondelete="CASCADE"))
-    role_id = MC(ForeignKey("user_role.id", ondelete="RESTRICT"), nullable=False)
+    role_id = MC(
+        ForeignKey("user_role.id", ondelete="RESTRICT", onupdate="CASCADE"),
+        nullable=False,
+    )
     shipping_id = MC(ForeignKey("shipping.id", ondelete="CASCADE"))
 
     billing = relationship("Billing", foreign_keys=[billing_id])

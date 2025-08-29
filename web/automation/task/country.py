@@ -1,10 +1,10 @@
 import requests
 from requests import RequestException
 
-from web.config import config
 from web.database import conn
-from web.database.model import Country, Currency, CurrencyId, Region
+from web.database.model import Country, Currency, Region
 from web.logger import log
+from web.setup import config
 
 from ..automator import ApiSyncer
 from ..utils import external_sync
@@ -12,6 +12,7 @@ from ..utils import external_sync
 
 class CountryApiSyncer(ApiSyncer):
     API_URL = "https://restcountries.com/v3.1/all?fields=name,cca2,region,currencies"
+    BASE_CURRENCY_CODE = "USD"
 
     @classmethod
     @external_sync
@@ -23,7 +24,7 @@ class CountryApiSyncer(ApiSyncer):
                 response = requests.request(
                     "GET",
                     cls.API_URL,
-                    timeout=config.APP_SYNC_TIMEOUT,
+                    timeout=config.AUTOMATE_TIMEOUT_S,
                 )
                 resources = response.json()
             except RequestException as error:
@@ -31,12 +32,16 @@ class CountryApiSyncer(ApiSyncer):
                 return
             # Load iteration objects
             currencies = s.query(Currency).all()
-            currency_usd = s.query(Currency).filter_by(id=CurrencyId.USD).first()
+            currency_base = (
+                s.query(Currency).filter_by(code=cls.BASE_CURRENCY_CODE).first()
+            )
             regions = s.query(Region).all()
             countries = s.query(Country).all()
             # Sanity checks
-            if currency_usd is None:
-                log.warning("Country seeder failed: USD currency not found")
+            if currency_base is None:
+                log.warning(
+                    f"Country seeder failed: base currency {cls.BASE_CURRENCY_CODE} not found"
+                )
                 return
             # Get resource details
             for resource in resources:
@@ -53,7 +58,7 @@ class CountryApiSyncer(ApiSyncer):
                     if currency.code in currency_codes:
                         break
                 else:
-                    currency = currency_usd
+                    currency = currency_base
                 # Get region
                 try:
                     region = next(x for x in regions if x.name == region_name)

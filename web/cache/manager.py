@@ -55,7 +55,10 @@ class CacheManager(metaclass=Singleton):
             log.info("Updating cache")
             self._updated_at = datetime.now(timezone.utc)
             for hook in self.hooks:
-                hook()
+                try:
+                    hook()
+                except Exception as e:
+                    log.error(f"Error running cache hook {hook.__name__}: {e}")
 
 
 cache_manager = CacheManager()

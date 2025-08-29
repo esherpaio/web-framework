@@ -3,8 +3,8 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from smtplib import SMTP
 
-from web.config import config
 from web.logger import log
+from web.setup import config
 
 from .enum import MailMethod
 
@@ -27,10 +27,10 @@ def send_email(
     if bcc is not None:
         bcc = list(set(bcc))
     # Send email
-    if config.EMAIL_METHOD == MailMethod.SMTP:
+    if config.MAIL_METHOD == MailMethod.SMTP:
         _send_email_smtp(subject, html, to, reply_to, cc, bcc, blob_path, blob_name)
     else:
-        log.error(f"Cannot send email, unknown method {config.EMAIL_METHOD}")
+        log.error(f"Cannot send email, unknown method {config.MAIL_METHOD}")
         return False
     return True
 
@@ -47,8 +47,8 @@ def _send_email_smtp(
 ) -> None:
     # Create message
     msg = MIMEMultipart()
-    msg["From"] = config.EMAIL_FROM
-    msg["Reply-To"] = reply_to or config.EMAIL_FROM
+    msg["From"] = config.MAIL_SENDER
+    msg["Reply-To"] = reply_to or config.MAIL_SENDER
     msg["Subject"] = subject
     if to is not None:
         msg["To"] = ",".join(to)
@@ -69,11 +69,11 @@ def _send_email_smtp(
         msg.attach(attachment)
     # Send email
     with SMTP(
-        config.SMTP_HOST,
+        config.SMTP_HOSTNAME,
         port=config.SMTP_PORT,
-        timeout=config.EMAIL_TIMEOUT,
+        timeout=config.MAIL_TIMEOUT_S,
     ) as smtp:
         smtp.set_debuglevel(False)
         smtp.starttls()
         smtp.login(config.SMTP_USERNAME, config.SMTP_PASSWORD)
-        smtp.send_message(msg, from_addr=config.EMAIL_FROM, to_addrs=all_)
+        smtp.send_message(msg, from_addr=config.MAIL_SENDER, to_addrs=all_)

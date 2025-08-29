@@ -4,11 +4,11 @@ from sqlalchemy import Boolean, String
 from sqlalchemy.orm import mapped_column as MC
 from sqlalchemy.orm import validates
 
-from ._base import Base
+from ._base import IntBase
 from ._utils import get_lower, val_length
 
 
-class Language(Base):
+class Language(IntBase):
     __tablename__ = "language"
 
     code = MC(String(2), nullable=False, unique=True)

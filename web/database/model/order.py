@@ -6,7 +6,7 @@ from sqlalchemy.ext.hybrid import hybrid_method, hybrid_property
 from sqlalchemy.orm import mapped_column as MC
 from sqlalchemy.orm import relationship, validates
 
-from ._base import Base
+from ._base import IntBase
 from ._utils import (
     default_price,
     default_rate,
@@ -18,7 +18,7 @@ from ._utils import (
 from .order_status import OrderStatus, OrderStatusId
 
 
-class Order(Base):
+class Order(IntBase):
     __tablename__ = "order"
     __table_args__ = (CheckConstraint("coupon_amount IS NULL OR coupon_rate IS NULL"),)
 
@@ -35,7 +35,10 @@ class Order(Base):
 
     billing_id = MC(ForeignKey("billing.id", ondelete="RESTRICT"), nullable=False)
     shipping_id = MC(ForeignKey("shipping.id", ondelete="RESTRICT"), nullable=False)
-    status_id = MC(ForeignKey("order_status.id", ondelete="RESTRICT"), nullable=False)
+    status_id = MC(
+        ForeignKey("order_status.id", ondelete="RESTRICT", onupdate="CASCADE"),
+        nullable=False,
+    )
     user_id = MC(ForeignKey("user.id", ondelete="RESTRICT"), nullable=False)
 
     billing = relationship("Billing")

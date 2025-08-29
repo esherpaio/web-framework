@@ -3,20 +3,13 @@ import xml.etree.ElementTree as ET
 import requests
 from requests import RequestException
 
-from web.automation.fixture import currency_seeds
-from web.config import config
 from web.database import conn
 from web.database.model import Currency
 from web.logger import log
+from web.setup import config
 
-from ..automator import ApiSyncer, SeedSyncer
+from ..automator import ApiSyncer
 from ..utils import external_sync
-
-
-class CurrencySeedSyncer(SeedSyncer):
-    MODEL = Currency
-    KEY = "id"
-    SEEDS = currency_seeds
 
 
 class CurrencyApiSyncer(ApiSyncer):
@@ -31,7 +24,7 @@ class CurrencyApiSyncer(ApiSyncer):
                 resource = requests.request(
                     "GET",
                     cls.API_URL,
-                    timeout=config.APP_SYNC_TIMEOUT,
+                    timeout=config.AUTOMATE_TIMEOUT_S,
                 )
             except RequestException as error:
                 log.error(error, exc_info=True)
