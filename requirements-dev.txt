@@ -14,7 +14,7 @@ mypy==1.17.1
 ruff~=0.12.9
 
 # blueprints
-git+https://github.com/esherpaio/web-blueprint-admin.git@7508838
-git+https://github.com/esherpaio/web-blueprint-api.git@2fb64cc
-git+https://github.com/esherpaio/web-blueprint-auth.git@3f9f402
-git+https://github.com/esherpaio/web-blueprint-index.git@c4c6634
+git+https://github.com/esherpaio/web-blueprint-admin.git
+git+https://github.com/esherpaio/web-blueprint-api.git
+git+https://github.com/esherpaio/web-blueprint-auth.git
+git+https://github.com/esherpaio/web-blueprint-index.git
