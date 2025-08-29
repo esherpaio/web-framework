@@ -1,7 +1,7 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from web.config import config
+from web.setup import config
 
 
 def init_db(uri: str | None = None, **options):

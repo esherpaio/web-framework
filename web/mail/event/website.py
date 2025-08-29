@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 
-from web.config import config
 from web.i18n import _
+from web.setup import config
 
 from .. import render_email, send_email
 
@@ -31,7 +31,7 @@ def mail_contact_business(
             _("MAIL_CONTACT_MESSAGE", message=message),
         ],
     )
-    return send_email(subject, html, to=[config.EMAIL_TO], reply_to=email)
+    return send_email(subject, html, to=[config.MAIL_RECEIVER], reply_to=email)
 
 
 def mail_contact_customer(

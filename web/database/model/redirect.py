@@ -1,10 +1,10 @@
 from sqlalchemy import String
 from sqlalchemy.orm import mapped_column as MC
 
-from ._base import Base
+from ._base import IntBase
 
 
-class Redirect(Base):
+class Redirect(IntBase):
     __tablename__ = "redirect"
 
     url_from = MC(String(256), unique=True, nullable=False)

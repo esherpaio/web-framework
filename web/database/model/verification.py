@@ -5,10 +5,10 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import mapped_column as MC
 from sqlalchemy.orm import relationship
 
-from ._base import Base
+from ._base import IntBase
 
 
-class Verification(Base):
+class Verification(IntBase):
     __tablename__ = "verification"
 
     key = MC(String(256), nullable=False)

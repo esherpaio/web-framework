@@ -7,8 +7,8 @@ from flask import Flask, Response, make_response, request
 from werkzeug.datastructures import Headers
 
 from web.cache import cache
-from web.config import config
 from web.logger import log
+from web.setup import config
 from web.utils import Singleton
 
 from .enum import Encoding, Minification
@@ -166,7 +166,7 @@ class Optimizer(metaclass=Singleton):
 
     def cache(self, f: Callable) -> Callable[..., Response]:
         def wrap(*args, **kwargs) -> Response:
-            if config.APP_OPTIMIZE:
+            if config.OPTIMIZER_ENABLED:
                 encoding = self.get_encoding(request.headers)
                 response = self.get_cache(encoding)
                 if response is not None:
@@ -179,7 +179,7 @@ class Optimizer(metaclass=Singleton):
 
     def after_request(self, response: Response) -> Response:
         # validate response
-        if not config.APP_OPTIMIZE:
+        if not config.OPTIMIZER_ENABLED:
             return response
         if response.status_code is None or response.content_length is None:
             return response

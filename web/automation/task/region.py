@@ -1,10 +1,10 @@
 import requests
 from requests import RequestException
 
-from web.config import config
 from web.database import conn
 from web.database.model import Region
 from web.logger import log
+from web.setup import config
 
 from ..automator import ApiSyncer
 from ..utils import external_sync
@@ -23,7 +23,7 @@ class RegionApiSyncer(ApiSyncer):
                 response = requests.request(
                     "GET",
                     cls.API_URL,
-                    timeout=config.APP_SYNC_TIMEOUT,
+                    timeout=config.AUTOMATE_TIMEOUT_S,
                 )
                 resources = response.json()
             except RequestException as error:

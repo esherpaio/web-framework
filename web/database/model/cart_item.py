@@ -6,13 +6,13 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import mapped_column as MC
 from sqlalchemy.orm import relationship, validates
 
-from web.config import config
+from web.setup import config
 
-from ._base import Base
+from ._base import IntBase
 from ._utils import val_number
 
 
-class CartItem(Base):
+class CartItem(IntBase):
     __tablename__ = "cart_item"
     __table_args__ = (UniqueConstraint("cart_id", "sku_id"),)
 
@@ -37,7 +37,7 @@ class CartItem(Base):
     def unit_price(self) -> Decimal:
         unit_price = self.sku.unit_price
         if self.cart.vat_reverse:
-            vat_rate = Decimal(str(config.BUSINESS_VAT_RATE))
+            vat_rate = Decimal(str(config.BUSINESS_VAT_REVERSE_RATE))
             unit_price *= vat_rate
         return unit_price * self.cart.currency.rate
 

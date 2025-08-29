@@ -5,11 +5,11 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import mapped_column as MC
 from sqlalchemy.orm import relationship, validates
 
-from ._base import Base
+from ._base import IntBase
 from ._utils import get_lower, get_text, val_email, val_length, val_phone
 
 
-class Shipping(Base):
+class Shipping(IntBase):
     __tablename__ = "shipping"
 
     address = MC(String(128), nullable=False)

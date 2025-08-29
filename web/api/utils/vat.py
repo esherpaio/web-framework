@@ -4,7 +4,7 @@ from decimal import Decimal
 import pyvat
 from pyvat import ItemType, Party, VatChargeAction
 
-from web.config import config
+from web.setup import config
 
 
 def get_vat(country_code: str, is_business: bool) -> tuple[Decimal, bool]:

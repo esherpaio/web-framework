@@ -1,19 +1,15 @@
-.PHONY: activate
-activate:
-	python3 -m venv .venv
-
-.PHONY: requirements
-requirements:
+.PHONY: venv packages
+venv:
+	python3.12 -m venv .venv
+packages:
 	pip install --upgrade pip
 	pip freeze | grep '^web-' | sed 's/ @.*//' | xargs -r pip uninstall -y
 	pip install -r requirements.txt
 	pip install -r requirements-dev.txt
 
-.PHONY: migrations migrate
+.PHONY: migrations
 migrations:
 	alembic check || alembic revision --autogenerate -m ""
-migrate:
-	alembic upgrade head
 
 .PHONY: format format_py format_html
 format: format_py format_html
@@ -34,4 +30,4 @@ lint_html:
 
 .PHONY: test
 test:
-	pytest .
+	pytest --maxfail=1 --verbose

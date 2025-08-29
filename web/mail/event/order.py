@@ -1,10 +1,10 @@
 from sqlalchemy.orm import Session
 
-from web.config import config
 from web.database.model import Invoice, Order, Refund
 from web.document import get_pdf_path
 from web.document.object import gen_invoice_pdf, gen_refund_pdf
 from web.i18n import _
+from web.setup import config
 from web.utils import remove_file
 
 from .. import render_email, send_email

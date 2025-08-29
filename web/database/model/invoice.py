@@ -2,10 +2,10 @@ from sqlalchemy import DateTime, ForeignKey, String
 from sqlalchemy.orm import mapped_column as MC
 from sqlalchemy.orm import relationship
 
-from ._base import Attribute, Base
+from ._base import Attribute, IntBase
 
 
-class Invoice(Base, Attribute):
+class Invoice(IntBase, Attribute):
     __tablename__ = "invoice"
 
     expires_at = MC(DateTime(timezone=True))

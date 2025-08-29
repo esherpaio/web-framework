@@ -4,9 +4,9 @@ from fpdf import FPDF
 from fpdf.enums import TableBordersLayout, XPos, YPos
 from sqlalchemy.orm import Session
 
-from web.config import config
 from web.database.model import Invoice, Order, Refund
 from web.i18n import _
+from web.setup import config
 
 from ..style import (
     COLOR_DARKGREY,
@@ -32,7 +32,7 @@ def gen_refund_pdf(
     pdf.set_auto_page_break(auto=True, margin=30)
     pdf.add_page()
 
-    pdf.image(config.WEBSITE_LOGO_URL, x="L", h=15, keep_aspect_ratio=True)
+    pdf.image(config.BUSINESS_LOGO_URL, x="L", h=15, keep_aspect_ratio=True)
 
     pdf.ln(6)
     pdf.set_text_color(*COLOR_TEXT)
@@ -115,8 +115,8 @@ def _get_refund_info_table_data(
         config.BUSINESS_STREET,
         f"{config.BUSINESS_ZIP_CODE} {config.BUSINESS_CITY}",
         config.BUSINESS_COUNTRY,
-        _("PDF_CC_NUMBER", cc=config.BUSINESS_CC),
-        _("PDF_VAT_NUMBER", vat=config.BUSINESS_VAT),
+        _("PDF_CC_NUMBER", cc=config.BUSINESS_REGISTRATION_NUMBER),
+        _("PDF_VAT_NUMBER", vat=config.BUSINESS_VAT_NUMBER),
     ]
 
     third = [

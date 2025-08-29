@@ -11,7 +11,7 @@ from .category import Category
 from .category_item import CategoryItem
 from .country import Country
 from .coupon import Coupon
-from .currency import Currency, CurrencyId
+from .currency import Currency
 from .email import Email
 from .email_status import EmailStatus, EmailStatusId
 from .file import File
@@ -57,7 +57,6 @@ __all__ = [
     "Country",
     "Coupon",
     "Currency",
-    "CurrencyId",
     "Email",
     "EmailStatus",
     "EmailStatusId",

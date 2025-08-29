@@ -1,3 +1,4 @@
+import logging
 from datetime import datetime, timezone
 from typing import Callable, Type
 
@@ -11,83 +12,27 @@ from web.app.urls import url_for
 from web.auth import Auth, current_user
 from web.automation import Automator, task
 from web.cache import cache, cache_common, cache_manager
-from web.config import config
 from web.i18n import translator
 from web.locale import LocaleManager, current_locale
-from web.logger import log
+from web.logger import WerkzeugFilter, log
 from web.mail import MailEvent, mail
 from web.optimizer import optimizer
+from web.setup import config
 from web.utils.generators import format_decimal
 
 
-class Web:
-    def __init__(
-        self,
-        app: Flask | None = None,
-        blueprints: list[Blueprint] | None = None,
-        jinja_filters: dict[str, Callable] | None = None,
-        jinja_globals: dict[str, Callable] | None = None,
-        mail_events: dict[MailEvent | str, list[Callable]] | None = None,
-        translations_dir: str | None = None,
-        automation_tasks: list[Type[Automator]] | None = None,
-        db_migrate: bool = False,
-        db_hook: Callable | None = None,
-        cache_hook: Callable | None = None,
-    ) -> None:
-        if blueprints is None:
-            blueprints = []
-        if jinja_filters is None:
-            jinja_filters = {}
-        if jinja_globals is None:
-            jinja_globals = {}
-        if mail_events is None:
-            mail_events = {}
-        if automation_tasks is None:
-            automation_tasks = []
-
-        if app is not None:
-            self.init(
-                app,
-                blueprints,
-                jinja_filters,
-                jinja_globals,
-                mail_events,
-                translations_dir,
-                automation_tasks,
-                db_migrate,
-                db_hook,
-                cache_hook,
-            )
-
-    def init(
-        self,
-        app: Flask,
-        blueprints: list[Blueprint],
-        jinja_filters: dict[str, Callable],
-        jinja_globals: dict[str, Callable],
-        mail_events: dict[MailEvent | str, list[Callable]],
-        translations_dir: str | None,
-        automation_tasks: list[Type[Automator]],
-        db_migrate: bool,
-        db_hook: Callable | None,
-        cache_hook: Callable | None,
-    ) -> None:
-        self.setup_i18n(translations_dir)
-        self.setup_database(db_migrate, automation_tasks, db_hook)
-        self.setup_cache(cache_hook)
-        self.setup_mail(mail_events)
-        self.setup_flask(app, blueprints)
-        self.setup_jinja(app, jinja_filters, jinja_globals)
-
-    #
-    # Setup
-    #
+class Server:
+    def setup_logging(self) -> None:
+        log_werkzeug = logging.getLogger("werkzeug")
+        log_werkzeug.addFilter(WerkzeugFilter())
 
     def setup_i18n(self, dir_: str | None) -> None:
         if dir_ is None:
             return
         log.info(f"Loading translations from {dir_}")
-        translator.load_dir(dir_)
+        file_count = translator.load_dir(dir_)
+        if file_count == 0:
+            log.warning(f"No translation files found in {dir_}")
 
     def setup_database(
         self,
@@ -120,7 +65,10 @@ class Web:
         # Run database hook
         if hook is not None:
             log.info("Running database hook")
-            hook()
+            try:
+                hook()
+            except Exception as e:
+                log.error(f"Error running database hook: {e}")
 
     def setup_cache(self, hook: Callable | None = None) -> None:
         cache_manager.add_hook(cache_common)
@@ -130,8 +78,8 @@ class Web:
         cache_manager.update(force=True)
 
     def setup_mail(self, events: dict[MailEvent | str, list[Callable]]) -> None:
-        if config.EMAIL_METHOD:
-            log.info(f"Configuring email method {config.EMAIL_METHOD}")
+        if config.MAIL_METHOD:
+            log.info(f"Configuring email method {config.MAIL_METHOD}")
         else:
             log.warning("No email method configured")
 
@@ -140,8 +88,8 @@ class Web:
             mail.events.update(events)
 
     def setup_flask(self, app: Flask, blueprints: list[Blueprint]) -> None:
-        app.config["PREFERRED_URL_SCHEME"] = config.APP_URL_SCHEME
-        if config.APP_DEBUG:
+        app.config["PREFERRED_URL_SCHEME"] = config.URL_SCHEME
+        if config.DEBUG:
             log.info("Enabling Flask debug mode")
             app.debug = True
         app.register_error_handler(Exception, handle_error)
@@ -151,7 +99,7 @@ class Web:
             app.register_blueprint(blueprint)
 
         Auth(app)
-        if config.APP_OPTIMIZE:
+        if config.OPTIMIZER_ENABLED:
             log.info("Enabling optimizer")
             optimizer.init(app)
         LocaleManager(app)
@@ -160,9 +108,14 @@ class Web:
     def setup_jinja(
         self,
         app: Flask,
-        filters: dict[str, Callable],
-        globals_: dict[str, Callable],
+        filters: dict[str, Callable] | None = None,
+        globals_: dict[str, Callable] | None = None,
     ) -> None:
+        if filters is None:
+            filters = {}
+        if globals_ is None:
+            globals_ = {}
+
         app.context_processor(
             lambda: dict(
                 now=datetime.now(timezone.utc),

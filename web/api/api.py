@@ -1,7 +1,7 @@
 from typing import Any, Callable, Generic, TypeVar
 
 from flask import abort, has_request_context, request
-from psycopg2.errors import UniqueViolation
+from psycopg2.errors import ForeignKeyViolation, NotNullViolation, UniqueViolation
 from sqlalchemy import ColumnExpressionArgument
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.attributes import InstrumentedAttribute
@@ -22,6 +22,17 @@ class API(Generic[B]):
     patch_columns: set[InstrumentedAttribute | str] = set()
     get_filters: set[InstrumentedAttribute | str] = set()
     get_columns: set[InstrumentedAttribute | str] = set()
+
+    #
+    # Validation
+    #
+
+    @classmethod
+    def validate_request(self) -> None:
+        from web.auth import current_user
+
+        if not current_user:
+            abort(json_response(401, HttpText.HTTP_401))
 
     #
     # Parsing
@@ -160,13 +171,16 @@ class API(Generic[B]):
         for k, v in data.items():
             if hasattr(model, k):
                 setattr(model, k, v)
+
         try:
             s.add(model)
+            s.flush()
         except IntegrityError as e:
-            if isinstance(e.orig, UniqueViolation):
+            if isinstance(e.orig, NotNullViolation):
+                abort(json_response(400, HttpText.HTTP_400))
+            if isinstance(e.orig, (UniqueViolation, ForeignKeyViolation)):
                 abort(json_response(409, HttpText.HTTP_409))
             raise e
-        s.flush()
 
     @classmethod
     def get(
@@ -177,13 +191,13 @@ class API(Generic[B]):
     ) -> B:
         if cls.model is None:
             raise NotImplementedError
+
         if id_ is not None:
             filters += (cls.model.id == id_,)
         model = s.query(cls.model).filter(*filters).first()
         if model is None:
             abort(json_response(404, HttpText.HTTP_404))
-        else:
-            return model
+        return model
 
     @classmethod
     def list_(

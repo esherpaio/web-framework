@@ -6,7 +6,7 @@ from flask import url_for as _url_for
 from requests.models import PreparedRequest
 from werkzeug import Response
 
-from web.config import config
+from web.setup import config
 
 
 def parse_url(
@@ -47,7 +47,7 @@ def url_for(
     if _scheme is not None:
         scheme = _scheme
     else:
-        scheme = config.APP_URL_SCHEME
+        scheme = config.URL_SCHEME
     return _url_for(
         endpoint,
         _anchor=_anchor,

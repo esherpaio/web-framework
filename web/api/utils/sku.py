@@ -1,6 +1,7 @@
 from decimal import Decimal
 
 from sqlalchemy.orm import Session, joinedload
+from sqlalchemy.sql import ColumnElement
 
 from web.database.model import Product, ProductValue, Sku, SkuDetail
 from web.logger import log
@@ -16,22 +17,23 @@ def set_sku_unit_prices(
     product_ids: list[int] | None = None,
     value_ids: list[int] | None = None,
 ) -> None:
-    filters = []
+    filters: list[ColumnElement[bool]] = []
     if sku_ids is not None:
         filters.append(Sku.id.in_(sku_ids))
     if product_ids is not None:
         filters.append(Sku.product_id.in_(product_ids))
     if value_ids is not None:
-        filters.append(SkuDetail.value_id.in_(value_ids))
+        filters.append(Sku.details.any(SkuDetail.value_id.in_(value_ids)))
+
     if not filters:
         log.warning("No filters to update SKUs")
         return
+
     skus = (
         s.query(Sku)
         .options(
             joinedload(Sku.product),
-            joinedload(Sku.details),
-            joinedload(Sku.details, SkuDetail.value),
+            joinedload(Sku.details).joinedload(SkuDetail.value),
         )
         .filter(*filters)
         .all()

@@ -7,13 +7,13 @@ from sqlalchemy.orm import relationship, validates
 
 from web.utils import none_attrgetter
 
-from ._base import Attribute, Base
+from ._base import Attribute, IntBase
 from ._utils import default_price, get_slug, val_number
 from .product_media import ProductMedia
 from .product_type import ProductTypeId
 
 
-class Product(Base, Attribute):
+class Product(IntBase, Attribute):
     __tablename__ = "product"
 
     file_url = MC(String(128))
@@ -27,7 +27,10 @@ class Product(Base, Attribute):
     unit_price = MC(default_price, nullable=False)
 
     shipment_class_id = MC(ForeignKey("shipment_class.id", ondelete="RESTRICT"))
-    type_id = MC(ForeignKey("product_type.id", ondelete="RESTRICT"), nullable=False)
+    type_id = MC(
+        ForeignKey("product_type.id", ondelete="RESTRICT", onupdate="CASCADE"),
+        nullable=False,
+    )
 
     links = relationship("ProductLink", back_populates="product")
     medias = relationship(

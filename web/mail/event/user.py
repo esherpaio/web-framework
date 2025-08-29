@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 
-from web.config import config
 from web.i18n import _
+from web.setup import config
 
 from .. import render_email, send_email
 

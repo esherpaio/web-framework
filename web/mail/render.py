@@ -2,7 +2,7 @@ import os
 
 import jinja2
 
-from web.config import config
+from web.setup import config
 
 
 def render_email(template: str = "default", dir_: str | None = None, **attrs) -> str:

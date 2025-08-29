@@ -3,9 +3,9 @@ import os
 
 from flask import has_request_context
 
-from web.config import config
 from web.locale import current_locale
 from web.logger import log
+from web.setup import config
 from web.utils import Singleton
 
 
@@ -19,22 +19,30 @@ class Translator(metaclass=Singleton):
         root_dir = os.path.join(cur_dir, "translation")
         self.load_dir(root_dir)
 
-    def load_dir(self, dir_: str) -> None:
+    def load_dir(self, dir_: str) -> int:
+        total = 0
         dir_ = os.path.abspath(dir_)
         for fd, _, fns in os.walk(dir_):
             for fn in fns:
                 fp = os.path.abspath(os.path.join(fd, fn))
-                self.load_file(fp)
+                result = self.load_file(fp)
+                if result:
+                    total += 1
+        return total
 
-    def load_file(self, fp: str) -> None:
+    def load_file(self, fp: str) -> bool:
         with open(fp, "r") as f:
-            data = f.read()
-        fn, fext = os.path.splitext(os.path.basename(fp))
+            data_str = f.read()
+        fbn = os.path.basename(fp)
+        fn, fext = os.path.splitext(fbn)
         if fext != ".json":
-            return
+            return False
         if fn not in self.translations:
             self.translations[fn] = {}
-        self.translations[fn].update(json.loads(data))
+        data = json.loads(data_str)
+        if data:
+            self.translations[fn].update(data)
+        return bool(data)
 
     def get_translations(self, language_code: str) -> dict:
         try:
@@ -52,8 +60,8 @@ class Translator(metaclass=Singleton):
                 log.error("Unable to get language from locale")
             else:
                 return language.code
-        if config.WEBSITE_LANGUAGE_CODE:
-            return config.WEBSITE_LANGUAGE_CODE
+        if config.LOCALE_LANGUAGE_CODE:
+            return config.LOCALE_LANGUAGE_CODE
         return self.fallback_language_code
 
     def translate_strict(self, key: str, **kwargs) -> str | None:

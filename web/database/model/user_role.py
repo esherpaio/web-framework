@@ -1,24 +1,24 @@
-from enum import IntEnum
+from enum import IntEnum, StrEnum
 
 from sqlalchemy import Integer, String
 from sqlalchemy.orm import mapped_column as MC
 
-from ._base import Base
+from ._base import StrBase
 
 
-class UserRole(Base):
+class UserRole(StrBase):
     __tablename__ = "user_role"
 
     level = MC(Integer, nullable=False)
     name = MC(String(64), nullable=False, unique=True)
 
 
-class UserRoleId(IntEnum):
-    GUEST = 1
-    USER = 2
-    EXTERNAL = 5
-    ADMIN = 3
-    SUPER = 4
+class UserRoleId(StrEnum):
+    GUEST = "guest"
+    USER = "user"
+    EXTERNAL = "external"
+    ADMIN = "admin"
+    SUPER = "super"
 
 
 class UserRoleLevel(IntEnum):

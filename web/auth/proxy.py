@@ -4,10 +4,10 @@ from flask import g
 from sqlalchemy.orm import joinedload
 from werkzeug.local import LocalProxy
 
-from web.config import config
 from web.database import conn
 from web.database.model import User, UserRoleId
 from web.logger import log
+from web.setup import config
 
 from .enum import AuthType, G
 

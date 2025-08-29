@@ -2,10 +2,10 @@ from sqlalchemy import ForeignKey, Integer, UniqueConstraint
 from sqlalchemy.orm import mapped_column as MC
 from sqlalchemy.orm import relationship
 
-from ._base import Base
+from ._base import IntBase
 
 
-class ProductMedia(Base):
+class ProductMedia(IntBase):
     __tablename__ = "product_media"
     __table_args__ = (UniqueConstraint("product_id", "file_id"),)
 
