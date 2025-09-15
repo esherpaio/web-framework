@@ -61,7 +61,7 @@ class Meta:
     @property
     def title(self) -> str:
         if self._title:
-            return f"{self._title} • {config.META_WEBSITE_NAME}"
+            return self._title
         return config.META_WEBSITE_NAME
 
     @property
