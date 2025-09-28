@@ -21,6 +21,7 @@ class SchemaId(StrEnum):
 
 class ListItem(TypedDict):
     name: str
+    description: str
     url: str
     image: NotRequired[str]
 
@@ -260,6 +261,7 @@ class SchemaItemList(Schema):
         for position, item in enumerate(items, 1):
             thing: dict[str, Any] = {
                 "name": item["name"],
+                "description": item["description"],
                 "url": item["url"],
             }
             if "image" in item:
