@@ -159,3 +159,7 @@ class EventAddPaymentInfo(Event):
 
 class EventPurchase(Event):
     NAME = "purchase"
+
+
+class EventOutboundClick(Event):
+    NAME = "outbound_click"
