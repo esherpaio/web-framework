@@ -1,6 +1,4 @@
-import importlib
-import logging
-
+from web.database.module import import_package
 from web.setup import config
 
 from ._base import Base
@@ -46,6 +44,9 @@ from .sku_detail import SkuDetail
 from .user import User
 from .user_role import UserRole, UserRoleId, UserRoleLevel
 from .verification import Verification
+
+if config.DATABASE_MODULE is not None:
+    import_package(config.DATABASE_MODULE)
 
 __all__ = [
     "AppBlueprint",
@@ -99,33 +100,3 @@ __all__ = [
     "UserRoleLevel",
     "Verification",
 ]
-
-# Dynamic module import with error handling
-if config.DATABASE_MODULE is not None:
-    try:
-        database_mod = importlib.import_module(config.DATABASE_MODULE)
-
-        # Get attributes to import
-        if hasattr(database_mod, "__all__"):
-            attrs_to_import = database_mod.__all__
-        else:
-            # Fall back to all non-private attributes
-            attrs_to_import = [
-                attr for attr in dir(database_mod) if not attr.startswith("_")
-            ]
-
-        # Import the attributes
-        for attr in attrs_to_import:
-            if hasattr(database_mod, attr):
-                globals()[attr] = getattr(database_mod, attr)
-                if attr not in __all__:
-                    __all__.append(attr)
-
-    except ImportError as e:
-        logging.warning(
-            f"Failed to import database module '{config.DATABASE_MODULE}': {e}"
-        )
-    except Exception as e:
-        logging.error(
-            f"Error importing database module '{config.DATABASE_MODULE}': {e}"
-        )
