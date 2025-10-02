@@ -1,7 +1,6 @@
-from web.database.module import import_package
 from web.setup import config
 
-from ._base import Attribute, Base, IntBase, StrBase
+from ._base import Base
 from .app_blueprint import AppBlueprint
 from .app_route import AppRoute
 from .app_settings import AppSettings
@@ -46,7 +45,10 @@ from .user_role import UserRole, UserRoleId, UserRoleLevel
 from .verification import Verification
 
 if config.DATABASE_MODULE is not None:
-    import_package(config.DATABASE_MODULE)
+    database_mod = __import__(config.DATABASE_MODULE, fromlist=["*"])
+    for attr in dir(database_mod):
+        if not attr.startswith("_"):
+            globals()[attr] = getattr(database_mod, attr)
 
 __all__ = [
     "AppBlueprint",
@@ -54,7 +56,6 @@ __all__ = [
     "AppSettings",
     "Article",
     "ArticleMedia",
-    "Attribute",
     "Base",
     "Billing",
     "Cart",
@@ -70,7 +71,6 @@ __all__ = [
     "File",
     "FileType",
     "FileTypeId",
-    "IntBase",
     "Invoice",
     "Language",
     "Order",
@@ -96,7 +96,6 @@ __all__ = [
     "Shipping",
     "Sku",
     "SkuDetail",
-    "StrBase",
     "User",
     "UserRole",
     "UserRoleId",
