@@ -1,7 +1,7 @@
 from web.database.module import import_package
 from web.setup import config
 
-from ._base import Base
+from ._base import Attribute, Base, IntBase, StrBase
 from .app_blueprint import AppBlueprint
 from .app_route import AppRoute
 from .app_settings import AppSettings
@@ -54,6 +54,7 @@ __all__ = [
     "AppSettings",
     "Article",
     "ArticleMedia",
+    "Attribute",
     "Base",
     "Billing",
     "Cart",
@@ -69,6 +70,7 @@ __all__ = [
     "File",
     "FileType",
     "FileTypeId",
+    "IntBase",
     "Invoice",
     "Language",
     "Order",
@@ -94,6 +96,7 @@ __all__ = [
     "Shipping",
     "Sku",
     "SkuDetail",
+    "StrBase",
     "User",
     "UserRole",
     "UserRoleId",
