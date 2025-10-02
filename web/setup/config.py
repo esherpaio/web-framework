@@ -21,6 +21,7 @@ class _Protocol(Protocol):
     WORKER_INTERVAL_S: int
 
     DATABASE_URL: str
+    DATABASE_MODULE: str | None
     LOCALHOST_URL: str | None
 
     ENDPOINT_HOME: str
