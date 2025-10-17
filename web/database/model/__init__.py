@@ -1,3 +1,5 @@
+from web.setup import config
+
 from ._base import Base
 from .app_blueprint import AppBlueprint
 from .app_route import AppRoute
@@ -41,6 +43,12 @@ from .sku_detail import SkuDetail
 from .user import User
 from .user_role import UserRole, UserRoleId, UserRoleLevel
 from .verification import Verification
+
+if config.DATABASE_MODULE is not None:
+    database_mod = __import__(config.DATABASE_MODULE, fromlist=["*"])
+    for attr in dir(database_mod):
+        if not attr.startswith("_"):
+            globals()[attr] = getattr(database_mod, attr)
 
 __all__ = [
     "AppBlueprint",
