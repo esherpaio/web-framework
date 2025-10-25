@@ -2,16 +2,16 @@
 setuptools~=80.9.0
 
 # migrations
-alembic~=1.16.4
+alembic~=1.17.0
 
 # testing
-pytest~=8.4.1
-pytest-cov~=6.2.1
+pytest~=8.4.2
+pytest-cov~=7.0.0
 
 # formating and linting
 djlint~=1.36.4
-mypy==1.17.1
-ruff~=0.12.9
+mypy==1.18.2
+ruff~=0.14.2
 
 # blueprints
 git+https://github.com/esherpaio/web-blueprint-admin.git
