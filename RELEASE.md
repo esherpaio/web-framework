@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.10.7 (2025-10-25)
+
+- Updated schema.org JSON-LD
+- Updated Google tags
+
 ## v0.10.6 (2025-03-23)
 
 - Support for ARIA (accessibility features)
