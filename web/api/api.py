@@ -193,8 +193,8 @@ class API(Generic[B]):
             raise NotImplementedError
 
         if id_ is not None:
-            filters += (cls.model.id == id_,)
-        model = s.query(cls.model).filter(*filters).first()
+            filters += (cls.model.id == id_,)  # type: ignore [attr-defined]
+        model = s.query(cls.model).filter(*filters).first()  # type: ignore [arg-type]
         if model is None:
             abort(json_response(404, HttpText.HTTP_404))
         return model
@@ -211,9 +211,9 @@ class API(Generic[B]):
         if cls.model is None:
             raise NotImplementedError
         if order_by is None:
-            order_by = cls.model.id
+            order_by = cls.model.id  # type: ignore [attr-defined]
         models = (
-            s.query(cls.model)
+            s.query(cls.model)  # type: ignore [arg-type]
             .filter(*filters)
             .order_by(order_by)
             .limit(limit)
