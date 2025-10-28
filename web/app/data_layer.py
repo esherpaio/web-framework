@@ -163,3 +163,7 @@ class EventPurchase(Event):
 
 class EventOutboundClick(Event):
     NAME = "outbound_click"
+
+
+class EventShareClick(Event):
+    NAME = "share_click"
