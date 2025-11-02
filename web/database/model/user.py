@@ -13,6 +13,7 @@ from .user_role import UserRoleId
 class User(IntBase, Attribute):
     __tablename__ = "user"
 
+    display_name = MC(String(128))
     api_key = MC(String(64), unique=True)
     email = MC(String(128), unique=True)
     is_active = MC(Boolean, nullable=False, default=False, server_default="false")
