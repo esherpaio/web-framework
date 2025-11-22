@@ -1,4 +1,5 @@
 import gzip
+import time
 import zlib
 from typing import Callable
 
@@ -19,7 +20,8 @@ class Optimizer(metaclass=Singleton):
     ENCODING = "utf-8"
 
     def __init__(self, app: Flask | None = None) -> None:
-        self._cached_endpoints: set[str] = set()
+        if "_endpoints" not in cache:
+            cache["_endpoints"] = dict()
         if app is not None:
             self.init(app)
 
@@ -134,31 +136,37 @@ class Optimizer(metaclass=Singleton):
     #
 
     def set_cache(self, response: Response, encoding: Encoding | None) -> None:
-        if request.endpoint not in self._cached_endpoints:
+        if "_endpoints" not in cache:
+            cache["_endpoints"] = dict()
+        if (request.full_path, encoding) in cache._endpoints:
             return
+
+        cache._endpoints[request.full_path, encoding] = (
+            time.monotonic(),
+            response.get_data(as_text=False),
+        )
         log.info(f"Optimizer cached {request.full_path}")
-        cache[(request.full_path, encoding)] = response.get_data(as_text=False)
 
     def get_cache(self, encoding: Encoding | None) -> Response | None:
-        if isinstance(request.endpoint, str):
-            self._cached_endpoints.add(request.endpoint)
-        from_cache = cache.get((request.full_path, encoding))
-        if from_cache is not None:
-            response = make_response()
-            response.direct_passthrough = False
-            response.set_data(from_cache)
-            return response
-        return None
+        endpoint = cache._endpoints.get((request.full_path, encoding))
+        if endpoint is None:
+            return None
+
+        cached_at, data = endpoint
+        cached_ago_s = int(time.monotonic() - cached_at)
+        if cached_ago_s > config.OPTIMIZER_CACHE_MAX_S:
+            del cache._endpoints[request.full_path, encoding]
+            log.info(f"Optimizer expired {request.full_path}")
+            return None
+
+        response = make_response()
+        response.direct_passthrough = False
+        response.set_data(data)
+        return response
 
     def del_cache(self) -> None:
-        for key in list(cache.keys()):
-            if (
-                isinstance(key, tuple)
-                and isinstance(key[0], str)
-                and key[0].startswith("/")
-            ):
-                del cache[key]
-        self._cached_endpoints = set()
+        cache._endpoints = dict()
+        log.warning("Optimizer cache cleared")
 
     #
     # Request handler
