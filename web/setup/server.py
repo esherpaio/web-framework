@@ -104,8 +104,6 @@ class Server:
         LocaleManager(app)
         Redirector(app)
 
-        log.info("Flask running")
-
     def setup_jinja(
         self,
         app: Flask,

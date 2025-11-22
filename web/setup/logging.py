@@ -26,9 +26,13 @@ class CustomWsgiRequestHandler(WSGIRequestHandler):
 
 
 def quiet_werkzeug_log(type, message, *args, **kwargs):
-    ignore = ["press ctrl+c to quit", "running on"]
-    if any(ig in message.lower() for ig in ignore):
-        return
+    lines = message.split("\n")
+    if (
+        len(lines) > 1
+        and lines[1].startswith(" * ")
+        and "running on http" in lines[1].lower()
+    ):
+        message = lines[1].removeprefix(" * ")
     werkzeug_log(type, message, *args, **kwargs)
 
 
