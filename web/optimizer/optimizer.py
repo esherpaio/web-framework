@@ -165,8 +165,10 @@ class Optimizer(metaclass=Singleton):
         return response
 
     def del_cache(self) -> None:
+        is_empty = not bool(cache._endpoints)
         cache._endpoints = dict()
-        log.warning("Optimizer cache cleared")
+        if not is_empty:
+            log.warning("Optimizer cache cleared")
 
     #
     # Request handler
