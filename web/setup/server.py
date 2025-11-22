@@ -1,4 +1,3 @@
-import logging
 from datetime import datetime, timezone
 from typing import Callable, Type
 
@@ -14,7 +13,7 @@ from web.automation import Automator, task
 from web.cache import cache, cache_common, cache_manager
 from web.i18n import translator
 from web.locale import LocaleManager, current_locale
-from web.logger import WerkzeugFilter, log
+from web.logger import log
 from web.mail import MailEvent, mail
 from web.optimizer import optimizer
 from web.setup import config
@@ -25,8 +24,6 @@ from web.utils.generators import format_decimal
 class Server:
     def setup_logging(self) -> None:
         patch_logging()
-        log_werkzeug = logging.getLogger("werkzeug")
-        log_werkzeug.addFilter(WerkzeugFilter())
 
     def setup_i18n(self, dir_: str | None) -> None:
         if dir_ is None:
@@ -106,6 +103,8 @@ class Server:
             optimizer.init(app)
         LocaleManager(app)
         Redirector(app)
+
+        log.info("Flask running")
 
     def setup_jinja(
         self,

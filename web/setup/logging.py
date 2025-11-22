@@ -1,19 +1,28 @@
-from http import HTTPStatus
-
 import flask.cli
 import werkzeug.serving
 from werkzeug.serving import WSGIRequestHandler
+
+from web.logger import AnsiColor
 
 werkzeug_log = werkzeug.serving._log
 
 
 class CustomWsgiRequestHandler(WSGIRequestHandler):
     def log_request(self, code: int | str = "NA", *args, **kwargs) -> None:
-        if isinstance(code, HTTPStatus):
-            code = code.value
+        code = str(code)
         method = getattr(self, "command", "NA")
         path = getattr(self, "path", "")
-        werkzeug_log("info", f"{method} {code} {path}")
+        message = f"{method} {code} {path}"
+
+        match code[0]:
+            case "3":
+                color_int = AnsiColor.WARNING.value
+                message = f"\x1b[{color_int}m{message}\x1b[0m"
+            case "4" | "5":
+                color_int = AnsiColor.ERROR.value
+                message = f"\x1b[{color_int}m{message}\x1b[0m"
+
+        werkzeug_log("info", message)
 
 
 def quiet_werkzeug_log(type, message, *args, **kwargs):
