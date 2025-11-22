@@ -1,4 +1,3 @@
-import logging
 import os
 import signal
 import time
@@ -10,9 +9,10 @@ from flask import Flask
 
 from web.automation import Automator
 from web.i18n import translator
-from web.logger import WerkzeugFilter, log
+from web.logger import log
 from web.mail import MailEvent, mail
 from web.setup import config
+from web.setup.logging import patch_logging
 
 
 class Worker:
@@ -36,8 +36,7 @@ class Worker:
     #
 
     def setup_logging(self) -> None:
-        log_werkzeug = logging.getLogger("werkzeug")
-        log_werkzeug.addFilter(WerkzeugFilter())
+        patch_logging()
 
     def setup_i18n(self, dir_: str | None) -> None:
         if dir_ is None:
