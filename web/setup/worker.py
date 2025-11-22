@@ -13,6 +13,7 @@ from web.i18n import translator
 from web.logger import WerkzeugFilter, log
 from web.mail import MailEvent, mail
 from web.setup import config
+from web.setup.logging import patch_logging
 
 
 class Worker:
@@ -36,6 +37,7 @@ class Worker:
     #
 
     def setup_logging(self) -> None:
+        patch_logging()
         log_werkzeug = logging.getLogger("werkzeug")
         log_werkzeug.addFilter(WerkzeugFilter())
 

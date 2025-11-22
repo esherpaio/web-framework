@@ -18,11 +18,13 @@ from web.logger import WerkzeugFilter, log
 from web.mail import MailEvent, mail
 from web.optimizer import optimizer
 from web.setup import config
+from web.setup.logging import patch_logging
 from web.utils.generators import format_decimal
 
 
 class Server:
     def setup_logging(self) -> None:
+        patch_logging()
         log_werkzeug = logging.getLogger("werkzeug")
         log_werkzeug.addFilter(WerkzeugFilter())
 
