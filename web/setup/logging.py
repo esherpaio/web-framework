@@ -1,3 +1,5 @@
+import time
+
 import flask.cli
 import werkzeug.serving
 from werkzeug.serving import WSGIRequestHandler
@@ -8,11 +10,16 @@ werkzeug_log = werkzeug.serving._log
 
 
 class CustomWsgiRequestHandler(WSGIRequestHandler):
+    def handle(self) -> None:
+        self.request_at = time.monotonic()
+        super().handle()
+
     def log_request(self, code: int | str = "NA", *args, **kwargs) -> None:
         code = str(code)
         method = getattr(self, "command", "NA")
         path = getattr(self, "path", "")
-        message = f"{method} {code} {path}"
+        duration_ms = int((time.monotonic() - self.request_at) * 1000)
+        message = f"{method} {code} {path} {duration_ms}ms"
 
         match code[0]:
             case "2":
@@ -28,7 +35,7 @@ class CustomWsgiRequestHandler(WSGIRequestHandler):
         werkzeug_log("info", message)
 
 
-def quiet_werkzeug_log(type, message, *args, **kwargs):
+def quiet_werkzeug_log(type, message, *args, **kwargs) -> None:
     lines = message.split("\n")
     if (
         len(lines) > 1
