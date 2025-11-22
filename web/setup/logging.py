@@ -15,6 +15,9 @@ class CustomWsgiRequestHandler(WSGIRequestHandler):
         message = f"{method} {code} {path}"
 
         match code[0]:
+            case "2":
+                color_int = AnsiColor.DEBUG.value
+                message = f"\x1b[{color_int}m{message}\x1b[0m"
             case "3":
                 color_int = AnsiColor.WARNING.value
                 message = f"\x1b[{color_int}m{message}\x1b[0m"

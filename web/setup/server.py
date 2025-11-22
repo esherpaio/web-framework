@@ -57,7 +57,6 @@ class Server:
             task.UserRoleSeedSyncer,
         ]
         all_tasks = default_tasks + tasks
-        log.info(f"Running {len(all_tasks)} tasks")
         for task_ in all_tasks:
             task_.run()
 
