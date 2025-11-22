@@ -1,38 +1,24 @@
 import logging
-import re
+from enum import Enum
 from logging import Handler, LogRecord
 
 from web.setup import config
 
 #
-# Filters and formatters
+# Enums
 #
 
 
-LEVEL_COLORS = {
-    "DEBUG": "\033[90m",
-    "INFO": "",
-    "WARNING": "\033[33m",
-    "ERROR": "\033[31m",
-    "CRITICAL": "\033[41m",
-}
-RESET = "\033[0m"
+class AnsiColor(Enum):
+    DEBUG = 90
+    WARNING = 33
+    ERROR = 31
+    CRITICAL = 41
 
 
-class WerkzeugFilter(logging.Filter):
-    ansi_escape = re.compile(r"\x1B\[[0-?]*[ -/]*[@-~]")
-    pattern = re.compile(r'"(\S+)\s+(\S+)[^"]*"\s+(\d{3})')
-
-    def filter(self, record: logging.LogRecord) -> bool:
-        message = record.getMessage()
-        escaped = self.ansi_escape.sub("", message)
-        match = self.pattern.search(escaped)
-        if match:
-            color = LEVEL_COLORS.get(record.levelname, "")
-            method, url, status = match.groups()
-            record.msg = f"{color}{method} {url} {status}{RESET}"
-            record.args = ()
-        return True
+#
+# Formatters
+#
 
 
 class PlainFormatter(logging.Formatter):
@@ -40,9 +26,12 @@ class PlainFormatter(logging.Formatter):
 
     def format(self, record: logging.LogRecord) -> str:
         formatter = logging.Formatter(self.template)
-        color = LEVEL_COLORS.get(record.levelname, "")
         message = formatter.format(record)
-        return f"{color}{message}{RESET}"
+        try:
+            color_int = AnsiColor[record.levelname].value
+        except KeyError:
+            return message
+        return f"\x1b[{color_int}m{message}\x1b[0m"
 
 
 class HtmlFormatter(logging.Formatter):

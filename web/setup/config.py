@@ -35,7 +35,9 @@ class _Protocol(Protocol):
     AUTOMATE_EXTERNAL: bool
     AUTOMATE_STATIC: bool
     AUTOMATE_TIMEOUT_S: int
+
     OPTIMIZER_ENABLED: bool
+    OPTIMIZER_CACHE_MAX_S: int
 
     AUTH_JWT_SECRET: str
     AUTH_JWT_ALLOW_GUEST: bool
