@@ -7,56 +7,74 @@ from web.setup import config
 from .type import _SupportsRead
 
 
+def _get_dir(rel_dir: str) -> str:
+    if config.FTP_BASE_DIR is not None:
+        dir_ = os.path.dirname(os.path.join(config.FTP_BASE_DIR, rel_dir))
+    else:
+        dir_ = os.path.dirname(rel_dir)
+    return dir_
+
+
+def _get_path(rel_fp: str) -> str:
+    if config.FTP_BASE_DIR is not None:
+        fp = os.path.join(config.FTP_BASE_DIR, rel_fp)
+    else:
+        fp = rel_fp
+    return fp
+
+
 def filenames(path: str) -> list[str]:
-    folder = os.path.dirname(path)
+    dir_ = _get_dir(path)
     with FTP(
         config.FTP_HOSTNAME,
         config.FTP_USERNAME,
         config.FTP_PASSWORD,
     ) as ftp:
-        ftp.cwd(folder)
-        return ftp.nlst()
+        ftp.cwd(dir_)
+        fns = ftp.nlst()
+    return fns
 
 
 def exists(path: str) -> bool:
-    folder = os.path.dirname(path)
-    name = os.path.basename(path)
+    dir_ = _get_dir(path)
+    fn = os.path.basename(path)
     with FTP(
         config.FTP_HOSTNAME,
         config.FTP_USERNAME,
         config.FTP_PASSWORD,
     ) as ftp:
-        ftp.cwd(folder)
-        names = ftp.nlst()
-        return name in names
+        ftp.cwd(dir_)
+        fns = ftp.nlst()
+    return fn in fns
 
 
 def upload(file_: _SupportsRead[bytes], path: str) -> None:
-    folder = os.path.dirname(path)
-    name = os.path.basename(path)
+    dir_ = _get_dir(path)
+    fn = os.path.basename(path)
     with FTP(
         config.FTP_HOSTNAME,
         config.FTP_USERNAME,
         config.FTP_PASSWORD,
     ) as ftp:
         try:
-            ftp.mkd(folder)
+            ftp.mkd(dir_)
         except error_perm as error:
             if error.args[0][:3] != "521":
                 raise
-        ftp.cwd(folder)
-        ftp.storbinary(f"STOR {name}", file_)
+        ftp.cwd(dir_)
+        ftp.storbinary(f"STOR {fn}", file_)
     log.info(f"Uploaded on FTP: {path}")
 
 
 def delete(path: str) -> None:
+    fp = _get_path(path)
     with FTP(
         config.FTP_HOSTNAME,
         config.FTP_USERNAME,
         config.FTP_PASSWORD,
     ) as ftp:
         try:
-            ftp.delete(path)
+            ftp.delete(fp)
         except error_perm as error:
             if error.args[0][:3] != "550":
                 raise
