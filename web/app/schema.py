@@ -87,7 +87,7 @@ class SchemaWebsite(Schema):
             _external=True,
             _locale=current_locale.locale,
         )
-        self.data = {
+        data = {
             "@context": "https://schema.org",
             "@type": "WebSite",
             "@id": f"{home_url}{SchemaId.WEBSITE}",
@@ -96,6 +96,22 @@ class SchemaWebsite(Schema):
             "inLanguage": current_locale.language_code,
             "publisher": {"@id": f"{home_url}{SchemaId.ORGANIZATION}"},
         }
+        if config.ENDPOINT_SEARCH:
+            search_url = parse_url(
+                config.ENDPOINT_SEARCH,
+                _func=url_for_locale,
+                _external=True,
+                _locale=current_locale.locale,
+            )
+            data["potentialAction"] = {
+                "@type": "SearchAction",
+                "target": {
+                    "@type": "EntryPoint",
+                    "urlTemplate": f"{search_url}?s={{search_term_string}}",
+                },
+                "query-input": "required name=search_term_string",
+            }
+        self.data = data
 
 
 class SchemaOrganization(Schema):

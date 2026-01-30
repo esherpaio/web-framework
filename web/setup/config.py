@@ -28,6 +28,7 @@ class _Protocol(Protocol):
     ENDPOINT_ERROR: str
     ENDPOINT_LOGIN: str
     ENDPOINT_PASSWORD_RECOVERY: str
+    ENDPOINT_SEARCH: str | None
 
     LOCALE_LANGUAGE_CODE: str
     LOCALE_COUNTRY_CODE: str
