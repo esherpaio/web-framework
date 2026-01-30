@@ -107,9 +107,9 @@ class SchemaWebsite(Schema):
                 "@type": "SearchAction",
                 "target": {
                     "@type": "EntryPoint",
-                    "urlTemplate": f"{search_url}?s={{search_term_string}}",
+                    "urlTemplate": f"{search_url}?s={{search}}",
                 },
-                "query-input": "required name=search_term_string",
+                "query-input": "required name=search",
             }
         self.data = data
 
