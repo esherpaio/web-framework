@@ -1,6 +1,7 @@
 async function initConsent() {
     let cookie = getCookie("consent");
-    if (!cookie) {
+    let element = document.getElementById("modal-consent");
+    if (!cookie && element) {
         const modalOptions = { backdrop: "static", keyboard: false };
         const modal = new bootstrap.Modal(`#modal-consent`, modalOptions);
         modal.show();
