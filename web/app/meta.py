@@ -6,7 +6,7 @@ from flask import has_request_context, request
 from markupsafe import Markup
 
 from web.database.model import AppRoute
-from web.locale import current_locale
+from web.locale import current_locale, expects_locale
 from web.setup import config
 
 
@@ -34,11 +34,11 @@ class MetaTag(StrEnum):
 
 
 class RobotTag(StrEnum):
-    INDEX_FOLLOW = "index, follow"
-    NOINDEX_FOLLOW = "noindex, follow"
-    INDEX_NOFOLLOW = "index, nofollow"
-    NOINDEX_NOFOLLOW = "noindex, nofollow"
-    INDEX_FOLLOW_MAX = "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"  # fmt: skip
+    INDEX_FOLLOW = "index,follow"
+    NOINDEX_FOLLOW = "noindex,follow"
+    INDEX_NOFOLLOW = "index,nofollow"
+    NOINDEX_NOFOLLOW = "noindex,nofollow"
+    INDEX_FOLLOW_MAX = "index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"  # fmt: skip
 
 
 class Meta:
@@ -124,7 +124,11 @@ class Meta:
         yield Markup(MetaTag.META_CHARSET)
         yield Markup(MetaTag.META_VIEWPORT)
         if self.robots:
-            yield Markup(MetaTag.META_ROBOTS % self.robots)
+            required_args = 1 if expects_locale(request.endpoint) else 0
+            if len(request.args) > required_args:
+                yield Markup(MetaTag.META_ROBOTS % RobotTag.NOINDEX_FOLLOW)
+            else:
+                yield Markup(MetaTag.META_ROBOTS % self.robots)
         if self.description:
             yield Markup(MetaTag.META_DESCRIPTION % self.description)
         if self.hex_color:
