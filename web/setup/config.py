@@ -126,7 +126,7 @@ class Config:
         return getattr(self._config, name)
 
     def _setup(self) -> None:
-        module_path = os.getenv("CONFIG_MODULE", "config")
+        module_path = os.getenv("CONFIG_MODULE", "test.config")
         config_ = importlib.import_module(module_path)
         self._validate(config_)
         self._config = config_
