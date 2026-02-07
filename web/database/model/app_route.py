@@ -1,4 +1,5 @@
-from sqlalchemy import Boolean, String
+from sqlalchemy import Boolean, String, Text
+from sqlalchemy.dialects.postgresql import ARRAY
 from sqlalchemy.orm import mapped_column as MC
 
 from ._base import Attribute, IntBase
@@ -16,3 +17,5 @@ class AppRoute(IntBase, Attribute):
     name = MC(String(64), nullable=True)
     robots = MC(String(256), nullable=True)
     is_collection = MC(Boolean, nullable=False, default=False, server_default="false")
+    sitemap_query_key = MC(String(32), nullable=True)
+    sitemap_query_values = MC(ARRAY(Text), nullable=True)
