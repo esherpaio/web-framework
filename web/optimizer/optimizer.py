@@ -136,6 +136,9 @@ class Optimizer(metaclass=Singleton):
     #
 
     def set_cache(self, response: Response, encoding: Encoding | None) -> None:
+        if request.method != "GET":
+            return
+
         if "_endpoints" not in cache:
             cache["_endpoints"] = dict()
         if (request.full_path, encoding) in cache._endpoints:
