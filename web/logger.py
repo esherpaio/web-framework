@@ -84,7 +84,7 @@ def _get_logger(name: str) -> logging.Logger:
     stream = logging.StreamHandler()
     stream.setFormatter(PlainFormatter())
     base.addHandler(stream)
-    if not config.MAIL_LOG_ENABLED and config.MAIL_ADMIN:
+    if not config.DEBUG and config.MAIL_LOG_ENABLED and config.MAIL_ADMIN:
         mail = MailHandler()
         base.addHandler(mail)
     return base

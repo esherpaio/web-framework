@@ -27,10 +27,6 @@ class SeedSyncer(Automator):
 
     @classmethod
     def run(cls) -> None:
-        assert issubclass(cls.MODEL, Base)
-        assert isinstance(cls.KEY, str)
-        assert isinstance(cls.SEEDS, list)
-
         cls.log_start()
         with conn.begin() as s:
             cls.sync_model(s)
