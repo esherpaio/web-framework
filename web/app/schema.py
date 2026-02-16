@@ -26,6 +26,11 @@ class ListItem(TypedDict):
     image: NotRequired[str]
 
 
+class BreadcrumbItem(TypedDict):
+    name: str
+    url: str
+
+
 class FaqItem(TypedDict):
     question: str
     answer: str
@@ -303,6 +308,26 @@ class SchemaItemList(Schema):
             "itemListElement": list_items,
         }
         self.data = data
+
+
+class SchemaBreadcrumbList(Schema):
+    def __init__(self, items: list[BreadcrumbItem]) -> None:
+        super().__init__()
+        list_items = []
+        for position, item in enumerate(items, 1):
+            list_items.append(
+                {
+                    "@type": "ListItem",
+                    "position": position,
+                    "name": item["name"],
+                    "item": item["url"],
+                }
+            )
+        self.data = {
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": list_items,
+        }
 
 
 class SchemaFaqPage(Schema):
