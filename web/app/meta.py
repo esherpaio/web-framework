@@ -6,7 +6,7 @@ from flask import has_request_context, request
 from markupsafe import Markup
 
 from web.database.model import AppRoute
-from web.locale import current_locale, expects_locale
+from web.locale import current_locale
 from web.setup import config
 
 
@@ -124,11 +124,7 @@ class Meta:
         yield Markup(MetaTag.META_CHARSET)
         yield Markup(MetaTag.META_VIEWPORT)
         if self.robots:
-            required_args = 1 if expects_locale(request.endpoint) else 0
-            if len(request.args) > required_args:
-                yield Markup(MetaTag.META_ROBOTS % RobotTag.NOINDEX_FOLLOW)
-            else:
-                yield Markup(MetaTag.META_ROBOTS % self.robots)
+            yield Markup(MetaTag.META_ROBOTS % self.robots)
         if self.description:
             yield Markup(MetaTag.META_DESCRIPTION % self.description)
         if self.hex_color:
