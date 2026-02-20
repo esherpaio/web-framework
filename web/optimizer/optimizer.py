@@ -136,7 +136,7 @@ class Optimizer(metaclass=Singleton):
                 "public, "
                 f"max-age={config.OPTIMIZER_BROWSER_CACHE_MAX_S}, "
                 f"s-maxage={config.OPTIMIZER_CDN_CACHE_MAX_S}, "
-                "stale-while-revalidate=60"
+                f"stale-while-revalidate={config.OPTIMIZER_CDN_STALE_MAX_S}"
             )
         if isinstance(encoding, Encoding):
             response.headers["Content-Encoding"] = encoding
