@@ -234,5 +234,7 @@ def set_jwt(response: Response, access_token: str, csrf_token: str) -> None:
 
 
 def del_jwt(response: Response) -> None:
-    response.delete_cookie(config.AUTH_JWT_COOKIE)
-    response.delete_cookie(config.AUTH_CSRF_COOKIE)
+    if request.cookies.get(config.AUTH_JWT_COOKIE) is not None:
+        response.delete_cookie(config.AUTH_JWT_COOKIE)
+    if request.cookies.get(config.AUTH_CSRF_COOKIE) is not None:
+        response.delete_cookie(config.AUTH_CSRF_COOKIE)
