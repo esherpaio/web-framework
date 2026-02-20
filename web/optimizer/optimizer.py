@@ -194,7 +194,7 @@ class Optimizer(metaclass=Singleton):
                 encoding = self.get_encoding(request.headers)
                 response = self.get_cache(encoding)
                 if response is not None:
-                    self.set_headers(response, encoding)
+                    self.set_headers(response, encoding, cache=True)
                     return response
             return f(*args, **kwargs)
 
