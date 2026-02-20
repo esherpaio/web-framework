@@ -202,6 +202,10 @@ def decode_jwt(encoded_token: str, csrf_token: str | None = None) -> dict:
 
 
 def set_jwt(response: Response, access_token: str, csrf_token: str) -> None:
+    current = request.cookies.get(config.AUTH_JWT_COOKIE)
+    if request.method == "GET" and current is not None:
+        return
+
     if config.URL_SCHEME == "https":
         secure = True
     else:

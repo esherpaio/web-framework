@@ -51,5 +51,8 @@ class LocaleManager(metaclass=Singleton):
 
     @staticmethod
     def set_locale(resp: Response) -> Response:
-        resp.set_cookie("locale", current_locale.locale)
+        current = request.cookies.get("locale", None)
+        new = current_locale.locale
+        if current != new:
+            resp.set_cookie("locale", current_locale.locale)
         return resp
