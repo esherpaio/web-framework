@@ -124,9 +124,20 @@ class Optimizer(metaclass=Singleton):
     #
 
     @staticmethod
-    def set_headers(response: Response, encoding: Encoding | None) -> None:
+    def set_headers(
+        response: Response,
+        encoding: Encoding | None,
+        cache: bool = False,
+    ) -> None:
         if response.direct_passthrough:
             return
+        if cache:
+            response.headers["Cache-Control"] = (
+                "public, "
+                f"max-age={config.OPTIMIZER_BROWSER_CACHE_MAX_S}, "
+                f"s-maxage={config.OPTIMIZER_CDN_CACHE_MAX_S}, "
+                "stale-while-revalidate=60"
+            )
         if isinstance(encoding, Encoding):
             response.headers["Content-Encoding"] = encoding
         response.headers["Content-Length"] = str(response.content_length)
@@ -157,7 +168,7 @@ class Optimizer(metaclass=Singleton):
 
         cached_at, data = endpoint
         cached_ago_s = int(time.monotonic() - cached_at)
-        if cached_ago_s > config.OPTIMIZER_CACHE_MAX_S:
+        if cached_ago_s > config.OPTIMIZER_SERVER_CACHE_MAX_S:
             del cache._endpoints[request.full_path, encoding]
             log.info(f"Optimizer expired {request.full_path}")
             return None
