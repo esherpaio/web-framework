@@ -4,7 +4,7 @@ import zlib
 from typing import Callable
 
 import brotli
-from flask import Flask, Response, make_response, request
+from flask import Flask, Response, g, make_response, request
 from werkzeug.datastructures import Headers
 
 from web.cache import cache
@@ -131,7 +131,7 @@ class Optimizer(metaclass=Singleton):
     ) -> None:
         if response.direct_passthrough:
             return
-        if cache:
+        if g.get("cached", False):
             response.headers["Cache-Control"] = (
                 "public, "
                 f"max-age={config.OPTIMIZER_BROWSER_CACHE_MAX_S}, "
@@ -191,6 +191,7 @@ class Optimizer(metaclass=Singleton):
     def cache(self, f: Callable) -> Callable[..., Response]:
         def wrap(*args, **kwargs) -> Response:
             if config.OPTIMIZER_ENABLED:
+                g.cached = True
                 encoding = self.get_encoding(request.headers)
                 response = self.get_cache(encoding)
                 if response is not None:
