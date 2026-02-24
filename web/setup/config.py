@@ -96,6 +96,7 @@ class _Protocol(Protocol):
     META_LOGO_URL: str
     META_FAVICON_URL: str
     META_COLOR_HEX: str
+    OG_LOCALE: bool
 
     SOCIAL_DISCORD: str | None
     SOCIAL_FACEBOOK: str | None

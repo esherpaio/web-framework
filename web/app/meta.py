@@ -96,7 +96,11 @@ class Meta:
 
     @property
     def locale(self) -> str | None:
-        if current_locale.language_code and current_locale.country_code:
+        if (
+            config.OG_LOCALE
+            and current_locale.language_code
+            and current_locale.country_code
+        ):
             return f"{current_locale.language_code}_{current_locale.country_code}"
         return None
 
