@@ -14,7 +14,7 @@ class MetaTag(StrEnum):
     LINK_APPLE_TOUCH_ICON = "<link rel='apple-touch-icon' href='%s'/>"
     LINK_CANONICAL = "<link rel='canonical' href='%s'/>"
     LINK_ICON = "<link rel='icon' href='%s'/>"
-    META_CHARSET = "<meta http-equiv='Content-Type' charset='utf-8'/>"
+    META_CHARSET = "<meta charset='utf-8'/>"
     META_DESCRIPTION = "<meta name='description' content='%s'/>"
     META_ROBOTS = "<meta name='robots' content='%s'/>"
     META_THEME_COLOR = "<meta name='theme-color' content='%s'/>"
