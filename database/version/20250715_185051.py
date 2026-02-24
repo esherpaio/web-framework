@@ -148,9 +148,9 @@ def upgrade() -> None:
         s = orm.Session(bind=bind)
         for row in s.query(cls_).all():
             for item in enum:
-                score = similarity(row.name, item.value)  # type: ignore [attr-defined]
+                score = similarity(row.name, item.value)  # type: ignore[attr-defined]
                 if score > 0.8:
-                    row.id = item.value  # type: ignore [attr-defined]
+                    row.id = item.value  # type: ignore[attr-defined]
                     break
         s.flush()
 

@@ -88,7 +88,7 @@ class Server:
 
     def setup_flask(self, app: Flask, blueprints: list[Blueprint]) -> None:
         if not config.DEBUG:
-            app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
+            app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)  # type: ignore[method-assign]
         app.config["PREFERRED_URL_SCHEME"] = config.URL_SCHEME
         if config.DEBUG:
             log.info("Enabling Flask debug mode")
