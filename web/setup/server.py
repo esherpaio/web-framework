@@ -3,6 +3,7 @@ from typing import Callable, Type
 
 import alembic.config
 from flask import Blueprint, Flask
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 from web import cdn
 from web.app.error import handle_error
@@ -86,6 +87,8 @@ class Server:
             mail.events.update(events)
 
     def setup_flask(self, app: Flask, blueprints: list[Blueprint]) -> None:
+        if not config.DEBUG:
+            app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
         app.config["PREFERRED_URL_SCHEME"] = config.URL_SCHEME
         if config.DEBUG:
             log.info("Enabling Flask debug mode")
