@@ -146,7 +146,7 @@ def env_var(key: str, type_: type[str | int | bool], default: Any = None) -> Any
     if type_ is int:
         return int(value)
     if type_ is bool:
-        return value in ["true", "1"]
+        return value in [True, 1, "true", "1"]
 
 
 config: _Protocol = Config()
