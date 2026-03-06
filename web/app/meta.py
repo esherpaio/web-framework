@@ -50,11 +50,13 @@ class Meta:
         description: str | None = None,
         robots: str | None = None,
         image_url: str | None = None,
+        type_: str | None = None,
     ) -> None:
         self._title = title
         self._description = description
         self._robots = robots
         self._image_url = image_url
+        self._type = type_ or "website"
 
     # Properties
 
@@ -145,6 +147,7 @@ class Meta:
         # Opengraph
         if self.canonical_url:
             yield Markup(MetaTag.OG_URL % self.canonical_url)
+        yield Markup(MetaTag.OG_TYPE % self._type)
         if self.locale:
             yield Markup(MetaTag.OG_LOCALE % self.locale)
         if self.title:
@@ -157,7 +160,7 @@ class Meta:
             yield Markup(MetaTag.OG_SITE_NAME % self.website_name)
         if self.facebook_url:
             yield Markup(MetaTag.OG_PUBLISHER % self.facebook_url)
-        # Twitteracquirer
+        # Twitter
         yield Markup(MetaTag.TWITTER_CARD)
         if self.twitter_at:
             yield Markup(MetaTag.TWITTER_SITE % self.twitter_at)
