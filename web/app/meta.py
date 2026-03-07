@@ -30,6 +30,7 @@ class MetaTag(StrEnum):
     TITLE = "<title>%s</title>"
     TWITTER_CARD = "<meta name='twitter:card' content='summary_large_image'/>"
     TWITTER_CREATOR = "<meta name='twitter:creator' content='%s'/>"
+    TWITTER_IMAGE = "<meta name='twitter:image' content='%s'/>"
     TWITTER_SITE = "<meta name='twitter:site' content='%s'/>"
 
 
@@ -162,6 +163,8 @@ class Meta:
             yield Markup(MetaTag.OG_PUBLISHER % self.facebook_url)
         # Twitter
         yield Markup(MetaTag.TWITTER_CARD)
+        if self.image_url:
+            yield Markup(MetaTag.TWITTER_IMAGE % self.image_url)
         if self.twitter_at:
             yield Markup(MetaTag.TWITTER_SITE % self.twitter_at)
             yield Markup(MetaTag.TWITTER_CREATOR % self.twitter_at)
