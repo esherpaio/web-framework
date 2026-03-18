@@ -82,6 +82,10 @@ class Meta:
         return config.META_FAVICON_URL
 
     @property
+    def logo_url(self) -> str:
+        return config.META_LOGO_URL
+
+    @property
     def hex_color(self) -> str:
         return config.META_COLOR_HEX
 
@@ -144,7 +148,7 @@ class Meta:
             yield Markup(MetaTag.LINK_CANONICAL % self.canonical_url)
         if self.favicon_url:
             yield Markup(MetaTag.LINK_ICON % self.favicon_url)
-            yield Markup(MetaTag.LINK_APPLE_TOUCH_ICON % self.favicon_url)
+            yield Markup(MetaTag.LINK_APPLE_TOUCH_ICON % self.logo_url)
         # Opengraph
         if self.canonical_url:
             yield Markup(MetaTag.OG_URL % self.canonical_url)
