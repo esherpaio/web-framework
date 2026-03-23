@@ -148,6 +148,7 @@ class Meta:
             yield Markup(MetaTag.LINK_CANONICAL % self.canonical_url)
         if self.favicon_url:
             yield Markup(MetaTag.LINK_ICON % self.favicon_url)
+        if self.logo_url:
             yield Markup(MetaTag.LINK_APPLE_TOUCH_ICON % self.logo_url)
         # Opengraph
         if self.canonical_url:
