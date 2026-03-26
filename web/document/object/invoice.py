@@ -1,7 +1,7 @@
 from itertools import zip_longest
 
 from fpdf import FPDF
-from fpdf.enums import TableBordersLayout, XPos, YPos
+from fpdf.enums import Align, TableBordersLayout, XPos, YPos
 from sqlalchemy.orm import Session
 
 from web.database.model import Invoice, Order
@@ -31,7 +31,7 @@ def gen_invoice_pdf(
     pdf.set_auto_page_break(auto=True, margin=30)
     pdf.add_page()
 
-    pdf.image(config.BUSINESS_LOGO_URL, x="L", h=15, keep_aspect_ratio=True)
+    pdf.image(config.BUSINESS_LOGO_URL, x=Align.L, h=15, keep_aspect_ratio=True)
 
     pdf.ln(6)
     pdf.set_text_color(*COLOR_TEXT)
