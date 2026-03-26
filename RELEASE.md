@@ -1,49 +1,95 @@
 # Changelog
 
-## v0.10.7 (2025-10-25)
+## 2026-02-20
 
-- Updated schema.org JSON-LD
-- Updated Google tags
+- Support for CDN caching
+- Various improvements:
+  - Do not set cookies every request, only when necessary
+  - Do not delete cookies when they are not set
 
-## v0.10.6 (2025-03-23)
+## 2026-02-16
+
+- Improved schema.org JSON-LD:
+  - Support breadcrumbs
+
+## 2026-03-26
+
+- Support for Cloudflare Turnstile
+
+## 2026-01-30
+
+- Google login improvements:
+  - Support for Google login via UserInfo API
+  - Save display name from Google profile
+
+- Improved schema.org JSON-LD:
+  - Support search endpoints
+
+## 2026-01-06
+
+- Sitemap improvements:
+  - Automatically exclude empty sitemaps
+  - Support lastmod attribute in sitemaps
+  - Support for dynamic sitemap generation
+
+- Internal improvements:
+  - Support FTP base directory
+
+## 2025-11-22
+
+Internal improvements:
+
+- Support cache expiration for HTML content
+
+## 2025-11-01
+
+- Bug fixes:
+  - Fix logo in email templates
+
+## 2025-10-25
+
+- Improved schema.org JSON-LD
+- Improved Google tags
+
+## 2025-03-23
 
 - Support for ARIA (accessibility features)
 
-## v0.10.3 (2025-02-13)
+## 2025-02-13
 
 - Bug fixes
   - Fixed a bug in locale validation that could occur during checkout
 
-## v0.10.2 (2025-01-31)
+## 2025-01-31
 
-- Admin panel improvements
+- Admin panel improvements:
   - Colored order statuses
-  - Create orders (BETA)
-  - Send mass emails (BETA)
+  - Create orders
+  - Send mass emails
 
-## v0.10.1 (2025-01-06)
+## 2025-01-06
 
-- Various improvements
+- Various improvements:
   - Improved HTML minification
   - Sensitive data is obfuscating in logging
   - Users will be prompted to set a password if they had previously always signed in using third party platforms
 
-- Bug fixes
+- Bug fixes:
   - Fixed a bug in shipment method validation that could occur during checkout
   - Fixed an incorrect redirect in the admin panel that could occur after removing a product
   - Fixed a bug in displaying product HTML that was triggered by specifc HTML content
 
-## v0.10.0 (2024-10-08)
+## 2024-10-08
 
 - Support Google tags for conversion tracking
 - Updated schema.org JSON-LD for web crawlers
 
-## v0.9.0 (2024-09-03)
+## 2024-09-03
 
-- Security improvements
+- Security improvements:
   - Implementation of JSON Web Tokens
   - Protection against Cross-Site Request Forgery
 
-- PDF generation
+- PDF generation:
   - Faster PDF generation
   - New font to support more languages
