@@ -14,7 +14,7 @@ mypy==1.19.1
 ruff~=0.15.1
 
 # blueprints
-git+https://github.com/esherpaio/web-blueprint-admin.git#refactor
-git+https://github.com/esherpaio/web-blueprint-api.git#refactor
-git+https://github.com/esherpaio/web-blueprint-auth.git#refactor
-git+https://github.com/esherpaio/web-blueprint-index.git#refactor
+git+https://github.com/esherpaio/web-blueprint-admin.git@refactor
+git+https://github.com/esherpaio/web-blueprint-api.git@refactor
+git+https://github.com/esherpaio/web-blueprint-auth.git@refactor
+git+https://github.com/esherpaio/web-blueprint-index.git@refactor
