@@ -30,6 +30,7 @@ class MetaTag(StrEnum):
     TITLE = "<title>%s</title>"
     TWITTER_CARD = "<meta name='twitter:card' content='summary_large_image'/>"
     TWITTER_CREATOR = "<meta name='twitter:creator' content='%s'/>"
+    TWITTER_IMAGE = "<meta name='twitter:image' content='%s'/>"
     TWITTER_SITE = "<meta name='twitter:site' content='%s'/>"
 
 
@@ -50,11 +51,13 @@ class Meta:
         description: str | None = None,
         robots: str | None = None,
         image_url: str | None = None,
+        type_: str | None = None,
     ) -> None:
         self._title = title
         self._description = description
         self._robots = robots
         self._image_url = image_url
+        self._type = type_ or "website"
 
     # Properties
 
@@ -77,6 +80,10 @@ class Meta:
     @property
     def favicon_url(self) -> str:
         return config.META_FAVICON_URL
+
+    @property
+    def logo_url(self) -> str:
+        return config.META_LOGO_URL
 
     @property
     def hex_color(self) -> str:
@@ -141,10 +148,12 @@ class Meta:
             yield Markup(MetaTag.LINK_CANONICAL % self.canonical_url)
         if self.favicon_url:
             yield Markup(MetaTag.LINK_ICON % self.favicon_url)
-            yield Markup(MetaTag.LINK_APPLE_TOUCH_ICON % self.favicon_url)
+        if self.logo_url:
+            yield Markup(MetaTag.LINK_APPLE_TOUCH_ICON % self.logo_url)
         # Opengraph
         if self.canonical_url:
             yield Markup(MetaTag.OG_URL % self.canonical_url)
+        yield Markup(MetaTag.OG_TYPE % self._type)
         if self.locale:
             yield Markup(MetaTag.OG_LOCALE % self.locale)
         if self.title:
@@ -157,8 +166,10 @@ class Meta:
             yield Markup(MetaTag.OG_SITE_NAME % self.website_name)
         if self.facebook_url:
             yield Markup(MetaTag.OG_PUBLISHER % self.facebook_url)
-        # Twitteracquirer
+        # Twitter
         yield Markup(MetaTag.TWITTER_CARD)
+        if self.image_url:
+            yield Markup(MetaTag.TWITTER_IMAGE % self.image_url)
         if self.twitter_at:
             yield Markup(MetaTag.TWITTER_SITE % self.twitter_at)
             yield Markup(MetaTag.TWITTER_CREATOR % self.twitter_at)

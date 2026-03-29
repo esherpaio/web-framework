@@ -83,12 +83,12 @@ class _Protocol(Protocol):
     FTP_USERNAME: str
     FTP_PASSWORD: str
 
+    TURNSTILE_SITE_KEY: str | None
+    TURNSTILE_SECRET_KEY: str | None
     GOOGLE_API_KEY: str | None
     GOOGLE_CLIENT_ID: str | None
     GOOGLE_PLACE_ID: str | None
-
     MOLLIE_API_KEY: str | None
-
     INTIME_ENABLED: bool
 
     META_BRAND_NAME: str | None
@@ -127,7 +127,7 @@ class Config:
     def __getattr__(self, name: str) -> Any:
         if self._config is None:
             self._setup()
-        return getattr(self._config, name)
+        return getattr(self._config, name, None)
 
     def _setup(self) -> None:
         module_path = os.getenv("CONFIG_MODULE", "test.config")

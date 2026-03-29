@@ -8,6 +8,7 @@ from typing import Callable, Type
 from flask import Flask
 
 from web.automation import Automator
+from web.cache import cache_common, cache_manager
 from web.i18n import translator
 from web.logger import log
 from web.mail import MailEvent, mail
@@ -43,6 +44,12 @@ class Worker:
             return
         log.info(f"Loading translations from {dir_}")
         translator.load_dir(dir_)
+
+    def setup_cache(self, hook: Callable | None = None) -> None:
+        cache_manager.add_hook(cache_common)
+        if hook is not None:
+            cache_manager.add_hook(hook)
+        cache_manager.update(force=True)
 
     def setup_mail(self, events: dict[MailEvent | str, list[Callable]] | None) -> None:
         if config.MAIL_METHOD:
