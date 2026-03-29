@@ -190,7 +190,7 @@ class Optimizer(metaclass=Singleton):
 
     def cache(self, f: Callable) -> Callable[..., Response]:
         def wrap(*args, **kwargs) -> Response:
-            if config.OPTIMIZER_ENABLED:
+            if config.OPTIMIZER_ENABLED and not self._is_ignored(request.path):
                 g.cached = True
                 encoding = self.get_encoding(request.headers)
                 response = self.get_cache(encoding)
@@ -202,9 +202,16 @@ class Optimizer(metaclass=Singleton):
         wrap.__name__ = f.__name__
         return wrap
 
+    @staticmethod
+    def _is_ignored(path: str) -> bool:
+        ignore_paths: list[str] = config.OPTIMIZER_IGNORE_PATHS or []
+        return any(path.startswith(p) for p in ignore_paths)
+
     def after_request(self, response: Response) -> Response:
         # validate response
         if not config.OPTIMIZER_ENABLED:
+            return response
+        if self._is_ignored(request.path):
             return response
         if response.status_code is None or response.content_length is None:
             return response

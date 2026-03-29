@@ -42,6 +42,7 @@ class _Protocol(Protocol):
     OPTIMIZER_CDN_CACHE_MAX_S: int
     OPTIMIZER_CDN_STALE_MAX_S: int
     OPTIMIZER_BROWSER_CACHE_MAX_S: int
+    OPTIMIZER_IGNORE_PATHS: list[str]
 
     AUTH_JWT_SECRET: str
     AUTH_JWT_ALLOW_GUEST: bool
