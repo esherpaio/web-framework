@@ -15,6 +15,7 @@ class AppRoute(IntBase, Attribute):
     in_sitemap = MC(Boolean, nullable=False, default=False, server_default="false")
     js_path = MC(String(128))
     name = MC(String(64), nullable=True)
+    breadcrumb_name = MC(String(64), nullable=True)
     robots = MC(String(256), nullable=True)
     is_collection = MC(Boolean, nullable=False, default=False, server_default="false")
     sitemap_query_key = MC(String(32), nullable=True)
