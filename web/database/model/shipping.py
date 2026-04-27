@@ -1,6 +1,6 @@
 from typing import Any
 
-from sqlalchemy import ForeignKey, String, func
+from sqlalchemy import Boolean, ForeignKey, String, func
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import mapped_column as MC
 from sqlalchemy.orm import relationship, validates
@@ -17,15 +17,14 @@ class Shipping(IntBase):
     company = MC(String(128))
     email = MC(String(128), nullable=False)
     first_name = MC(String(128), nullable=False)
+    is_default = MC(Boolean, nullable=False, default=False, server_default="false")
     last_name = MC(String(128), nullable=False)
     phone = MC(String(64))
     state = MC(String(64))
     zip_code = MC(String(64), nullable=False)
 
     country_id = MC(ForeignKey("country.id", ondelete="RESTRICT"), nullable=False)
-    user_id = MC(
-        ForeignKey("user.id", ondelete="CASCADE", use_alter=True), nullable=False
-    )
+    user_id = MC(ForeignKey("user.id", ondelete="CASCADE"), nullable=False)
 
     country = relationship("Country", lazy="joined")
 

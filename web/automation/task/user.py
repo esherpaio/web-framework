@@ -3,7 +3,7 @@ from datetime import datetime, timedelta, timezone
 from sqlalchemy.sql import not_, true
 
 from web.database import conn
-from web.database.model import User
+from web.database.model import Billing, Shipping, User
 
 from ..automator import Cleaner
 
@@ -19,6 +19,6 @@ class UserCleaner(Cleaner):
                 User.is_guest == true(),
                 not_(User.carts.any()),
                 not_(User.orders.any()),
-                not_(User.billing),
-                not_(User.shipping),
+                not_(s.query(Billing).filter(Billing.user_id == User.id).exists()),
+                not_(s.query(Shipping).filter(Shipping.user_id == User.id).exists()),
             ).delete()
