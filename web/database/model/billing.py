@@ -1,6 +1,6 @@
 from typing import Any
 
-from sqlalchemy import ForeignKey, String, func
+from sqlalchemy import Boolean, ForeignKey, Index, String, func, text
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import mapped_column as MC
 from sqlalchemy.orm import relationship, validates
@@ -11,6 +11,9 @@ from ._utils import get_lower, get_text, val_email, val_length, val_phone
 
 class Billing(IntBase):
     __tablename__ = "billing"
+    __table_args__ = (
+        Index(None, "user_id", unique=True, postgresql_where=text("is_default")),
+    )
 
     address = MC(String(128), nullable=False)
     city = MC(String(128), nullable=False)
@@ -22,11 +25,10 @@ class Billing(IntBase):
     state = MC(String(64))
     vat = MC(String(64))
     zip_code = MC(String(64), nullable=False)
+    is_default = MC(Boolean, nullable=False, default=False, server_default="false")
 
     country_id = MC(ForeignKey("country.id", ondelete="RESTRICT"), nullable=False)
-    user_id = MC(
-        ForeignKey("user.id", ondelete="CASCADE", use_alter=True), nullable=False
-    )
+    user_id = MC(ForeignKey("user.id", ondelete="CASCADE"), nullable=False)
 
     country = relationship("Country", lazy="joined")
 

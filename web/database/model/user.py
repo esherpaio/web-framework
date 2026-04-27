@@ -23,19 +23,31 @@ class User(IntBase, Attribute):
         Boolean, nullable=False, default=False, server_default="false"
     )
 
-    billing_id = MC(ForeignKey("billing.id", ondelete="CASCADE"))
     role_id = MC(
         ForeignKey("user_role.id", ondelete="RESTRICT", onupdate="CASCADE"),
         nullable=False,
     )
-    shipping_id = MC(ForeignKey("shipping.id", ondelete="CASCADE"))
 
-    billing = relationship("Billing", foreign_keys=[billing_id])
     carts = relationship("Cart", back_populates="user")
     orders = relationship("Order", back_populates="user")
     role = relationship("UserRole")
-    shipping = relationship("Shipping", foreign_keys=[shipping_id])
     verifications = relationship("Verification", back_populates="user")
+    default_billing = relationship(
+        "Billing",
+        primaryjoin=("and_(User.id == Billing.user_id, Billing.is_default.is_(True))"),
+        foreign_keys="Billing.user_id",
+        uselist=False,
+        viewonly=True,
+    )
+    default_shipping = relationship(
+        "Shipping",
+        primaryjoin=(
+            "and_(User.id == Shipping.user_id, Shipping.is_default.is_(True))"
+        ),
+        foreign_keys="Shipping.user_id",
+        uselist=False,
+        viewonly=True,
+    )
 
     # Validation
 
@@ -62,3 +74,13 @@ class User(IntBase, Attribute):
     @hybrid_property
     def is_super(self) -> bool:
         return self.role_id == UserRoleId.SUPER
+
+    # Properties - defaults
+
+    @property
+    def default_billing_id(self) -> int | None:
+        return self.default_billing.id if self.default_billing is not None else None
+
+    @property
+    def default_shipping_id(self) -> int | None:
+        return self.default_shipping.id if self.default_shipping is not None else None

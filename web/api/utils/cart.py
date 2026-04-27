@@ -28,8 +28,8 @@ def predict_shipping(s: Session, cart: Cart) -> Shipping | None:
     # Get shipping
     if cart and cart.shipping_id:
         shipping = s.query(Shipping).filter_by(id=cart.shipping_id).first()
-    elif user and user.shipping_id:
-        shipping = s.query(Shipping).filter_by(id=user.shipping_id).first()
+    elif user is not None:
+        shipping = s.query(Shipping).filter_by(user_id=user.id, is_default=True).first()
     else:
         shipping = None
     return shipping
@@ -45,8 +45,8 @@ def predict_billing(s: Session, cart: Cart) -> Billing | None:
     # Get billing
     if cart and cart.billing_id:
         billing = s.query(Billing).filter_by(id=cart.billing_id).first()
-    elif user and user.billing_id:
-        billing = s.query(Billing).filter_by(id=user.billing_id).first()
+    elif user is not None:
+        billing = s.query(Billing).filter_by(user_id=user.id, is_default=True).first()
     else:
         billing = None
     return billing
