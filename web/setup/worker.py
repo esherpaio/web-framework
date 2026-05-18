@@ -1,4 +1,3 @@
-import os
 import signal
 import time
 from threading import Event, Thread
@@ -112,4 +111,3 @@ class Worker:
         self._stop_event.set()
         if self._thread is not None and self._thread.is_alive():
             self._thread.join(timeout=5)
-        os._exit(1)
