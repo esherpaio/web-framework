@@ -1,4 +1,5 @@
 import atexit
+import signal
 from datetime import datetime, timezone
 from threading import Event, Thread
 from typing import Callable
@@ -69,7 +70,8 @@ class CacheManager(metaclass=Singleton):
             daemon=False,
         )
         self._thread.start()
-        atexit.register(self._shutdown)
+        atexit.register(self._on_shutdown)
+        self._on_sigint()
 
     def _refresh_loop(self) -> None:
         while not self._stop.wait(REFRESH_INTERVAL_S):
@@ -78,11 +80,22 @@ class CacheManager(metaclass=Singleton):
             except Exception as e:
                 log.error(f"Error refreshing cache: {e}")
 
-    def _shutdown(self) -> None:
+    def _on_shutdown(self) -> None:
         self._stop.set()
         thread = self._thread
         if thread is not None and thread.is_alive():
             thread.join(timeout=SHUTDOWN_TIMEOUT_S)
+
+    def _on_sigint(self) -> None:
+        prev = signal.getsignal(signal.SIGINT)
+
+        def handler(sig: int, frame: object) -> None:
+            self._stop.set()
+            signal.signal(signal.SIGINT, prev)
+            if callable(prev):
+                prev(sig, frame)
+
+        signal.signal(signal.SIGINT, handler)
 
 
 cache_manager = CacheManager()
