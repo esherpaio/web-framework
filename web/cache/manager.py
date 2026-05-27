@@ -2,6 +2,7 @@ import atexit
 import signal
 from datetime import datetime, timezone
 from threading import Event, Thread
+from types import FrameType
 from typing import Callable
 
 from web.database import conn
@@ -66,7 +67,7 @@ class CacheManager(metaclass=Singleton):
             return
         self._thread = Thread(
             target=self._refresh_loop,
-            name="CacheManagerRefresh",
+            name="CacheManager",
             daemon=False,
         )
         self._thread.start()
@@ -89,7 +90,7 @@ class CacheManager(metaclass=Singleton):
     def _on_sigint(self) -> None:
         prev = signal.getsignal(signal.SIGINT)
 
-        def handler(sig: int, frame: object) -> None:
+        def handler(sig: int, frame: FrameType | None) -> None:
             self._stop.set()
             signal.signal(signal.SIGINT, prev)
             if callable(prev):
