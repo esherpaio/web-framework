@@ -1,5 +1,7 @@
+import io
 import os
 from collections import defaultdict
+from datetime import datetime
 from enum import StrEnum
 from typing import Type
 
@@ -70,6 +72,7 @@ class StaticJob:
 
 class StaticProcessor(Processor):
     JOBS: list[StaticJob]
+    KEEP: int = 50
 
     @classmethod
     def run(cls) -> None:
@@ -77,16 +80,19 @@ class StaticProcessor(Processor):
         if not config.AUTOMATE_STATIC:
             log.warning("Static processor is disabled")
             return
-        with conn.begin() as s:
-            resources = cls.get_resources(s)
-            cdn_filenames = cdn.filenames(os.path.join("static", ""))
-            present = cls.set_resources(s, resources, cdn_filenames)
-            s.flush()
-        with conn.begin() as s:
-            cls.del_resources(s, present)
+        with cdn.connect() as client:
+            datetimes = client.datetimes(os.path.join("static"))
+            with conn.begin() as s:
+                resources = cls.load_resources(s)
+                uploaded = cls.upload_bundles(s, client, resources, set(datetimes))
+                s.flush()
+            with conn.begin() as s:
+                cls.clear_stale_paths(s, uploaded)
+            with conn.begin() as s:
+                cls.prune_files(s, client, datetimes)
 
     @classmethod
-    def get_resources(
+    def load_resources(
         cls,
         s: Session,
     ) -> dict[StaticJob, AppSettings | AppBlueprint | AppRoute]:
@@ -100,13 +106,14 @@ class StaticProcessor(Processor):
         return resources
 
     @classmethod
-    def set_resources(
+    def upload_bundles(
         cls,
         s: Session,
+        client: cdn.Client,
         resources: dict[StaticJob, AppSettings | AppBlueprint | AppRoute],
-        cdn_filenames: list[str],
+        cdn_filenames: set[str],
     ) -> dict[tuple[str, int], list[StaticType]]:
-        present: dict[tuple[str, int], list[StaticType]] = defaultdict(list)
+        processed: dict[tuple[str, int], list[StaticType]] = defaultdict(list)
         for job in cls.JOBS:
             resource = resources[job]
             packer = Packer()
@@ -115,16 +122,16 @@ class StaticProcessor(Processor):
             if not compiled:
                 log.error(f"Static job {job.id_} compiled empty")
                 continue
-            present[(resource.__tablename__, resource.id)].append(job.type_)
             cdn_filename = f"{hash_}{out_ext}"
             cdn_path = os.path.join("static", cdn_filename)
             if cdn_filename not in cdn_filenames:
-                packer.write_cdn(bytes_, cdn_path)
+                client.upload(io.BytesIO(bytes_), cdn_path)
             job.set_attribute(s, resource, cdn_path)
-        return present
+            processed[(resource.__tablename__, resource.id)].append(job.type_)
+        return processed
 
     @classmethod
-    def del_resources(
+    def clear_stale_paths(
         cls,
         s: Session,
         present: dict[tuple[str, int], list[StaticType]],
@@ -136,9 +143,31 @@ class StaticProcessor(Processor):
         ]:
             present_types = present[(resource.__tablename__, resource.id)]
             absent_types = [t for t in list(StaticType) if t not in present_types]
-            for absent_type in absent_types:
-                if absent_type == StaticType.JS and resource.js_path:  # type: ignore[attr-defined]
+            for type_ in absent_types:
+                if type_ == StaticType.JS and resource.js_path:  # type: ignore[attr-defined]
                     resource.js_path = None  # type: ignore[attr-defined]
-                elif absent_type == StaticType.CSS and resource.css_path:  # type: ignore[attr-defined]
+                elif type_ == StaticType.CSS and resource.css_path:  # type: ignore[attr-defined]
                     resource.css_path = None  # type: ignore[attr-defined]
                 s.flush()
+
+    @classmethod
+    def prune_files(
+        cls,
+        s: Session,
+        client: cdn.Client,
+        datetimes: dict[str, datetime],
+    ) -> None:
+        active: set[str] = set()
+        for resource in [
+            *s.query(AppSettings).all(),
+            *s.query(AppBlueprint).all(),
+            *s.query(AppRoute).all(),
+        ]:
+            for path in (resource.js_path, resource.css_path):  # type: ignore[attr-defined]
+                if path:
+                    active.add(os.path.basename(path))
+        ordered = sorted(datetimes, key=lambda fn: datetimes[fn], reverse=True)
+        keep = set(ordered[: cls.KEEP]) | active
+        for fn in ordered:
+            if fn not in keep:
+                client.delete(os.path.join("static", fn))
