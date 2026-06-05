@@ -73,7 +73,6 @@ class StaticJob:
 class StaticProcessor(Processor):
     JOBS: list[StaticJob]
     KEEP: int = 50
-    REQUIRES_APP = cdn.STATIC_LOCAL
 
     @classmethod
     def run(cls) -> None:
