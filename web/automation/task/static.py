@@ -81,15 +81,15 @@ class StaticProcessor(Processor):
             log.warning("Static processor is disabled")
             return
         with cdn.connect() as client:
-            datetimes = client.datetimes(os.path.join("static"))
+            modified = client.modified(os.path.join("static"))
             with conn.begin() as s:
                 resources = cls.load_resources(s)
-                uploaded = cls.upload_bundles(s, client, resources, set(datetimes))
+                uploaded = cls.upload_bundles(s, client, resources, set(modified))
                 s.flush()
             with conn.begin() as s:
                 cls.clear_stale_paths(s, uploaded)
             with conn.begin() as s:
-                cls.prune_files(s, client, datetimes)
+                cls.prune_files(s, client, modified)
 
     @classmethod
     def load_resources(
@@ -155,7 +155,7 @@ class StaticProcessor(Processor):
         cls,
         s: Session,
         client: cdn.Client,
-        datetimes: dict[str, datetime],
+        modified: dict[str, datetime],
     ) -> None:
         active: set[str] = set()
         for resource in [
@@ -166,7 +166,7 @@ class StaticProcessor(Processor):
             for path in (resource.js_path, resource.css_path):  # type: ignore[attr-defined]
                 if path:
                     active.add(os.path.basename(path))
-        ordered = sorted(datetimes, key=lambda fn: datetimes[fn], reverse=True)
+        ordered = sorted(modified, key=lambda fn: modified[fn], reverse=True)
         keep = set(ordered[: cls.KEEP]) | active
         for fn in ordered:
             if fn not in keep:

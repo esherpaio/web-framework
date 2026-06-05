@@ -17,20 +17,22 @@ def url(*args: str | None) -> str | None:
     return os.path.join(config.CDN_BASE_URL, *parts)
 
 
+def _abs(rel: str) -> str:
+    if config.FTP_BASE_DIR is not None:
+        return os.path.join(config.FTP_BASE_DIR, rel)
+    return rel
+
+
 def _get_dir(rel_dir: str) -> str:
-    if config.FTP_BASE_DIR is not None:
-        dir_ = os.path.dirname(os.path.join(config.FTP_BASE_DIR, rel_dir))
-    else:
-        dir_ = os.path.dirname(rel_dir)
-    return dir_
+    return os.path.normpath(_abs(rel_dir))
 
 
-def _get_path(rel_fp: str) -> str:
-    if config.FTP_BASE_DIR is not None:
-        fp = os.path.join(config.FTP_BASE_DIR, rel_fp)
-    else:
-        fp = rel_fp
-    return fp
+def _get_file_dir(rel_fp: str) -> str:
+    return os.path.dirname(_abs(rel_fp))
+
+
+def _get_file_path(rel_fp: str) -> str:
+    return _abs(rel_fp)
 
 
 class Client:
@@ -41,7 +43,7 @@ class Client:
         self._ftp.cwd(_get_dir(path))
         return self._ftp.nlst()
 
-    def datetimes(self, path: str) -> dict[str, datetime]:
+    def modified(self, path: str) -> dict[str, datetime]:
         self._ftp.cwd(_get_dir(path))
         times: dict[str, datetime] = {}
         for fn in self._ftp.nlst():
@@ -59,11 +61,11 @@ class Client:
         return times
 
     def exists(self, path: str) -> bool:
-        self._ftp.cwd(_get_dir(path))
+        self._ftp.cwd(_get_file_dir(path))
         return os.path.basename(path) in self._ftp.nlst()
 
     def upload(self, file_: _SupportsRead[bytes], path: str) -> None:
-        dir_ = _get_dir(path)
+        dir_ = _get_file_dir(path)
         try:
             self._ftp.mkd(dir_)
         except error_perm as error:
@@ -75,7 +77,7 @@ class Client:
 
     def delete(self, path: str) -> None:
         try:
-            self._ftp.delete(_get_path(path))
+            self._ftp.delete(_get_file_path(path))
         except error_perm as error:
             if error.args[0][:3] != "550":
                 raise
@@ -104,7 +106,7 @@ def filenames(path: str) -> list[str]:
 
 def modified(path: str) -> dict[str, datetime]:
     with connect() as client:
-        return client.datetimes(path)
+        return client.modified(path)
 
 
 def exists(path: str) -> bool:
