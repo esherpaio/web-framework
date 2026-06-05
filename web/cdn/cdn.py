@@ -22,7 +22,7 @@ def url(*args: str | None) -> str | None:
     if not parts:
         return None
     rel = os.path.join(*parts)
-    if config.DEBUG and STATIC_DIR in parts:
+    if config.DEBUG and rel.startswith(STATIC_DIR):
         if current_app.static_url_path is None:
             raise RuntimeError
         return os.path.join(current_app.static_url_path, rel)
