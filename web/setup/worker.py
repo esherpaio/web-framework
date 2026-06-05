@@ -104,6 +104,9 @@ class Worker:
         for task in self._tasks:
             if self._stop_event.is_set():
                 return
+            if config.DEBUG and not task.RUN_DEBUG:
+                log.debug(f"Skipping task {task.__name__} in debug mode")
+                continue
             try:
                 task.run()
             except Exception as e:

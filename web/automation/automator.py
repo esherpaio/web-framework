@@ -9,6 +9,8 @@ from web.logger import log
 
 
 class Automator:
+    RUN_DEBUG: bool = True
+
     @classmethod
     def log_start(cls) -> None:
         name = re.sub(r"([a-z])([A-Z])", r"\1 \2", cls.__name__).lower()
@@ -50,6 +52,7 @@ class SeedSyncer(Automator):
 
 class ApiSyncer(Automator):
     API_URL: str
+    RUN_DEBUG: bool = False
 
     @classmethod
     def run(cls) -> None:
