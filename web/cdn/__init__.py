@@ -1,12 +1,25 @@
-from .cdn import Client, connect, delete, exists, filenames, modified, upload, url
+from .cdn import (
+    BaseClient,
+    CdnClient,
+    LocalClient,
+    connect,
+    delete,
+    exists,
+    filenames,
+    modified,
+    upload,
+    url,
+)
 
 __all__ = [
-    "Client",
+    "BaseClient",
+    "CdnClient",
     "connect",
-    "filenames",
-    "modified",
-    "exists",
     "delete",
+    "exists",
+    "filenames",
+    "LocalClient",
+    "modified",
     "upload",
     "url",
 ]

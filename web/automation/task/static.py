@@ -109,7 +109,7 @@ class StaticProcessor(Processor):
     def upload_bundles(
         cls,
         s: Session,
-        client: cdn.Client,
+        client: cdn.BaseClient,
         resources: dict[StaticJob, AppSettings | AppBlueprint | AppRoute],
         cdn_filenames: set[str],
     ) -> dict[tuple[str, int], list[StaticType]]:
@@ -154,7 +154,7 @@ class StaticProcessor(Processor):
     def prune_files(
         cls,
         s: Session,
-        client: cdn.Client,
+        client: cdn.BaseClient,
         modified: dict[str, datetime],
     ) -> None:
         active: set[str] = set()
