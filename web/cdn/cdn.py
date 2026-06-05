@@ -51,28 +51,27 @@ class BaseClient(Protocol):
 class CdnClient(BaseClient):
     def __init__(self, ftp: FTP) -> None:
         self._ftp = ftp
+        self._home = ftp.pwd()
 
     #
     # Private
     #
 
-    @classmethod
-    def _abs(cls, rel: str) -> str:
+    def _abs(self, rel: str) -> str:
+        parts = [self._home]
         if config.FTP_BASE_DIR is not None:
-            return os.path.join(config.FTP_BASE_DIR, rel)
-        return rel
+            parts.append(config.FTP_BASE_DIR)
+        parts.append(rel)
+        return os.path.normpath(os.path.join(*parts))
 
-    @classmethod
-    def _get_dir(cls, rel_dir: str) -> str:
-        return os.path.normpath(cls._abs(rel_dir))
+    def _get_dir(self, rel_dir: str) -> str:
+        return self._abs(rel_dir)
 
-    @classmethod
-    def _get_file_dir(cls, rel_fp: str) -> str:
-        return os.path.dirname(cls._abs(rel_fp))
+    def _get_file_dir(self, rel_fp: str) -> str:
+        return os.path.dirname(self._abs(rel_fp))
 
-    @classmethod
-    def _get_file_path(cls, rel_fp: str) -> str:
-        return cls._abs(rel_fp)
+    def _get_file_path(self, rel_fp: str) -> str:
+        return self._abs(rel_fp)
 
     #
     # Public
