@@ -22,7 +22,6 @@ class CacheManager(metaclass=Singleton):
         self._stop_event: Event = Event()
         self._thread: Thread | None = None
         self.hooks: list[Callable] = []
-        self.update(force=True)
         self.start()
 
     #
