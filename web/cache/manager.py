@@ -19,11 +19,33 @@ class CacheManager(metaclass=Singleton):
         super().__init__()
         self._updated_at: datetime = datetime.now(timezone.utc)
         self._active: bool = True
-        self._stop: Event = Event()
+        self._stop_event: Event = Event()
         self._thread: Thread | None = None
         self.hooks: list[Callable] = []
         self.update(force=True)
-        self._start_loop()
+        self.start()
+
+    #
+    # Public
+    #
+
+    def add_hook(self, hook: Callable) -> None:
+        if hook not in self.hooks:
+            self.hooks.append(hook)
+
+    def start(self) -> None:
+        if self._thread is not None and self._thread.is_alive():
+            return
+        log.info("Starting cache manager")
+        self._stop_event.clear()
+        atexit.register(self._on_shutdown)
+        self._on_sigint()
+        self._thread = Thread(
+            target=self._loop,
+            name="CacheManager",
+            daemon=False,
+        )
+        self._thread.start()
 
     def pause(self) -> None:
         if not self._active:
@@ -36,10 +58,6 @@ class CacheManager(metaclass=Singleton):
             log.info("Cache is already active")
             return
         self._active = True
-
-    def add_hook(self, hook: Callable) -> None:
-        if hook not in self.hooks:
-            self.hooks.append(hook)
 
     @property
     def expired(self) -> bool:
@@ -62,36 +80,28 @@ class CacheManager(metaclass=Singleton):
             except Exception as e:
                 log.error(f"Error running cache hook {hook.__name__}: {e}")
 
-    def _start_loop(self) -> None:
-        if self._thread is not None and self._thread.is_alive():
-            return
-        self._thread = Thread(
-            target=self._refresh_loop,
-            name="CacheManager",
-            daemon=False,
-        )
-        self._thread.start()
-        atexit.register(self._on_shutdown)
-        self._on_sigint()
+    #
+    # Private
+    #
 
-    def _refresh_loop(self) -> None:
-        while not self._stop.wait(REFRESH_INTERVAL_S):
+    def _loop(self) -> None:
+        while not self._stop_event.wait(REFRESH_INTERVAL_S):
             try:
                 self.update()
             except Exception as e:
                 log.error(f"Error refreshing cache: {e}")
 
     def _on_shutdown(self) -> None:
-        self._stop.set()
-        thread = self._thread
-        if thread is not None and thread.is_alive():
-            thread.join(timeout=SHUTDOWN_TIMEOUT_S)
+        log.info("Stopping cache manager")
+        self._stop_event.set()
+        if self._thread is not None and self._thread.is_alive():
+            self._thread.join(timeout=SHUTDOWN_TIMEOUT_S)
 
     def _on_sigint(self) -> None:
         prev = signal.getsignal(signal.SIGINT)
 
         def handler(sig: int, frame: FrameType | None) -> None:
-            self._stop.set()
+            self._stop_event.set()
             signal.signal(signal.SIGINT, prev)
             if callable(prev):
                 prev(sig, frame)
