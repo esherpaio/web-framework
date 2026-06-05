@@ -10,6 +10,7 @@ from web.logger import log
 
 class Automator:
     RUN_DEBUG: bool = True
+    REQUIRES_APP: bool = False
 
     @classmethod
     def log_start(cls) -> None:
