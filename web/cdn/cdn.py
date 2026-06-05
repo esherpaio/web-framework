@@ -18,7 +18,9 @@ def url(*args: str | None) -> str | None:
         return None
     rel = os.path.join(*parts)
     if config.DEBUG:
-        return os.path.join(rel)
+        if current_app.static_url_path is None:
+            raise RuntimeError
+        return os.path.join(current_app.static_url_path, rel)
     return os.path.join(config.CDN_BASE_URL, rel)
 
 
