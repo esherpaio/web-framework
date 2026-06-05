@@ -17,6 +17,11 @@ from web.setup import config
 
 from ..automator import Processor
 
+if not config.DEBUG:
+    STATIC_DIR = "static"
+else:
+    STATIC_DIR = "cdn"
+
 
 class StaticType(StrEnum):
     JS = "js"
@@ -74,6 +79,12 @@ class StaticProcessor(Processor):
     JOBS: list[StaticJob]
     KEEP: int = 50
 
+    def __init__(self, *args, **kwargs) -> None:
+        if not config.DEBUG:
+            self.REQUIRES_APP = False
+        else:
+            self.REQUIRES_APP = True
+
     @classmethod
     def run(cls) -> None:
         cls.log_start()
@@ -81,7 +92,7 @@ class StaticProcessor(Processor):
             log.warning("Static processor is disabled")
             return
         with cdn.connect() as client:
-            modified = client.modified(os.path.join("static"))
+            modified = client.modified(os.path.join(STATIC_DIR))
             with conn.begin() as s:
                 resources = cls.load_resources(s)
                 uploaded = cls.upload_bundles(s, client, resources, set(modified))
@@ -123,7 +134,7 @@ class StaticProcessor(Processor):
                 log.error(f"Static job {job.id_} compiled empty")
                 continue
             cdn_filename = f"{hash_}{out_ext}"
-            cdn_path = os.path.join("static", cdn_filename)
+            cdn_path = os.path.join(STATIC_DIR, cdn_filename)
             if cdn_filename not in cdn_filenames:
                 client.upload(io.BytesIO(bytes_), cdn_path)
             job.set_attribute(s, resource, cdn_path)
@@ -170,4 +181,4 @@ class StaticProcessor(Processor):
         keep = set(ordered[: cls.KEEP]) | active
         for fn in ordered:
             if fn not in keep:
-                client.delete(os.path.join("static", fn))
+                client.delete(os.path.join(STATIC_DIR, fn))

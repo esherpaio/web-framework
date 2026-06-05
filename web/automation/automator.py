@@ -21,6 +21,9 @@ class Automator:
     def run(cls) -> None:
         raise NotImplementedError
 
+    def __str__(self) -> str:
+        return self.__class__.__name__
+
 
 class SeedSyncer(Automator):
     MODEL: Type[Base]

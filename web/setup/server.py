@@ -59,12 +59,13 @@ class Server:
         ]
         all_tasks = default_tasks + tasks
         for task_ in all_tasks:
-            if config.DEBUG and not task_.RUN_DEBUG:
-                log.debug(f"Skipping task {task_.__name__} in debug mode")
+            task_cls = task_()
+            if config.DEBUG and not task_cls.RUN_DEBUG:
+                log.debug(f"Skipping task {task_cls} in debug mode")
                 continue
-            if task_.REQUIRES_APP:
+            if task_cls.REQUIRES_APP:
                 continue
-            task_.run()
+            task_cls.run()
 
         # Run database hook
         if hook is not None:
@@ -76,10 +77,11 @@ class Server:
 
     def setup_tasks(self, tasks: list[Type[Automator]], app: Flask) -> None:
         for task_ in tasks:
-            if not task_.REQUIRES_APP:
+            task_cls = task_()
+            if not task_cls.REQUIRES_APP:
                 continue
             with app.app_context():
-                task_.run()
+                task_cls.run()
 
     def setup_cache(self, hook: Callable | None = None) -> None:
         cache_manager.add_hook(cache_common)

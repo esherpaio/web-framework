@@ -104,13 +104,14 @@ class Worker:
         for task in self._tasks:
             if self._stop_event.is_set():
                 return
-            if config.DEBUG and not task.RUN_DEBUG:
-                log.debug(f"Skipping task {task.__name__} in debug mode")
+            task_cls = task()
+            if config.DEBUG and not task_cls.RUN_DEBUG:
+                log.debug(f"Skipping task {task_cls} in debug mode")
                 continue
             try:
-                task.run()
+                task_cls.run()
             except Exception as e:
-                log.error(f"Error running task {task.__name__}: {e}")
+                log.error(f"Error running task {task_cls}: {e}")
 
     def _on_shutdown(self) -> None:
         log.info("Stopping worker")
