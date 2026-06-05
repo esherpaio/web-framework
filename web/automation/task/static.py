@@ -73,12 +73,7 @@ class StaticJob:
 class StaticProcessor(Processor):
     JOBS: list[StaticJob]
     KEEP: int = 50
-
-    def __init__(self, *args, **kwargs) -> None:
-        if not config.DEBUG:
-            self.REQUIRES_APP = False
-        else:
-            self.REQUIRES_APP = True
+    REQUIRES_APP = cdn.STATIC_LOCAL
 
     @classmethod
     def run(cls) -> None:

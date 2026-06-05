@@ -10,7 +10,7 @@ from web.app.error import handle_error
 from web.app.redirector import Redirector
 from web.app.urls import url_for
 from web.auth import Auth, current_user
-from web.automation import Automator, task
+from web.automation import Automator
 from web.cache import cache, cache_common, cache_manager
 from web.i18n import translator
 from web.locale import LocaleManager, current_locale
@@ -36,6 +36,7 @@ class Server:
 
     def setup_database(
         self,
+        app: Flask,
         migrate: bool,
         tasks: list[Type[Automator]],
         hook: Callable | None = None,
@@ -46,26 +47,15 @@ class Server:
             alembic.config.main(argv=["upgrade", "head"])
 
         # Run tasks
-        default_tasks = [
-            task.UserCleaner,
-            task.CartCleaner,
-            task.AppSettingSeedSyncer,
-            task.EmailStatusSeedSyncer,
-            task.FileTypeSeedSyncer,
-            task.OrderStatusSeedSyncer,
-            task.ProductLinkeTypeSeedSyncer,
-            task.ProductTypeSeedSyncer,
-            task.UserRoleSeedSyncer,
-        ]
-        all_tasks = default_tasks + tasks
-        for task_ in all_tasks:
-            task_cls = task_()
+        for task in tasks:
+            task_cls = task()
             if config.DEBUG and not task_cls.RUN_DEBUG:
                 log.debug(f"Skipping task {task_cls} in debug mode")
                 continue
             if task_cls.REQUIRES_APP:
                 continue
-            task_cls.run()
+            with app.app_context():
+                task_cls.run()
 
         # Run database hook
         if hook is not None:
@@ -74,14 +64,6 @@ class Server:
                 hook()
             except Exception as e:
                 log.error(f"Error running database hook: {e}")
-
-    def setup_tasks(self, tasks: list[Type[Automator]], app: Flask) -> None:
-        for task_ in tasks:
-            task_cls = task_()
-            if not task_cls.REQUIRES_APP:
-                continue
-            with app.app_context():
-                task_cls.run()
 
     def setup_cache(self, hook: Callable | None = None) -> None:
         cache_manager.add_hook(cache_common)

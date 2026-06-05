@@ -12,8 +12,10 @@ from web.setup import config
 from .type import _SupportsRead
 
 if not config.DEBUG:
+    STATIC_LOCAL = True
     STATIC_DIR = "static"
 else:
+    STATIC_LOCAL = False
     STATIC_DIR = "cdn"
 
 

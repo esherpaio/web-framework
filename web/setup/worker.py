@@ -41,10 +41,6 @@ class Worker:
         )
         self._thread.start()
 
-    def wait(self) -> None:
-        while not self._stop_event.wait(1):
-            pass
-
     #
     # Setup
     #
