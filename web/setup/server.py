@@ -59,6 +59,9 @@ class Server:
         ]
         all_tasks = default_tasks + tasks
         for task_ in all_tasks:
+            if config.DEBUG and not task_.RUN_DEBUG:
+                log.debug(f"Skipping task {task_.__name__} in debug mode")
+                continue
             task_.run()
 
         # Run database hook
