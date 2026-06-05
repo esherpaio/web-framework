@@ -11,13 +11,18 @@ from web.setup import config
 
 from .type import _SupportsRead
 
+if not config.DEBUG:
+    STATIC_DIR = "static"
+else:
+    STATIC_DIR = "cdn"
+
 
 def url(*args: str | None) -> str | None:
     parts = [x for x in args if x is not None]
     if not parts:
         return None
     rel = os.path.join(*parts)
-    if config.DEBUG:
+    if config.DEBUG and STATIC_DIR in parts:
         if current_app.static_url_path is None:
             raise RuntimeError
         return os.path.join(current_app.static_url_path, rel)

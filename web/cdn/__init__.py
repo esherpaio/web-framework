@@ -1,4 +1,5 @@
 from .cdn import (
+    STATIC_DIR,
     BaseClient,
     CdnClient,
     LocalClient,
@@ -20,6 +21,7 @@ __all__ = [
     "filenames",
     "LocalClient",
     "modified",
+    "STATIC_DIR",
     "upload",
     "url",
 ]
