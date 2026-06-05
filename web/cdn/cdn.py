@@ -44,11 +44,18 @@ class Client:
     def datetimes(self, path: str) -> dict[str, datetime]:
         self._ftp.cwd(_get_dir(path))
         times: dict[str, datetime] = {}
-        for fn, facts in self._ftp.mlsd():
-            modify = facts.get("modify")
-            if modify is None:
+        for fn in self._ftp.nlst():
+            try:
+                resp = self._ftp.sendcmd(f"MDTM {fn}")
+            except error_perm:
                 continue
-            times[fn] = datetime.strptime(modify, "%Y%m%d%H%M%S")
+            if not resp.startswith("213"):
+                continue
+            stamp = resp[3:].strip()
+            try:
+                times[fn] = datetime.strptime(stamp[:14], "%Y%m%d%H%M%S")
+            except ValueError:
+                continue
         return times
 
     def exists(self, path: str) -> bool:
