@@ -1,23 +1,42 @@
 import re
+from datetime import UTC, datetime, timedelta
 from typing import Any, Type
 
 import requests
 from sqlalchemy.orm import Session
 
 from web.database import conn
-from web.database.model import Base
+from web.database.model import AppSettings, Base
 from web.logger import log
 from web.setup import config
 
 
 class Automator:
     RUN_DEBUG: bool = True
-    REQUIRES_APP: bool = False
+    INTERVAL_S: int | None = None
 
     @classmethod
     def log_start(cls) -> None:
         name = re.sub(r"([a-z])([A-Z])", r"\1 \2", cls.__name__).lower()
         log.info(f"Running task {name}")
+
+    @classmethod
+    def should_run(cls) -> bool:
+        if cls.INTERVAL_S is None:
+            return True
+        with conn.begin() as s:
+            settings = s.query(AppSettings).first()
+            last_run = settings.automator.get(cls.__name__)
+        if last_run is None:
+            return True
+        elapsed = datetime.now(UTC) - datetime.fromisoformat(last_run)
+        return elapsed >= timedelta(seconds=cls.INTERVAL_S)
+
+    @classmethod
+    def mark_run(cls) -> None:
+        with conn.begin() as s:
+            settings = s.query(AppSettings).first()
+            settings.automator[cls.__name__] = datetime.now(UTC).isoformat()
 
     @classmethod
     def run(cls) -> None:

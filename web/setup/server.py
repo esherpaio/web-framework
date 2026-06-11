@@ -52,8 +52,6 @@ class Server:
             if config.DEBUG and not task_cls.RUN_DEBUG:
                 log.debug(f"Skipping task {task_cls} in debug mode")
                 continue
-            if task_cls.REQUIRES_APP:
-                continue
             with app.app_context():
                 task_cls.run()
 

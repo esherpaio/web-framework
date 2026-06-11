@@ -28,4 +28,4 @@ class StrBase(Base):
 class Attribute(Base):
     __abstract__ = True
 
-    attributes = MC(MutableDict.as_mutable(JSONB), nullable=False, server_default="{}")  # type: ignore[arg-type]
+    attributes = MC(MutableDict.as_mutable(JSONB), nullable=False, server_default="{}")
