@@ -9,6 +9,8 @@ from ..automator import Cleaner
 
 
 class UserCleaner(Cleaner):
+    INTERVAL_S = 86400
+
     @classmethod
     def run(cls, days: int = 14) -> None:
         cls.log_start()

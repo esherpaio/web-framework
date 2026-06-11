@@ -85,6 +85,8 @@ class ApiSyncer(Automator):
 
 
 class RestCountriesApiSyncer(ApiSyncer):
+    INTERVAL_S = 604800
+
     @classmethod
     def fetch_all(cls, url) -> list[Any]:
         objects: list[Any] = []

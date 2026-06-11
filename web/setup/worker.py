@@ -104,10 +104,14 @@ class Worker:
             if config.DEBUG and not task_cls.RUN_DEBUG:
                 log.debug(f"Skipping task {task_cls} in debug mode")
                 continue
+            if not task_cls.should_run():
+                log.debug(f"Skipping task {task_cls} while interval not reached")
+                continue
             try:
                 task_cls.run()
             except Exception as e:
                 log.error(f"Error running task {task_cls}: {e}")
+            task_cls.mark_run()
 
     def _on_shutdown(self) -> None:
         log.info("Stopping worker")
