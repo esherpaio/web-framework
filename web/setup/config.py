@@ -90,6 +90,7 @@ class _Protocol(Protocol):
     GOOGLE_CLIENT_ID: str | None
     GOOGLE_PLACE_ID: str | None
     MOLLIE_API_KEY: str | None
+    REST_COUNTRIES_API_KEY: str | None
     INTIME_ENABLED: bool
 
     META_BRAND_NAME: str | None
