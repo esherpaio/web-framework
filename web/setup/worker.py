@@ -105,7 +105,7 @@ class Worker:
                 log.debug(f"Skipping task {task_cls} in debug mode")
                 continue
             if not task_cls.should_run():
-                log.debug(f"Skipping task {task_cls} while interval not reached")
+                log.debug(f"Skipping task {task_cls} while interval unreached")
                 continue
             try:
                 task_cls.run()
