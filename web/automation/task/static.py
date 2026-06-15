@@ -49,9 +49,9 @@ class StaticJob:
     ) -> AppSettings | AppBlueprint | AppRoute | None:
         if self.model == AppSettings:
             return s.query(AppSettings).first()
-        elif self.model == AppBlueprint:
+        if self.model == AppBlueprint:
             return s.query(AppBlueprint).filter_by(endpoint=self.endpoint).first()
-        elif self.model == AppRoute:
+        if self.model == AppRoute:
             return s.query(AppRoute).filter_by(endpoint=self.endpoint).first()
         log.error(f"Static job model {self.model} is unsupported")
         return None
@@ -64,8 +64,10 @@ class StaticJob:
     ) -> None:
         if self.type_ is StaticType.JS:
             resource.js_path = cdn_path
+            s.flush()
         elif self.type_ is StaticType.CSS:
             resource.css_path = cdn_path
+            s.flush()
         else:
             log.error(f"Static job type {self.type_} is unsupported")
 
@@ -80,13 +82,14 @@ class StaticProcessor(Processor):
         if not config.AUTOMATE_STATIC:
             log.warning("Static processor is disabled")
             return
+
         with cdn.connect() as client:
-            static_dn = cdn.get_static_dir_name()
-            modified = client.modified(os.path.join(static_dn))
+            static_dir = cdn.get_static_dir()
+            modified = client.modified(static_dir)
+            filenames = set(modified)
             with conn.begin() as s:
                 resources = cls.load_resources(s)
-                uploaded = cls.upload_bundles(s, client, resources, set(modified))
-                s.flush()
+                uploaded = cls.upload_bundles(s, client, resources, filenames)
             with conn.begin() as s:
                 cls.clear_stale_paths(s, uploaded)
             with conn.begin() as s:
@@ -112,9 +115,9 @@ class StaticProcessor(Processor):
         s: Session,
         client: cdn.BaseClient,
         resources: dict[StaticJob, AppSettings | AppBlueprint | AppRoute],
-        cdn_filenames: set[str],
+        cdn_fns: set[str],
     ) -> dict[tuple[str, int], list[StaticType]]:
-        static_dn = cdn.get_static_dir_name()
+        static_dir = cdn.get_static_dir()
 
         processed: dict[tuple[str, int], list[StaticType]] = defaultdict(list)
         for job in cls.JOBS:
@@ -125,9 +128,9 @@ class StaticProcessor(Processor):
                 continue
 
             out_ext = packer.validate(job.bundles)
-            cdn_filename = f"{hash_}{out_ext}"
-            cdn_path = os.path.join(static_dn, cdn_filename)
-            if cdn_filename not in cdn_filenames:
+            cdn_fn = f"{hash_}{out_ext}"
+            cdn_path = os.path.join(static_dir, cdn_fn)
+            if cdn_fn not in cdn_fns:
                 client.upload(io.BytesIO(bytes_), cdn_path)
 
             resource = resources[job]
@@ -163,7 +166,7 @@ class StaticProcessor(Processor):
         client: cdn.BaseClient,
         modified: dict[str, datetime],
     ) -> None:
-        static_dn = cdn.get_static_dir_name()
+        static_dir = cdn.get_static_dir()
 
         active: set[str] = set()
         for resource in [
@@ -179,4 +182,4 @@ class StaticProcessor(Processor):
         keep = set(ordered[: cls.KEEP]) | active
         for fn in ordered:
             if fn not in keep:
-                client.delete(os.path.join(static_dn, fn))
+                client.delete(os.path.join(static_dir, fn))

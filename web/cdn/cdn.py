@@ -11,6 +11,9 @@ from web.setup import config
 
 from .type import _SupportsRead
 
+LOCAL_DIR = "cdn"
+CDN_DIR = "static"
+
 
 def use_local_static(path: str | None = None) -> bool:
     if not config.DEBUG:
@@ -19,14 +22,12 @@ def use_local_static(path: str | None = None) -> bool:
         return False
     if path is None:
         return True
-    static_dn = get_static_dir_name(path)
-    return path.startswith(static_dn)
+    local_path = path.startswith(LOCAL_DIR)
+    return local_path
 
 
-def get_static_dir_name(path: str | None = None) -> str:
-    if use_local_static(path):
-        return "cdn"
-    return "static"
+def get_static_dir(path: str | None = None) -> str:
+    return LOCAL_DIR if use_local_static(path) else CDN_DIR
 
 
 def url(*args: str | None) -> str | None:
