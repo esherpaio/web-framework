@@ -4,31 +4,43 @@ from datetime import datetime
 from ftplib import FTP, error_perm
 from typing import Iterator, Protocol
 
-from flask import current_app
+from flask import current_app, has_app_context
 
 from web.logger import log
 from web.setup import config
 
 from .type import _SupportsRead
 
-if not config.DEBUG:
-    STATIC_LOCAL = False
-    STATIC_DIR = "static"
-else:
-    STATIC_LOCAL = True
-    STATIC_DIR = "cdn"
+
+def use_local_static(path: str | None = None) -> bool:
+    if not config.DEBUG:
+        return False
+    if not has_app_context():
+        return False
+    if path is None:
+        return True
+    static_dn = get_static_dir_name(path)
+    return path.startswith(static_dn)
+
+
+def get_static_dir_name(path: str | None = None) -> str:
+    if use_local_static(path):
+        return "cdn"
+    return "static"
 
 
 def url(*args: str | None) -> str | None:
-    parts = [x for x in args if x is not None]
-    if not parts:
+    path_parts = [x for x in args if x is not None]
+    if not path_parts:
         return None
-    rel = os.path.join(*parts)
-    if config.DEBUG and STATIC_LOCAL and rel.startswith(STATIC_DIR):
+    path = os.path.join(*path_parts)
+
+    local_static = use_local_static(path)
+    if local_static:
         if current_app.static_url_path is None:
             raise RuntimeError
-        return os.path.join(current_app.static_url_path, rel)
-    return os.path.join(config.CDN_BASE_URL, rel)
+        return os.path.join(current_app.static_url_path, path)
+    return os.path.join(config.CDN_BASE_URL, path)
 
 
 #
@@ -178,15 +190,15 @@ class LocalClient(BaseClient):
 
 @contextmanager
 def connect() -> Iterator[BaseClient]:
-    if config.DEBUG:
+    if use_local_static():
         yield LocalClient()
-        return
-    with FTP(
-        config.FTP_HOSTNAME,
-        config.FTP_USERNAME,
-        config.FTP_PASSWORD,
-    ) as ftp:
-        yield CdnClient(ftp)
+    else:
+        with FTP(
+            config.FTP_HOSTNAME,
+            config.FTP_USERNAME,
+            config.FTP_PASSWORD,
+        ) as ftp:
+            yield CdnClient(ftp)
 
 
 def filenames(path: str) -> list[str]:

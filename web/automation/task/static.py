@@ -81,7 +81,8 @@ class StaticProcessor(Processor):
             log.warning("Static processor is disabled")
             return
         with cdn.connect() as client:
-            modified = client.modified(os.path.join(cdn.STATIC_DIR))
+            static_dn = cdn.get_static_dir_name()
+            modified = client.modified(os.path.join(static_dn))
             with conn.begin() as s:
                 resources = cls.load_resources(s)
                 uploaded = cls.upload_bundles(s, client, resources, set(modified))
@@ -113,21 +114,26 @@ class StaticProcessor(Processor):
         resources: dict[StaticJob, AppSettings | AppBlueprint | AppRoute],
         cdn_filenames: set[str],
     ) -> dict[tuple[str, int], list[StaticType]]:
+        static_dn = cdn.get_static_dir_name()
+
         processed: dict[tuple[str, int], list[StaticType]] = defaultdict(list)
         for job in cls.JOBS:
-            resource = resources[job]
             packer = Packer()
-            out_ext = packer.validate(job.bundles)
             compiled, bytes_, hash_ = packer.pack(job.bundles)
             if not compiled:
                 log.error(f"Static job {job.id_} compiled empty")
                 continue
+
+            out_ext = packer.validate(job.bundles)
             cdn_filename = f"{hash_}{out_ext}"
-            cdn_path = os.path.join(cdn.STATIC_DIR, cdn_filename)
+            cdn_path = os.path.join(static_dn, cdn_filename)
             if cdn_filename not in cdn_filenames:
                 client.upload(io.BytesIO(bytes_), cdn_path)
+
+            resource = resources[job]
             job.set_attribute(s, resource, cdn_path)
             processed[(resource.__tablename__, resource.id)].append(job.type_)
+
         return processed
 
     @classmethod
@@ -157,6 +163,8 @@ class StaticProcessor(Processor):
         client: cdn.BaseClient,
         modified: dict[str, datetime],
     ) -> None:
+        static_dn = cdn.get_static_dir_name()
+
         active: set[str] = set()
         for resource in [
             *s.query(AppSettings).all(),
@@ -166,8 +174,9 @@ class StaticProcessor(Processor):
             for path in (resource.js_path, resource.css_path):  # type: ignore[attr-defined]
                 if path:
                     active.add(os.path.basename(path))
+
         ordered = sorted(modified, key=lambda fn: modified[fn], reverse=True)
         keep = set(ordered[: cls.KEEP]) | active
         for fn in ordered:
             if fn not in keep:
-                client.delete(os.path.join(cdn.STATIC_DIR, fn))
+                client.delete(os.path.join(static_dn, fn))
