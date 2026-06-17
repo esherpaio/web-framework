@@ -38,7 +38,8 @@ class CacheManager(metaclass=Singleton):
         log.info("Starting cache manager")
         self._stop_event.clear()
         atexit.register(self._on_shutdown)
-        self._on_sigint()
+        self._on_signal(signal.SIGINT)
+        self._on_signal(signal.SIGTERM)
         self._thread = Thread(
             target=self._loop,
             name="CacheManager",
@@ -96,16 +97,16 @@ class CacheManager(metaclass=Singleton):
         if self._thread is not None and self._thread.is_alive():
             self._thread.join(timeout=SHUTDOWN_TIMEOUT_S)
 
-    def _on_sigint(self) -> None:
-        prev = signal.getsignal(signal.SIGINT)
+    def _on_signal(self, sig: int) -> None:
+        prev = signal.getsignal(sig)
 
-        def handler(sig: int, frame: FrameType | None) -> None:
+        def handler(signum: int, frame: FrameType | None) -> None:
             self._stop_event.set()
-            signal.signal(signal.SIGINT, prev)
+            signal.signal(signum, prev)
             if callable(prev):
-                prev(sig, frame)
+                prev(signum, frame)
 
-        signal.signal(signal.SIGINT, handler)
+        signal.signal(sig, handler)
 
 
 cache_manager = CacheManager()

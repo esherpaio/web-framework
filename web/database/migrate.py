@@ -1,9 +1,10 @@
 from alembic import context
 from sqlalchemy import create_engine, make_url, text
 
-from .client import engine
 from web.database.model import Base
 from web.setup import config
+
+from .client import engine
 
 
 def create_database() -> None:
