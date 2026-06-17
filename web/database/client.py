@@ -13,7 +13,7 @@ def init_db(uri: str | None = None, **options):
         raise EnvironmentError
 
     engine = create_engine(
-        config.DATABASE_URL,
+        uri,
         pool_pre_ping=True,  # Check if connection is alive before using
         pool_size=2,  # Keep x connections open in pool
         max_overflow=5,  # Allow x extra connections when pool is full
