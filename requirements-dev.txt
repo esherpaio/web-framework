@@ -5,13 +5,13 @@ setuptools~=82.0.1
 alembic~=1.18.4
 
 # testing
-pytest~=9.0.2
+pytest~=9.0.3
 pytest-cov~=7.1.0
 
 # formating and linting
-djlint~=1.36.4
-mypy==1.19.1
-ruff~=0.15.8
+djlint~=1.39.0
+mypy==2.1.0
+ruff~=0.15.16
 
 # blueprints
 git+https://github.com/esherpaio/web-blueprint-admin.git

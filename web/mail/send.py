@@ -1,6 +1,7 @@
 from email.mime.application import MIMEApplication
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+from email.utils import formatdate, make_msgid
 from smtplib import SMTP
 
 from web.logger import log
@@ -50,6 +51,9 @@ def _send_email_smtp(
     msg["From"] = config.MAIL_SENDER
     msg["Reply-To"] = reply_to or config.MAIL_SENDER
     msg["Subject"] = subject
+    msg["Date"] = formatdate(localtime=True)
+    sender_domain = config.MAIL_SENDER.rsplit("@", 1)[-1]
+    msg["Message-ID"] = make_msgid(domain=sender_domain)
     if to is not None:
         msg["To"] = ",".join(to)
     if cc is not None:
@@ -57,9 +61,11 @@ def _send_email_smtp(
     if bcc is not None:
         msg["Bcc"] = ",".join(bcc)
     all_ = list(set((to or []) + (cc or []) + (bcc or [])))
+
     # Add body
     body = MIMEText(html, "html")
     msg.attach(body)
+
     # Add attachment
     if blob_path and blob_name:
         with open(blob_path, "rb") as file_:
@@ -67,6 +73,7 @@ def _send_email_smtp(
         attachment = MIMEApplication(data)
         attachment.add_header("Content-Disposition", "attachment", filename=blob_name)
         msg.attach(attachment)
+
     # Send email
     with SMTP(
         config.SMTP_HOSTNAME,

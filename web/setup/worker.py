@@ -1,4 +1,4 @@
-import os
+import atexit
 import signal
 import time
 from threading import Event, Thread
@@ -15,22 +15,32 @@ from web.mail import MailEvent, mail
 from web.setup import config
 from web.setup.logging import patch_logging
 
+SHUTDOWN_TIMEOUT_S = 5
+
 
 class Worker:
     def __init__(self) -> None:
         log.info("Initializing worker")
-        self._thread: Thread | None = None
         self._stop_event = Event()
+        self._thread: Thread | None = None
         self._tasks: list[Type[Automator]] = []
         self._interval_s = config.WORKER_INTERVAL_S
-        self._last_event_time: float | None = None
+        self._last_loop: float | None = None
 
-        signal.signal(signal.SIGTERM, self._signal)
-        signal.signal(signal.SIGINT, self._signal)
-
-    def _signal(self, signum: int, frame: FrameType | None) -> None:
-        log.info(f"Worker received signal {signum}")
-        self.stop()
+    def start(self) -> None:
+        if self._thread is not None and self._thread.is_alive():
+            return
+        log.info("Starting worker")
+        self._stop_event.clear()
+        atexit.register(self._on_shutdown)
+        self._on_signal(signal.SIGINT)
+        self._on_signal(signal.SIGTERM)
+        self._thread = Thread(
+            target=self._schedule,
+            name="Worker",
+            daemon=False,
+        )
+        self._thread.start()
 
     #
     # Setup
@@ -73,43 +83,50 @@ class Worker:
         self._tasks = tasks
 
     #
-    # Worker
+    # Private
     #
 
-    def start(self) -> None:
-        if self._thread is not None and self._thread.is_alive():
-            log.warning("Worker is already running")
-            return
-
-        log.info("Starting worker")
-        self._stop_event.clear()
-        self._thread = Thread(target=self._start_scheduler)
-        self._thread.start()
-
-    def _start_scheduler(self) -> None:
+    def _schedule(self) -> None:
         while not self._stop_event.is_set():
-            current_time = time.monotonic()
             if (
-                self._last_event_time is None
-                or self._last_event_time + self._interval_s <= current_time
+                self._last_loop is None
+                or self._last_loop + self._interval_s <= time.monotonic()
             ):
-                self._last_event_time = time.monotonic()
-                self._iterate_tasks()
+                self._last_loop = time.monotonic()
+                self._loop()
             else:
                 self._stop_event.wait(self._interval_s)
 
-    def _iterate_tasks(self) -> None:
+    def _loop(self) -> None:
         for task in self._tasks:
             if self._stop_event.is_set():
                 return
+            task_cls = task()
+            if config.DEBUG and not task_cls.RUN_DEBUG:
+                log.debug(f"Skipping task {task_cls} in debug mode")
+                continue
+            if not task_cls.should_run():
+                log.debug(f"Skipping task {task_cls} while interval unreached")
+                continue
             try:
-                task.run()
+                task_cls.run()
             except Exception as e:
-                log.error(f"Error running task {task.__name__}: {e}")
+                log.error(f"Error running task {task_cls}: {e}")
+            task_cls.mark_run()
 
-    def stop(self) -> None:
+    def _on_shutdown(self) -> None:
         log.info("Stopping worker")
         self._stop_event.set()
         if self._thread is not None and self._thread.is_alive():
-            self._thread.join(timeout=5)
-        os._exit(1)
+            self._thread.join(timeout=SHUTDOWN_TIMEOUT_S)
+
+    def _on_signal(self, sig: int) -> None:
+        prev = signal.getsignal(sig)
+
+        def handler(signum: int, frame: FrameType | None) -> None:
+            self._stop_event.set()
+            signal.signal(signum, prev)
+            if callable(prev):
+                prev(signum, frame)
+
+        signal.signal(sig, handler)

@@ -1,88 +1,227 @@
 import os
+from contextlib import contextmanager
+from datetime import datetime
 from ftplib import FTP, error_perm
+from typing import Iterator, Protocol
+
+from flask import current_app, has_app_context
 
 from web.logger import log
 from web.setup import config
 
 from .type import _SupportsRead
 
-
-def _get_dir(rel_dir: str) -> str:
-    if config.FTP_BASE_DIR is not None:
-        dir_ = os.path.dirname(os.path.join(config.FTP_BASE_DIR, rel_dir))
-    else:
-        dir_ = os.path.dirname(rel_dir)
-    return dir_
+LOCAL_DIR = "cdn"
+CDN_DIR = "static"
 
 
-def _get_path(rel_fp: str) -> str:
-    if config.FTP_BASE_DIR is not None:
-        fp = os.path.join(config.FTP_BASE_DIR, rel_fp)
-    else:
-        fp = rel_fp
-    return fp
+def use_local_static(path: str | None = None) -> bool:
+    if not config.DEBUG:
+        return False
+    if not has_app_context():
+        return False
+    if path is None:
+        return True
+    local_path = path.startswith(LOCAL_DIR)
+    return local_path
 
 
-def filenames(path: str) -> list[str]:
-    dir_ = _get_dir(path)
-    with FTP(
-        config.FTP_HOSTNAME,
-        config.FTP_USERNAME,
-        config.FTP_PASSWORD,
-    ) as ftp:
-        ftp.cwd(dir_)
-        fns = ftp.nlst()
-    return fns
-
-
-def exists(path: str) -> bool:
-    dir_ = _get_dir(path)
-    fn = os.path.basename(path)
-    with FTP(
-        config.FTP_HOSTNAME,
-        config.FTP_USERNAME,
-        config.FTP_PASSWORD,
-    ) as ftp:
-        ftp.cwd(dir_)
-        fns = ftp.nlst()
-    return fn in fns
-
-
-def upload(file_: _SupportsRead[bytes], path: str) -> None:
-    dir_ = _get_dir(path)
-    fn = os.path.basename(path)
-    with FTP(
-        config.FTP_HOSTNAME,
-        config.FTP_USERNAME,
-        config.FTP_PASSWORD,
-    ) as ftp:
-        try:
-            ftp.mkd(dir_)
-        except error_perm as error:
-            if error.args[0][:3] != "521":
-                raise
-        ftp.cwd(dir_)
-        ftp.storbinary(f"STOR {fn}", file_)
-    log.info(f"Uploaded on FTP: {path}")
-
-
-def delete(path: str) -> None:
-    fp = _get_path(path)
-    with FTP(
-        config.FTP_HOSTNAME,
-        config.FTP_USERNAME,
-        config.FTP_PASSWORD,
-    ) as ftp:
-        try:
-            ftp.delete(fp)
-        except error_perm as error:
-            if error.args[0][:3] != "550":
-                raise
-    log.info(f"Deleted on FTP: {path}")
+def get_static_dir(path: str | None = None) -> str:
+    return LOCAL_DIR if use_local_static(path) else CDN_DIR
 
 
 def url(*args: str | None) -> str | None:
-    parts = [x for x in args if x is not None]
-    if not parts:
+    path_parts = [x for x in args if x is not None]
+    if not path_parts:
         return None
-    return os.path.join(config.CDN_BASE_URL, *parts)
+    path = os.path.join(*path_parts)
+
+    local_static = use_local_static(path)
+    if local_static:
+        if current_app.static_url_path is None:
+            raise RuntimeError
+        return os.path.join(current_app.static_url_path, path)
+    return os.path.join(config.CDN_BASE_URL, path)
+
+
+#
+# Client
+#
+
+
+class BaseClient(Protocol):
+    def filenames(self, path: str) -> list[str]: ...
+
+    def modified(self, path: str) -> dict[str, datetime]: ...
+
+    def exists(self, path: str) -> bool: ...
+
+    def upload(self, file_: _SupportsRead[bytes], path: str) -> None: ...
+
+    def delete(self, path: str) -> None: ...
+
+
+class CdnClient(BaseClient):
+    def __init__(self, ftp: FTP) -> None:
+        self._ftp = ftp
+        self._home = ftp.pwd()
+
+    #
+    # Private
+    #
+
+    def _abs(self, rel: str) -> str:
+        parts = [self._home]
+        if config.FTP_BASE_DIR is not None:
+            parts.append(config.FTP_BASE_DIR)
+        parts.append(rel)
+        return os.path.normpath(os.path.join(*parts))
+
+    def _get_dir(self, rel_dir: str) -> str:
+        return self._abs(rel_dir)
+
+    def _get_file_dir(self, rel_fp: str) -> str:
+        return os.path.dirname(self._abs(rel_fp))
+
+    def _get_file_path(self, rel_fp: str) -> str:
+        return self._abs(rel_fp)
+
+    #
+    # Public
+    #
+
+    def filenames(self, path: str) -> list[str]:
+        self._ftp.cwd(self._get_dir(path))
+        return self._ftp.nlst()
+
+    def modified(self, path: str) -> dict[str, datetime]:
+        self._ftp.cwd(self._get_dir(path))
+        times: dict[str, datetime] = {}
+        for fn in self._ftp.nlst():
+            try:
+                resp = self._ftp.sendcmd(f"MDTM {fn}")
+            except error_perm:
+                continue
+            if not resp.startswith("213"):
+                continue
+            stamp = resp[3:].strip()
+            try:
+                times[fn] = datetime.strptime(stamp[:14], "%Y%m%d%H%M%S")
+            except ValueError:
+                continue
+        return times
+
+    def exists(self, path: str) -> bool:
+        self._ftp.cwd(self._get_file_dir(path))
+        return os.path.basename(path) in self._ftp.nlst()
+
+    def upload(self, file_: _SupportsRead[bytes], path: str) -> None:
+        dir_ = self._get_file_dir(path)
+        try:
+            self._ftp.mkd(dir_)
+        except error_perm as error:
+            if error.args[0][:3] != "521":
+                raise
+        self._ftp.cwd(dir_)
+        self._ftp.storbinary(f"STOR {os.path.basename(path)}", file_)
+        log.info(f"Uploaded on FTP: {path}")
+
+    def delete(self, path: str) -> None:
+        try:
+            self._ftp.delete(self._get_file_path(path))
+        except error_perm as error:
+            if error.args[0][:3] != "550":
+                raise
+        log.info(f"Deleted on FTP: {path}")
+
+
+class LocalClient(BaseClient):
+    #
+    # Private
+    #
+
+    @classmethod
+    def _path(cls, rel: str) -> str:
+        if current_app.static_folder is None:
+            raise RuntimeError
+        return os.path.join(current_app.static_folder, os.path.normpath(rel))
+
+    #
+    # Public
+    #
+
+    def filenames(self, path: str) -> list[str]:
+        dir_ = self._path(path)
+        if not os.path.isdir(dir_):
+            return []
+        return os.listdir(dir_)
+
+    def modified(self, path: str) -> dict[str, datetime]:
+        dir_ = self._path(path)
+        times: dict[str, datetime] = {}
+        if not os.path.isdir(dir_):
+            return times
+        for fn in os.listdir(dir_):
+            fp = os.path.join(dir_, fn)
+            if os.path.isfile(fp):
+                times[fn] = datetime.fromtimestamp(os.path.getmtime(fp))
+        return times
+
+    def exists(self, path: str) -> bool:
+        return os.path.isfile(self._path(path))
+
+    def upload(self, file_: _SupportsRead[bytes], path: str) -> None:
+        fp = self._path(path)
+        os.makedirs(os.path.dirname(fp), exist_ok=True)
+        with open(fp, "wb") as out:
+            out.write(file_.read())
+        log.info(f"Saved locally: {path}")
+
+    def delete(self, path: str) -> None:
+        fp = self._path(path)
+        if os.path.isfile(fp):
+            os.remove(fp)
+            log.info(f"Deleted locally: {path}")
+
+
+#
+# Deprecated
+#
+
+
+@contextmanager
+def connect() -> Iterator[BaseClient]:
+    if use_local_static():
+        yield LocalClient()
+    else:
+        with FTP(
+            config.FTP_HOSTNAME,
+            config.FTP_USERNAME,
+            config.FTP_PASSWORD,
+        ) as ftp:
+            yield CdnClient(ftp)
+
+
+def filenames(path: str) -> list[str]:
+    with connect() as client:
+        return client.filenames(path)
+
+
+def modified(path: str) -> dict[str, datetime]:
+    with connect() as client:
+        return client.modified(path)
+
+
+def exists(path: str) -> bool:
+    with connect() as client:
+        return client.exists(path)
+
+
+def upload(file_: _SupportsRead[bytes], path: str) -> None:
+    with connect() as client:
+        client.upload(file_, path)
+
+
+def delete(path: str) -> None:
+    with connect() as client:
+        client.delete(path)

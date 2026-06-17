@@ -5,6 +5,8 @@ from ..automator import SeedSyncer
 
 
 class AppSettingSeedSyncer(SeedSyncer):
+    INTERVAL_S = 86400
+
     @classmethod
     def run(cls) -> None:
         cls.log_start()

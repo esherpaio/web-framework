@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-03-26
+
+- Support for Cloudflare Turnstile
+
 ## 2026-02-20
 
 - Support for CDN caching
@@ -11,10 +15,6 @@
 
 - Improved schema.org JSON-LD:
   - Support breadcrumbs
-
-## 2026-03-26
-
-- Support for Cloudflare Turnstile
 
 ## 2026-01-30
 

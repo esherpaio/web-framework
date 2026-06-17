@@ -1,6 +1,8 @@
-import time
+import atexit
+import signal
 from datetime import datetime, timezone
-from threading import Thread
+from threading import Event, Thread
+from types import FrameType
 from typing import Callable
 
 from web.database import conn
@@ -8,14 +10,42 @@ from web.database.model import AppSettings
 from web.logger import log
 from web.utils import Singleton
 
+REFRESH_INTERVAL_S = 60
+SHUTDOWN_TIMEOUT_S = 5
+
 
 class CacheManager(metaclass=Singleton):
     def __init__(self) -> None:
         super().__init__()
         self._updated_at: datetime = datetime.now(timezone.utc)
         self._active: bool = True
+        self._stop_event: Event = Event()
+        self._thread: Thread | None = None
         self.hooks: list[Callable] = []
-        self.update(force=True)
+        self.start()
+
+    #
+    # Public
+    #
+
+    def add_hook(self, hook: Callable) -> None:
+        if hook not in self.hooks:
+            self.hooks.append(hook)
+
+    def start(self) -> None:
+        if self._thread is not None and self._thread.is_alive():
+            return
+        log.info("Starting cache manager")
+        self._stop_event.clear()
+        atexit.register(self._on_shutdown)
+        self._on_signal(signal.SIGINT)
+        self._on_signal(signal.SIGTERM)
+        self._thread = Thread(
+            target=self._loop,
+            name="CacheManager",
+            daemon=False,
+        )
+        self._thread.start()
 
     def pause(self) -> None:
         if not self._active:
@@ -29,10 +59,6 @@ class CacheManager(metaclass=Singleton):
             return
         self._active = True
 
-    def add_hook(self, hook: Callable) -> None:
-        if hook not in self.hooks:
-            self.hooks.append(hook)
-
     @property
     def expired(self) -> bool:
         if self._updated_at is None:
@@ -44,21 +70,43 @@ class CacheManager(metaclass=Singleton):
         return settings.cached_at > self._updated_at
 
     def update(self, force: bool = False) -> None:
-        if not force:
+        if not (force or (self._active and self.expired)):
+            return
+        log.info("Updating cache")
+        self._updated_at = datetime.now(timezone.utc)
+        for hook in self.hooks:
             try:
-                time.sleep(60)
-            except Exception:
-                return
-        if self._active:
-            Thread(target=self.update, daemon=True).start()
-        if force or self.expired:
-            log.info("Updating cache")
-            self._updated_at = datetime.now(timezone.utc)
-            for hook in self.hooks:
-                try:
-                    hook()
-                except Exception as e:
-                    log.error(f"Error running cache hook {hook.__name__}: {e}")
+                hook()
+            except Exception as e:
+                log.error(f"Error running cache hook {hook.__name__}: {e}")
+
+    #
+    # Private
+    #
+
+    def _loop(self) -> None:
+        while not self._stop_event.wait(REFRESH_INTERVAL_S):
+            try:
+                self.update()
+            except Exception as e:
+                log.error(f"Error refreshing cache: {e}")
+
+    def _on_shutdown(self) -> None:
+        log.info("Stopping cache manager")
+        self._stop_event.set()
+        if self._thread is not None and self._thread.is_alive():
+            self._thread.join(timeout=SHUTDOWN_TIMEOUT_S)
+
+    def _on_signal(self, sig: int) -> None:
+        prev = signal.getsignal(sig)
+
+        def handler(signum: int, frame: FrameType | None) -> None:
+            self._stop_event.set()
+            signal.signal(signum, prev)
+            if callable(prev):
+                prev(signum, frame)
+
+        signal.signal(sig, handler)
 
 
 cache_manager = CacheManager()

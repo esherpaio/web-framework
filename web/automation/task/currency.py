@@ -13,6 +13,7 @@ from ..utils import external_sync
 
 
 class CurrencyApiSyncer(ApiSyncer):
+    INTERVAL_S = 86400
     API_URL = "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml"
 
     @classmethod

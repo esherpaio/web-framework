@@ -27,6 +27,7 @@ class Mail(metaclass=Singleton):
         cls,
         s: Session,
         event_id: MailEvent | str,
+        user_id: int | None = None,
         _email: Email | None = None,
         **kwargs,
     ) -> bool:
@@ -50,10 +51,12 @@ class Mail(metaclass=Singleton):
 
             # Save email in database
             if _email is None:
+                if user_id is None and current_user:
+                    user_id = current_user.id
                 _email = Email(
                     event_id=event_id,
                     data=kwargs,
-                    user_id=current_user.id if current_user else None,
+                    user_id=user_id,
                     status_id=status_id,
                 )
                 s.add(_email)

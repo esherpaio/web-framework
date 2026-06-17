@@ -1,18 +1,14 @@
-import requests
-from requests import RequestException
-
 from web.database import conn
 from web.database.model import Country, Currency, Region
 from web.logger import log
-from web.setup import config
 
-from ..automator import ApiSyncer
+from ..automator import RestCountriesApiSyncer
 from ..utils import external_sync
 
 
-class CountryApiSyncer(ApiSyncer):
-    API_URL = "https://restcountries.com/v3.1/all?fields=name,cca2,region,currencies"
-    BASE_CURRENCY_CODE = "USD"
+class CountryApiSyncer(RestCountriesApiSyncer):
+    API_URL = "https://api.restcountries.com/countries/v5?response_fields=names,codes,region,currencies&limit=100"
+    CURRENCY_CODE = "USD"
 
     @classmethod
     @external_sync
@@ -21,61 +17,61 @@ class CountryApiSyncer(ApiSyncer):
         with conn.begin() as s:
             # Call API
             try:
-                response = requests.request(
-                    "GET",
-                    cls.API_URL,
-                    timeout=config.AUTOMATE_TIMEOUT_S,
-                )
-                resources = response.json()
-            except RequestException as error:
-                log.error(f"Country seeder failed: {error}")
+                resources = cls.fetch_all(cls.API_URL)
+            except Exception as error:
+                log.error(error, exc_info=True)
                 return
+
             # Load iteration objects
+            currency_base = s.query(Currency).filter_by(code=cls.CURRENCY_CODE).first()
+            if currency_base is None:
+                log.warning(f"Base currency {cls.CURRENCY_CODE} not found")
+                return
             currencies = s.query(Currency).all()
-            currency_base = (
-                s.query(Currency).filter_by(code=cls.BASE_CURRENCY_CODE).first()
-            )
             regions = s.query(Region).all()
             countries = s.query(Country).all()
-            # Sanity checks
-            if currency_base is None:
-                log.warning(
-                    f"Country seeder failed: base currency {cls.BASE_CURRENCY_CODE} not found"
-                )
-                return
+
             # Get resource details
             for resource in resources:
-                try:
-                    country_name = resource["name"]["common"]
-                    country_code = resource["cca2"]
-                    region_name = resource["region"]
-                    currency_codes = list(resource["currencies"].keys())
-                except KeyError as error:
-                    log.error(error, exc_info=True)
+                country_name = resource.get("names", {}).get("common")
+                if not country_name:
                     continue
-                # Get currency, fallback to USD
-                for currency in currencies:
-                    if currency.code in currency_codes:
-                        break
-                else:
-                    currency = currency_base
-                # Get region
-                try:
-                    region = next(x for x in regions if x.name == region_name)
-                except StopIteration as error:
-                    log.error(error, exc_info=True)
+                country_code = resource.get("codes", {}).get("alpha_2")
+                if not country_code:
                     continue
-                # Update or insert country
+                region_name = resource.get("region")
+                if not region_name:
+                    continue
+                if not isinstance(resource.get("currencies"), list):
+                    continue
+                currency_codes = [
+                    x["code"]
+                    for x in resource["currencies"]
+                    if x.get("code") and len(x["code"]) == 3 and x["code"].isalpha()
+                ]
+                if not currency_codes:
+                    continue
+
+                # Get currency and region
+                currency = next(
+                    (x for x in currencies if x.code in currency_codes),
+                    currency_base,
+                )
+                region = next((x for x in regions if x.name == region_name), None)
+                if region is None:
+                    continue
+
+                # Upsert country
                 country = next((x for x in countries if x.code == country_code), None)
                 if country:
-                    country.currency_id = currency.id
                     country.name = country_name
+                    country.currency_id = currency.id
                     country.region_id = region.id
                 else:
                     country = Country(
                         code=country_code,
-                        currency_id=currency.id,
                         name=country_name,
+                        currency_id=currency.id,
                         region_id=region.id,
                     )
                     s.add(country)
