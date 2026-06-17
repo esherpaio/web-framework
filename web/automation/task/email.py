@@ -32,7 +32,10 @@ class EmailProcessor(Processor):
         )
         if config.DEBUG:
             query = query.join(User, User.id == Email.user_id).filter(
-                User.role_id == UserRoleId.ADMIN
+                or_(
+                    User.role_id == UserRoleId.ADMIN,
+                    User.role_id == UserRoleId.SUPER,
+                )
             )
         email = query.order_by(Email.id.asc()).with_for_update(skip_locked=True).first()
         if email is None:
