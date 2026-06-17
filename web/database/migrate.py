@@ -1,7 +1,7 @@
 from alembic import context
 from sqlalchemy import create_engine, make_url, text
 
-from web.database import engine
+from .client import engine
 from web.database.model import Base
 from web.setup import config
 
