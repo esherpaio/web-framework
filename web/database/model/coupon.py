@@ -14,7 +14,7 @@ class Coupon(IntBase):
     __tablename__ = "coupon"
     __table_args__ = (
         CheckConstraint("amount IS NULL OR rate IS NULL"),
-        Index(None, unique=True, postgresql_where=text("is_default")),
+        Index(None, "is_default", unique=True, postgresql_where=text("is_default")),
     )
 
     amount = MC(default_price)
@@ -42,6 +42,12 @@ class Coupon(IntBase):
     def percentage(self) -> int | None:
         if self.rate:
             return int(round((self.rate - 1) * 100))
+        return None
+
+    @hybrid_property
+    def discount_percentage(self) -> int | None:
+        if self.rate:
+            return int(round((1 - self.rate) * 100))
         return None
 
 
