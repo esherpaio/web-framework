@@ -72,7 +72,7 @@ class CartItem(IntBase):
         # Add coupon
         if with_coupon and self.cart.coupon:
             coupon = self.cart.coupon
-            if coupon.rate:
+            if coupon.rate is not None:
                 price *= coupon.rate
         return price
 
