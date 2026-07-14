@@ -1,7 +1,9 @@
 from typing import Any
 
-from sqlalchemy import Boolean, CheckConstraint, String
+from sqlalchemy import Boolean, CheckConstraint, Index, String, event, text, update
+from sqlalchemy.engine import Connection
 from sqlalchemy.ext.hybrid import hybrid_property
+from sqlalchemy.orm import Mapper
 from sqlalchemy.orm import mapped_column as MC
 from sqlalchemy.orm import validates
 
@@ -11,10 +13,14 @@ from ._utils import default_price, default_rate, get_upper, val_length, val_numb
 
 class Coupon(IntBase):
     __tablename__ = "coupon"
-    __table_args__ = (CheckConstraint("amount IS NULL OR rate IS NULL"),)
+    __table_args__ = (
+        CheckConstraint("amount IS NULL OR rate IS NULL"),
+        Index(None, unique=True, postgresql_where=text("is_default")),
+    )
 
     amount = MC(default_price)
     code = MC(String(32), nullable=False)
+    is_default = MC(Boolean, nullable=False, default=False, server_default="false")
     is_deleted = MC(Boolean, nullable=False, default=False, server_default="false")
     rate = MC(default_rate)
 
@@ -38,3 +44,14 @@ class Coupon(IntBase):
         if self.rate:
             return int(round((self.rate - 1) * 100))
         return None
+
+
+@event.listens_for(Coupon, "before_insert")
+@event.listens_for(Coupon, "before_update")
+def _unset_other_defaults(mapper: Mapper, connection: Connection, target: Coupon) -> None:
+    if not target.is_default:
+        return
+    stmt = update(Coupon).where(Coupon.is_default.is_(True)).values(is_default=False)
+    if target.id is not None:
+        stmt = stmt.where(Coupon.id != target.id)
+    connection.execute(stmt)
