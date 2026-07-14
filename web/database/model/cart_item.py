@@ -70,10 +70,9 @@ class CartItem(IntBase):
         if include_vat:
             price *= self.cart.vat_rate
         # Add coupon
-        if with_coupon and self.cart.coupon:
-            coupon = self.cart.coupon
-            if coupon.rate is not None:
-                price *= coupon.rate
+        coupon = self.cart.coupon
+        if with_coupon and coupon and coupon.rate is not None:
+            price *= coupon.rate
         return price
 
     # Properties - SKU
