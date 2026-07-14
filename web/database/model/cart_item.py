@@ -2,7 +2,7 @@ from decimal import Decimal
 from typing import Any
 
 from sqlalchemy import ForeignKey, Integer, UniqueConstraint
-from sqlalchemy.ext.hybrid import hybrid_property
+from sqlalchemy.ext.hybrid import hybrid_method, hybrid_property
 from sqlalchemy.orm import mapped_column as MC
 from sqlalchemy.orm import relationship, validates
 
@@ -47,25 +47,34 @@ class CartItem(IntBase):
 
     @hybrid_property
     def total_price(self) -> Decimal:
-        return self.unit_price * self.quantity
+        return self._get_price(include_vat=False)
 
     @hybrid_property
     def total_price_vat(self) -> Decimal:
-        return self.total_price * self.cart.vat_rate
+        return self._get_price(include_vat=True)
 
     @hybrid_property
-    def total_price_vat_discounted(self) -> Decimal:
-        price = self.total_price_vat
-        coupon = self.cart.coupon
-        if coupon is not None:
+    def discount_price(self) -> Decimal:
+        return self._get_price(include_vat=False, with_coupon=True)
+
+    @hybrid_property
+    def discount_price_vat(self) -> Decimal:
+        return self._get_price(include_vat=True, with_coupon=True)
+
+    # Functions - pricing
+
+    @hybrid_method
+    def _get_price(self, include_vat: bool, with_coupon: bool = False) -> Decimal:
+        price = self.unit_price * self.quantity
+        # Add VAT
+        if include_vat:
+            price *= self.cart.vat_rate
+        # Add coupon
+        if with_coupon and self.cart.coupon:
+            coupon = self.cart.coupon
             if coupon.rate:
                 price *= coupon.rate
-            elif coupon.amount:
-                subtotal = self.cart.subtotal_price_vat
-                if subtotal > 0:
-                    share = self.total_price_vat / subtotal
-                    price -= coupon.amount * self.cart.vat_rate * share
-        return max(price, Decimal("0"))
+        return price
 
     # Properties - SKU
 

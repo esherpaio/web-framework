@@ -54,11 +54,13 @@ class Coupon(IntBase):
 @event.listens_for(Coupon, "before_insert")
 @event.listens_for(Coupon, "before_update")
 def _unset_other_defaults(
-    mapper: Mapper, connection: Connection, target: Coupon
+    mapper: Mapper,
+    connection: Connection,
+    target: Coupon,
 ) -> None:
     if not target.is_default:
         return
-    stmt = update(Coupon).where(Coupon.is_default.is_(True)).values(is_default=False)
+    query = update(Coupon).where(Coupon.is_default.is_(True)).values(is_default=False)
     if target.id is not None:
-        stmt = stmt.where(Coupon.id != target.id)
-    connection.execute(stmt)
+        query = query.where(Coupon.id != target.id)
+    connection.execute(query)
