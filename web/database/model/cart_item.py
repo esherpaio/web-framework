@@ -53,6 +53,20 @@ class CartItem(IntBase):
     def total_price_vat(self) -> Decimal:
         return self.total_price * self.cart.vat_rate
 
+    @hybrid_property
+    def total_price_vat_discounted(self) -> Decimal:
+        price = self.total_price_vat
+        coupon = self.cart.coupon
+        if coupon is not None:
+            if coupon.rate:
+                price *= coupon.rate
+            elif coupon.amount:
+                subtotal = self.cart.subtotal_price_vat
+                if subtotal > 0:
+                    share = self.total_price_vat / subtotal
+                    price -= coupon.amount * self.cart.vat_rate * share
+        return max(price, Decimal("0"))
+
     # Properties - SKU
 
     @hybrid_property
