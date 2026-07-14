@@ -40,13 +40,13 @@ class Coupon(IntBase):
 
     @hybrid_property
     def percentage(self) -> int | None:
-        if self.rate:
+        if self.rate is not None:
             return int(round((self.rate - 1) * 100))
         return None
 
     @hybrid_property
     def discount_percentage(self) -> int | None:
-        if self.rate:
+        if self.rate is not None:
             return int(round((1 - self.rate) * 100))
         return None
 
