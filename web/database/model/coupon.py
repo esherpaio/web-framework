@@ -3,9 +3,8 @@ from typing import Any
 from sqlalchemy import Boolean, CheckConstraint, Index, String, event, text, update
 from sqlalchemy.engine import Connection
 from sqlalchemy.ext.hybrid import hybrid_property
-from sqlalchemy.orm import Mapper
+from sqlalchemy.orm import Mapper, validates
 from sqlalchemy.orm import mapped_column as MC
-from sqlalchemy.orm import validates
 
 from ._base import IntBase
 from ._utils import default_price, default_rate, get_upper, val_length, val_number
@@ -48,7 +47,9 @@ class Coupon(IntBase):
 
 @event.listens_for(Coupon, "before_insert")
 @event.listens_for(Coupon, "before_update")
-def _unset_other_defaults(mapper: Mapper, connection: Connection, target: Coupon) -> None:
+def _unset_other_defaults(
+    mapper: Mapper, connection: Connection, target: Coupon
+) -> None:
     if not target.is_default:
         return
     stmt = update(Coupon).where(Coupon.is_default.is_(True)).values(is_default=False)
