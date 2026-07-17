@@ -8,7 +8,7 @@ from web.database.model import Country, Currency, Language
 from web.setup import config
 
 from .error import CountryNotFoundError, CurrencyNotFoundError, LanguageNotFoundError
-from .utils import gen_locale, get_cookie_locale, get_route_locale, match_locale
+from .utils import gen_locale, get_route_locale, match_locale
 
 
 class Locale:
@@ -25,9 +25,6 @@ class Locale:
         view_locale = get_route_locale()
         if view_locale:
             locales.append(view_locale)
-        cookie_locale = get_cookie_locale()
-        if cookie_locale:
-            locales.append(cookie_locale)
         web_locale = gen_locale(config.LOCALE_LANGUAGE_CODE, config.LOCALE_COUNTRY_CODE)
         locales.append(web_locale)
         return locales

@@ -49,6 +49,10 @@ class Auth:
         g._auth_type = auth_type
 
     def after_request(self, response: Response) -> Response:
+        if request.blueprint is None or not request.blueprint.startswith(
+            ("api", "webhook")
+        ):
+            return response
         auth_type = getattr(g, G.AUTH_TYPE, None)
         if auth_type == AuthType.NONE:
             del_jwt(response)

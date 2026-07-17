@@ -17,7 +17,6 @@ class LocaleManager(metaclass=Singleton):
         app.before_request(self.redirect_locale)
         app.url_defaults(self.set_locale_urls)
         app.add_template_global(self.get_locale_url, name="locale_url")
-        app.after_request(self.set_locale)
 
     @staticmethod
     def redirect_locale() -> Response | None:
@@ -48,11 +47,3 @@ class LocaleManager(metaclass=Singleton):
             locale = gen_locale(language_code, country_code)
             kwargs["_locale"] = locale
         return url_for(request.endpoint, **kwargs, _external=True)
-
-    @staticmethod
-    def set_locale(resp: Response) -> Response:
-        current = request.cookies.get("locale", None)
-        new = current_locale.locale
-        if current != new:
-            resp.set_cookie("locale", current_locale.locale)
-        return resp
