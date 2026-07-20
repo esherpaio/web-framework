@@ -1,5 +1,19 @@
 # Changelog
 
+## 2026-07-14
+
+Webshop features:
+- Support for default coupons
+- Support for shipment delivery times
+
+- Improved schema.org JSON-LD:
+  - Support product delivery details
+
+## 2026-06-17
+
+- Updated support for restcountries.com
+- Improve SMTP mails to be less likely to be marked as spam
+
 ## 2026-03-26
 
 - Support for Cloudflare Turnstile
