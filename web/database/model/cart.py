@@ -14,7 +14,10 @@ class Cart(IntBase):
     __tablename__ = "cart"
 
     shipment_price = MC(
-        default_price, nullable=False, default=Decimal("0.00"), server_default="0.00"
+        default_price,
+        nullable=False,
+        default=Decimal("0.00"),
+        server_default="0.00",
     )
     vat_rate = MC(default_vat, nullable=False, default=Decimal("1"), server_default="1")
     vat_reverse = MC(Boolean, nullable=False, default=False, server_default="false")
@@ -30,7 +33,10 @@ class Cart(IntBase):
     coupon = relationship("Coupon", lazy="joined")
     currency = relationship("Currency", lazy="joined")
     items = relationship(
-        "CartItem", back_populates="cart", cascade="all, delete", lazy="joined"
+        "CartItem",
+        back_populates="cart",
+        cascade="all, delete",
+        lazy="joined",
     )
     shipment_method = relationship("ShipmentMethod")
     shipping = relationship("Shipping")
