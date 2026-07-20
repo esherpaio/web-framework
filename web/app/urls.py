@@ -1,7 +1,7 @@
 from typing import Any, Callable
 from urllib.parse import parse_qsl, urlencode, urlparse, urlunparse
 
-from flask import redirect, request
+from flask import has_request_context, redirect, request
 from flask import url_for as _url_for
 from requests.models import PreparedRequest
 from werkzeug import Response
@@ -56,6 +56,16 @@ def url_for(
         _external=_external,
         **values,
     )
+
+
+def absolute_url(path: str) -> str:
+    """Build an absolute URL for a path, usable outside a request context."""
+    path = "/" + path.lstrip("/")
+    if has_request_context():
+        base = request.host_url.rstrip("/")
+    else:
+        base = (config.PUBLIC_URL or "").rstrip("/")
+    return f"{base}{path}"
 
 
 def redirect_with_query(new_url: str, code: int = 302) -> Response:

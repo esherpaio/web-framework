@@ -7,6 +7,7 @@ mail_events: dict[MailEvent | str, list[Callable]] = {
     MailEvent.ORDER_RECEIVED: [event.mail_order_received],
     MailEvent.ORDER_REFUNDED: [event.mail_order_refunded],
     MailEvent.ORDER_SHIPPED: [event.mail_order_shipped],
+    MailEvent.REVIEW_REQUEST: [event.mail_review_request],
     MailEvent.USER_REQUEST_PASSWORD: [event.mail_user_password],
     MailEvent.USER_REQUEST_VERIFICATION: [event.mail_user_verification],
     MailEvent.WEBSITE_CONTACT: [event.mail_contact_business],

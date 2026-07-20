@@ -23,6 +23,7 @@ class _Protocol(Protocol):
     DATABASE_URL: str
     DATABASE_MODULE: str | None
     LOCALHOST_URL: str | None
+    PUBLIC_URL: str
 
     ENDPOINT_HOME: str
     ENDPOINT_ERROR: str
@@ -36,6 +37,10 @@ class _Protocol(Protocol):
     AUTOMATE_EXTERNAL: bool
     AUTOMATE_STATIC: bool
     AUTOMATE_TIMEOUT_S: int
+
+    REVIEW_ENABLED: bool
+    REVIEW_REQUEST_DELAY_DAYS: int
+    REVIEW_REQUEST_EXPIRES_DAYS: int
 
     OPTIMIZER_ENABLED: bool
     OPTIMIZER_SERVER_CACHE_MAX_S: int

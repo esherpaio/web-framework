@@ -1,6 +1,8 @@
 from datetime import datetime, timezone
 from typing import Callable
 
+from sqlalchemy import insert
+from sqlalchemy.engine import Connection
 from sqlalchemy.orm import Session
 
 from web.auth import current_user
@@ -29,6 +31,7 @@ class Mail(metaclass=Singleton):
         event_id: MailEvent | str,
         user_id: int | None = None,
         _email: Email | None = None,
+        scheduled_at: datetime | None = None,
         **kwargs,
     ) -> bool:
         # Remember error state
@@ -58,6 +61,7 @@ class Mail(metaclass=Singleton):
                     data=kwargs,
                     user_id=user_id,
                     status_id=status_id,
+                    scheduled_at=scheduled_at,
                 )
                 s.add(_email)
             else:
@@ -74,6 +78,25 @@ class Mail(metaclass=Singleton):
                 log.warning(f"Failed email {_email.id} for event {event_id}")
 
         return all_result
+
+
+def enqueue_email(
+    connection: Connection,
+    event_id: MailEvent | str,
+    data: dict | None = None,
+    scheduled_at: datetime | None = None,
+    user_id: int | None = None,
+) -> None:
+    """Queue an email via a Core connection (e.g. from a SQLAlchemy event)."""
+    connection.execute(
+        insert(Email).values(
+            event_id=str(event_id),
+            data=data or {},
+            status_id=EmailStatusId.QUEUED,
+            user_id=user_id,
+            scheduled_at=scheduled_at,
+        )
+    )
 
 
 mail = Mail()

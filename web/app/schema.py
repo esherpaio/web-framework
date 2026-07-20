@@ -44,6 +44,14 @@ class ShippingItem(TypedDict):
     max_days: NotRequired[int]
 
 
+class ReviewItem(TypedDict):
+    author: str
+    rating: int
+    body: str
+    date_published: str
+    title: NotRequired[str]
+
+
 class Schema:
     """A class to generate schema.org JSON-LD."""
 
@@ -203,6 +211,9 @@ class SchemaProduct(Schema):
         image_url: str | None = None,
         description: str | None = None,
         shipping: list[ShippingItem] | None = None,
+        rating: float | None = None,
+        review_count: int | None = None,
+        reviews: list[ReviewItem] | None = None,
     ) -> None:
         super().__init__()
         home_url = parse_url(
@@ -284,6 +295,34 @@ class SchemaProduct(Schema):
                     }
                 shipping_details.append(detail)
             data["offers"]["shippingDetails"] = shipping_details  # type: ignore[index]
+        if rating is not None and review_count:
+            data["aggregateRating"] = {
+                "@type": "AggregateRating",
+                "ratingValue": round(rating, 1),
+                "reviewCount": review_count,
+                "bestRating": 5,
+                "worstRating": 1,
+            }
+        if reviews:
+            data["review"] = [
+                {
+                    "@type": "Review",
+                    "author": {
+                        "@type": "Person",
+                        "name": review["author"],
+                    },
+                    "datePublished": review["date_published"],
+                    "name": review.get("title"),
+                    "reviewBody": review["body"],
+                    "reviewRating": {
+                        "@type": "Rating",
+                        "ratingValue": review["rating"],
+                        "bestRating": 5,
+                        "worstRating": 1,
+                    },
+                }
+                for review in reviews
+            ]
         self.data = data
 
 
