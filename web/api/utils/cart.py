@@ -1,11 +1,7 @@
-from typing import Callable
-
 from sqlalchemy import false, or_
 from sqlalchemy.orm import Session
-from werkzeug import Response
 
 from web.auth import current_user
-from web.database import conn
 from web.database.model import (
     Billing,
     Cart,
@@ -19,7 +15,7 @@ from web.locale import current_locale
 
 
 def predict_shipping(s: Session, cart: Cart) -> Shipping | None:
-    """Get the most accurate shipping object."""
+    """Get the most probable shipping object."""
     # Get user
     if current_user and current_user.id:
         user = s.query(User).filter_by(id=current_user.id).first()
@@ -36,7 +32,7 @@ def predict_shipping(s: Session, cart: Cart) -> Shipping | None:
 
 
 def predict_billing(s: Session, cart: Cart) -> Billing | None:
-    """Get the most accurate billing object."""
+    """Get the most probable billing object."""
     # Get user
     if current_user and current_user.id:
         user = s.query(User).filter_by(id=current_user.id).first()
@@ -104,27 +100,3 @@ def get_shipment_methods(s: Session, cart: Cart) -> list[ShipmentMethod]:
     else:
         shipment_methods = []
     return shipment_methods
-
-
-def transfer_cart(f: Callable) -> Callable[..., Response]:
-    """Transfer a cart from one session to another."""
-
-    def wrap(*args, **kwargs) -> Response:
-        with conn.begin() as s:
-            if not current_user:
-                return f(*args, **kwargs)
-            # Get before and after user ids
-            prev_user_id = current_user.id
-            resp = f(*args, **kwargs)
-            curr_user_id = current_user.id
-            # Transfer cart
-            prev_cart = s.query(Cart).filter_by(user_id=prev_user_id).first()
-            if prev_cart is not None:
-                s.query(Cart).filter_by(user_id=curr_user_id).delete()
-                prev_cart.user_id = curr_user_id
-                s.flush()
-
-        return resp
-
-    wrap.__name__ = f.__name__
-    return wrap
