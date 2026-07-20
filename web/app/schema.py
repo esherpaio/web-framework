@@ -36,6 +36,14 @@ class FaqItem(TypedDict):
     answer: str
 
 
+class ShippingItem(TypedDict):
+    countries: list[str]
+    rate: float
+    currency: str
+    min_days: NotRequired[int]
+    max_days: NotRequired[int]
+
+
 class Schema:
     """A class to generate schema.org JSON-LD."""
 
@@ -194,6 +202,7 @@ class SchemaProduct(Schema):
         stock: int | None = None,
         image_url: str | None = None,
         description: str | None = None,
+        shipping: list[ShippingItem] | None = None,
     ) -> None:
         super().__init__()
         home_url = parse_url(
@@ -235,6 +244,46 @@ class SchemaProduct(Schema):
             }
         if description is not None:
             data["description"] = description
+        if shipping:
+            shipping_details = []
+            for item in shipping:
+                countries = item["countries"]
+                if len(countries) == 1:
+                    destination: Any = {
+                        "@type": "DefinedRegion",
+                        "addressCountry": countries[0],
+                    }
+                else:
+                    destination = [
+                        {"@type": "DefinedRegion", "addressCountry": country}
+                        for country in countries
+                    ]
+                detail: dict[str, Any] = {
+                    "@type": "OfferShippingDetails",
+                    "shippingRate": {
+                        "@type": "MonetaryAmount",
+                        "value": round(item["rate"], 2),
+                        "currency": item["currency"],
+                    },
+                    "shippingDestination": destination,
+                }
+                min_days = item.get("min_days")
+                max_days = item.get("max_days")
+                if min_days is not None or max_days is not None:
+                    transit_time: dict[str, Any] = {
+                        "@type": "QuantitativeValue",
+                        "unitCode": "DAY",
+                    }
+                    if min_days is not None:
+                        transit_time["minValue"] = min_days
+                    if max_days is not None:
+                        transit_time["maxValue"] = max_days
+                    detail["deliveryTime"] = {
+                        "@type": "ShippingDeliveryTime",
+                        "transitTime": transit_time,
+                    }
+                shipping_details.append(detail)
+            data["offers"]["shippingDetails"] = shipping_details  # type: ignore[index]
         self.data = data
 
 
