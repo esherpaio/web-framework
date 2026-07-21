@@ -5,6 +5,8 @@ from typing import Any, Literal, Protocol
 
 from dotenv import load_dotenv
 
+load_dotenv(override=True)
+
 LogLevel = Literal["CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG", "NOTSET"]
 UrlScheme = Literal["http", "https"]
 MailMethod = Literal["SMTP"]
