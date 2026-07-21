@@ -5,7 +5,6 @@ from flask import redirect, request
 from flask import url_for as _url_for
 from werkzeug import Response
 
-from web.locale import expects_locale
 from web.setup import config
 
 
@@ -17,6 +16,8 @@ def url_for(
     _external: bool | None = None,
     **values: Any,
 ) -> str:
+    from web.locale import expects_locale
+
     if _scheme is not None:
         scheme = _scheme
     else:
