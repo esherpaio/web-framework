@@ -3,12 +3,17 @@ from enum import StrEnum
 
 from sqlalchemy import DateTime, ForeignKey, String
 from sqlalchemy.dialects.postgresql import JSONB
-from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.ext.mutable import MutableDict
 from sqlalchemy.orm import mapped_column as MC
 from sqlalchemy.orm import relationship
 
 from ._base import IntBase
+
+
+class VerificationType(StrEnum):
+    VERIFICATION = "verification"
+    PASSWORD = "password"
+    REVIEW = "review"
 
 
 class Verification(IntBase):
@@ -24,7 +29,7 @@ class Verification(IntBase):
 
     user = relationship("User", back_populates="verifications")
 
-    @hybrid_property
+    @property
     def is_valid(self) -> bool:
         now = datetime.now(timezone.utc)
         if self.valid_from is not None and self.valid_from > now:
@@ -32,9 +37,3 @@ class Verification(IntBase):
         if self.expires_at is not None and self.expires_at < now:
             return False
         return True
-
-
-class VerificationType(StrEnum):
-    VERIFICATION = "verification"
-    PASSWORD = "password"
-    REVIEW = "review"

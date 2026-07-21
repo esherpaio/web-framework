@@ -1,21 +1,13 @@
-import uuid
-from datetime import UTC, datetime, timedelta
 from typing import Any
 
-from sqlalchemy import Boolean, ForeignKey, Integer, String, Text, event, insert, select
-from sqlalchemy.engine import Connection
+from sqlalchemy import Boolean, ForeignKey, Integer, String, Text
 from sqlalchemy.ext.hybrid import hybrid_property
-from sqlalchemy.orm import Mapper, relationship, validates
 from sqlalchemy.orm import mapped_column as MC
-
-from web.setup import config
+from sqlalchemy.orm import relationship, validates
 
 from ._base import IntBase
 from ._utils import get_text, val_length, val_number
-from .order import Order
-from .order_status import OrderStatusId
 from .review_status import ReviewStatusId
-from .verification import Verification, VerificationType
 
 
 class Review(IntBase):
@@ -81,56 +73,3 @@ class Review(IntBase):
     @hybrid_property
     def option_labels(self) -> list[str]:
         return [f"{d.option.name}: {d.value.name}" for d in self.sku.details]
-
-
-@event.listens_for(Order, "after_insert")
-@event.listens_for(Order, "after_update")
-def _create_review_request(
-    mapper: Mapper,
-    connection: Connection,
-    target: Order,
-) -> None:
-    if not config.REVIEW_ENABLED:
-        return
-    if target.status_id != OrderStatusId.COMPLETED:
-        return
-
-    delay_days = config.REVIEW_REQUEST_DELAY_DAYS
-    expires_days = config.REVIEW_REQUEST_EXPIRES_DAYS
-    now = datetime.now(UTC)
-    valid_from = now + timedelta(days=delay_days)
-    expires_at = valid_from + timedelta(days=expires_days)
-
-    if expires_at < now:
-        return
-
-    existing = connection.execute(
-        select(Verification.id).where(
-            Verification.type == VerificationType.REVIEW,
-            Verification.data["order_id"].astext == str(target.id),
-        )
-    ).first()
-    if existing is not None:
-        return
-
-    from web.mail import enqueue_email
-    from web.mail.enum import MailEvent
-
-    token = uuid.uuid4().hex
-    connection.execute(
-        insert(Verification).values(
-            key=token,
-            type=VerificationType.REVIEW,
-            user_id=target.user_id,
-            valid_from=valid_from,
-            expires_at=expires_at,
-            data={"order_id": target.id},
-        )
-    )
-    enqueue_email(
-        connection,
-        MailEvent.REVIEW_REQUEST,
-        data={"token": token},
-        scheduled_at=valid_from,
-        user_id=target.user_id,
-    )

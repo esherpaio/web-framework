@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 
 from web.app.urls import absolute_url
-from web.database.model import Order, Verification
+from web.database.model import Order, Verification, VerificationType
 from web.i18n import _
 from web.setup import config
 
@@ -13,8 +13,10 @@ def mail_review_request(
     token: str,
     **kwargs,
 ) -> bool:
-    verification = s.query(Verification).filter_by(key=token).first()
-    if verification is None:
+    verification = (
+        s.query(Verification).filter_by(key=token, type=VerificationType.REVIEW).first()
+    )
+    if verification is None or not verification.is_valid:
         return False
     order = s.query(Order).filter_by(id=verification.data.get("order_id")).first()
     if order is None:
