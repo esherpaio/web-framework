@@ -95,8 +95,8 @@ def _create_review_request(
     if target.status_id != OrderStatusId.COMPLETED:
         return
 
-    delay_days = config.REVIEW_REQUEST_DELAY_DAYS or 14
-    expires_days = config.REVIEW_REQUEST_EXPIRES_DAYS or 90
+    delay_days = config.REVIEW_REQUEST_DELAY_DAYS
+    expires_days = config.REVIEW_REQUEST_EXPIRES_DAYS
     now = datetime.now(UTC)
     valid_from = now + timedelta(days=delay_days)
     expires_at = valid_from + timedelta(days=expires_days)
