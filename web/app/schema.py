@@ -6,9 +6,9 @@ from flask import request
 from markupsafe import Markup
 
 from web.api import JsonEncoder
-from web.app.urls import parse_url
+from web.app.urls import url_for
 from web.database.model import AppRoute
-from web.locale import current_locale, url_for_locale
+from web.locale import current_locale
 from web.setup import config
 
 
@@ -82,9 +82,8 @@ class SchemaWebPage(Schema):
         description: str | None = None,
     ) -> None:
         super().__init__()
-        home_url = parse_url(
+        home_url = url_for(
             config.ENDPOINT_HOME,
-            _func=url_for_locale,
             _external=True,
             _locale=current_locale.locale,
         )
@@ -102,9 +101,8 @@ class SchemaWebPage(Schema):
 class SchemaWebsite(Schema):
     def __init__(self) -> None:
         super().__init__()
-        home_url = parse_url(
+        home_url = url_for(
             config.ENDPOINT_HOME,
-            _func=url_for_locale,
             _external=True,
             _locale=current_locale.locale,
         )
@@ -118,9 +116,8 @@ class SchemaWebsite(Schema):
             "publisher": {"@id": f"{home_url}{SchemaId.ORGANIZATION}"},
         }
         if config.ENDPOINT_SEARCH:
-            search_url = parse_url(
+            search_url = url_for(
                 config.ENDPOINT_SEARCH,
-                _func=url_for_locale,
                 _external=True,
                 _locale=current_locale.locale,
             )
@@ -138,9 +135,8 @@ class SchemaWebsite(Schema):
 class SchemaOrganization(Schema):
     def __init__(self) -> None:
         super().__init__()
-        home_url = parse_url(
+        home_url = url_for(
             config.ENDPOINT_HOME,
-            _func=url_for_locale,
             _external=True,
             _locale=current_locale.locale,
         )
@@ -176,9 +172,8 @@ class SchemaPerson(Schema):
         social_urls: list[str] | None = None,
     ) -> None:
         super().__init__()
-        home_url = parse_url(
+        home_url = url_for(
             config.ENDPOINT_HOME,
-            _func=url_for_locale,
             _external=True,
             _locale=current_locale.locale,
         )
@@ -216,13 +211,12 @@ class SchemaProduct(Schema):
         reviews: list[ReviewItem] | None = None,
     ) -> None:
         super().__init__()
-        home_url = parse_url(
+        home_url = url_for(
             config.ENDPOINT_HOME,
-            _func=url_for_locale,
             _external=True,
             _locale=current_locale.locale,
         )
-        data = {
+        data: dict[str, Any] = {
             "@context": "https://schema.org",
             "@type": "Product",
             "name": name,
@@ -329,9 +323,8 @@ class SchemaProduct(Schema):
 class SchemaLocalBusiness(Schema):
     def __init__(self) -> None:
         super().__init__()
-        home_url = parse_url(
+        home_url = url_for(
             config.ENDPOINT_HOME,
-            _func=url_for_locale,
             _external=True,
             _locale=current_locale.locale,
         )
