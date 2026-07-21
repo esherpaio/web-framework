@@ -20,7 +20,7 @@ class Verification(IntBase):
     __tablename__ = "verification"
 
     key = MC(String(256), nullable=False)
-    type = MC(String(32), nullable=False)
+    type = MC(String(32), nullable=True)
     valid_from = MC(DateTime(timezone=True))
     expires_at = MC(DateTime(timezone=True))
     data = MC(MutableDict.as_mutable(JSONB), nullable=False, server_default="{}")  # type: ignore[arg-type]
