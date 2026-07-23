@@ -81,6 +81,7 @@ class _Protocol(Protocol):
     SMTP_PASSWORD: str
 
     CDN_BASE_URL: str
+    CDN_LOCAL: bool = False
     CDN_AUTO_NAMING: bool
     CDN_IMAGE_EXTS: list[str]
     CDN_AUDIO_EXTS: list[str]

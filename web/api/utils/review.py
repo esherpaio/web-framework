@@ -35,7 +35,7 @@ def create_review_request(s: Session, order: Order) -> None:
         s.query(Verification.id)
         .filter(
             Verification.type == VerificationType.REVIEW,
-            Verification.data["order_id"].astext == str(order.id),
+            Verification.data["order_id"].as_integer() == order.id,
         )
         .first()
     )

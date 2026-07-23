@@ -16,7 +16,7 @@ CDN_DIR = "static"
 
 
 def use_local_static(path: str | None = None) -> bool:
-    if not config.DEBUG:
+    if not config.CDN_LOCAL:
         return False
     if not has_app_context():
         return False
