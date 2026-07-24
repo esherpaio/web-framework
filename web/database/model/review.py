@@ -13,12 +13,12 @@ from .review_status import ReviewStatusId
 class Review(IntBase):
     __tablename__ = "review"
 
-    author_name = MC(String(128), nullable=False)
-    body = MC(Text, nullable=False)
-    photo_url = MC(String(256))
+    author_name = MC(String(128), nullable=True)
+    body = MC(Text, nullable=True)
+    photo_url = MC(String(256), nullable=True)
     rating = MC(Integer, nullable=False)
     show_photo = MC(Boolean, nullable=False, default=True, server_default="true")
-    title = MC(String(128), nullable=False)
+    title = MC(String(128), nullable=True)
 
     order_id = MC(ForeignKey("order.id", ondelete="CASCADE"), nullable=False)
     product_id = MC(ForeignKey("product.id", ondelete="CASCADE"), nullable=False)
