@@ -7,5 +7,4 @@ from .utils import (
     get_route_locale,
     lacks_locale,
     match_locale,
-    url_for_locale,
 )

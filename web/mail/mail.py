@@ -29,6 +29,7 @@ class Mail(metaclass=Singleton):
         event_id: MailEvent | str,
         user_id: int | None = None,
         _email: Email | None = None,
+        scheduled_at: datetime | None = None,
         **kwargs,
     ) -> bool:
         # Remember error state
@@ -58,6 +59,7 @@ class Mail(metaclass=Singleton):
                     data=kwargs,
                     user_id=user_id,
                     status_id=status_id,
+                    scheduled_at=scheduled_at,
                 )
                 s.add(_email)
             else:

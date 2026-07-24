@@ -1,4 +1,4 @@
-from sqlalchemy import ForeignKey, String
+from sqlalchemy import DateTime, ForeignKey, String
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.ext.mutable import MutableDict
 from sqlalchemy.orm import mapped_column as MC
@@ -12,6 +12,7 @@ class Email(IntBase):
 
     data = MC(MutableDict.as_mutable(JSONB), nullable=False, server_default="{}")  # type: ignore[arg-type]
     event_id = MC(String(64), nullable=False)
+    scheduled_at = MC(DateTime(timezone=True))
 
     status_id = MC(
         ForeignKey("email_status.id", ondelete="RESTRICT", onupdate="CASCADE"),

@@ -5,6 +5,8 @@ from typing import Any, Literal, Protocol
 
 from dotenv import load_dotenv
 
+load_dotenv(override=True)
+
 LogLevel = Literal["CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG", "NOTSET"]
 UrlScheme = Literal["http", "https"]
 MailMethod = Literal["SMTP"]
@@ -23,6 +25,7 @@ class _Protocol(Protocol):
     DATABASE_URL: str
     DATABASE_MODULE: str | None
     LOCALHOST_URL: str | None
+    PUBLIC_URL: str
 
     ENDPOINT_HOME: str
     ENDPOINT_ERROR: str
@@ -36,6 +39,10 @@ class _Protocol(Protocol):
     AUTOMATE_EXTERNAL: bool
     AUTOMATE_STATIC: bool
     AUTOMATE_TIMEOUT_S: int
+
+    REVIEW_ENABLED: bool = True
+    REVIEW_REQUEST_DELAY_DAYS: int = 14
+    REVIEW_REQUEST_EXPIRES_DAYS: int = 90
 
     OPTIMIZER_ENABLED: bool
     OPTIMIZER_SERVER_CACHE_MAX_S: int
@@ -74,6 +81,7 @@ class _Protocol(Protocol):
     SMTP_PASSWORD: str
 
     CDN_BASE_URL: str
+    CDN_LOCAL: bool = False
     CDN_AUTO_NAMING: bool
     CDN_IMAGE_EXTS: list[str]
     CDN_AUDIO_EXTS: list[str]

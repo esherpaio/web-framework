@@ -2,7 +2,6 @@ import re
 
 from flask import current_app, has_request_context, request
 
-from web.app.urls import url_for
 from web.setup import config
 
 
@@ -52,10 +51,3 @@ def gen_locale(
     if country_code is None:
         country_code = config.LOCALE_COUNTRY_CODE
     return f"{language_code}-{country_code}".lower()
-
-
-def url_for_locale(endpoint: str, *args, **kwargs) -> str:
-    """Generate an URL for a route with locale."""
-    if not expects_locale(endpoint) and "_locale" in kwargs:
-        kwargs.pop("_locale")
-    return url_for(endpoint, *args, **kwargs)
