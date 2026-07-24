@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING
 
 from sqlalchemy.orm import Session
 
+from web.app.urls import url_for
 from web.database.model import Order, Review, Verification, VerificationType
 from web.mail import MailEvent, mail
 from web.setup import config
@@ -57,10 +58,12 @@ def create_review_request(s: Session, order: Order) -> None:
     s.add(verification)
     s.flush()
 
+    review_url = url_for("checkout.review", _external=True, token=token)
     mail.trigger_events(
         s,
         MailEvent.REVIEW_REQUEST,
         order.user_id,
         scheduled_at=valid_from,
         token=token,
+        review_url=review_url,
     )

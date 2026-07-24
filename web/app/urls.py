@@ -1,5 +1,5 @@
 from typing import Any
-from urllib.parse import parse_qsl, urlencode, urljoin, urlparse, urlunparse
+from urllib.parse import parse_qsl, urlencode, urlparse, urlunparse
 
 from flask import redirect, request
 from flask import url_for as _url_for
@@ -32,14 +32,6 @@ def url_for(
         _external=_external,
         **values,
     )
-
-
-def absolute_url(*args: str) -> str:
-    base = (config.PUBLIC_URL or "").rstrip("/")
-    if not base:
-        raise EnvironmentError
-    parts = "/".join(arg.strip("/") for arg in args)
-    return urljoin(base, parts)
 
 
 def redirect_with_query(new_url: str, code: int = 302) -> Response:

@@ -1,6 +1,5 @@
 from sqlalchemy.orm import Session
 
-from web.app.urls import absolute_url
 from web.database.model import Order, Verification, VerificationType
 from web.i18n import _
 from web.setup import config
@@ -11,6 +10,7 @@ from .. import render_email, send_email
 def mail_review_request(
     s: Session,
     token: str,
+    review_url: str,
     **kwargs,
 ) -> bool:
     verification = (
@@ -22,7 +22,6 @@ def mail_review_request(
     if order is None:
         return False
 
-    review_url = absolute_url(f"/reviews/{token}")
     subject = _("MAIL_REVIEW_SUBJECT", business_name=config.BUSINESS_NAME)
     html = render_email(
         title=_("MAIL_REVIEW_TITLE"),
