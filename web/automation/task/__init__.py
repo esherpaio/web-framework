@@ -9,6 +9,7 @@ from .order_status import OrderStatusSeedSyncer
 from .product_link_type import ProductLinkeTypeSeedSyncer
 from .product_type import ProductTypeSeedSyncer
 from .region import RegionApiSyncer
+from .review_status import ReviewStatusSeedSyncer
 from .sku import SkuProcessor
 from .static import StaticJob, StaticProcessor, StaticType
 from .user import UserCleaner

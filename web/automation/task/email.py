@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta, timezone
 
-from sqlalchemy import null, or_
+from sqlalchemy import func, null, or_
 from sqlalchemy.orm import Session
 
 from web.database import conn
@@ -22,11 +22,14 @@ class EmailProcessor(Processor):
 
     @staticmethod
     def send_email(s: Session, max_weeks: int = 4) -> bool:
+        now = datetime.now(timezone.utc)
+        due_at = func.coalesce(Email.scheduled_at, Email.created_at)
         query = s.query(Email).filter(
-            Email.created_at > datetime.now(timezone.utc) - timedelta(weeks=max_weeks),
+            due_at > now - timedelta(weeks=max_weeks),
+            due_at <= now,
             or_(
                 Email.updated_at == null(),
-                Email.updated_at < datetime.now(timezone.utc) - timedelta(days=1),
+                Email.updated_at < now - timedelta(days=1),
             ),
             Email.status_id.in_([EmailStatusId.QUEUED, EmailStatusId.FAILED]),
         )

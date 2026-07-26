@@ -1,39 +1,11 @@
-from typing import Any, Callable
+from typing import Any
 from urllib.parse import parse_qsl, urlencode, urlparse, urlunparse
 
 from flask import redirect, request
 from flask import url_for as _url_for
-from requests.models import PreparedRequest
 from werkzeug import Response
 
 from web.setup import config
-
-
-def parse_url(
-    endpoint: str,
-    _func: Callable,
-    _anchor: str | None = None,
-    _method: str | None = None,
-    _scheme: str | None = None,
-    _external: bool | None = None,
-    **values: Any,
-) -> str:
-    if endpoint.startswith(("http://", "https://")):
-        req = PreparedRequest()
-        req.prepare_url(endpoint, values)
-        url = req.url
-    else:
-        url = _func(
-            endpoint,
-            _anchor=_anchor,
-            _method=_method,
-            _scheme=_scheme,
-            _external=_external,
-            **values,
-        )
-    if url is None:
-        raise ValueError
-    return url
 
 
 def url_for(
@@ -44,10 +16,14 @@ def url_for(
     _external: bool | None = None,
     **values: Any,
 ) -> str:
+    from web.locale import expects_locale
+
     if _scheme is not None:
         scheme = _scheme
     else:
         scheme = config.URL_SCHEME
+    if "_locale" in values and not expects_locale(endpoint):
+        values.pop("_locale")
     return _url_for(
         endpoint,
         _anchor=_anchor,

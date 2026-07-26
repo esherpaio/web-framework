@@ -6,9 +6,9 @@ from flask import request
 from markupsafe import Markup
 
 from web.api import JsonEncoder
-from web.app.urls import parse_url
+from web.app.urls import url_for
 from web.database.model import AppRoute
-from web.locale import current_locale, url_for_locale
+from web.locale import current_locale
 from web.setup import config
 
 
@@ -44,6 +44,14 @@ class ShippingItem(TypedDict):
     max_days: NotRequired[int]
 
 
+class ReviewItem(TypedDict):
+    author: str
+    rating: int
+    body: str
+    date_published: str
+    title: NotRequired[str]
+
+
 class Schema:
     """A class to generate schema.org JSON-LD."""
 
@@ -74,9 +82,8 @@ class SchemaWebPage(Schema):
         description: str | None = None,
     ) -> None:
         super().__init__()
-        home_url = parse_url(
+        home_url = url_for(
             config.ENDPOINT_HOME,
-            _func=url_for_locale,
             _external=True,
             _locale=current_locale.locale,
         )
@@ -94,9 +101,8 @@ class SchemaWebPage(Schema):
 class SchemaWebsite(Schema):
     def __init__(self) -> None:
         super().__init__()
-        home_url = parse_url(
+        home_url = url_for(
             config.ENDPOINT_HOME,
-            _func=url_for_locale,
             _external=True,
             _locale=current_locale.locale,
         )
@@ -110,9 +116,8 @@ class SchemaWebsite(Schema):
             "publisher": {"@id": f"{home_url}{SchemaId.ORGANIZATION}"},
         }
         if config.ENDPOINT_SEARCH:
-            search_url = parse_url(
+            search_url = url_for(
                 config.ENDPOINT_SEARCH,
-                _func=url_for_locale,
                 _external=True,
                 _locale=current_locale.locale,
             )
@@ -130,9 +135,8 @@ class SchemaWebsite(Schema):
 class SchemaOrganization(Schema):
     def __init__(self) -> None:
         super().__init__()
-        home_url = parse_url(
+        home_url = url_for(
             config.ENDPOINT_HOME,
-            _func=url_for_locale,
             _external=True,
             _locale=current_locale.locale,
         )
@@ -168,9 +172,8 @@ class SchemaPerson(Schema):
         social_urls: list[str] | None = None,
     ) -> None:
         super().__init__()
-        home_url = parse_url(
+        home_url = url_for(
             config.ENDPOINT_HOME,
-            _func=url_for_locale,
             _external=True,
             _locale=current_locale.locale,
         )
@@ -203,15 +206,17 @@ class SchemaProduct(Schema):
         image_url: str | None = None,
         description: str | None = None,
         shipping: list[ShippingItem] | None = None,
+        rating: float | None = None,
+        review_count: int | None = None,
+        reviews: list[ReviewItem] | None = None,
     ) -> None:
         super().__init__()
-        home_url = parse_url(
+        home_url = url_for(
             config.ENDPOINT_HOME,
-            _func=url_for_locale,
             _external=True,
             _locale=current_locale.locale,
         )
-        data = {
+        data: dict[str, Any] = {
             "@context": "https://schema.org",
             "@type": "Product",
             "name": name,
@@ -284,15 +289,42 @@ class SchemaProduct(Schema):
                     }
                 shipping_details.append(detail)
             data["offers"]["shippingDetails"] = shipping_details  # type: ignore[index]
+        if rating is not None and review_count:
+            data["aggregateRating"] = {
+                "@type": "AggregateRating",
+                "ratingValue": round(rating, 1),
+                "reviewCount": review_count,
+                "bestRating": 5,
+                "worstRating": 1,
+            }
+        if reviews:
+            data["review"] = [
+                {
+                    "@type": "Review",
+                    "author": {
+                        "@type": "Person",
+                        "name": review["author"],
+                    },
+                    "datePublished": review["date_published"],
+                    "name": review.get("title"),
+                    "reviewBody": review["body"],
+                    "reviewRating": {
+                        "@type": "Rating",
+                        "ratingValue": review["rating"],
+                        "bestRating": 5,
+                        "worstRating": 1,
+                    },
+                }
+                for review in reviews
+            ]
         self.data = data
 
 
 class SchemaLocalBusiness(Schema):
     def __init__(self) -> None:
         super().__init__()
-        home_url = parse_url(
+        home_url = url_for(
             config.ENDPOINT_HOME,
-            _func=url_for_locale,
             _external=True,
             _locale=current_locale.locale,
         )

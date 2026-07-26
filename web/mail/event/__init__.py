@@ -4,5 +4,6 @@ from .order import (
     mail_order_refunded,
     mail_order_shipped,
 )
+from .review import mail_review_request
 from .user import mail_user_password, mail_user_verification
 from .website import mail_bulk, mail_contact_business, mail_contact_customer

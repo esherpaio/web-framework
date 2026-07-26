@@ -6,6 +6,7 @@ class MailEvent(StrEnum):
     ORDER_RECEIVED = "order.received"
     ORDER_REFUNDED = "order.refunded"
     ORDER_SHIPPED = "order.shipped"
+    REVIEW_REQUEST = "review.request"
     USER_REQUEST_PASSWORD = "user.request_password"
     USER_REQUEST_VERIFICATION = "user.request_verification"
     WEBSITE_CONTACT = "website.contact"

@@ -33,6 +33,8 @@ from .product_value import ProductValue
 from .redirect import Redirect
 from .refund import Refund
 from .region import Region
+from .review import Review
+from .review_status import ReviewStatus, ReviewStatusId
 from .shipment import Shipment
 from .shipment_class import ShipmentClass
 from .shipment_method import ShipmentMethod
@@ -42,7 +44,7 @@ from .sku import Sku
 from .sku_detail import SkuDetail
 from .user import User
 from .user_role import UserRole, UserRoleId, UserRoleLevel
-from .verification import Verification
+from .verification import Verification, VerificationType
 
 if config.DATABASE_MODULE is not None:
     database_mod = __import__(config.DATABASE_MODULE, fromlist=["*"])
