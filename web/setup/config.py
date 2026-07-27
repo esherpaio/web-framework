@@ -18,6 +18,7 @@ class _Protocol(Protocol):
     DEBUG: bool
     LOG_LEVEL: LogLevel
     URL_SCHEME: UrlScheme
+    DOMAIN_NAME: str
 
     WORKER_ENABLED: bool
     WORKER_INTERVAL_S: int
@@ -25,7 +26,6 @@ class _Protocol(Protocol):
     DATABASE_URL: str
     DATABASE_MODULE: str | None
     LOCALHOST_URL: str | None
-    PUBLIC_URL: str
 
     ENDPOINT_HOME: str
     ENDPOINT_ERROR: str
