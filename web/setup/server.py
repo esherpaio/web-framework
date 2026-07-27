@@ -81,16 +81,18 @@ class Server:
             mail.events.update(events)
 
     def setup_flask(self, app: Flask, blueprints: list[Blueprint]) -> None:
-        app.static_url_path = "/static"
-        app.static_folder = "static"
-
-        if not config.DEBUG:
-            app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)  # type: ignore[method-assign]
-        app.config["PREFERRED_URL_SCHEME"] = config.URL_SCHEME
-        app.config["SERVER_NAME"] = config.DOMAIN_NAME
         if config.DEBUG:
             log.info("Enabling Flask debug mode")
             app.debug = True
+
+        app.config["PREFERRED_URL_SCHEME"] = config.URL_SCHEME
+        app.config["SERVER_NAME"] = config.DOMAIN_NAME
+        if not config.DEBUG:
+            app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1)  # type: ignore[method-assign]
+
+        app.static_url_path = "/static"
+        app.static_folder = "static"
+
         app.register_error_handler(Exception, handle_error)
 
         log.info(f"Registering {len(blueprints)} blueprints")
