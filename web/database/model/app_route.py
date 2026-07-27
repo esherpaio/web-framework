@@ -12,6 +12,7 @@ class AppRoute(IntBase, Attribute):
     description = MC(String(256))
     endpoint = MC(String(64), unique=True, nullable=False)
     image_url = MC(String(256))
+    image_url_alt = MC(String(256))
     in_sitemap = MC(Boolean, nullable=False, default=False, server_default="false")
     js_path = MC(String(128))
     name = MC(String(64), nullable=True)
