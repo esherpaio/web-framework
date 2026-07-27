@@ -146,8 +146,18 @@ class Optimizer(metaclass=Singleton):
     # Cache
     #
 
+    @staticmethod
+    def is_domain_host() -> bool:
+        if config.DEBUG:
+            return True
+        host = request.host.split(":", 1)[0].removeprefix("www.")
+        return host == config.DOMAIN_NAME
+
     def set_cache(self, response: Response, encoding: Encoding | None) -> None:
         if request.method != "GET":
+            return
+
+        if not self.is_domain_host():
             return
 
         if "_endpoints" not in cache:
