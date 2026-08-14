@@ -21,4 +21,10 @@ class SitemapLocation(IntBase):
     template_hash = MC(String(64), nullable=True)
 
     route_id = MC(ForeignKey("app_route.id", ondelete="CASCADE"), nullable=False)
+    images = relationship(
+        "SitemapImage",
+        back_populates="location",
+        cascade="all, delete-orphan",
+        order_by="SitemapImage.loc",
+    )
     route = relationship("AppRoute", back_populates="sitemap_locations")

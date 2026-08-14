@@ -1,8 +1,15 @@
+from enum import StrEnum
+
 from sqlalchemy import Boolean, String
 from sqlalchemy.orm import mapped_column as MC
 from sqlalchemy.orm import relationship
 
 from ._base import Attribute, IntBase
+
+
+class SitemapImageMode(StrEnum):
+    COMBINED = "combined"
+    SEPARATE = "separate"
 
 
 class AppRoute(IntBase, Attribute):
@@ -25,6 +32,7 @@ class AppRoute(IntBase, Attribute):
         default="pages",
         server_default="pages",
     )
+    sitemap_image_mode = MC(String(16), nullable=True)
     template_path = MC(String(128), nullable=True)
 
     sitemap_locations = relationship(

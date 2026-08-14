@@ -2,7 +2,7 @@ from web.setup import config
 
 from ._base import Base
 from .app_blueprint import AppBlueprint
-from .app_route import AppRoute
+from .app_route import AppRoute, SitemapImageMode
 from .app_settings import AppSettings
 from .article import Article
 from .article_media import ArticleMedia
@@ -40,6 +40,7 @@ from .shipment_class import ShipmentClass
 from .shipment_method import ShipmentMethod
 from .shipment_zone import ShipmentZone
 from .shipping import Shipping
+from .sitemap_image import SitemapImage
 from .sitemap_location import SitemapLocation
 from .sku import Sku
 from .sku_detail import SkuDetail

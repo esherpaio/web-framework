@@ -4,11 +4,12 @@ from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
+from urllib.parse import urlparse
 
 from sqlalchemy.orm import Session
 
 from web.database import conn
-from web.database.model import AppRoute, SitemapLocation
+from web.database.model import AppRoute, SitemapImage, SitemapLocation
 from web.logger import log
 from web.setup import config
 
@@ -22,6 +23,7 @@ class SitemapLocationSpec:
     endpoint_args: dict[str, Any] = field(default_factory=dict)
     content_lastmod: datetime | None = None
     template_hash: str | None = None
+    image_locs: tuple[str, ...] = ()
 
 
 def get_template_hash(
@@ -62,10 +64,7 @@ class SitemapLocationSyncer(Processor):
                 continue
 
             if route.template_path:
-                template_hash = get_template_hash(
-                    route.template_path,
-                    cls.TEMPLATE_DIR,
-                )
+                template_hash = get_template_hash(route.template_path, cls.TEMPLATE_DIR)
                 spec = SitemapLocationSpec(template_hash=template_hash)
             else:
                 lastmod = max(
@@ -112,6 +111,7 @@ class SitemapLocationSyncer(Processor):
                     template_hash=spec.template_hash,
                 )
                 s.add(location)
+                cls._sync_images(location, spec.image_locs)
                 continue
 
             # Content dates only move forward. Older source timestamps must not
@@ -131,6 +131,9 @@ class SitemapLocationSyncer(Processor):
             if spec.template_hash is not None:
                 location.template_hash = spec.template_hash
 
+            if cls._sync_images(location, spec.image_locs):
+                location.lastmod = max(location.lastmod, now)
+
         # The supplied specs are authoritative, so remove pages that disappeared
         # from the source query (for example deleted or hidden content).
         for key, location in existing.items():
@@ -140,3 +143,34 @@ class SitemapLocationSyncer(Processor):
     @staticmethod
     def _key(endpoint_args: dict[str, Any]) -> str:
         return json.dumps(endpoint_args, sort_keys=True, separators=(",", ":"))
+
+    @staticmethod
+    def _sync_images(
+        location: SitemapLocation,
+        image_locs: tuple[str, ...],
+    ) -> bool:
+        """Reconcile the images belonging to one sitemap page location."""
+        if len(image_locs) != len(set(image_locs)):
+            raise ValueError("Duplicate image locations are not allowed")
+        for image_loc in image_locs:
+            parsed = urlparse(image_loc)
+            if not image_loc or (
+                parsed.scheme
+                and (parsed.scheme not in {"http", "https"} or not parsed.netloc)
+            ):
+                raise ValueError(f"Invalid sitemap image location: {image_loc}")
+            if not parsed.scheme and parsed.netloc:
+                raise ValueError(f"Invalid sitemap image location: {image_loc}")
+
+        existing = {image.loc: image for image in location.images}
+        desired = set(image_locs)
+        changed = set(existing) != desired
+
+        for image_loc in image_locs:
+            if image_loc not in existing:
+                location.images.append(SitemapImage(loc=image_loc))
+        for image_loc, image in existing.items():
+            if image_loc not in desired:
+                location.images.remove(image)
+
+        return changed
