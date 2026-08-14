@@ -10,6 +10,7 @@ from .product_link_type import ProductLinkeTypeSeedSyncer
 from .product_type import ProductTypeSeedSyncer
 from .region import RegionApiSyncer
 from .review_status import ReviewStatusSeedSyncer
+from .sitemap import SitemapLocationSpec, SitemapLocationSyncer, get_template_hash
 from .sku import SkuProcessor
 from .static import StaticJob, StaticProcessor, StaticType
 from .user import UserCleaner

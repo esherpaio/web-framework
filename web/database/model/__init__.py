@@ -40,6 +40,7 @@ from .shipment_class import ShipmentClass
 from .shipment_method import ShipmentMethod
 from .shipment_zone import ShipmentZone
 from .shipping import Shipping
+from .sitemap_location import SitemapLocation
 from .sku import Sku
 from .sku_detail import SkuDetail
 from .user import User
