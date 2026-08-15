@@ -5,6 +5,7 @@ from .cdn import (
     connect,
     delete,
     exists,
+    external_url,
     filenames,
     get_static_dir,
     modified,

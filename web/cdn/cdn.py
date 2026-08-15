@@ -3,6 +3,7 @@ from contextlib import contextmanager
 from datetime import datetime
 from ftplib import FTP, error_perm
 from typing import Iterator, Protocol
+from urllib.parse import urlparse
 
 from flask import current_app, has_app_context
 
@@ -42,6 +43,23 @@ def url(*args: str | None) -> str | None:
             raise RuntimeError
         return os.path.join(current_app.static_url_path, path)
     return os.path.join(config.CDN_BASE_URL, path)
+
+
+def external_url(path: str) -> str:
+    """Return an absolute CDN URL, leaving existing HTTP(S) URLs unchanged."""
+    if not path:
+        raise ValueError("CDN path or URL cannot be empty")
+    parsed = urlparse(path)
+    if parsed.scheme in {"http", "https"} and parsed.netloc:
+        return path
+    if parsed.scheme or parsed.netloc:
+        raise ValueError(f"Invalid CDN path or URL: {path}")
+
+    external_path = f"{config.CDN_BASE_URL.rstrip('/')}/{path.lstrip('/')}"
+    parsed = urlparse(external_path)
+    if parsed.scheme not in {"http", "https"} or not parsed.netloc:
+        raise ValueError(f"Invalid CDN URL: {external_path}")
+    return external_path
 
 
 #

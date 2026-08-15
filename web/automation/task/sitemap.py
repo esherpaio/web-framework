@@ -4,10 +4,10 @@ from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
-from urllib.parse import urlparse
 
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, selectinload
 
+from web import cdn
 from web.database import conn
 from web.database.model import AppRoute, SitemapImage, SitemapLocation
 from web.logger import log
@@ -85,7 +85,12 @@ class SitemapLocationSyncer(Processor):
         # Match locations by their endpoint arguments, such as {"slug": "about"}.
         existing = {
             cls._key(location.endpoint_args): location
-            for location in s.query(SitemapLocation).filter_by(route_id=route_id).all()
+            for location in (
+                s.query(SitemapLocation)
+                .options(selectinload(SitemapLocation.images))
+                .filter_by(route_id=route_id)
+                .all()
+            )
         }
         desired_keys: set[str] = set()
         now = datetime.now(UTC)
@@ -150,17 +155,9 @@ class SitemapLocationSyncer(Processor):
         image_locs: tuple[str, ...],
     ) -> bool:
         """Reconcile the images belonging to one sitemap page location."""
+        image_locs = tuple(cdn.external_url(image_loc) for image_loc in image_locs)
         if len(image_locs) != len(set(image_locs)):
             raise ValueError("Duplicate image locations are not allowed")
-        for image_loc in image_locs:
-            parsed = urlparse(image_loc)
-            if not image_loc or (
-                parsed.scheme
-                and (parsed.scheme not in {"http", "https"} or not parsed.netloc)
-            ):
-                raise ValueError(f"Invalid sitemap image location: {image_loc}")
-            if not parsed.scheme and parsed.netloc:
-                raise ValueError(f"Invalid sitemap image location: {image_loc}")
 
         existing = {image.loc: image for image in location.images}
         desired = set(image_locs)
