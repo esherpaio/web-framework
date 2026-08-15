@@ -6,6 +6,7 @@
   - More accurate last-modified dates for individual pages
   - Image sitemaps to improve product and photo discovery
   - Localized page annotations for improved language and regional targeting
+  - Automatic splitting of large sitemaps
 
 ## 2026-07-14
 
