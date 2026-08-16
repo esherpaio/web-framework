@@ -9,3 +9,4 @@ class Encoding(StrEnum):
 
 class Minification(StrEnum):
     html = "html"
+    xml = "xml"

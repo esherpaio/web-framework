@@ -13,7 +13,7 @@ from web.setup import config
 from web.utils import Singleton
 
 from .enum import Encoding, Minification
-from .object import minify_html
+from .object import minify_html, minify_xml
 
 
 class Optimizer(metaclass=Singleton):
@@ -41,6 +41,8 @@ class Optimizer(metaclass=Singleton):
         # minify
         if minification == Minification.html:
             minified = minify_html(text)
+        elif minification == Minification.xml:
+            minified = minify_xml(text)
         else:
             raise ValueError
         # set data
@@ -54,6 +56,8 @@ class Optimizer(metaclass=Singleton):
             return None
         if mimetype.endswith("html"):
             return Minification.html
+        if mimetype.endswith("xml"):
+            return Minification.xml
         return None
 
     #

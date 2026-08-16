@@ -1,8 +1,14 @@
 import re
+from enum import StrEnum
 
 from flask import current_app, has_request_context, request
 
 from web.setup import config
+
+
+class LocaleStyle(StrEnum):
+    SLUG = "slug"
+    BCP47 = "bcp47"
 
 
 def get_route_locale() -> str | None:
@@ -16,7 +22,6 @@ def get_route_locale() -> str | None:
 
 
 def expects_locale(endpoint: str | None) -> bool:
-    """Determine whether a locale is expected."""
     if endpoint is not None and current_app.url_map.is_endpoint_expecting(
         endpoint, "_locale"
     ):
@@ -25,7 +30,6 @@ def expects_locale(endpoint: str | None) -> bool:
 
 
 def lacks_locale(endpoint: str | None, values: dict) -> bool:
-    """Determine whether a locale lacks."""
     if expects_locale(endpoint):
         locale = values.get("_locale", None)
         if locale is None or None in match_locale(locale):
@@ -43,11 +47,21 @@ def match_locale(locale: str) -> tuple[str | None, ...]:
 
 
 def gen_locale(
-    language_code: str | None = None, country_code: str | None = None
+    language_code: str | None = None,
+    country_code: str | None = None,
+    *,
+    style: LocaleStyle = LocaleStyle.SLUG,
 ) -> str:
-    """Generate a locale."""
     if language_code is None:
         language_code = config.LOCALE_LANGUAGE_CODE
     if country_code is None:
         country_code = config.LOCALE_COUNTRY_CODE
-    return f"{language_code}-{country_code}".lower()
+
+    if style == LocaleStyle.SLUG:
+        language_code = language_code.lower()
+        country_code = country_code.lower()
+    elif style == LocaleStyle.BCP47:
+        language_code = language_code.lower()
+        country_code = country_code.upper()
+
+    return f"{language_code}-{country_code}"

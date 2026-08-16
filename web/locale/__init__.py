@@ -2,6 +2,7 @@ from .locale import Locale
 from .manager import LocaleManager
 from .proxy import current_locale
 from .utils import (
+    LocaleStyle,
     expects_locale,
     gen_locale,
     get_route_locale,

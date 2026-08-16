@@ -31,7 +31,7 @@ class Locale:
 
     @cached_property
     def locale(self) -> str:
-        return f"{self.language_code.lower()}-{self.country_code.lower()}"
+        return gen_locale(self.language_code, self.country_code)
 
     @cached_property
     def locale_posix(self) -> str:

@@ -22,6 +22,9 @@ class CacheManager(metaclass=Singleton):
         self._stop_event: Event = Event()
         self._thread: Thread | None = None
         self.hooks: list[Callable] = []
+        atexit.register(self.stop)
+        self._on_signal(signal.SIGINT)
+        self._on_signal(signal.SIGTERM)
         self.start()
 
     #
@@ -37,15 +40,21 @@ class CacheManager(metaclass=Singleton):
             return
         log.info("Starting cache manager")
         self._stop_event.clear()
-        atexit.register(self._on_shutdown)
-        self._on_signal(signal.SIGINT)
-        self._on_signal(signal.SIGTERM)
         self._thread = Thread(
             target=self._loop,
             name="CacheManager",
-            daemon=False,
+            # A non-daemon thread prevents Python from reaching atexit handlers,
+            # including the handler responsible for stopping this thread.
+            daemon=True,
         )
         self._thread.start()
+
+    def stop(self) -> None:
+        if self._thread is None or not self._thread.is_alive():
+            return
+        log.info("Stopping cache manager")
+        self._stop_event.set()
+        self._thread.join(timeout=SHUTDOWN_TIMEOUT_S)
 
     def pause(self) -> None:
         if not self._active:
@@ -90,12 +99,6 @@ class CacheManager(metaclass=Singleton):
                 self.update()
             except Exception as e:
                 log.error(f"Error refreshing cache: {e}")
-
-    def _on_shutdown(self) -> None:
-        log.info("Stopping cache manager")
-        self._stop_event.set()
-        if self._thread is not None and self._thread.is_alive():
-            self._thread.join(timeout=SHUTDOWN_TIMEOUT_S)
 
     def _on_signal(self, sig: int) -> None:
         prev = signal.getsignal(sig)
