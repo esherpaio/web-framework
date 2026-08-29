@@ -32,6 +32,6 @@ class ScssBundle:
 
         compiled = CssBundle._compile(scss)
         bytes_after = len(compiled.encode("utf-8"))
-        reduction = round((1 - bytes_after / bytes_before) * 100) if bytes_before else 0
-        log.info(f"Compiled SCSS: {bytes_after / 1024:.2f} KB ({reduction}% reduction)")
+        perc = round((1 - bytes_after / bytes_before) * 100) if bytes_before else 0
+        log.debug(f"Compiled SCSS: {bytes_after / 1024:.2f} KB ({perc}% reduction)")
         return compiled
