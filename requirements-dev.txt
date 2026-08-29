@@ -12,9 +12,3 @@ pytest-cov~=7.1.0
 djlint~=1.39.0
 mypy==2.1.0
 ruff~=0.15.16
-
-# blueprints
-git+https://github.com/esherpaio/web-blueprint-admin.git
-git+https://github.com/esherpaio/web-blueprint-api.git
-git+https://github.com/esherpaio/web-blueprint-auth.git
-git+https://github.com/esherpaio/web-blueprint-index.git

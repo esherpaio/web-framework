@@ -34,4 +34,4 @@ lint-html:
 
 .PHONY: test
 test:
-	pytest --maxfail=1 --verbose
+	pytest tests --maxfail=1 --verbose

@@ -5,28 +5,19 @@ from pathlib import Path
 from typing import Iterable, Sequence
 
 import tinycss2
-
-DEFAULT_CONTENT_EXTENSIONS = frozenset(
-    {
-        ".html",
-        ".jinja",
-        ".jinja2",
-        ".js",
-        ".jsx",
-        ".py",
-        ".ts",
-        ".tsx",
-    }
-)
-DEFAULT_EXCLUDED_DIRECTORIES = frozenset(
-    {
-        ".git",
-        ".venv",
-        "__pycache__",
-        "cdn",
-        "node_modules",
-        "venv",
-    }
+from tinycss2.ast import (
+    AtRule,
+    Comment,
+    CurlyBracketsBlock,
+    FunctionBlock,
+    HashToken,
+    IdentToken,
+    LiteralToken,
+    Node,
+    ParenthesesBlock,
+    ParseError,
+    QualifiedRule,
+    WhitespaceToken,
 )
 
 SIMPLE_NAME_RE = re.compile(r"[-_A-Za-z][-_A-Za-z0-9]*")
@@ -37,52 +28,60 @@ CLASS_ATTRIBUTE_RE = re.compile(
 )
 JINJA_EXPRESSION_RE = re.compile(r"\{\{(?P<expression>.*?)\}\}", re.DOTALL)
 
-NESTED_RULE_AT_KEYWORDS = frozenset(
-    {
-        "-moz-document",
-        "-webkit-keyframes",
-        "container",
-        "document",
-        "keyframes",
-        "layer",
-        "media",
-        "scope",
-        "starting-style",
-        "supports",
-    }
-)
+DEFAULT_CONTENT_EXTENSIONS = {
+    ".html",
+    ".jinja",
+    ".jinja2",
+    ".js",
+    ".jsx",
+    ".py",
+    ".ts",
+    ".tsx",
+}
+DEFAULT_EXCLUDED_DIRECTORIES = {
+    ".git",
+    ".venv",
+    "__pycache__",
+    "node_modules",
+    "venv",
+}
+NESTED_RULE_AT_KEYWORDS = {
+    "-moz-document",
+    "-webkit-keyframes",
+    "container",
+    "document",
+    "keyframes",
+    "layer",
+    "media",
+    "scope",
+    "starting-style",
+    "supports",
+}
 
 
 class CssPurgeError(Exception):
     """Raised when CSS purging cannot complete safely."""
 
 
-@dataclass(frozen=True)
+@dataclass
 class CssSafelist:
     """Class and ID names that static source scanning cannot discover."""
 
-    names: frozenset[str] = frozenset()
-    patterns: tuple[str, ...] = ()
-
-    def __post_init__(self) -> None:
-        object.__setattr__(self, "names", frozenset(self.names))
-        object.__setattr__(self, "patterns", tuple(self.patterns))
-        for pattern in self.patterns:
-            try:
-                re.compile(pattern)
-            except re.error as exc:
-                raise ValueError(
-                    f"Invalid CSS safelist pattern {pattern!r}: {exc}"
-                ) from exc
+    names: set[str] = field(default_factory=set)
+    patterns: list[str] = field(default_factory=list)
 
 
-@dataclass(frozen=True)
+@dataclass
 class CssPurgeConfig:
     """Configuration for matching compiled selectors against source content."""
 
-    content_paths: tuple[str | Path, ...]
-    content_extensions: frozenset[str] = DEFAULT_CONTENT_EXTENSIONS
-    excluded_directories: frozenset[str] = DEFAULT_EXCLUDED_DIRECTORIES
+    content_paths: list[str | Path]
+    content_extensions: set[str] = field(
+        default_factory=lambda: set(DEFAULT_CONTENT_EXTENSIONS)
+    )
+    excluded_directories: set[str] = field(
+        default_factory=lambda: set(DEFAULT_EXCLUDED_DIRECTORIES)
+    )
     safelist: CssSafelist = field(default_factory=CssSafelist)
     preserve_dynamic_prefixes: bool = True
 
@@ -90,24 +89,18 @@ class CssPurgeConfig:
         if not self.content_paths:
             raise ValueError("CSS purge content paths cannot be empty")
 
-        extensions = frozenset(
+        extensions = {
             extension.lower() if extension.startswith(".") else f".{extension.lower()}"
             for extension in self.content_extensions
             if extension
-        )
+        }
         if not extensions:
             raise ValueError("CSS purge content extensions cannot be empty")
 
-        object.__setattr__(self, "content_paths", tuple(self.content_paths))
-        object.__setattr__(self, "content_extensions", extensions)
-        object.__setattr__(
-            self,
-            "excluded_directories",
-            frozenset(self.excluded_directories),
-        )
+        self.content_extensions = extensions
 
 
-@dataclass(frozen=True)
+@dataclass
 class CssDynamicReference:
     """A template expression that can supply an unrestricted class value."""
 
@@ -116,15 +109,15 @@ class CssDynamicReference:
     expression: str
 
 
-@dataclass(frozen=True)
+@dataclass
 class CssRemovedSelector:
     """A removed selector and the required names missing from source content."""
 
     selector: str
-    missing_names: tuple[str, ...]
+    missing_names: list[str]
 
 
-@dataclass(frozen=True)
+@dataclass
 class CssPurgeResult:
     """Compiled CSS and typed diagnostics from one purge operation."""
 
@@ -135,22 +128,22 @@ class CssPurgeResult:
     selectors_retained_as_complex: int
     bytes_before: int
     bytes_after: int
-    dynamic_prefixes: tuple[str, ...]
-    dynamic_references: tuple[CssDynamicReference, ...]
-    removed_selectors: tuple[CssRemovedSelector, ...]
+    dynamic_prefixes: list[str]
+    dynamic_references: list[CssDynamicReference]
+    removed_selectors: list[CssRemovedSelector]
 
 
-@dataclass(frozen=True)
+@dataclass
 class _SourceIndex:
-    files: tuple[Path, ...]
-    used_names: frozenset[str]
-    dynamic_prefixes: frozenset[str]
-    dynamic_references: tuple[CssDynamicReference, ...]
+    files: list[Path]
+    used_names: set[str]
+    dynamic_prefixes: set[str]
+    dynamic_references: list[CssDynamicReference]
 
 
-@dataclass(frozen=True)
+@dataclass
 class _SelectorAnalysis:
-    required_names: frozenset[str]
+    required_names: set[str]
     is_complex: bool
 
 
@@ -167,9 +160,9 @@ class CssPurger:
 
     def __init__(self, config: CssPurgeConfig) -> None:
         self._config = config
-        self._safelist_patterns = tuple(
+        self._safelist_patterns = [
             re.compile(pattern) for pattern in config.safelist.patterns
-        )
+        ]
 
     def purge(self, css: str) -> CssPurgeResult:
         rules = tinycss2.parse_stylesheet(
@@ -198,13 +191,13 @@ class CssPurger:
             selectors_retained_as_complex=stats.selectors_retained_as_complex,
             bytes_before=len(css.encode("utf-8")),
             bytes_after=len(purged_css.encode("utf-8")),
-            dynamic_prefixes=tuple(sorted(source_index.dynamic_prefixes)),
+            dynamic_prefixes=sorted(source_index.dynamic_prefixes),
             dynamic_references=source_index.dynamic_references,
-            removed_selectors=tuple(stats.removed_selectors),
+            removed_selectors=stats.removed_selectors,
         )
 
     def _build_source_index(self, candidate_names: set[str]) -> _SourceIndex:
-        files = tuple(self._iter_source_files())
+        files = list(self._iter_source_files())
         if not files:
             raise CssPurgeError(
                 "No CSS purge source files matched the configured content paths"
@@ -238,9 +231,9 @@ class CssPurger:
 
         return _SourceIndex(
             files=files,
-            used_names=frozenset(used_names),
-            dynamic_prefixes=frozenset(dynamic_prefixes),
-            dynamic_references=tuple(dynamic_references),
+            used_names=used_names,
+            dynamic_prefixes=dynamic_prefixes,
+            dynamic_references=dynamic_references,
         )
 
     def _iter_source_files(self) -> Iterable[Path]:
@@ -256,9 +249,9 @@ class CssPurger:
 
             for root, directories, names in os.walk(path):
                 directories[:] = [
-                    name
-                    for name in directories
-                    if name not in self._config.excluded_directories
+                    directory
+                    for directory in directories
+                    if directory not in self._config.excluded_directories
                 ]
                 root_path = Path(root)
                 for name in names:
@@ -298,21 +291,20 @@ class CssPurger:
 
     def _collect_candidate_names(
         self,
-        rules: Sequence[object],
+        rules: Sequence[Node],
         context: str,
     ) -> set[str]:
         self._raise_parse_errors(rules, context)
         names: set[str] = set()
 
         for rule in rules:
-            rule_type = getattr(rule, "type", None)
-            if rule_type == "qualified-rule":
+            if isinstance(rule, QualifiedRule):
                 for selector_tokens in self._split_selector_list(rule.prelude):
                     names.update(self._analyse_selector(selector_tokens).required_names)
                 continue
 
             if (
-                rule_type == "at-rule"
+                isinstance(rule, AtRule)
                 and rule.content is not None
                 and rule.lower_at_keyword in NESTED_RULE_AT_KEYWORDS
             ):
@@ -330,17 +322,16 @@ class CssPurger:
 
     def _purge_rule_list(
         self,
-        rules: Sequence[object],
+        rules: Sequence[Node],
         source_index: _SourceIndex,
         stats: _PurgeStats,
         context: str,
-    ) -> list[object]:
+    ) -> list[Node]:
         self._raise_parse_errors(rules, context)
         output = []
 
         for rule in rules:
-            rule_type = getattr(rule, "type", None)
-            if rule_type == "qualified-rule":
+            if isinstance(rule, QualifiedRule):
                 selector_lists = self._split_selector_list(rule.prelude)
                 kept_selectors = []
 
@@ -351,12 +342,10 @@ class CssPurger:
 
                     stats.selectors_total += 1
                     analysis = self._analyse_selector(selector_tokens)
-                    missing_names = tuple(
-                        sorted(
-                            name
-                            for name in analysis.required_names
-                            if not self._is_name_present(name, source_index)
-                        )
+                    missing_names = sorted(
+                        name
+                        for name in analysis.required_names
+                        if not self._is_name_present(name, source_index)
                     )
                     if missing_names:
                         stats.selectors_removed += 1
@@ -378,7 +367,7 @@ class CssPurger:
                 continue
 
             if (
-                rule_type == "at-rule"
+                isinstance(rule, AtRule)
                 and rule.content is not None
                 and rule.lower_at_keyword in NESTED_RULE_AT_KEYWORDS
             ):
@@ -395,7 +384,7 @@ class CssPurger:
                     nested_context,
                 )
                 has_content = any(
-                    getattr(node, "type", None) not in {"comment", "whitespace"}
+                    not isinstance(node, (Comment, WhitespaceToken))
                     for node in nested_output
                 )
                 if has_content:
@@ -419,42 +408,43 @@ class CssPurger:
         )
 
     @staticmethod
-    def _split_selector_list(prelude: Sequence[object]) -> list[list[object]]:
-        selectors: list[list[object]] = [[]]
+    def _split_selector_list(prelude: Sequence[Node]) -> list[list[Node]]:
+        selectors: list[list[Node]] = [[]]
         for token in prelude:
-            if getattr(token, "type", None) == "literal" and token.value == ",":
+            if isinstance(token, LiteralToken) and token.value == ",":
                 selectors.append([])
             else:
                 selectors[-1].append(token)
         return selectors
 
     @staticmethod
-    def _analyse_selector(tokens: Sequence[object]) -> _SelectorAnalysis:
+    def _analyse_selector(tokens: Sequence[Node]) -> _SelectorAnalysis:
         required_names: set[str] = set()
         is_complex = False
 
         for index, token in enumerate(tokens):
-            token_type = getattr(token, "type", None)
-            if token_type == "literal" and token.value == ".":
+            if isinstance(token, LiteralToken) and token.value == ".":
                 if index + 1 < len(tokens):
                     next_token = tokens[index + 1]
-                    if getattr(next_token, "type", None) == "ident":
+                    if isinstance(next_token, IdentToken):
                         required_names.add(next_token.value)
                 continue
-            if token_type == "hash" and getattr(token, "is_identifier", False):
+            if isinstance(token, HashToken) and token.is_identifier:
                 required_names.add(token.value)
                 continue
-            if token_type in {"function", "() block", "{} block"}:
+            if isinstance(
+                token,
+                (FunctionBlock, ParenthesesBlock, CurlyBracketsBlock),
+            ):
                 is_complex = True
 
-        return _SelectorAnalysis(frozenset(required_names), is_complex)
+        return _SelectorAnalysis(required_names, is_complex)
 
     @staticmethod
-    def _raise_parse_errors(nodes: Sequence[object], context: str) -> None:
+    def _raise_parse_errors(nodes: Sequence[Node], context: str) -> None:
         for node in nodes:
-            if getattr(node, "type", None) != "error":
+            if not isinstance(node, ParseError):
                 continue
-            message = getattr(node, "message", "unknown CSS parse error")
-            line = getattr(node, "source_line", "?")
-            column = getattr(node, "source_column", "?")
-            raise CssPurgeError(f"{context}:{line}:{column}: {message}")
+            raise CssPurgeError(
+                f"{context}:{node.source_line}:{node.source_column}: {node.message}"
+            )
