@@ -1,6 +1,5 @@
 import re
 
-
 _MARKUP_PATTERN = re.compile(
     r"<!--.*?-->|<!\[CDATA\[.*?\]\]>|<(?:\"[^\"]*\"|'[^']*'|[^'\">])*>",
     re.DOTALL,

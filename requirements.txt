@@ -15,6 +15,7 @@ markupsafe==3.0.3
 rcssmin==1.2.2
 rjsmin==1.2.5
 libsass==0.23.0
+tinycss2==1.5.1
 brotli==1.2.0
 
 # localization and validation
