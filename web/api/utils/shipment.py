@@ -1,63 +1,84 @@
+from decimal import Decimal
 from typing import TYPE_CHECKING
 
-from sqlalchemy import true
-from sqlalchemy.orm import Session, joinedload
+from sqlalchemy import false, or_
+from sqlalchemy.orm import Session
 
-from web.database.model import Country, ShipmentMethod
+from web.database.model import (
+    Country,
+    Currency,
+    ShipmentClass,
+    ShipmentMethod,
+    ShipmentZone,
+)
 
 if TYPE_CHECKING:
     from web.app.schema import ShippingItem
 
 
-def get_shipment_method_countries(
+def select_shipment_methods(
     s: Session,
-    method: ShipmentMethod,
-) -> list[Country]:
-    zone = method.zone
-    if zone is None:
+    class_ids: list[int] | int | None,
+    country: Country,
+) -> list[ShipmentMethod]:
+    if isinstance(class_ids, int):
+        class_ids = [class_ids]
+    if not class_ids:
         return []
-    if zone.country_id is not None:
-        return [zone.country] if zone.country else []
-    if zone.region_id is not None:
-        return (
-            s.query(Country)
-            .options(joinedload(Country.currency))
-            .filter(
-                Country.region_id == zone.region_id,
-                Country.allows_shipping == true(),
-            )
-            .all()
+
+    class_ = (
+        s.query(ShipmentClass)
+        .filter(
+            ShipmentClass.id.in_(class_ids),
+            ShipmentClass.is_deleted == false(),
         )
-    return []
+        .order_by(ShipmentClass.order)
+        .first()
+    )
+    zone_ = (
+        s.query(ShipmentZone)
+        .filter(
+            or_(
+                ShipmentZone.country_id == country.id,
+                ShipmentZone.region_id == country.region_id,
+            ),
+            ShipmentZone.is_deleted == false(),
+        )
+        .order_by(ShipmentZone.order)
+        .first()
+    )
+    if class_ is None or zone_ is None:
+        return []
+
+    methods = (
+        s.query(ShipmentMethod)
+        .filter_by(
+            class_id=class_.id,
+            zone_id=zone_.id,
+            is_deleted=False,
+        )
+        .order_by(ShipmentMethod.unit_price)
+        .all()
+    )
+    return methods
 
 
 def gen_shipping_items(
-    s: Session,
     methods: list[ShipmentMethod],
+    country: Country,
+    currency: Currency,
+    vat_rate: Decimal,
 ) -> list["ShippingItem"]:
-    per_country: dict[str, set[tuple]] = {}
-    for method in methods:
-        for country in get_shipment_method_countries(s, method):
-            currency = country.currency
-            rate = round(float(method.unit_price * currency.rate), 2)
-            option = (rate, method.min_days, method.max_days, currency.code)
-            per_country.setdefault(country.code, set()).add(option)
-
-    groups: dict[tuple, list[str]] = {}
-    for code, options in per_country.items():
-        for option in options:
-            groups.setdefault(option, []).append(code)
-
     items: list[ShippingItem] = []
-    for (rate, min_days, max_days, currency_code), countries in groups.items():
+    for method in methods:
         item: ShippingItem = {
-            "countries": countries,
-            "rate": rate,
-            "currency": currency_code,
+            "countries": [country.code],
+            "rate": method.get_price(currency=currency, vat_rate=vat_rate),
+            "currency": currency.code,
         }
-        if min_days is not None:
-            item["min_days"] = min_days
-        if max_days is not None:
-            item["max_days"] = max_days
+        if method.min_days is not None:
+            item["min_days"] = method.min_days
+        if method.max_days is not None:
+            item["max_days"] = method.max_days
         items.append(item)
     return items

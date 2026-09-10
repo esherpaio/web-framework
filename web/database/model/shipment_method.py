@@ -7,6 +7,7 @@ from sqlalchemy.orm import relationship, validates
 
 from ._base import IntBase
 from ._utils import default_price, val_number
+from .currency import Currency
 
 
 class ShipmentMethod(IntBase):
@@ -50,3 +51,6 @@ class ShipmentMethod(IntBase):
         if key == "min_days" and value is not None and self.max_days is not None:
             val_number(key, value, max_=self.max_days)
         return value
+
+    def get_price(self, currency: Currency, vat_rate: Decimal) -> Decimal:
+        return self.unit_price * currency.rate * vat_rate

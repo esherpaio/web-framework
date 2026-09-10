@@ -83,3 +83,4 @@ class Translator(metaclass=Singleton):
 
 translator = Translator()
 _ = translator.translate
+_s = translator.translate_strict

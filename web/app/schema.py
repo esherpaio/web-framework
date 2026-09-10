@@ -1,4 +1,5 @@
 import json
+from decimal import Decimal
 from enum import StrEnum
 from typing import Any, NotRequired, TypedDict
 
@@ -38,7 +39,7 @@ class FaqItem(TypedDict):
 
 class ShippingItem(TypedDict):
     countries: list[str]
-    rate: float
+    rate: Decimal | float
     currency: str
     min_days: NotRequired[int]
     max_days: NotRequired[int]
@@ -205,10 +206,10 @@ class SchemaProduct(Schema):
         stock: int | None = None,
         image_url: str | None = None,
         description: str | None = None,
-        shipping: list[ShippingItem] | None = None,
-        rating: float | None = None,
-        review_count: int | None = None,
+        shippings: list[ShippingItem] | None = None,
         reviews: list[ReviewItem] | None = None,
+        handling_min_days: int | None = None,
+        handling_max_days: int | None = None,
     ) -> None:
         super().__init__()
         home_url = url_for(
@@ -240,7 +241,7 @@ class SchemaProduct(Schema):
                 availability = "https://schema.org/InStock"
             else:
                 availability = "https://schema.org/OutOfStock"
-            data["offers"]["availability"] = availability  # type: ignore[index]
+            data["offers"]["availability"] = availability
         if image_url is not None:
             data["image"] = {
                 "@type": "ImageObject",
@@ -249,9 +250,10 @@ class SchemaProduct(Schema):
             }
         if description is not None:
             data["description"] = description
-        if shipping:
+
+        if shippings:
             shipping_details = []
-            for item in shipping:
+            for item in shippings:
                 countries = item["countries"]
                 if len(countries) == 1:
                     destination: Any = {
@@ -272,32 +274,34 @@ class SchemaProduct(Schema):
                     },
                     "shippingDestination": destination,
                 }
-                min_days = item.get("min_days")
-                max_days = item.get("max_days")
-                if min_days is not None or max_days is not None:
-                    transit_time: dict[str, Any] = {
-                        "@type": "QuantitativeValue",
-                        "unitCode": "DAY",
-                    }
-                    if min_days is not None:
-                        transit_time["minValue"] = min_days
-                    if max_days is not None:
-                        transit_time["maxValue"] = max_days
-                    detail["deliveryTime"] = {
-                        "@type": "ShippingDeliveryTime",
-                        "transitTime": transit_time,
-                    }
+                delivery_time: dict[str, Any] = {"@type": "ShippingDeliveryTime"}
+                for key, min_days, max_days in (
+                    ("transitTime", item.get("min_days"), item.get("max_days")),
+                    ("handlingTime", handling_min_days, handling_max_days),
+                ):
+                    if min_days is not None and max_days is not None:
+                        delivery_time[key] = {
+                            "@type": "QuantitativeValue",
+                            "unitCode": "DAY",
+                            "minValue": min_days,
+                            "maxValue": max_days,
+                        }
+                if len(delivery_time) > 1:
+                    detail["deliveryTime"] = delivery_time
                 shipping_details.append(detail)
-            data["offers"]["shippingDetails"] = shipping_details  # type: ignore[index]
-        if rating is not None and review_count:
+            data["offers"]["shippingDetails"] = shipping_details
+
+        if reviews:
+            review_count = len(reviews)
+            review_rating = sum(review["rating"] for review in reviews) / review_count
             data["aggregateRating"] = {
                 "@type": "AggregateRating",
-                "ratingValue": round(rating, 1),
+                "ratingValue": round(review_rating, 1),
                 "reviewCount": review_count,
+                "ratingCount": review_count,
                 "bestRating": 5,
                 "worstRating": 1,
             }
-        if reviews:
             data["review"] = [
                 {
                     "@type": "Review",
@@ -317,6 +321,7 @@ class SchemaProduct(Schema):
                 }
                 for review in reviews
             ]
+
         self.data = data
 
 
