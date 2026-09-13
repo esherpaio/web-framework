@@ -1,18 +1,23 @@
+import itertools
 import re
 from enum import StrEnum
 from typing import Generator
 
-from flask import has_request_context, request
+from flask import current_app, has_request_context, request
 from markupsafe import Markup
 
+from web.app.urls import url_for
+from web.cache import cache
 from web.database.model import AppRoute
-from web.locale import current_locale
+from web.locale import LocaleStyle, current_locale, expects_locale, gen_locale
 from web.setup import config
 
 
 class MetaTag(StrEnum):
+    LINK_ALTERNATE = "<link rel='alternate' hreflang='%s' href='%s'/>"
     LINK_APPLE_TOUCH_ICON = "<link rel='apple-touch-icon' href='%s'/>"
     LINK_CANONICAL = "<link rel='canonical' href='%s'/>"
+    LINK_DESCRIBED_BY = "<link rel='describedby' href='%s'/>"
     LINK_ICON = "<link rel='icon' href='%s'/>"
     META_CHARSET = "<meta charset='utf-8'/>"
     META_DESCRIPTION = "<meta name='description' content='%s'/>"
@@ -95,11 +100,51 @@ class Meta:
             return self._robots
         return "noindex,follow"
 
+    @robots.setter
+    def robots(self, robots: str | None) -> None:
+        self._robots = robots
+
     @property
     def canonical_url(self) -> str | None:
         if has_request_context():
             return request.base_url
         return None
+
+    @property
+    def llms_url(self) -> str | None:
+        if not has_request_context():
+            return None
+        if "index.llms" not in current_app.view_functions:
+            return None
+        return url_for("index.llms", _external=True)
+
+    @property
+    def alternate_urls(self) -> list[tuple[str, str]]:
+        if not has_request_context() or request.endpoint is None:
+            return []
+        if not expects_locale(request.endpoint):
+            return []
+        country_codes = sorted(x.code for x in cache.countries if x.in_sitemap)
+        language_codes = sorted(x.code for x in cache.languages if x.in_sitemap)
+        view_args = request.view_args or {}
+        alternates = []
+        for country_code, language_code in itertools.product(
+            country_codes, language_codes
+        ):
+            values = view_args | {"_locale": gen_locale(language_code, country_code)}
+            alternates.append(
+                (
+                    gen_locale(language_code, country_code, style=LocaleStyle.BCP47),
+                    url_for(request.endpoint, **values, _external=True),
+                )
+            )
+        values = view_args | {"_locale": gen_locale()}
+        alternates.append(
+            ("x-default", url_for(request.endpoint, **values, _external=True))
+        )
+        if len({href for _, href in alternates}) < 2:
+            return []
+        return alternates
 
     @property
     def locale(self) -> str | None:
@@ -146,6 +191,10 @@ class Meta:
         # Link
         if self.canonical_url:
             yield Markup(MetaTag.LINK_CANONICAL % self.canonical_url)
+        for hreflang, href in self.alternate_urls:
+            yield Markup(MetaTag.LINK_ALTERNATE % (hreflang, href))
+        if self.llms_url:
+            yield Markup(MetaTag.LINK_DESCRIBED_BY % self.llms_url)
         if self.favicon_url:
             yield Markup(MetaTag.LINK_ICON % self.favicon_url)
         if self.logo_url:

@@ -202,6 +202,7 @@ class SchemaProduct(Schema):
         self,
         name: str,
         price: float,
+        price_before_discount: float | None = None,
         sku: str | None = None,
         stock: int | None = None,
         image_url: str | None = None,
@@ -234,6 +235,13 @@ class SchemaProduct(Schema):
                 "seller": {"@id": f"{home_url}{SchemaId.ORGANIZATION}"},
             },
         }
+        if price_before_discount is not None and price_before_discount > price:
+            data["offers"]["priceSpecification"] = {
+                "@type": "UnitPriceSpecification",
+                "priceType": "https://schema.org/StrikethroughPrice",
+                "price": round(price_before_discount, 2),
+                "priceCurrency": current_locale.currency.code,
+            }
         if sku is not None:
             data["sku"] = sku
         if stock is not None:

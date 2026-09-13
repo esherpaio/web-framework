@@ -3,6 +3,7 @@ from enum import StrEnum
 
 from flask import current_app, has_request_context, request
 
+from web.cache import cache
 from web.setup import config
 
 
@@ -44,6 +45,21 @@ def match_locale(locale: str) -> tuple[str | None, ...]:
         language_code, country_code = match.groups()
         return language_code.lower(), country_code.lower()
     return None, None
+
+
+def unknown_locale(locale: str | None) -> bool:
+    if locale is None:
+        return False
+    language_code, country_code = match_locale(locale)
+    if language_code is None or country_code is None:
+        return False
+    if not cache.countries or not cache.languages:  # type: ignore [attr-defined]
+        return False
+    if not any(x.code.lower() == country_code for x in cache.countries):  # type: ignore [attr-defined]
+        return True
+    if not any(x.code.lower() == language_code for x in cache.languages):  # type: ignore [attr-defined]
+        return True
+    return False
 
 
 def gen_locale(

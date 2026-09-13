@@ -11,6 +11,7 @@ class SitemapLocation(IntBase):
     __tablename__ = "sitemap_location"
     __table_args__ = (UniqueConstraint("route_id", "endpoint_args"),)
 
+    description = MC(String(256), nullable=True)
     endpoint_args = MC(
         MutableDict.as_mutable(JSONB),
         nullable=False,
@@ -19,6 +20,7 @@ class SitemapLocation(IntBase):
     )
     lastmod = MC(DateTime(timezone=True), nullable=False)
     template_hash = MC(String(64), nullable=True)
+    title = MC(String(256), nullable=True)
 
     route_id = MC(ForeignKey("app_route.id", ondelete="CASCADE"), nullable=False)
     images = relationship(

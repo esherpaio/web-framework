@@ -24,6 +24,8 @@ class SitemapLocationSpec:
     content_lastmod: datetime | None = None
     template_hash: str | None = None
     image_locs: tuple[str, ...] = ()
+    title: str | None = None
+    description: str | None = None
 
 
 def get_template_hash(
@@ -114,6 +116,8 @@ class SitemapLocationSyncer(Processor):
                     endpoint_args=spec.endpoint_args,
                     lastmod=spec.content_lastmod or now,
                     template_hash=spec.template_hash,
+                    title=spec.title,
+                    description=spec.description,
                 )
                 s.add(location)
                 cls._sync_images(location, spec.image_locs)
@@ -133,6 +137,8 @@ class SitemapLocationSyncer(Processor):
                 and spec.template_hash != location.template_hash
             ):
                 location.lastmod = max(location.lastmod, now)
+            location.title = spec.title
+            location.description = spec.description
             if spec.template_hash is not None:
                 location.template_hash = spec.template_hash
 

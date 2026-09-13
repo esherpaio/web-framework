@@ -5,7 +5,7 @@ from web.app.urls import redirect_with_query, url_for
 from web.utils import Singleton
 
 from .proxy import current_locale
-from .utils import expects_locale, gen_locale, lacks_locale
+from .utils import expects_locale, gen_locale, lacks_locale, unknown_locale
 
 
 class LocaleManager(metaclass=Singleton):
@@ -25,6 +25,11 @@ class LocaleManager(metaclass=Singleton):
         if request.view_args is None:
             return None
         if lacks_locale(request.endpoint, request.view_args):
+            request.view_args["_locale"] = current_locale.locale
+            url = url_for(request.endpoint, **request.view_args)
+            return redirect_with_query(url, code=301)
+        locale = request.view_args.get("_locale")
+        if unknown_locale(locale) and current_locale.locale != locale:
             request.view_args["_locale"] = current_locale.locale
             url = url_for(request.endpoint, **request.view_args)
             return redirect_with_query(url, code=301)
