@@ -2,6 +2,11 @@ import re
 
 import rjsmin
 
+PRESERVE_RE = re.compile(
+    r"<(script|textarea|pre)\b[^>]*>[\s\S]*?</\1\s*>",
+    flags=re.IGNORECASE,
+)
+
 
 def minify_html(value: str) -> str:
     # Remove comments
@@ -21,14 +26,12 @@ def minify_html(value: str) -> str:
         value,
     )
 
-    # Split HTML and isolate script blocks
-    parts = re.split(r"(<script[\s\S]*?</script>)", value, flags=re.IGNORECASE)
-    for i, part in enumerate(parts):
-        # Remove all newlines and extra spaces
-        if not re.match(r"^\s*<script", part, flags=re.IGNORECASE):
-            parts[i] = re.sub(r"\s+", " ", part).strip()
+    parts = []
+    index = 0
+    for match in PRESERVE_RE.finditer(value):
+        parts.append(re.sub(r"\s+", " ", value[index : match.start()]))
+        parts.append(match.group(0))
+        index = match.end()
+    parts.append(re.sub(r"\s+", " ", value[index:]))
 
-    # Join and remove new lines
-    final = "".join(parts)
-    final = re.sub(r"\s*\n\s*", " ", final).strip()
-    return final
+    return "".join(parts).strip()
