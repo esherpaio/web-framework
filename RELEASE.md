@@ -1,5 +1,25 @@
 # Changelog
 
+## 2026-09-14
+
+- Support for llms.txt, helping AI assistants discover and understand the website
+- Alternate page links for improved language and regional targeting
+- Faster page loads with new CSS minifier
+- Smaller sitemap files through minification
+
+- Improved schema.org JSON-LD:
+  - Support product handling times
+  - More accurate product review ratings
+
+- Back office improvements:
+  - Errors are now automatically reported to the administrator
+  - Styling fixes
+
+- Bug fixes:
+  - Fixed text area content being altered in HTML minification
+  - Fixed selecting related items in the back office
+  - Fixed serving static files from a local CDN
+
 ## 2026-08-14
 
 - Improved sitemap support:
@@ -11,8 +31,8 @@
 ## 2026-07-14
 
 Webshop features:
-- Support for default coupons
-- Support for shipment delivery times
+  - Support for default coupons
+  - Support for shipment delivery times
 
 - Improved schema.org JSON-LD:
   - Support product delivery details
@@ -84,7 +104,7 @@ Internal improvements:
 
 ## 2025-01-31
 
-- Admin panel improvements:
+- Back office improvements:
   - Colored order statuses
   - Create orders
   - Send mass emails
@@ -98,7 +118,7 @@ Internal improvements:
 
 - Bug fixes:
   - Fixed a bug in shipment method validation that could occur during checkout
-  - Fixed an incorrect redirect in the admin panel that could occur after removing a product
+  - Fixed an incorrect redirect in the back office that could occur after removing a product
   - Fixed a bug in displaying product HTML that was triggered by specifc HTML content
 
 ## 2024-10-08
