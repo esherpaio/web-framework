@@ -1,8 +1,6 @@
 import hashlib
-import io
 import os
 
-from web import cdn
 from web.logger import log
 
 from .bundle import CssBundle, JsBundle, ScssBundle
@@ -46,15 +44,3 @@ class Packer:
                 file_.write(data)
             log.info(f"Saved bundle to {out_path}")
         return out_path
-
-    def write_cdn(
-        self,
-        data: bytes,
-        cdn_path: str,
-    ) -> str:
-        if not cdn.exists(cdn_path):
-            fileb = io.BytesIO(data)
-            cdn.upload(fileb, cdn_path)
-            cdn_url = cdn.url(cdn_path)
-            log.info(f"Uploaded bundle to {cdn_url}")
-        return cdn_path

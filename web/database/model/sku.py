@@ -5,7 +5,7 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import mapped_column as MC
 from sqlalchemy.orm import relationship, validates
 
-from web import cdn
+from web.cdn import cdn_url
 
 from ._base import Attribute, IntBase
 from ._utils import default_price, val_number
@@ -50,7 +50,7 @@ class Sku(IntBase, Attribute):
     @hybrid_property
     def main_image(self) -> str | None:
         if self.product and self.product.images:
-            return cdn.url(self.product.images[0].file_.path)
+            return cdn_url(self.product.images[0].file_.path)
         return None
 
     # Properties - details

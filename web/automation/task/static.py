@@ -7,7 +7,7 @@ from typing import Type
 
 from sqlalchemy.orm import Session
 
-from web import cdn
+from web.cdn import CDN_DIR, Client
 from web.database import conn
 from web.database.model import AppBlueprint, AppRoute, AppSettings
 from web.logger import log
@@ -83,17 +83,16 @@ class StaticProcessor(Processor):
             log.warning("Static processor is disabled")
             return
 
-        with cdn.connect() as client:
-            static_dir = cdn.get_static_dir()
-            modified = client.modified(static_dir)
+        with Client.connect() as c:
+            modified = c.modified(CDN_DIR)
             filenames = set(modified)
             with conn.begin() as s:
                 resources = cls.load_resources(s)
-                uploaded = cls.upload_bundles(s, client, resources, filenames)
+                uploaded = cls.upload_bundles(s, c, resources, filenames)
             with conn.begin() as s:
                 cls.clear_stale_paths(s, uploaded)
             with conn.begin() as s:
-                cls.prune_files(s, client, modified)
+                cls.prune_files(s, c, modified)
 
     @classmethod
     def load_resources(
@@ -113,12 +112,10 @@ class StaticProcessor(Processor):
     def upload_bundles(
         cls,
         s: Session,
-        client: cdn.BaseClient,
+        client: Client,
         resources: dict[StaticJob, AppSettings | AppBlueprint | AppRoute],
         cdn_fns: set[str],
     ) -> dict[tuple[str, int], list[StaticType]]:
-        static_dir = cdn.get_static_dir()
-
         processed: dict[tuple[str, int], list[StaticType]] = defaultdict(list)
         for job in cls.JOBS:
             packer = Packer()
@@ -129,7 +126,7 @@ class StaticProcessor(Processor):
 
             out_ext = packer.validate(job.bundles)
             cdn_fn = f"{hash_}{out_ext}"
-            cdn_path = os.path.join(static_dir, cdn_fn)
+            cdn_path = os.path.join(CDN_DIR, cdn_fn)
             if cdn_fn not in cdn_fns:
                 client.upload(io.BytesIO(bytes_), cdn_path)
 
@@ -163,11 +160,9 @@ class StaticProcessor(Processor):
     def prune_files(
         cls,
         s: Session,
-        client: cdn.BaseClient,
+        client: Client,
         modified: dict[str, datetime],
     ) -> None:
-        static_dir = cdn.get_static_dir()
-
         active: set[str] = set()
         for resource in [
             *s.query(AppSettings).all(),
@@ -182,4 +177,4 @@ class StaticProcessor(Processor):
         keep = set(ordered[: cls.KEEP]) | active
         for fn in ordered:
             if fn not in keep:
-                client.delete(os.path.join(static_dir, fn))
+                client.delete(os.path.join(CDN_DIR, fn))

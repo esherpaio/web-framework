@@ -1,65 +1,31 @@
 import os
+import posixpath
+from abc import ABC, abstractmethod
+from collections.abc import Generator
 from contextlib import contextmanager
 from datetime import datetime
 from ftplib import FTP, error_perm
-from typing import Iterator, Protocol
-from urllib.parse import urlparse
-
-from flask import current_app, has_app_context
 
 from web.logger import log
 from web.setup import config
 
 from .type import _SupportsRead
 
-LOCAL_DIR = "cdn"
 CDN_DIR = "static"
+LOCAL_DIR = os.path.join("static", "cdn")
+LOCAL_URL = "/static/cdn"
 
 
-def use_local_static(path: str | None = None) -> bool:
-    if not config.CDN_LOCAL:
-        return False
-    if not has_app_context():
-        return False
-    if path is None:
-        return True
-    local_path = path.startswith(LOCAL_DIR)
-    return local_path
-
-
-def get_static_dir(path: str | None = None) -> str:
-    return LOCAL_DIR if use_local_static(path) else CDN_DIR
-
-
-def url(*args: str | None) -> str | None:
+def cdn_url(*args: str | None, external: bool = False) -> str | None:
     path_parts = [x for x in args if x is not None]
     if not path_parts:
         return None
-    path = os.path.join(*path_parts)
-
-    local_static = use_local_static(path)
-    if local_static:
-        if current_app.static_url_path is None:
-            raise RuntimeError
-        return os.path.join(current_app.static_url_path, path)
-    return os.path.join(config.CDN_BASE_URL, path)
-
-
-def external_url(path: str) -> str:
-    """Return an absolute CDN URL, leaving existing HTTP(S) URLs unchanged."""
-    if not path:
-        raise ValueError("CDN path or URL cannot be empty")
-    parsed = urlparse(path)
-    if parsed.scheme in {"http", "https"} and parsed.netloc:
+    path = posixpath.join(*path_parts)
+    if path.startswith(("http://", "https://")):
         return path
-    if parsed.scheme or parsed.netloc:
-        raise ValueError(f"Invalid CDN path or URL: {path}")
-
-    external_path = f"{config.CDN_BASE_URL.rstrip('/')}/{path.lstrip('/')}"
-    parsed = urlparse(external_path)
-    if parsed.scheme not in {"http", "https"} or not parsed.netloc:
-        raise ValueError(f"Invalid CDN URL: {external_path}")
-    return external_path
+    if not external and config.CDN_LOCAL and os.path.isfile(LocalClient._path(path)):
+        return posixpath.join(LOCAL_URL, path.lstrip("/"))
+    return posixpath.join(config.CDN_BASE_URL, path.lstrip("/"))
 
 
 #
@@ -67,53 +33,54 @@ def external_url(path: str) -> str:
 #
 
 
-class BaseClient(Protocol):
+class Client(ABC):
+    @classmethod
+    @contextmanager
+    def connect(cls) -> Generator["Client", None, None]:
+        if config.CDN_LOCAL:
+            yield LocalClient()
+        else:
+            with FTP(
+                config.FTP_HOSTNAME,
+                config.FTP_USERNAME,
+                config.FTP_PASSWORD,
+            ) as ftp:
+                yield CdnClient(ftp)
+
+    @abstractmethod
     def filenames(self, path: str) -> list[str]: ...
 
+    @abstractmethod
     def modified(self, path: str) -> dict[str, datetime]: ...
 
+    @abstractmethod
     def exists(self, path: str) -> bool: ...
 
+    @abstractmethod
     def upload(self, file_: _SupportsRead[bytes], path: str) -> None: ...
 
+    @abstractmethod
     def delete(self, path: str) -> None: ...
 
 
-class CdnClient(BaseClient):
+class CdnClient(Client):
     def __init__(self, ftp: FTP) -> None:
         self._ftp = ftp
         self._home = ftp.pwd()
 
-    #
-    # Private
-    #
-
-    def _abs(self, rel: str) -> str:
+    def _path(self, rel: str) -> str:
         parts = [self._home]
         if config.FTP_BASE_DIR is not None:
             parts.append(config.FTP_BASE_DIR)
         parts.append(rel)
         return os.path.normpath(os.path.join(*parts))
 
-    def _get_dir(self, rel_dir: str) -> str:
-        return self._abs(rel_dir)
-
-    def _get_file_dir(self, rel_fp: str) -> str:
-        return os.path.dirname(self._abs(rel_fp))
-
-    def _get_file_path(self, rel_fp: str) -> str:
-        return self._abs(rel_fp)
-
-    #
-    # Public
-    #
-
     def filenames(self, path: str) -> list[str]:
-        self._ftp.cwd(self._get_dir(path))
+        self._ftp.cwd(self._path(path))
         return self._ftp.nlst()
 
     def modified(self, path: str) -> dict[str, datetime]:
-        self._ftp.cwd(self._get_dir(path))
+        self._ftp.cwd(self._path(path))
         times: dict[str, datetime] = {}
         for fn in self._ftp.nlst():
             try:
@@ -130,11 +97,11 @@ class CdnClient(BaseClient):
         return times
 
     def exists(self, path: str) -> bool:
-        self._ftp.cwd(self._get_file_dir(path))
+        self._ftp.cwd(os.path.dirname(self._path(path)))
         return os.path.basename(path) in self._ftp.nlst()
 
     def upload(self, file_: _SupportsRead[bytes], path: str) -> None:
-        dir_ = self._get_file_dir(path)
+        dir_ = os.path.dirname(self._path(path))
         try:
             self._ftp.mkd(dir_)
         except error_perm as error:
@@ -146,27 +113,21 @@ class CdnClient(BaseClient):
 
     def delete(self, path: str) -> None:
         try:
-            self._ftp.delete(self._get_file_path(path))
+            self._ftp.delete(self._path(path))
         except error_perm as error:
             if error.args[0][:3] != "550":
                 raise
         log.info(f"Deleted on FTP: {path}")
 
 
-class LocalClient(BaseClient):
-    #
-    # Private
-    #
-
+class LocalClient(Client):
     @classmethod
     def _path(cls, rel: str) -> str:
-        if current_app.static_folder is None:
-            raise RuntimeError
-        return os.path.join(current_app.static_folder, os.path.normpath(rel))
-
-    #
-    # Public
-    #
+        root = os.path.join(config.BASE_DIR, LOCAL_DIR)
+        path = os.path.normpath(os.path.join(root, rel.lstrip("/")))
+        if path != root and not path.startswith(f"{root}{os.sep}"):
+            raise ValueError(f"Invalid CDN path: {rel}")
+        return path
 
     def filenames(self, path: str) -> list[str]:
         dir_ = self._path(path)
@@ -200,46 +161,3 @@ class LocalClient(BaseClient):
         if os.path.isfile(fp):
             os.remove(fp)
             log.info(f"Deleted locally: {path}")
-
-
-#
-# Deprecated
-#
-
-
-@contextmanager
-def connect() -> Iterator[BaseClient]:
-    if use_local_static():
-        yield LocalClient()
-    else:
-        with FTP(
-            config.FTP_HOSTNAME,
-            config.FTP_USERNAME,
-            config.FTP_PASSWORD,
-        ) as ftp:
-            yield CdnClient(ftp)
-
-
-def filenames(path: str) -> list[str]:
-    with connect() as client:
-        return client.filenames(path)
-
-
-def modified(path: str) -> dict[str, datetime]:
-    with connect() as client:
-        return client.modified(path)
-
-
-def exists(path: str) -> bool:
-    with connect() as client:
-        return client.exists(path)
-
-
-def upload(file_: _SupportsRead[bytes], path: str) -> None:
-    with connect() as client:
-        client.upload(file_, path)
-
-
-def delete(path: str) -> None:
-    with connect() as client:
-        client.delete(path)

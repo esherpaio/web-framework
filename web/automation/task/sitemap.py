@@ -7,7 +7,7 @@ from typing import Any
 
 from sqlalchemy.orm import Session, selectinload
 
-from web import cdn
+from web.cdn import cdn_url
 from web.database import conn
 from web.database.model import AppRoute, SitemapImage, SitemapLocation
 from web.logger import log
@@ -161,7 +161,8 @@ class SitemapLocationSyncer(Processor):
         image_locs: tuple[str, ...],
     ) -> bool:
         """Reconcile the images belonging to one sitemap page location."""
-        image_locs = tuple(cdn.external_url(image_loc) for image_loc in image_locs)
+        urls = [cdn_url(image_loc, external=True) for image_loc in image_locs]
+        image_locs = tuple(x for x in urls if x is not None)
         if len(image_locs) != len(set(image_locs)):
             raise ValueError("Duplicate image locations are not allowed")
 

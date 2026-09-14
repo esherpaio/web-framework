@@ -5,13 +5,13 @@ import alembic.config
 from flask import Blueprint, Flask
 from werkzeug.middleware.proxy_fix import ProxyFix
 
-from web import cdn
 from web.app.error import handle_error
 from web.app.redirector import Redirector
 from web.app.urls import url_for
 from web.auth import Auth, current_user
 from web.automation import Automator
 from web.cache import cache, cache_common, cache_manager
+from web.cdn import cdn_url
 from web.i18n import translator
 from web.locale import LocaleManager, current_locale
 from web.logger import log
@@ -134,7 +134,7 @@ class Server:
         for name, func in filters.items():
             app.add_template_filter(func, name=name)
 
-        globals_["cdn_url"] = cdn.url
+        globals_["cdn_url"] = cdn_url
         globals_["url_for"] = url_for
         for name, func in globals_.items():
             app.add_template_global(func, name=name)
