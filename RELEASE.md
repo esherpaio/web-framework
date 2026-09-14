@@ -2,20 +2,20 @@
 
 ## 2026-09-14
 
-- Support for llms.txt, helping AI assistants discover and understand the website
-- Alternate page links for improved language and regional targeting
 - Faster page loads with new CSS minifier
-- Smaller sitemap files through minification
 
-- Improved schema.org JSON-LD:
-  - Support product handling times
-  - More accurate product review ratings
+- Search engine and AI improvements:
+  - Support for llms.txt, helping AI assistants discover and understand the website
+  - Alternate page links, so search engines show visitors the right language and region
+  - Smaller sitemap files, letting search engines process them faster
+  - Improved schema.org JSON-LD, supporting product handling times, delivery times and product ratings
 
 - Back office improvements:
   - Errors are now automatically reported to the administrator
   - Styling fixes
 
 - Bug fixes:
+  - Fixed product and option price changes in the back office not being applied to SKUs
   - Fixed text area content being altered in HTML minification
   - Fixed selecting related items in the back office
   - Fixed serving static files from a local CDN
@@ -49,6 +49,7 @@ Webshop features:
 ## 2026-02-20
 
 - Support for CDN caching
+
 - Various improvements:
   - Do not set cookies every request, only when necessary
   - Do not delete cookies when they are not set
