@@ -171,6 +171,7 @@ class Optimizer(metaclass=Singleton):
 
         cache._endpoints[request.full_path, encoding] = (
             time.monotonic(),
+            response.headers.get("Content-Type"),
             response.get_data(as_text=False),
         )
         log.info(f"Optimizer cached {request.full_path}")
@@ -180,7 +181,7 @@ class Optimizer(metaclass=Singleton):
         if endpoint is None:
             return None
 
-        cached_at, data = endpoint
+        cached_at, content_type, data = endpoint
         cached_ago_s = int(time.monotonic() - cached_at)
         if cached_ago_s > config.OPTIMIZER_SERVER_CACHE_MAX_S:
             del cache._endpoints[request.full_path, encoding]
@@ -190,6 +191,8 @@ class Optimizer(metaclass=Singleton):
         response = make_response()
         response.direct_passthrough = False
         response.set_data(data)
+        if content_type is not None:
+            response.headers["Content-Type"] = content_type
         return response
 
     def del_cache(self) -> None:
