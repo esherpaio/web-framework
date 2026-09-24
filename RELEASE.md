@@ -1,5 +1,18 @@
 # Changelog
 
+## 2026-09-24
+
+- Email protection improvements:
+  - Improved Cloudflare Turnstile protection for contact forms
+  - Automatically detect spam contact messages and prevent them from being sent
+  - Prevent duplicate emails from being sent repeatedly within a short period
+
+- Back office improvements:
+  - Review and permanently delete detected spam and duplicate emails
+  - Spam and duplicate emails are automatically deleted after 30 days
+  - Sidebar links are organized under clear category headings
+  - Related form fields are organized into sections for easier reading
+
 ## 2026-09-14
 
 - Faster page loads with new CSS minifier

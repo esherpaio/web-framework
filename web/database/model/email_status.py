@@ -15,5 +15,6 @@ class EmailStatus(StrBase):
 
 class EmailStatusId(StrEnum):
     QUEUED = "queued"
+    SKIPPED = "skipped"
     SENT = "sent"
     FAILED = "failed"

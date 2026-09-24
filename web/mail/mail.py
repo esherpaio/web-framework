@@ -4,11 +4,12 @@ from typing import Callable
 from sqlalchemy.orm import Session
 
 from web.auth import current_user
-from web.database.model import Email, EmailStatusId
+from web.database.model import Email, EmailStatusId, EmailType
 from web.logger import log
 from web.setup import config
 from web.utils import Singleton
 
+from .classification import classify_email
 from .enum import MailEvent
 
 
@@ -32,50 +33,55 @@ class Mail(metaclass=Singleton):
         scheduled_at: datetime | None = None,
         **kwargs,
     ) -> bool:
-        # Remember error state
-        all_result = True
+        if _email is not None and not isinstance(_email, Email):
+            raise TypeError("Expected an Email instance")
+        if _email is not None and _email.status_id == EmailStatusId.SKIPPED:
+            return True
 
-        for event in cls.get_events(event_id):
-            # Send immediately if not using worker
-            if _email or not config.WORKER_ENABLED:
+        events = cls.get_events(event_id)
+        if not events:
+            if _email is not None:
+                _email.status_id = EmailStatusId.SKIPPED
+                s.flush()
+            return False
+
+        send_now = _email is not None or not config.WORKER_ENABLED
+        if _email is None:
+            type_, digest = classify_email(s, event_id, kwargs)
+            if user_id is None and current_user:
+                user_id = current_user.id
+            _email = Email(
+                event_id=event_id,
+                data=kwargs,
+                user_id=user_id,
+                scheduled_at=scheduled_at,
+                type=type_,
+                content_hash=digest,
+                status_id=EmailStatusId.QUEUED,
+            )
+            s.add(_email)
+
+        success = True
+        if _email.type != EmailType.OK:
+            _email.status_id = EmailStatusId.SKIPPED
+        elif send_now:
+            for event in events:
                 try:
-                    result = event(s, **kwargs)
+                    mail_success = event(s, **kwargs)
                 except Exception:
-                    result = False
-                    all_result = False
-                if result:
-                    status_id = EmailStatusId.SENT
-                else:
-                    status_id = EmailStatusId.FAILED
-            else:
-                status_id = EmailStatusId.QUEUED
+                    mail_success = False
+                if not mail_success:
+                    success = False
+            _email.updated_at = datetime.now(timezone.utc)
+            _email.status_id = EmailStatusId.SENT if success else EmailStatusId.FAILED
+        s.flush()
 
-            # Save email in database
-            if _email is None:
-                if user_id is None and current_user:
-                    user_id = current_user.id
-                _email = Email(
-                    event_id=event_id,
-                    data=kwargs,
-                    user_id=user_id,
-                    status_id=status_id,
-                    scheduled_at=scheduled_at,
-                )
-                s.add(_email)
-            else:
-                _email.updated_at = datetime.now(timezone.utc)
-                _email.status_id = status_id
-            s.flush()
-
-            # Log
-            if status_id is EmailStatusId.QUEUED:
-                log.info(f"Queued email {_email.id} for event {event_id}")
-            elif status_id is EmailStatusId.SENT:
-                log.info(f"Sent email {_email.id} for event {event_id}")
-            elif status_id is EmailStatusId.FAILED:
-                log.warning(f"Failed email {_email.id} for event {event_id}")
-
-        return all_result
+        message = f"Email {_email.id} for event {event_id} {_email.status_id}"
+        if success:
+            log.info(message)
+        else:
+            log.warning(message)
+        return success
 
 
 mail = Mail()

@@ -14,7 +14,7 @@ from .category_item import CategoryItem
 from .country import Country
 from .coupon import Coupon
 from .currency import Currency
-from .email import Email
+from .email import Email, EmailType
 from .email_status import EmailStatus, EmailStatusId
 from .file import File
 from .file_type import FileType, FileTypeId

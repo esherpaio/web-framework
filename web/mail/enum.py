@@ -10,7 +10,6 @@ class MailEvent(StrEnum):
     USER_REQUEST_PASSWORD = "user.request_password"
     USER_REQUEST_VERIFICATION = "user.request_verification"
     WEBSITE_CONTACT = "website.contact"
-    WEBSITE_BULK = "website.bulk"
 
 
 class MailMethod(StrEnum):

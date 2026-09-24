@@ -11,5 +11,4 @@ mail_events: dict[MailEvent | str, list[Callable]] = {
     MailEvent.USER_REQUEST_PASSWORD: [event.mail_user_password],
     MailEvent.USER_REQUEST_VERIFICATION: [event.mail_user_verification],
     MailEvent.WEBSITE_CONTACT: [event.mail_contact_business],
-    MailEvent.WEBSITE_BULK: [event.mail_bulk],
 }

@@ -4,11 +4,11 @@ from sqlalchemy import func, null, or_
 from sqlalchemy.orm import Session
 
 from web.database import conn
-from web.database.model import Email, EmailStatusId, User, UserRoleId
+from web.database.model import Email, EmailStatusId, EmailType, User, UserRoleId
 from web.mail import mail
 from web.setup import config
 
-from ..automator import Processor
+from ..automator import Cleaner, Processor
 
 
 class EmailProcessor(Processor):
@@ -45,3 +45,18 @@ class EmailProcessor(Processor):
             return False
         mail.trigger_events(s, email.event_id, _email=email, **email.data)
         return True
+
+
+class EmailCleaner(Cleaner):
+    INTERVAL_S = 86400
+    RUN_DEBUG = False
+
+    @classmethod
+    def run(cls) -> None:
+        cls.log_start()
+        before = datetime.now(timezone.utc) - timedelta(days=30)
+        with conn.begin() as s:
+            s.query(Email).filter(
+                Email.type != EmailType.OK,
+                Email.created_at < before,
+            ).delete()

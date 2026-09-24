@@ -66,7 +66,7 @@ class _Protocol(Protocol):
 
     MAIL_METHOD: MailMethod
     MAIL_TIMEOUT_S: int
-    MAIL_MAX_RECEIVERS: int
+    MAIL_DUPLICATE_WINDOW_S: int
     MAIL_SENDER: str
     MAIL_RECEIVER: str
     MAIL_ADMIN: str
@@ -94,6 +94,7 @@ class _Protocol(Protocol):
 
     TURNSTILE_SITE_KEY: str | None
     TURNSTILE_SECRET_KEY: str | None
+    TURNSTILE_EVENT_IDS: list[str]
     GOOGLE_API_KEY: str | None
     GOOGLE_CLIENT_ID: str | None
     GOOGLE_PLACE_ID: str | None

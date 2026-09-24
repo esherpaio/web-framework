@@ -49,14 +49,3 @@ def mail_contact_customer(
         ],
     )
     return send_email(subject, html, to=[email])
-
-
-def mail_bulk(
-    s: Session,
-    emails: list[str],
-    subject: str,
-    html: str,
-    **kwargs,
-) -> bool:
-    html = render_email("html", title=subject, html=html)
-    return send_email(subject, html, bcc=emails)
