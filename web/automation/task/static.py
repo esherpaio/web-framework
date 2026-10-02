@@ -5,6 +5,7 @@ from datetime import datetime
 from enum import StrEnum
 from typing import Type
 
+from sqlalchemy import text
 from sqlalchemy.orm import Session
 
 from web.cdn import CDN_DIR, Client
@@ -84,15 +85,22 @@ class StaticProcessor(Processor):
             return
 
         with Client.connect() as c:
+            log.info("Reading static files from CDN")
             modified = c.modified(CDN_DIR)
             filenames = set(modified)
+            uploaded = cls.upload_bundles(c, filenames)
+            log.info("Saving static bundle paths")
             with conn.begin() as s:
+                s.execute(text("SET LOCAL lock_timeout = '10s'"))
                 resources = cls.load_resources(s)
-                uploaded = cls.upload_bundles(s, c, resources, filenames)
-            with conn.begin() as s:
-                cls.clear_stale_paths(s, uploaded)
-            with conn.begin() as s:
-                cls.prune_files(s, c, modified)
+                present: dict[tuple[str, int], list[StaticType]] = defaultdict(list)
+                for job, resource in resources.items():
+                    if job not in uploaded:
+                        continue
+                    job.set_attribute(s, resource, uploaded[job])
+                    present[(resource.__tablename__, resource.id)].append(job.type_)
+                cls.clear_stale_paths(s, present)
+            cls.prune_files(c, modified)
 
     @classmethod
     def load_resources(
@@ -111,13 +119,12 @@ class StaticProcessor(Processor):
     @classmethod
     def upload_bundles(
         cls,
-        s: Session,
         client: Client,
-        resources: dict[StaticJob, AppSettings | AppBlueprint | AppRoute],
         cdn_fns: set[str],
-    ) -> dict[tuple[str, int], list[StaticType]]:
-        processed: dict[tuple[str, int], list[StaticType]] = defaultdict(list)
+    ) -> dict[StaticJob, str]:
+        uploaded: dict[StaticJob, str] = {}
         for job in cls.JOBS:
+            log.info(f"Compiling static job {job.id_}")
             packer = Packer()
             compiled, bytes_, hash_ = packer.pack(job.bundles)
             if not compiled:
@@ -129,12 +136,11 @@ class StaticProcessor(Processor):
             cdn_path = os.path.join(CDN_DIR, cdn_fn)
             if cdn_fn not in cdn_fns:
                 client.upload(io.BytesIO(bytes_), cdn_path)
+                cdn_fns.add(cdn_fn)
 
-            resource = resources[job]
-            job.set_attribute(s, resource, cdn_path)
-            processed[(resource.__tablename__, resource.id)].append(job.type_)
+            uploaded[job] = cdn_path
 
-        return processed
+        return uploaded
 
     @classmethod
     def clear_stale_paths(
@@ -159,19 +165,19 @@ class StaticProcessor(Processor):
     @classmethod
     def prune_files(
         cls,
-        s: Session,
         client: Client,
         modified: dict[str, datetime],
     ) -> None:
         active: set[str] = set()
-        for resource in [
-            *s.query(AppSettings).all(),
-            *s.query(AppBlueprint).all(),
-            *s.query(AppRoute).all(),
-        ]:
-            for path in (resource.js_path, resource.css_path):  # type: ignore[attr-defined]
-                if path:
-                    active.add(os.path.basename(path))
+        with conn.begin() as s:
+            for resource in [
+                *s.query(AppSettings).all(),
+                *s.query(AppBlueprint).all(),
+                *s.query(AppRoute).all(),
+            ]:
+                for path in (resource.js_path, resource.css_path):  # type: ignore[attr-defined]
+                    if path:
+                        active.add(os.path.basename(path))
 
         ordered = sorted(modified, key=lambda fn: modified[fn], reverse=True)
         keep = set(ordered[: cls.KEEP]) | active

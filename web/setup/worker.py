@@ -1,4 +1,5 @@
 import atexit
+import os
 import signal
 import time
 from threading import Event, Thread
@@ -8,6 +9,7 @@ from typing import Callable, Type
 from flask import Flask
 
 from web.automation import Automator
+from web.automation.task.database import DatabaseRevisionCheck
 from web.cache import cache_common, cache_manager
 from web.i18n import translator
 from web.logger import log
@@ -26,6 +28,7 @@ class Worker:
         self._tasks: list[Type[Automator]] = []
         self._interval_s = config.WORKER_INTERVAL_S
         self._last_loop: float | None = None
+        self._exit_code = 0
 
     def start(self) -> None:
         if self._thread is not None and self._thread.is_alive():
@@ -49,6 +52,9 @@ class Worker:
     def setup_logging(self) -> None:
         patch_logging()
 
+    def setup_database(self) -> None:
+        DatabaseRevisionCheck.run()
+
     def setup_i18n(self, dir_: str | None) -> None:
         if dir_ is None:
             return
@@ -56,10 +62,14 @@ class Worker:
         translator.load_dir(dir_)
 
     def setup_cache(self, hook: Callable | None = None) -> None:
+        started = time.monotonic()
         cache_manager.add_hook(cache_common)
         if hook is not None:
             cache_manager.add_hook(hook)
         cache_manager.update(force=True)
+        cache_manager.start()
+        load_s = time.monotonic() - started
+        log.info(f"Loaded worker cache in {load_s:.2f}s")
 
     def setup_mail(self, events: dict[MailEvent | str, list[Callable]] | None) -> None:
         if config.MAIL_METHOD:
@@ -98,6 +108,16 @@ class Worker:
                 self._stop_event.wait(self._interval_s)
 
     def _loop(self) -> None:
+        try:
+            DatabaseRevisionCheck.run()
+        except SystemExit:
+            self._request_exit(0)
+            return
+        except Exception:
+            log.exception("Cannot verify database revision; stopping worker")
+            self._request_exit(1)
+            return
+
         for task in self._tasks:
             if self._stop_event.is_set():
                 return
@@ -119,14 +139,21 @@ class Worker:
         self._stop_event.set()
         if self._thread is not None and self._thread.is_alive():
             self._thread.join(timeout=SHUTDOWN_TIMEOUT_S)
+        cache_manager.stop()
+
+    def _request_exit(self, code: int) -> None:
+        self._exit_code = code
+        self._stop_event.set()
+        # Stop Bjoern's event loop by sending SIGINT to the current process
+        os.kill(os.getpid(), signal.SIGINT)
 
     def _on_signal(self, sig: int) -> None:
-        prev = signal.getsignal(sig)
-
         def handler(signum: int, frame: FrameType | None) -> None:
             self._stop_event.set()
-            signal.signal(signum, prev)
-            if callable(prev):
-                prev(signum, frame)
+            if signum == signal.SIGTERM:
+                os.kill(os.getpid(), signal.SIGINT)
+                return
+            self._on_shutdown()
+            raise SystemExit(self._exit_code)
 
         signal.signal(sig, handler)

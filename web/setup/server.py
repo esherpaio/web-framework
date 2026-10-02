@@ -1,7 +1,7 @@
+import time
 from datetime import datetime, timezone
 from typing import Callable, Type
 
-import alembic.config
 from flask import Blueprint, Flask
 from werkzeug.middleware.proxy_fix import ProxyFix
 
@@ -10,6 +10,7 @@ from web.app.redirector import Redirector
 from web.app.urls import url_for
 from web.auth import Auth, current_user
 from web.automation import Automator
+from web.automation.task.database import DatabaseRevisionCheck
 from web.cache import cache, cache_common, cache_manager
 from web.cdn import cdn_url
 from web.i18n import translator
@@ -41,10 +42,7 @@ class Server:
         tasks: list[Type[Automator]],
         hook: Callable | None = None,
     ) -> None:
-        # Migrate database
-        if migrate:
-            log.info("Migrating database")
-            alembic.config.main(argv=["upgrade", "head"])
+        DatabaseRevisionCheck.run(migrate=migrate)
 
         # Run tasks
         for task in tasks:
@@ -53,7 +51,10 @@ class Server:
                 log.debug(f"Skipping task {task_cls} in debug mode")
                 continue
             with app.app_context():
+                started = time.monotonic()
                 task_cls.run()
+                run_s = time.monotonic() - started
+                log.info(f"Completed task {task_cls} in {run_s:.2f}s")
 
         # Run database hook
         if hook is not None:
@@ -64,11 +65,15 @@ class Server:
                 log.error(f"Error running database hook: {e}")
 
     def setup_cache(self, hook: Callable | None = None) -> None:
+        started = time.monotonic()
         cache_manager.add_hook(cache_common)
         if hook is not None:
             cache_manager.add_hook(hook)
         cache_manager.add_hook(optimizer.del_cache)
         cache_manager.update(force=True)
+        cache_manager.start()
+        load_s = time.monotonic() - started
+        log.info(f"Loaded server cache in {load_s:.2f}s")
 
     def setup_mail(self, events: dict[MailEvent | str, list[Callable]]) -> None:
         if config.MAIL_METHOD:

@@ -1,4 +1,5 @@
 import atexit
+import os
 import signal
 from datetime import datetime, timezone
 from threading import Event, Thread
@@ -25,7 +26,6 @@ class CacheManager(metaclass=Singleton):
         atexit.register(self.stop)
         self._on_signal(signal.SIGINT)
         self._on_signal(signal.SIGTERM)
-        self.start()
 
     #
     # Public
@@ -43,9 +43,7 @@ class CacheManager(metaclass=Singleton):
         self._thread = Thread(
             target=self._loop,
             name="CacheManager",
-            # A non-daemon thread prevents Python from reaching atexit handlers,
-            # including the handler responsible for stopping this thread.
-            daemon=True,
+            daemon=False,
         )
         self._thread.start()
 
@@ -87,6 +85,8 @@ class CacheManager(metaclass=Singleton):
             try:
                 hook()
             except Exception as e:
+                if force:
+                    raise
                 log.error(f"Error running cache hook {hook.__name__}: {e}")
 
     #
@@ -105,9 +105,16 @@ class CacheManager(metaclass=Singleton):
 
         def handler(signum: int, frame: FrameType | None) -> None:
             self._stop_event.set()
+            if signum == signal.SIGTERM:
+                # Let Bjoern stop its event loop before Python unwinds startup.
+                os.kill(os.getpid(), signal.SIGINT)
+                return
+            self.stop()
             signal.signal(signum, prev)
             if callable(prev):
                 prev(signum, frame)
+            elif prev == signal.SIG_DFL:
+                raise SystemExit(0)
 
         signal.signal(sig, handler)
 

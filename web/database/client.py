@@ -14,6 +14,7 @@ def init_db(uri: str | None = None, **options):
 
     engine = create_engine(
         uri,
+        connect_args={"connect_timeout": 10},
         pool_pre_ping=True,  # Check if connection is alive before using
         pool_size=2,  # Keep x connections open in pool
         max_overflow=5,  # Allow x extra connections when pool is full

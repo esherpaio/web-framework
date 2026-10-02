@@ -44,6 +44,7 @@ class Client(ABC):
                 config.FTP_HOSTNAME,
                 config.FTP_USERNAME,
                 config.FTP_PASSWORD,
+                timeout=30,
             ) as ftp:
                 yield CdnClient(ftp)
 
@@ -101,6 +102,7 @@ class CdnClient(Client):
         return os.path.basename(path) in self._ftp.nlst()
 
     def upload(self, file_: _SupportsRead[bytes], path: str) -> None:
+        log.info(f"Uploading on FTP: {path}")
         dir_ = os.path.dirname(self._path(path))
         try:
             self._ftp.mkd(dir_)

@@ -2,6 +2,7 @@ from .app_settings import AppSettingSeedSyncer
 from .cart import CartCleaner
 from .country import CountryApiSyncer
 from .currency import CurrencyApiSyncer
+from .database import DatabaseRevisionCheck
 from .email import EmailCleaner, EmailProcessor
 from .email_status import EmailStatusSeedSyncer
 from .file_type import FileTypeSeedSyncer
