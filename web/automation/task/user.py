@@ -13,7 +13,6 @@ class UserCleaner(Cleaner):
 
     @classmethod
     def run(cls, days: int = 14) -> None:
-        cls.log_start()
         with conn.begin() as s:
             before_dt = datetime.now(timezone.utc) - timedelta(days=days)
             s.query(User).filter(

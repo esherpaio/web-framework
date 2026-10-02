@@ -42,7 +42,7 @@ class Server:
         tasks: list[Type[Automator]],
         hook: Callable | None = None,
     ) -> None:
-        DatabaseRevisionCheck.run(migrate=migrate)
+        DatabaseRevisionCheck.execute(migrate=migrate)
 
         # Run tasks
         for task in tasks:
@@ -51,10 +51,7 @@ class Server:
                 log.debug(f"Skipping task {task_cls} in debug mode")
                 continue
             with app.app_context():
-                started = time.monotonic()
-                task_cls.run()
-                run_s = time.monotonic() - started
-                log.info(f"Completed task {task_cls} in {run_s:.2f}s")
+                task_cls.execute()
 
         # Run database hook
         if hook is not None:

@@ -14,7 +14,6 @@ class RegionApiSyncer(RestCountriesApiSyncer):
     @classmethod
     @external_sync
     def run(cls) -> None:
-        cls.log_start()
         with conn.begin() as s:
             try:
                 resources = cls.fetch_all(cls.API_URL)

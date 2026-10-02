@@ -14,7 +14,6 @@ from ..automator import Cleaner, Processor
 class EmailProcessor(Processor):
     @classmethod
     def run(cls) -> None:
-        cls.log_start()
         has_sent: bool = True
         while has_sent:
             with conn.begin() as s:
@@ -53,7 +52,6 @@ class EmailCleaner(Cleaner):
 
     @classmethod
     def run(cls) -> None:
-        cls.log_start()
         before = datetime.now(timezone.utc) - timedelta(days=30)
         with conn.begin() as s:
             s.query(Email).filter(

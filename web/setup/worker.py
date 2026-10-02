@@ -53,7 +53,7 @@ class Worker:
         patch_logging()
 
     def setup_database(self) -> None:
-        DatabaseRevisionCheck.run()
+        DatabaseRevisionCheck.execute()
 
     def setup_i18n(self, dir_: str | None) -> None:
         if dir_ is None:
@@ -109,7 +109,7 @@ class Worker:
 
     def _loop(self) -> None:
         try:
-            DatabaseRevisionCheck.run()
+            DatabaseRevisionCheck.execute()
         except SystemExit:
             self._request_exit(0)
             return
@@ -129,7 +129,7 @@ class Worker:
                 log.debug(f"Skipping task {task_cls} while interval unreached")
                 continue
             try:
-                task_cls.run()
+                task_cls.execute()
             except Exception as e:
                 log.error(f"Error running task {task_cls}: {e}")
             task_cls.mark_run()

@@ -12,7 +12,6 @@ from ..automator import Automator
 class DatabaseRevisionCheck(Automator):
     @classmethod
     def run(cls, migrate: bool = False) -> None:
-        cls.log_start()
         if migrate:
             create_database()
 

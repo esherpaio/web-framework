@@ -79,7 +79,6 @@ class StaticProcessor(Processor):
 
     @classmethod
     def run(cls) -> None:
-        cls.log_start()
         if not config.AUTOMATE_STATIC:
             log.warning("Static processor is disabled")
             return

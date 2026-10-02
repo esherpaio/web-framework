@@ -1,4 +1,5 @@
 import re
+import time
 from datetime import UTC, datetime, timedelta
 from typing import Any, Type
 
@@ -16,9 +17,16 @@ class Automator:
     INTERVAL_S: int | None = None
 
     @classmethod
-    def log_start(cls) -> None:
+    def execute(cls, *args: Any, **kwargs: Any) -> None:
+        """Log task start and duration, including when it raises or exits."""
         name = re.sub(r"([a-z])([A-Z])", r"\1 \2", cls.__name__).lower()
         log.info(f"Running task {name}")
+        started = time.monotonic()
+        try:
+            cls.run(*args, **kwargs)
+        finally:
+            run_s = time.monotonic() - started
+            log.info(f"Task {name} ran for {run_s:.2f}s")
 
     @classmethod
     def should_run(cls) -> bool:
@@ -54,7 +62,6 @@ class SeedSyncer(Automator):
 
     @classmethod
     def run(cls) -> None:
-        cls.log_start()
         with conn.begin() as s:
             cls.sync_model(s)
 

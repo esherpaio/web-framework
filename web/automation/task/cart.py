@@ -13,7 +13,6 @@ class CartCleaner(Cleaner):
 
     @classmethod
     def run(cls, days: int = 28) -> None:
-        cls.log_start()
         with conn.begin() as s:
             before_dt = datetime.now(timezone.utc) - timedelta(days=days)
             s.query(Cart).filter(

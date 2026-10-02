@@ -20,7 +20,7 @@ def sync_before(
 ) -> Callable[[Callable[..., Any]], Callable[..., Any]]:
     def decorate(f: Callable) -> Callable[..., Any]:
         def wrap(*args, **kwargs) -> Any:
-            syncer().run()
+            syncer().execute()
             return f(*args, **kwargs)
 
         wrap.__name__ = f.__name__
@@ -35,7 +35,7 @@ def sync_after(
     def decorate(f: Callable) -> Callable[..., Any]:
         def wrap(*args, **kwargs) -> Any:
             result = f(*args, **kwargs)
-            syncer().run()
+            syncer().execute()
             return result
 
         wrap.__name__ = f.__name__

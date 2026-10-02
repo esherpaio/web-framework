@@ -13,7 +13,6 @@ class CountryApiSyncer(RestCountriesApiSyncer):
     @classmethod
     @external_sync
     def run(cls) -> None:
-        cls.log_start()
         with conn.begin() as s:
             # Call API
             try:
