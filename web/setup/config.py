@@ -3,9 +3,9 @@ import os
 from decimal import Decimal
 from typing import Any, Literal, Protocol
 
-from dotenv import load_dotenv
+from dotenv import find_dotenv, load_dotenv
 
-load_dotenv(override=True)
+load_dotenv(find_dotenv(usecwd=True), override=True)
 
 LogLevel = Literal["CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG", "NOTSET"]
 UrlScheme = Literal["http", "https"]
@@ -132,7 +132,7 @@ class Config:
     _config: _Protocol | None = None
 
     def __init__(self) -> None:
-        load_dotenv(override=True)
+        load_dotenv(find_dotenv(usecwd=True), override=True)
 
     def __getattr__(self, name: str) -> Any:
         if self._config is None:

@@ -35,6 +35,7 @@
     "API_SHIPMENT_METHOD_INVALID": "Please select a different shipment method.",
     "API_SHIPMENT_METHOD_REQUIRED": "Please select a shipment method.",
     "API_SHIPMENT_COUNTRY_UNALLOWED": "The selected country is unavailable for shipping.",
+    "API_SKU_UNAVAILABLE": "This product is no longer available.",
     "API_USER_ACTIVATION_CHECK": "Please activate your account with the URL in your email.",
     "API_USER_ACTIVATION_SUCCESS": "Your account has been activated.",
     "API_USER_EMAIL_IN_USE": "This email address is already in use.",

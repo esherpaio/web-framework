@@ -1,10 +1,20 @@
 from decimal import Decimal
 
+from flask import abort
 from sqlalchemy.orm import Session, joinedload
 from sqlalchemy.sql import ColumnElement
 
+from web.api import HttpText, json_response
 from web.database.model import Product, ProductValue, Sku, SkuDetail
+from web.i18n import _
 from web.logger import log
+
+
+def val_sku(sku: Sku | None) -> None:
+    if sku is None:
+        abort(json_response(404, HttpText.HTTP_404))
+    if sku.is_deleted or sku.product.is_deleted:
+        abort(json_response(400, _("API_SKU_UNAVAILABLE")))
 
 
 def get_sku_unit_price(product: Product, values: list[ProductValue]) -> Decimal:
