@@ -1,5 +1,6 @@
 from decimal import Decimal
 from typing import Any, Optional, Type
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 import emoji
 from sqlalchemy import Numeric, TypeDecorator
@@ -14,6 +15,7 @@ from ..error import (
     DbMinLengthError,
     DbMinNumberError,
     DbPhoneError,
+    DbTimezoneError,
 )
 
 #
@@ -64,6 +66,14 @@ def val_email(value: str | None) -> None:
     if isinstance(value, str):
         if not is_email(value):
             raise DbEmailError
+
+
+def val_timezone(value: str | None) -> None:
+    if isinstance(value, str):
+        try:
+            ZoneInfo(value)
+        except (ZoneInfoNotFoundError, ValueError) as error:
+            raise DbTimezoneError from error
 
 
 def val_length(

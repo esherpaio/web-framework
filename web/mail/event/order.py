@@ -18,7 +18,9 @@ def mail_order_received(
     **kwargs,
 ) -> bool:
     subject = _(
-        "MAIL_ORDER_SUBJECT", business_name=config.BUSINESS_NAME, order_id=order_id
+        "MAIL_ORDER_SUBJECT",
+        business_name=config.BUSINESS_NAME,
+        order_id=order_id,
     )
     html = render_email(
         title=_("MAIL_ORDER_TITLE", order_id=order_id),
@@ -46,14 +48,20 @@ def mail_order_paid(
     remove_file(pdf_path, delay_s=20)
     # Generate and send email
     subject = _(
-        "MAIL_ORDER_SUBJECT", business_name=config.BUSINESS_NAME, order_id=order_id
+        "MAIL_ORDER_SUBJECT",
+        business_name=config.BUSINESS_NAME,
+        order_id=order_id,
     )
     html = render_email(
         title=_("MAIL_ORDER_TITLE", order_id=order_id),
         paragraphs=[_("MAIL_ORDER_PAID_P1"), _("MAIL_ORDER_PAID_P2")],
     )
     return send_email(
-        subject, html, to=[billing_email], blob_path=pdf_path, blob_name=pdf_name
+        subject,
+        html,
+        to=[billing_email],
+        blob_path=pdf_path,
+        blob_name=pdf_name,
     )
 
 
@@ -67,7 +75,9 @@ def mail_order_shipped(
     **kwargs,
 ) -> bool:
     subject = _(
-        "MAIL_ORDER_SUBJECT", business_name=config.BUSINESS_NAME, order_id=order_id
+        "MAIL_ORDER_SUBJECT",
+        business_name=config.BUSINESS_NAME,
+        order_id=order_id,
     )
     html = render_email(
         title=_("MAIL_ORDER_TITLE", order_id=order_id),
@@ -98,12 +108,18 @@ def mail_order_refunded(
     remove_file(pdf_path, delay_s=20)
     # Generate and send email
     subject = _(
-        "MAIL_ORDER_SUBJECT", business_name=config.BUSINESS_NAME, order_id=order_id
+        "MAIL_ORDER_SUBJECT",
+        business_name=config.BUSINESS_NAME,
+        order_id=order_id,
     )
     html = render_email(
         title=_("MAIL_ORDER_TITLE", order_id=order_id),
         paragraphs=[_("MAIL_ORDER_REFUNDED_P1"), _("MAIL_ORDER_REFUNDED_P2")],
     )
     return send_email(
-        subject, html, to=[billing_email], blob_path=pdf_path, blob_name=pdf_name
+        subject,
+        html,
+        to=[billing_email],
+        blob_path=pdf_path,
+        blob_name=pdf_name,
     )

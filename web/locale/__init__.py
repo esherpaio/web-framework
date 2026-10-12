@@ -7,6 +7,6 @@ from .utils import (
     gen_locale,
     get_route_locale,
     lacks_locale,
-    match_locale,
+    parse_locale,
     unknown_locale,
 )

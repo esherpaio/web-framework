@@ -1,5 +1,7 @@
 import os
+from datetime import datetime, timezone
 from decimal import ROUND_HALF_UP, Decimal
+from zoneinfo import ZoneInfo
 
 DIR = os.path.dirname(os.path.realpath(__file__))
 
@@ -17,3 +19,10 @@ def get_pdf_path(pdf_name: str) -> str:
         os.makedirs(pdf_dir)
     pdf_path = os.path.join(pdf_dir, pdf_name)
     return pdf_path
+
+
+def local_datetime(datetime_: datetime, timezone_name: str) -> datetime:
+    if datetime_.tzinfo is None:
+        # Assume naive datetime is in UTC
+        datetime_ = datetime_.replace(tzinfo=timezone.utc)
+    return datetime_.astimezone(ZoneInfo(timezone_name))

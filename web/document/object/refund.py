@@ -2,6 +2,7 @@ from itertools import zip_longest
 
 from fpdf import FPDF
 from fpdf.enums import Align, TableBordersLayout, XPos, YPos
+from fpdf.image_datastructures import ImageCache
 from sqlalchemy.orm import Session
 
 from web.database.model import Invoice, Order, Refund
@@ -18,7 +19,7 @@ from ..style import (
     FirstRowFillMode,
     add_fonts,
 )
-from ..utils import format_decimal
+from ..utils import format_decimal, local_datetime
 
 
 def gen_refund_pdf(
@@ -26,8 +27,13 @@ def gen_refund_pdf(
     order: Order,
     invoice: Invoice,
     refund: Refund,
+    *,
+    image_cache: ImageCache | None = None,
 ) -> FPDF:
     pdf = FPDF(orientation="portrait", unit="mm", format="A4")
+    if image_cache is not None:
+        image_cache.reset_usages()
+        pdf.image_cache = image_cache
     add_fonts(pdf)
     pdf.set_auto_page_break(auto=True, margin=30)
     pdf.add_page()
@@ -44,7 +50,7 @@ def gen_refund_pdf(
     with pdf.table(
         line_height=6,
         text_align=("LEFT", "LEFT", "RIGHT", "LEFT"),
-        col_widths=(32, 32, 21, 15),
+        col_widths=(28, 24, 25, 23),
         borders_layout=TableBordersLayout.NONE,
         first_row_as_headings=False,
     ) as table:
@@ -128,13 +134,14 @@ def _get_refund_info_table_data(
         _("PDF_REFUND_DATE"),
     ]
 
+    tz = config.BUSINESS_TIMEZONE
     fourth = [
         str(order.id),
-        order.created_at.strftime("%Y-%m-%d"),
+        local_datetime(order.created_at, tz).strftime("%Y-%m-%d"),
         invoice.number,
-        invoice.created_at.strftime("%Y-%m-%d"),
+        local_datetime(invoice.created_at, tz).strftime("%Y-%m-%d"),
         refund.number,
-        refund.created_at.strftime("%Y-%m-%d"),
+        local_datetime(refund.created_at, tz).strftime("%Y-%m-%d"),
     ]
 
     return list(zip_longest(first, second, third, fourth, fillvalue=""))  # type: ignore[arg-type]

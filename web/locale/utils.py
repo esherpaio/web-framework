@@ -13,33 +13,30 @@ class LocaleStyle(StrEnum):
 
 
 def get_route_locale() -> str | None:
-    """Get the locale for the current route."""
     if has_request_context() and request.view_args is not None:
         locale = request.view_args.get("_locale", None)
-        if locale is None or None in match_locale(locale):
+        if locale is None or None in parse_locale(locale):
             return None
         return locale
     return None
 
 
 def expects_locale(endpoint: str | None) -> bool:
-    if endpoint is not None and current_app.url_map.is_endpoint_expecting(
+    return endpoint is not None and current_app.url_map.is_endpoint_expecting(
         endpoint, "_locale"
-    ):
-        return True
-    return False
+    )
 
 
 def lacks_locale(endpoint: str | None, values: dict) -> bool:
     if expects_locale(endpoint):
         locale = values.get("_locale", None)
-        if locale is None or None in match_locale(locale):
+        if locale is None or None in parse_locale(locale):
             return True
     return False
 
 
-def match_locale(locale: str) -> tuple[str | None, ...]:
-    """Parse a language and country code."""
+def parse_locale(locale: str) -> tuple[str | None, str | None]:
+    """Parse locale to get language and country code."""
     match = re.fullmatch(r"^([a-zA-Z]{2})[-_]+([a-zA-Z]{2})$", locale)
     if match is not None:
         language_code, country_code = match.groups()
@@ -50,7 +47,7 @@ def match_locale(locale: str) -> tuple[str | None, ...]:
 def unknown_locale(locale: str | None) -> bool:
     if locale is None:
         return False
-    language_code, country_code = match_locale(locale)
+    language_code, country_code = parse_locale(locale)
     if language_code is None or country_code is None:
         return False
     if not cache.countries or not cache.languages:  # type: ignore [attr-defined]

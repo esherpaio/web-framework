@@ -1,14 +1,14 @@
 from datetime import datetime
 from functools import cached_property
 
-from babel.dates import format_datetime
+from babel.dates import format_date, format_datetime
 
 from web.cache import cache
 from web.database.model import Country, Currency, Language
 from web.setup import config
 
 from .error import CountryNotFoundError, CurrencyNotFoundError, LanguageNotFoundError
-from .utils import gen_locale, get_route_locale, match_locale
+from .utils import gen_locale, get_route_locale, parse_locale
 
 
 class Locale:
@@ -20,7 +20,7 @@ class Locale:
     """
 
     @property
-    def possible_locales(self) -> list[str]:
+    def _possible_locales(self) -> list[str]:
         locales = []
         view_locale = get_route_locale()
         if view_locale:
@@ -42,10 +42,10 @@ class Locale:
     #
 
     @property
-    def possible_language_codes(self) -> list[str]:
+    def _possible_language_codes(self) -> list[str]:
         possible_language_codes = []
-        for possible_locale in self.possible_locales:
-            possible_language_code = match_locale(possible_locale)[0]
+        for possible_locale in self._possible_locales:
+            possible_language_code = parse_locale(possible_locale)[0]
             if possible_language_code is not None:
                 possible_language_codes.append(possible_language_code.lower())
         return possible_language_codes
@@ -58,10 +58,10 @@ class Locale:
             return config.LOCALE_LANGUAGE_CODE
 
     @property
-    def possible_country_codes(self) -> list[str]:
+    def _possible_country_codes(self) -> list[str]:
         possible_country_codes = []
-        for possible_locale in self.possible_locales:
-            possible_country_code = match_locale(possible_locale)[1]
+        for possible_locale in self._possible_locales:
+            possible_country_code = parse_locale(possible_locale)[1]
             if possible_country_code is not None:
                 possible_country_codes.append(possible_country_code.upper())
         return possible_country_codes
@@ -79,7 +79,7 @@ class Locale:
 
     @cached_property
     def language(self) -> Language:
-        for language_code in self.possible_language_codes:
+        for language_code in self._possible_language_codes:
             language = next(
                 (x for x in cache.languages if x.code == language_code),  # type: ignore[attr-defined]
                 None,
@@ -90,7 +90,7 @@ class Locale:
 
     @cached_property
     def country(self) -> Country:
-        for country_code in self.possible_country_codes:
+        for country_code in self._possible_country_codes:
             country = next(
                 (x for x in cache.countries if x.code == country_code),  # type: ignore[attr-defined]
                 None,
@@ -110,6 +110,9 @@ class Locale:
     #
     # Functions
     #
+
+    def format_date(self, datetime_: datetime) -> str:
+        return format_date(datetime_.date(), format="long", locale=self.locale_posix)
 
     def format_datetime(self, datetime_: datetime) -> str:
         return format_datetime(datetime_, locale=self.locale_posix)

@@ -61,6 +61,7 @@
     "DB_NULL_ERROR": "Een waarde is vereist, gelieve uw invoer te controleren.",
     "DB_NULL_FIELD_ERROR": "De waarde voor \"%(field)s\" is vereist, gelieve uw invoer te controleren.",
     "DB_PHONE_ERROR": "Het telefoonnummer is ongeldig, gelieve deze te controleren.",
+    "DB_TIMEZONE_ERROR": "De tijdzone is ongeldig, gelieve een ondersteunde tijdzone te selecteren.",
     "DB_TYPE_ERROR": "Een waarde heeft een onjuist type, gelieve uw invoer te controleren.",
     "DB_TYPE_FIELD_ERROR": "De waarde voor \"%(field)s\" heeft een onjuist type, gelieve uw invoer te controleren.",
     "FIELD_ADDRESS": "adres",
@@ -108,7 +109,7 @@
     "PDF_DESCRIPTION": "Beschrijving",
     "PDF_DISCOUNT": "Korting",
     "PDF_INVOICE_DATE": "Factuur datum",
-    "PDF_INVOICE_FILENAME": "Factuur nummer %(invoice_number)s.pdf",
+    "PDF_INVOICE_FILENAME": "Factuur %(invoice_number)s.pdf",
     "PDF_INVOICE_NUMBER": "Factuur nummer",
     "PDF_INVOICE": "Factuur",
     "PDF_ITEMS": "Artikelen",
@@ -118,12 +119,12 @@
     "PDF_PRICE": "Prijs",
     "PDF_QUANTITY": "Aantal",
     "PDF_REFUND_DATE": "Terugbetaling datum",
-    "PDF_REFUND_FILENAME": "Terugbetaling nummer %(refund_number)s.pdf",
+    "PDF_REFUND_FILENAME": "Terugbetaling %(refund_number)s.pdf",
     "PDF_REFUND_NUMBER": "Terugbetaling nummer",
     "PDF_REFUND": "Terugbetaling",
     "PDF_SHIPMENT": "Verzending",
     "PDF_SUBTOTAL": "Subtotaal",
     "PDF_TOTAL": "Totaal",
     "PDF_VAT_NUMBER": "BTW: %(vat)s",
-    "PDF_VAT_PERCENTAGE": "BTW %(vat_percentage)s%"
+    "PDF_VAT_PERCENTAGE": "BTW %(vat_percentage)s%%"
 }

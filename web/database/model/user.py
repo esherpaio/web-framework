@@ -19,9 +19,11 @@ class User(IntBase, Attribute):
     email = MC(String(128), unique=True)
     is_active = MC(Boolean, nullable=False, default=False, server_default="false")
     password_hash = MC(String(256))
-    bulk_email = MC(Boolean, nullable=False, default=False, server_default="false")
     newsletter_email = MC(
-        Boolean, nullable=False, default=False, server_default="false"
+        Boolean,
+        nullable=False,
+        default=False,
+        server_default="false",
     )
 
     role_id = MC(

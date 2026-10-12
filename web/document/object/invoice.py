@@ -2,6 +2,7 @@ from itertools import zip_longest
 
 from fpdf import FPDF
 from fpdf.enums import Align, TableBordersLayout, XPos, YPos
+from fpdf.image_datastructures import ImageCache
 from sqlalchemy.orm import Session
 
 from web.database.model import Invoice, Order
@@ -18,15 +19,20 @@ from ..style import (
     FirstRowFillMode,
     add_fonts,
 )
-from ..utils import format_decimal
+from ..utils import format_decimal, local_datetime
 
 
 def gen_invoice_pdf(
     s: Session,
     order: Order,
     invoice: Invoice,
+    *,
+    image_cache: ImageCache | None = None,
 ) -> FPDF:
     pdf = FPDF(orientation="portrait", unit="mm", format="A4")
+    if image_cache is not None:
+        image_cache.reset_usages()
+        pdf.image_cache = image_cache
     add_fonts(pdf)
     pdf.set_auto_page_break(auto=True, margin=30)
     pdf.add_page()
@@ -127,11 +133,12 @@ def _get_invoice_info_table_data(
         _("PDF_INVOICE_DATE"),
     ]
 
+    tz = config.BUSINESS_TIMEZONE
     fourth = [
         str(order.id),
-        order.created_at.strftime("%Y-%m-%d"),
+        local_datetime(order.created_at, tz).strftime("%Y-%m-%d"),
         invoice.number,
-        invoice.created_at.strftime("%Y-%m-%d"),
+        local_datetime(invoice.created_at, tz).strftime("%Y-%m-%d"),
     ]
 
     return list(zip_longest(first, second, third, fourth, fillvalue=""))  # type: ignore[arg-type]
