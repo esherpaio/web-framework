@@ -1,38 +1,39 @@
 # config
-python-dotenv==1.2.3
+python-dotenv==1.2.4
 
 # database
-psycopg2-binary==2.9.12
-sqlalchemy==2.0.52
+psycopg2-binary==2.9.13
+sqlalchemy==2.1.4
 
 # flask
-werkzeug==3.1.8
+werkzeug==3.1.9
 flask==3.1.3
 jinja2==3.1.6
-markupsafe==3.0.3
+markupsafe==3.0.4
 
-# minifcation and optimization
-rcssmin==1.2.2
-rjsmin==1.2.5
+# minifcation and compression
+rcssmin==1.3.0
+rjsmin==1.3.0
 libsass==0.23.0
 tinycss2==1.5.1
 brotli==1.2.0
 
 # localization and validation
 babel==2.18.0
-emoji==2.15.0
-phonenumbers==9.0.38
+tzdata>=2026.5
+emoji==2.16.0
+phonenumbers==9.0.41
 pyvat==1.3.18
 
 # auth
-pyjwt==2.13.0
+pyjwt==2.15.1
 
 # pdf
-fonttools==4.63.0
+fonttools==4.66.1
 pillow>=12.3.0
-fpdf2==2.8.8
+fpdf2==2.8.9
 
 # api
 requests==2.34.2
-mollie-api-python==3.9.1
-google-api-python-client==2.199.0
+mollie-api-python==4.0.0
+google-api-python-client==2.201.0
