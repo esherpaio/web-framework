@@ -2,7 +2,7 @@
 python-dotenv==1.2.4
 
 # database
-psycopg2-binary==2.9.13
+psycopg[binary]==3.3.6
 sqlalchemy==2.1.4
 
 # flask

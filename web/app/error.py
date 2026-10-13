@@ -1,8 +1,8 @@
 import logging
 
-import psycopg2.errors
-import sqlalchemy.exc
 from flask import redirect, request
+from psycopg.errors import ForeignKeyViolation
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.exc import NoResultFound
 from werkzeug import Response
 from werkzeug.exceptions import HTTPException
@@ -58,8 +58,8 @@ def handle_backend_error(error: Exception) -> Response:
             message = _(error.translation_key, **error.translation_kwargs)
         else:
             message = HttpText.HTTP_500
-    elif isinstance(error, sqlalchemy.exc.IntegrityError):
-        if isinstance(error.orig, psycopg2.errors.ForeignKeyViolation):
+    elif isinstance(error, IntegrityError):
+        if isinstance(error.orig, ForeignKeyViolation):
             code = 409
             message = HttpText.HTTP_409
         else:

@@ -1,7 +1,7 @@
 from typing import Any, Callable, Generic, TypeVar
 
 from flask import abort, has_request_context, request
-from psycopg2.errors import ForeignKeyViolation, NotNullViolation, UniqueViolation
+from psycopg.errors import ForeignKeyViolation, NotNullViolation, UniqueViolation
 from sqlalchemy import ColumnExpressionArgument
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.attributes import InstrumentedAttribute

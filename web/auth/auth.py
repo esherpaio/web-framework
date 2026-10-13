@@ -142,7 +142,10 @@ def key_authentication() -> int:
 def jwt_authentication() -> int:
     encoded_token, csrf_token = get_jwt()
     token = decode_jwt(encoded_token, csrf_token)
-    return token["sub"]
+    try:
+        return int(token["sub"])
+    except (KeyError, TypeError, ValueError):
+        raise JWTError
 
 
 def get_jwt() -> tuple[str, str | None]:
