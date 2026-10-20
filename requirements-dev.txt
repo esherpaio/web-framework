@@ -3,7 +3,7 @@ setuptools~=84.0.0
 
 # migrations
 alembic~=1.20.0
-alembic-postgresql-enum~=1.10.0
+alembic-postgresql-enum==1.11.0
 
 # testing
 pytest~=9.1.1
