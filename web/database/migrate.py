@@ -1,3 +1,4 @@
+import alembic_postgresql_enum  # noqa: F401
 from alembic import context
 from alembic.config import Config
 from alembic.migration import MigrationContext
