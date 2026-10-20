@@ -1,4 +1,4 @@
-import alembic_postgresql_enum  # noqa: F401
+import alembic_postgresql_enum as ape
 from alembic import context
 from alembic.config import Config
 from alembic.migration import MigrationContext
@@ -9,6 +9,8 @@ from web.database.model import Base
 from web.setup import config
 
 from .client import engine
+
+ape.set_configuration(ape.Config(add_type_ignore=True))
 
 
 def get_revisions() -> tuple[str | None, str | None]:
