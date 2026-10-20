@@ -50,7 +50,7 @@ def gen_refund_pdf(
     with pdf.table(
         line_height=6,
         text_align=("LEFT", "LEFT", "RIGHT", "LEFT"),
-        col_widths=(28, 24, 25, 23),
+        col_widths=(32, 32, 21, 15),
         borders_layout=TableBordersLayout.NONE,
         first_row_as_headings=False,
     ) as table:
