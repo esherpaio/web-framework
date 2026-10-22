@@ -1,27 +1,25 @@
-import gzip
-import time
-import zlib
+from functools import cached_property, wraps
 from typing import Callable
 
-import brotli
-from flask import Flask, Response, g, make_response, request
-from werkzeug.datastructures import Headers
+from flask import Flask, Response, g, request
+from flask.typing import ResponseReturnValue
 
-from web.cache import cache
 from web.logger import log
 from web.setup import config
 from web.utils import Singleton
 
-from .enum import Encoding, Minification
-from .object import minify_html, minify_xml
+from .cache import CacheKey, ResponseCache
+from .compression import compress, negotiate_encoding
+from .enum import CacheStatus, Encoding, G
+from .minification import minification_for, minify
+
+DEFAULT_SERVER_CACHE_MAX_MB = 32
+CACHEABLE_METHODS = ("GET", "HEAD")
+FORBIDDING_DIRECTIVES = ("private", "no-store", "no-cache")
 
 
 class Optimizer(metaclass=Singleton):
-    ENCODING = "utf-8"
-
     def __init__(self, app: Flask | None = None) -> None:
-        if "_endpoints" not in cache:
-            cache["_endpoints"] = dict()
         if app is not None:
             self.init(app)
 
@@ -29,223 +27,160 @@ class Optimizer(metaclass=Singleton):
         app.after_request(self.after_request)
 
     #
-    # Minification
+    # Public
     #
 
-    def execute_minify(
-        cls, response: Response, minification: Minification | None
-    ) -> None:
-        # get data
-        response.direct_passthrough = False
-        text = response.get_data(as_text=True)
-        # minify
-        if minification == Minification.html:
-            minified = minify_html(text)
-        elif minification == Minification.xml:
-            minified = minify_xml(text)
-        else:
-            raise ValueError
-        # set data
-        log.debug(f"Optimizer minified {request.full_path}")
-        encoded = minified.encode(cls.ENCODING)
-        response.set_data(encoded)
+    def cache(
+        self,
+        view: Callable[..., ResponseReturnValue],
+    ) -> Callable[..., ResponseReturnValue]:
+        @wraps(view)
+        def wrapped_view(*args, **kwargs) -> ResponseReturnValue:
+            if not self._is_cacheable_request():
+                return view(*args, **kwargs)
+            if not request.cache_control.no_cache:
+                key = self._cache_key(self._accepted_encoding())
+                response = self._cache.get(key)
+                if response is not None:
+                    setattr(g, G.CACHE_STATUS, CacheStatus.HIT)
+                    return response
+            setattr(g, G.CACHE_STATUS, CacheStatus.MISS)
+            return view(*args, **kwargs)
+
+        return wrapped_view
+
+    def after_request(self, response: Response) -> Response:
+        if not self._should_optimize(response):
+            return response
+        encoding = self._accepted_encoding()
+        cacheable = self._is_cacheable_response(response)
+        self._optimize(response, encoding)
+        self._set_headers(response, encoding, cacheable)
+        if self._cache_status() is CacheStatus.MISS:
+            self._store(response, encoding, cacheable)
+        return response
+
+    def del_cache(self) -> None:
+        if self._cache.clear():
+            log.warning("Optimizer cache cleared")
+
+    #
+    # Pipeline
+    #
+
+    def _should_optimize(self, response: Response) -> bool:
+        return (
+            self._is_active_for(request.path)
+            and self._cache_status() is not CacheStatus.HIT
+            and not response.direct_passthrough
+            and not response.is_streamed
+            and response.content_length is not None
+            and 200 <= response.status_code < 300
+            and "Content-Encoding" not in response.headers
+        )
 
     @staticmethod
-    def get_minification(mimetype: str | None) -> Minification | None:
-        if mimetype is None:
-            return None
-        if mimetype.endswith("html"):
-            return Minification.html
-        if mimetype.endswith("xml"):
-            return Minification.xml
-        return None
-
-    #
-    # Compression
-    #
-
-    def execute_compress(cls, response: Response, encoding: Encoding | None) -> None:
-        # get data
-        response.direct_passthrough = False
-        data = response.get_data(as_text=False)
-        # get level
-        level = cls.get_compress_level(encoding)
-        if level is None:
-            return
-        # compress
-        if encoding == Encoding.brotli:
-            compressed_data = brotli.compress(data, quality=level)
-        elif encoding == Encoding.deflate:
-            compressed_data = zlib.compress(data, level=level)
-        elif encoding == Encoding.gzip:
-            compressed_data = gzip.compress(data, compresslevel=level)
-        else:
-            raise ValueError
-        # set data
-        log.debug(f"Optimizer compressed {request.full_path}")
-        response.set_data(compressed_data)
+    def _optimize(response: Response, encoding: Encoding | None) -> None:
+        minification = minification_for(response.mimetype)
+        if minification is not None:
+            response.set_data(minify(response.get_data(as_text=True), minification))
+            log.debug(f"Optimizer minified {request.full_path}")
+        if encoding is not None:
+            response.set_data(compress(response.get_data(), encoding))
+            log.debug(f"Optimizer compressed {request.full_path}")
 
     @staticmethod
-    def get_encoding(headers: Headers) -> Encoding | None:
-        if headers is None:
-            return None
-        encoding = headers.get("Accept-Encoding", "").lower()
-        if "br" in encoding:
-            return Encoding.brotli
-        if "deflate" in encoding:
-            return Encoding.deflate
-        if "gzip" in encoding:
-            return Encoding.gzip
-        return None
-
-    @staticmethod
-    def get_compress_level(encoding: Encoding | None) -> int | None:
-        if encoding == Encoding.gzip:
-            return 9
-        if encoding == Encoding.brotli:
-            return 11
-        if encoding == Encoding.deflate:
-            return 9
-        return None
-
-    #
-    # Optimization
-    #
-
-    def optimize_response(
-        cls,
+    def _set_headers(
         response: Response,
         encoding: Encoding | None,
-        minification: Minification | None,
+        cacheable: bool,
     ) -> None:
-        if isinstance(minification, Minification):
-            cls.execute_minify(response, minification)
-        if isinstance(encoding, Encoding):
-            cls.execute_compress(response, encoding)
-
-    #
-    # Headers
-    #
-
-    @staticmethod
-    def set_headers(
-        response: Response,
-        encoding: Encoding | None,
-        cache: bool = False,
-    ) -> None:
-        if response.direct_passthrough:
-            return
-        if g.get("cached", False):
+        if cacheable and "Cache-Control" not in response.headers:
             response.headers["Cache-Control"] = (
                 "public, "
                 f"max-age={config.OPTIMIZER_BROWSER_CACHE_MAX_S}, "
                 f"s-maxage={config.OPTIMIZER_CDN_CACHE_MAX_S}, "
                 f"stale-while-revalidate={config.OPTIMIZER_CDN_STALE_MAX_S}"
             )
-        if isinstance(encoding, Encoding):
+        if encoding is not None:
             response.headers["Content-Encoding"] = encoding
-        response.headers["Content-Length"] = str(response.content_length)
+        response.vary.add("Accept-Encoding")
+
+    def _store(
+        self,
+        response: Response,
+        encoding: Encoding | None,
+        cacheable: bool,
+    ) -> None:
+        key = self._cache_key(encoding)
+        if cacheable:
+            if self._cache.set(key, response):
+                log.info(f"Optimizer cached {request.full_path}")
+        elif self._forbids_caching(response):
+            self._cache.delete(key)
 
     #
-    # Cache
+    # Cache policy
     #
 
     @staticmethod
-    def is_domain_host() -> bool:
+    def _is_active_for(path: str) -> bool:
+        ignore_paths: list[str] = config.OPTIMIZER_IGNORE_PATHS or []
+        return config.OPTIMIZER_ENABLED and not path.startswith(tuple(ignore_paths))
+
+    def _is_cacheable_request(self) -> bool:
+        return (
+            self._is_active_for(request.path)
+            and request.method in CACHEABLE_METHODS
+            and self._is_canonical_host()
+            and not request.cache_control.no_store
+        )
+
+    def _is_cacheable_response(self, response: Response) -> bool:
+        return (
+            self._cache_status() is CacheStatus.MISS
+            and response.status_code == 200
+            and not self._forbids_caching(response)
+            and "Set-Cookie" not in response.headers
+            and response.vary.as_set() <= {"accept-encoding"}
+        )
+
+    @staticmethod
+    def _forbids_caching(response: Response) -> bool:
+        return any(x in response.cache_control for x in FORBIDDING_DIRECTIVES)
+
+    @staticmethod
+    def _is_canonical_host() -> bool:
         if config.DEBUG:
             return True
         host = request.host.split(":", 1)[0].removeprefix("www.")
         return host == config.DOMAIN_NAME
 
-    def set_cache(self, response: Response, encoding: Encoding | None) -> None:
-        if request.method != "GET":
-            return
+    #
+    # Cache access
+    #
 
-        if not self.is_domain_host():
-            return
-
-        if "_endpoints" not in cache:
-            cache["_endpoints"] = dict()
-        if (request.full_path, encoding) in cache._endpoints:
-            return
-
-        cache._endpoints[request.full_path, encoding] = (
-            time.monotonic(),
-            response.headers.get("Content-Type"),
-            response.get_data(as_text=False),
+    @cached_property
+    def _cache(self) -> ResponseCache:
+        max_mb = config.OPTIMIZER_SERVER_CACHE_MAX_MB
+        if max_mb is None:
+            max_mb = DEFAULT_SERVER_CACHE_MAX_MB
+        return ResponseCache(
+            max_age_s=config.OPTIMIZER_SERVER_CACHE_MAX_S,
+            max_bytes=max_mb * 1024 * 1024,
         )
-        log.info(f"Optimizer cached {request.full_path}")
-
-    def get_cache(self, encoding: Encoding | None) -> Response | None:
-        endpoint = cache._endpoints.get((request.full_path, encoding))
-        if endpoint is None:
-            return None
-
-        cached_at, content_type, data = endpoint
-        cached_ago_s = int(time.monotonic() - cached_at)
-        if cached_ago_s > config.OPTIMIZER_SERVER_CACHE_MAX_S:
-            del cache._endpoints[request.full_path, encoding]
-            log.info(f"Optimizer expired {request.full_path}")
-            return None
-
-        response = make_response()
-        response.direct_passthrough = False
-        response.set_data(data)
-        if content_type is not None:
-            response.headers["Content-Type"] = content_type
-        return response
-
-    def del_cache(self) -> None:
-        is_empty = not bool(cache._endpoints)
-        cache._endpoints = dict()
-        if not is_empty:
-            log.warning("Optimizer cache cleared")
-
-    #
-    # Request handler
-    #
-
-    def cache(self, f: Callable) -> Callable[..., Response]:
-        def wrap(*args, **kwargs) -> Response:
-            if config.OPTIMIZER_ENABLED and not self._is_ignored(request.path):
-                g.cached = True
-                encoding = self.get_encoding(request.headers)
-                response = self.get_cache(encoding)
-                if response is not None:
-                    self.set_headers(response, encoding, cache=True)
-                    return response
-            return f(*args, **kwargs)
-
-        wrap.__name__ = f.__name__
-        return wrap
 
     @staticmethod
-    def _is_ignored(path: str) -> bool:
-        ignore_paths: list[str] = config.OPTIMIZER_IGNORE_PATHS or []
-        return any(path.startswith(p) for p in ignore_paths)
+    def _cache_status() -> CacheStatus | None:
+        return g.get(G.CACHE_STATUS)
 
-    def after_request(self, response: Response) -> Response:
-        # validate response
-        if not config.OPTIMIZER_ENABLED:
-            return response
-        if self._is_ignored(request.path):
-            return response
-        if response.status_code is None or response.content_length is None:
-            return response
-        if response.status_code < 200 or response.status_code >= 300:
-            return response
-        if "Content-Encoding" in response.headers:
-            return response
-        # choose encoding and minification
-        encoding = self.get_encoding(request.headers)
-        minification = self.get_minification(response.mimetype)
-        if encoding is None and minification is None:
-            return response
-        # handle response
-        self.optimize_response(response, encoding, minification)
-        self.set_cache(response, encoding)
-        self.set_headers(response, encoding)
-        return response
+    @staticmethod
+    def _cache_key(encoding: Encoding | None) -> CacheKey:
+        return CacheKey(request.full_path, encoding)
+
+    @staticmethod
+    def _accepted_encoding() -> Encoding | None:
+        return negotiate_encoding(request.headers.get("Accept-Encoding", ""))
 
 
 optimizer = Optimizer()
