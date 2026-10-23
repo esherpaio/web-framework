@@ -24,7 +24,7 @@ brotli==1.2.1
 babel==2.18.0
 tzdata>=2026.5
 emoji==2.16.0
-phonenumbers==9.0.41
+phonenumberslite==9.0.41
 pyvat==1.3.18
 
 # auth
@@ -38,4 +38,3 @@ fpdf2==2.8.9
 # api
 requests==2.34.2
 mollie-api-python==4.0.0
-google-api-python-client==2.201.0
