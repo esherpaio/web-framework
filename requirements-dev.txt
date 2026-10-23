@@ -1,18 +1,14 @@
 # building
-setuptools~=84.0.0
-
-# migrations
-alembic~=1.20.0
-alembic-postgresql-enum==1.11.0
+setuptools~=84.2.1
 
 # testing
 pytest~=9.1.1
 pytest-cov~=7.1.0
 
 # formating and linting
-djlint~=1.46.4
+djlint~=1.47.0
 mypy==2.4.0
-ruff~=0.17.0
+ruff~=0.17.2
 
 # blueprints
 git+https://github.com/esherpaio/web-framework.git
