@@ -1,6 +1,6 @@
 from typing import Any
 
-from sqlalchemy import Boolean, ForeignKey, String, Text
+from sqlalchemy import Boolean, DateTime, ForeignKey, String, Text
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import mapped_column as MC
@@ -22,6 +22,7 @@ class Article(IntBase, Attribute):
     slug = MC(String(64), unique=True, nullable=False)
     summary = MC(String(256))
     author = MC(String(64))
+    published_at = MC(DateTime(timezone=True))
     content = MC(JSONB)
     html = MC(Text)
 
