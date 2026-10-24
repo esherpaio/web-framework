@@ -21,6 +21,7 @@ class Article(IntBase, Attribute):
     name = MC(String(64), nullable=False)
     slug = MC(String(64), unique=True, nullable=False)
     summary = MC(String(256))
+    author = MC(String(64))
     content = MC(JSONB)
     html = MC(Text)
 
