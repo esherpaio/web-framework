@@ -26,3 +26,7 @@ class File(IntBase):
     @hybrid_property
     def is_video(self) -> bool:
         return self.type_id == FileTypeId.VIDEO
+
+    @hybrid_property
+    def is_document(self) -> bool:
+        return self.type_id == FileTypeId.DOCUMENT

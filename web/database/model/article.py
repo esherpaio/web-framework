@@ -1,6 +1,7 @@
 from typing import Any
 
-from sqlalchemy import Boolean, ForeignKey, String
+from sqlalchemy import Boolean, ForeignKey, String, Text
+from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import mapped_column as MC
 from sqlalchemy.orm import relationship, validates
@@ -20,12 +21,16 @@ class Article(IntBase, Attribute):
     name = MC(String(64), nullable=False)
     slug = MC(String(64), unique=True, nullable=False)
     summary = MC(String(256))
+    content = MC(JSONB)
+    html = MC(Text)
 
     route_id = MC(ForeignKey("app_route.id", ondelete="SET NULL"))
 
     category_items = relationship("CategoryItem", back_populates="article")
     medias = relationship(
-        "ArticleMedia", back_populates="article", order_by="ArticleMedia.order"
+        "ArticleMedia",
+        back_populates="article",
+        order_by="ArticleMedia.order",
     )
     route = relationship("AppRoute")
 
@@ -40,14 +45,15 @@ class Article(IntBase, Attribute):
 
     @hybrid_property
     def images(self) -> list[ArticleMedia]:
-        return sorted(
-            [x for x in self.medias if x.file_.is_image],
-            key=none_attrgetter("order"),
-        )
+        medias = [x for x in self.medias if x.file_.is_image]
+        return sorted(medias, key=none_attrgetter("order"))
 
     @hybrid_property
     def videos(self) -> list[ArticleMedia]:
-        return sorted(
-            [x for x in self.medias if x.file_.is_video],
-            key=none_attrgetter("order"),
-        )
+        medias = [x for x in self.medias if x.file_.is_video]
+        return sorted(medias, key=none_attrgetter("order"))
+
+    @hybrid_property
+    def documents(self) -> list[ArticleMedia]:
+        medias = [x for x in self.medias if x.file_.is_document]
+        return sorted(medias, key=none_attrgetter("order"))

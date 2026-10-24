@@ -15,3 +15,4 @@ class FileType(StrBase):
 class FileTypeId(StrEnum):
     IMAGE = "image"
     VIDEO = "video"
+    DOCUMENT = "document"

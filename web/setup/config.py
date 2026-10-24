@@ -87,6 +87,7 @@ class _Protocol(Protocol):
     CDN_IMAGE_EXTS: list[str]
     CDN_AUDIO_EXTS: list[str]
     CDN_VIDEO_EXTS: list[str]
+    CDN_DOCUMENT_EXTS: list[str]
 
     FTP_BASE_DIR: str
     FTP_HOSTNAME: str

@@ -71,3 +71,8 @@ class Product(IntBase, Attribute):
     def videos(self) -> list[ProductMedia]:
         medias = [x for x in self.medias if x.file_.is_video]
         return sorted(medias, key=none_attrgetter("order"))
+
+    @hybrid_property
+    def documents(self) -> list[ProductMedia]:
+        medias = [x for x in self.medias if x.file_.is_document]
+        return sorted(medias, key=none_attrgetter("order"))
