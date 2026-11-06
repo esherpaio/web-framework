@@ -10,6 +10,7 @@ from web.app.redirector import Redirector
 from web.app.urls import url_for
 from web.auth import Auth, current_user
 from web.automation import Automator
+from web.automation.defaults import with_default_tasks
 from web.automation.task.database import DatabaseRevisionCheck
 from web.cache import cache, cache_common, cache_manager
 from web.cdn import cdn_url
@@ -45,7 +46,7 @@ class Server:
         DatabaseRevisionCheck.execute(migrate=migrate)
 
         # Run tasks
-        for task in tasks:
+        for task in with_default_tasks(tasks, worker=False):
             task_cls = task()
             if config.DEBUG and not task_cls.RUN_DEBUG:
                 log.debug(f"Skipping task {task_cls} in debug mode")

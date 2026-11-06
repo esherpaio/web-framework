@@ -1,16 +1,17 @@
-from .app_settings import AppSettingSeedSyncer
-from .cart import CartCleaner
+from .cleaners import CartCleaner, EmailCleaner, UserCleaner
 from .database import DatabaseRevisionCheck
-from .email import EmailCleaner, EmailProcessor
-from .email_status import EmailStatusSeedSyncer
-from .file_type import FileTypeSeedSyncer
+from .email import EmailProcessor
 from .locale import LocaleSyncer
-from .order_status import OrderStatusSeedSyncer
-from .product_link_type import ProductLinkeTypeSeedSyncer
-from .product_type import ProductTypeSeedSyncer
-from .review_status import ReviewStatusSeedSyncer
+from .seeds import (
+    AppSettingSeedSyncer,
+    EmailStatusSeedSyncer,
+    FileTypeSeedSyncer,
+    OrderStatusSeedSyncer,
+    ProductLinkeTypeSeedSyncer,
+    ProductTypeSeedSyncer,
+    ReviewStatusSeedSyncer,
+    UserRoleSeedSyncer,
+)
 from .sitemap import SitemapLocationSpec, SitemapLocationSyncer, get_template_hash
 from .sku import SkuProcessor
 from .static import StaticJob, StaticProcessor, StaticType
-from .user import UserCleaner
-from .user_role import UserRoleSeedSyncer

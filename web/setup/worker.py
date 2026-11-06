@@ -9,6 +9,7 @@ from typing import Callable, Type
 from flask import Flask
 
 from web.automation import Automator
+from web.automation.defaults import with_default_tasks
 from web.automation.task.database import DatabaseRevisionCheck
 from web.cache import cache_common, cache_manager
 from web.i18n import translator
@@ -85,6 +86,7 @@ class Worker:
         app.add_url_rule("/", endpoint="home", view_func=lambda: "OK")
 
     def setup_tasks(self, tasks: list[Type[Automator]]) -> None:
+        tasks = with_default_tasks(tasks, worker=True)
         if not tasks:
             log.warning("No automation tasks configured")
             return
