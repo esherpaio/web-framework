@@ -77,8 +77,11 @@ class Auth:
         ):
             response = json_response(error.code, error.message)
         else:
-            url = url_for(config.ENDPOINT_LOGIN)
-            response = redirect(url, code=302)
+            next_path = None
+            if request.method == "GET" and request.endpoint != config.ENDPOINT_LOGIN:
+                next_path = request.full_path if request.query_string else request.path
+            login_url = url_for(config.ENDPOINT_LOGIN, next=next_path)
+            response = redirect(login_url, code=302)
         if error.code == 401:
             del_jwt(response)
         return response
