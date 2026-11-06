@@ -12,7 +12,7 @@ from ._utils import default_rate, get_upper, val_length, val_number
 class Currency(IntBase):
     __tablename__ = "currency"
 
-    code = MC(String(3), nullable=False, unique=True)
+    code = MC(String(3), nullable=False, unique=True, comment="ISO 4217 alpha-3")
     rate = MC(default_rate, nullable=False, default=Decimal("1"), server_default="1")
     symbol = MC(String(3), nullable=False)
 

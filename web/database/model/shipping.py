@@ -12,12 +12,7 @@ from ._utils import get_lower, get_text, val_email, val_length, val_phone
 class Shipping(IntBase):
     __tablename__ = "shipping"
     __table_args__ = (
-        Index(
-            None,
-            "user_id",
-            unique=True,
-            postgresql_where=text("is_default"),
-        ),
+        Index(None, "user_id", unique=True, postgresql_where=text("is_default")),
     )
 
     address = MC(String(128), nullable=False)
@@ -39,7 +34,13 @@ class Shipping(IntBase):
     # Validation
 
     @validates(
-        "address", "city", "state", "zip_code", "company", "first_name", "last_name"
+        "address",
+        "city",
+        "state",
+        "zip_code",
+        "company",
+        "first_name",
+        "last_name",
     )
     def validate_address(self, key: str, value: Any) -> Any:
         value = get_text(value)

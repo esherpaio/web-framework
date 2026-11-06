@@ -1,6 +1,9 @@
+import functools
 import re
 from enum import StrEnum
+from importlib.resources import files
 
+from babel import Locale as BabelLocale
 from flask import current_app, has_request_context, request
 
 from web.cache import cache
@@ -10,6 +13,25 @@ from web.setup import config
 class LocaleStyle(StrEnum):
     SLUG = "slug"
     BCP47 = "bcp47"
+
+
+class Region(StrEnum):
+    EUROPE = "Europe"
+    ASIA = "Asia"
+    AFRICA = "Africa"
+    AMERICAS = "Americas"
+    OCEANIA = "Oceania"
+    OTHER = "Other"
+
+
+ZONE_REGIONS = {
+    "Europe": Region.EUROPE,
+    "Asia": Region.ASIA,
+    "Africa": Region.AFRICA,
+    "America": Region.AMERICAS,
+    "Australia": Region.OCEANIA,
+    "Pacific": Region.OCEANIA,
+}
 
 
 def get_route_locale() -> str | None:
@@ -66,9 +88,9 @@ def gen_locale(
     style: LocaleStyle = LocaleStyle.SLUG,
 ) -> str:
     if language_code is None:
-        language_code = config.LOCALE_LANGUAGE_CODE
+        language_code = config.BASE_LANGUAGE_CODE
     if country_code is None:
-        country_code = config.LOCALE_COUNTRY_CODE
+        country_code = config.BASE_COUNTRY_CODE
 
     if style == LocaleStyle.SLUG:
         language_code = language_code.lower()
@@ -78,3 +100,28 @@ def gen_locale(
         country_code = country_code.upper()
 
     return f"{language_code}-{country_code}"
+
+
+def get_country_name(country_code: str, language_code: str | None = None) -> str:
+    if language_code is None:
+        language_code = config.BASE_LANGUAGE_CODE
+    territories = BabelLocale(language_code).territories
+    return territories.get(country_code, country_code)
+
+
+@functools.cache
+def get_country_regions() -> dict[str, Region]:
+    regions: dict[str, Region] = {}
+    zone_tab = files("tzdata.zoneinfo").joinpath("zone.tab")
+    for line in zone_tab.read_text(encoding="ascii").splitlines():
+        if line.startswith("#"):
+            continue
+        code, _, zone, *_ = line.split("\t")
+        prefix = zone.partition("/")[0]
+        # zone.tab lists each country's most populous zone first
+        regions.setdefault(code, ZONE_REGIONS.get(prefix, Region.OTHER))
+    return regions
+
+
+def get_country_region(country_code: str) -> Region:
+    return get_country_regions().get(country_code.upper(), Region.OTHER)

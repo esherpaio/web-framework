@@ -20,7 +20,10 @@ class Product(IntBase, Attribute):
     is_deleted = MC(Boolean, nullable=False, default=False, server_default="false")
     name = MC(String(64), nullable=False)
     consent_required = MC(
-        Boolean, nullable=False, default=False, server_default="false"
+        Boolean,
+        nullable=False,
+        default=False,
+        server_default="false",
     )
     slug = MC(String(64), unique=True, nullable=False)
     summary = MC(String(64))
@@ -34,10 +37,14 @@ class Product(IntBase, Attribute):
 
     links = relationship("ProductLink", back_populates="product")
     medias = relationship(
-        "ProductMedia", back_populates="product", order_by="ProductMedia.order"
+        "ProductMedia",
+        back_populates="product",
+        order_by="ProductMedia.order",
     )
     options = relationship(
-        "ProductOption", back_populates="product", order_by="ProductOption.order"
+        "ProductOption",
+        back_populates="product",
+        order_by="ProductOption.order",
     )
     shipment_class = relationship("ShipmentClass")
     type_ = relationship("ProductType")

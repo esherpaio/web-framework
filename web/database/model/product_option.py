@@ -21,7 +21,9 @@ class ProductOption(IntBase):
 
     product = relationship("Product", back_populates="options")
     values = relationship(
-        "ProductValue", back_populates="option", order_by="ProductValue.order"
+        "ProductValue",
+        back_populates="option",
+        order_by="ProductValue.order",
     )
 
     # Validations

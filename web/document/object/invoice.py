@@ -7,6 +7,7 @@ from sqlalchemy.orm import Session
 
 from web.database.model import Invoice, Order
 from web.i18n import _
+from web.locale import get_country_name
 from web.setup import config
 
 from ..style import (
@@ -121,7 +122,7 @@ def _get_invoice_info_table_data(
         config.BUSINESS_NAME,
         config.BUSINESS_STREET,
         f"{config.BUSINESS_ZIP_CODE} {config.BUSINESS_CITY}",
-        config.BUSINESS_COUNTRY,
+        get_country_name(config.BUSINESS_COUNTRY_CODE),
         _("PDF_CC_NUMBER", cc=config.BUSINESS_REGISTRATION_NUMBER),
         _("PDF_VAT_NUMBER", vat=config.BUSINESS_VAT_NUMBER),
     ]

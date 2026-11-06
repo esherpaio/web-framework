@@ -11,7 +11,6 @@ from web.database.model import (
     ProductLinkType,
     ProductType,
     Redirect,
-    Region,
     UserRole,
 )
 
@@ -31,7 +30,6 @@ def cache_common() -> None:
         cache.product_link_types = s.query(ProductLinkType).order_by(ProductLinkType.name).all()
         cache.product_types = s.query(ProductType).order_by(ProductType.name).all()
         cache.redirects = s.query(Redirect).order_by(Redirect.url_from.desc()).all()
-        cache.regions = s.query(Region).order_by(Region.name).all()
         cache.routes = s.query(AppRoute).all()
         cache.settings = s.query(AppSettings).first()
         cache.user_roles = s.query(UserRole).order_by(UserRole.name).all()

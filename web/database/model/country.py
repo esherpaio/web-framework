@@ -11,22 +11,26 @@ from ._utils import get_upper, val_length
 class Country(IntBase):
     __tablename__ = "country"
 
-    code = MC(String(2), nullable=False, unique=True)
+    code = MC(String(2), nullable=False, unique=True, comment="ISO 3166-1 alpha-2")
     in_sitemap = MC(Boolean, nullable=False, default=False, server_default="false")
     name = MC(String(64), nullable=False, unique=True)
     requires_billing_state = MC(
-        Boolean, nullable=False, default=False, server_default="false"
+        Boolean,
+        nullable=False,
+        default=False,
+        server_default="false",
     )
     requires_billing_vat = MC(
-        Boolean, nullable=False, default=False, server_default="false"
+        Boolean,
+        nullable=False,
+        default=False,
+        server_default="false",
     )
     allows_shipping = MC(Boolean, nullable=False, default=True, server_default="true")
 
     currency_id = MC(ForeignKey("currency.id", ondelete="RESTRICT"), nullable=False)
-    region_id = MC(ForeignKey("region.id", ondelete="RESTRICT"), nullable=False)
 
     currency = relationship("Currency")
-    region = relationship("Region")
 
     # Validation
 

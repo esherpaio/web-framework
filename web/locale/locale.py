@@ -25,7 +25,7 @@ class Locale:
         view_locale = get_route_locale()
         if view_locale:
             locales.append(view_locale)
-        web_locale = gen_locale(config.LOCALE_LANGUAGE_CODE, config.LOCALE_COUNTRY_CODE)
+        web_locale = gen_locale(config.BASE_LANGUAGE_CODE, config.BASE_COUNTRY_CODE)
         locales.append(web_locale)
         return locales
 
@@ -55,7 +55,7 @@ class Locale:
         try:
             return self.language.code
         except Exception:
-            return config.LOCALE_LANGUAGE_CODE
+            return config.BASE_LANGUAGE_CODE
 
     @property
     def _possible_country_codes(self) -> list[str]:
@@ -71,7 +71,7 @@ class Locale:
         try:
             return self.country.code
         except Exception:
-            return config.LOCALE_COUNTRY_CODE
+            return config.BASE_COUNTRY_CODE
 
     #
     # Objects

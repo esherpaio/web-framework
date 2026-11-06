@@ -32,13 +32,13 @@ from .product_type import ProductType, ProductTypeId
 from .product_value import ProductValue
 from .redirect import Redirect
 from .refund import Refund
-from .region import Region
 from .review import Review
 from .review_status import ReviewStatus, ReviewStatusId
 from .shipment import Shipment
 from .shipment_class import ShipmentClass
 from .shipment_method import ShipmentMethod
 from .shipment_zone import ShipmentZone
+from .shipment_zone_country import ShipmentZoneCountry
 from .shipping import Shipping
 from .sitemap_image import SitemapImage
 from .sitemap_location import SitemapLocation

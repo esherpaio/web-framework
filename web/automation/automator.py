@@ -3,13 +3,11 @@ import time
 from datetime import UTC, datetime, timedelta
 from typing import Any, Type
 
-import requests
 from sqlalchemy.orm import Session
 
 from web.database import conn
 from web.database.model import AppSettings, Base
 from web.logger import log
-from web.setup import config
 
 
 class Automator:
@@ -18,7 +16,6 @@ class Automator:
 
     @classmethod
     def execute(cls, *args: Any, **kwargs: Any) -> None:
-        """Log task start and duration, including when it raises or exits."""
         name = re.sub(r"([a-z])([A-Z])", r"\1 \2", cls.__name__).lower()
         log.info(f"Running task {name}")
         started = time.monotonic()
@@ -85,35 +82,6 @@ class SeedSyncer(Automator):
 class ApiSyncer(Automator):
     API_URL: str
     RUN_DEBUG: bool = False
-
-    @classmethod
-    def run(cls) -> None:
-        raise NotImplementedError
-
-
-class RestCountriesApiSyncer(ApiSyncer):
-    INTERVAL_S = 604800
-
-    @classmethod
-    def fetch_all(cls, url) -> list[Any]:
-        objects: list[Any] = []
-        offset = 0
-        while True:
-            response = requests.request(
-                "GET",
-                url,
-                timeout=config.AUTOMATE_TIMEOUT_S,
-                headers={"Authorization": f"Bearer {config.REST_COUNTRIES_API_KEY}"},
-                params={"offset": offset},
-            )
-            response.raise_for_status()
-            data = response.json()["data"]
-            objects.extend(data["objects"])
-            meta = data["meta"]
-            if not meta.get("more"):
-                break
-            offset += meta["count"]
-        return objects
 
     @classmethod
     def run(cls) -> None:

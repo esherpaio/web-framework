@@ -20,6 +20,9 @@ from .enum import AuthType, G
 from .error import AuthError, CSRFError, Forbidden, JWTError, KEYError, NoValueError
 from .proxy import current_user
 
+AUTH_KEY_HEADER = "Authorization"
+
+
 #
 # Base
 #
@@ -36,7 +39,7 @@ class Auth:
         app.after_request(self.after_request)
 
     def before_request(self) -> None:
-        if config.AUTH_KEY_HEADER in request.headers:
+        if AUTH_KEY_HEADER in request.headers:
             user_id = key_authentication()
             auth_type = AuthType.KEY
         elif config.AUTH_JWT_COOKIE in request.cookies:

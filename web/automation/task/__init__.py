@@ -1,15 +1,13 @@
 from .app_settings import AppSettingSeedSyncer
 from .cart import CartCleaner
-from .country import CountryApiSyncer
-from .currency import CurrencyApiSyncer
 from .database import DatabaseRevisionCheck
 from .email import EmailCleaner, EmailProcessor
 from .email_status import EmailStatusSeedSyncer
 from .file_type import FileTypeSeedSyncer
+from .locale import LocaleSyncer
 from .order_status import OrderStatusSeedSyncer
 from .product_link_type import ProductLinkeTypeSeedSyncer
 from .product_type import ProductTypeSeedSyncer
-from .region import RegionApiSyncer
 from .review_status import ReviewStatusSeedSyncer
 from .sitemap import SitemapLocationSpec, SitemapLocationSyncer, get_template_hash
 from .sku import SkuProcessor

@@ -11,7 +11,7 @@ from ._utils import get_lower, val_length
 class Language(IntBase):
     __tablename__ = "language"
 
-    code = MC(String(2), nullable=False, unique=True)
+    code = MC(String(2), nullable=False, unique=True, comment="ISO 639-1")
     in_sitemap = MC(Boolean, nullable=False, default=False, server_default="false")
     name = MC(String(64), nullable=False, unique=True)
 

@@ -14,7 +14,6 @@ from web.database.model import AppBlueprint, AppRoute, AppSettings
 from web.logger import log
 from web.packer import Packer
 from web.packer.bundle import CssBundle, JsBundle, ScssBundle
-from web.setup import config
 
 from ..automator import Processor
 
@@ -79,10 +78,6 @@ class StaticProcessor(Processor):
 
     @classmethod
     def run(cls) -> None:
-        if not config.AUTOMATE_STATIC:
-            log.warning("Static processor is disabled")
-            return
-
         with Client.connect() as c:
             log.info("Reading static files from CDN")
             modified = c.modified(CDN_DIR)

@@ -19,7 +19,9 @@ class Category(IntBase, Attribute):
     route_id = MC(ForeignKey("app_route.id", ondelete="SET NULL"))
 
     items = relationship(
-        "CategoryItem", back_populates="category", order_by="CategoryItem.order"
+        "CategoryItem",
+        back_populates="category",
+        order_by="CategoryItem.order",
     )
     route = relationship("AppRoute")
 

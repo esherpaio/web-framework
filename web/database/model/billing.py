@@ -35,7 +35,13 @@ class Billing(IntBase):
     # Validation
 
     @validates(
-        "address", "city", "state", "zip_code", "company", "first_name", "last_name"
+        "address",
+        "city",
+        "state",
+        "zip_code",
+        "company",
+        "first_name",
+        "last_name",
     )
     def validate_address(self, key: str, value: Any) -> Any:
         value = get_text(value)

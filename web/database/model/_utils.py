@@ -108,7 +108,7 @@ def val_number(
 
 
 def get_text(value: str | None) -> str | None:
-    if value in ["-", " "]:
+    if value in ("-", " ", ""):
         return None
     if isinstance(value, str):
         return emoji.replace_emoji(value, replace="")

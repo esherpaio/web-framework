@@ -132,7 +132,7 @@ class Server:
         )
 
         filters["price"] = format_decimal
-        filters["datetime"] = current_locale.format_datetime
+        filters["datetime"] = lambda value: current_locale.format_datetime(value)
         for name, func in filters.items():
             app.add_template_filter(func, name=name)
 

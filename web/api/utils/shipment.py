@@ -1,7 +1,7 @@
 from decimal import Decimal
 from typing import TYPE_CHECKING
 
-from sqlalchemy import false, or_
+from sqlalchemy import false
 from sqlalchemy.orm import Session
 
 from web.database.model import (
@@ -32,31 +32,27 @@ def select_shipment_methods(
             ShipmentClass.id.in_(class_ids),
             ShipmentClass.is_deleted == false(),
         )
-        .order_by(ShipmentClass.order)
+        .order_by(ShipmentClass.order, ShipmentClass.id)
         .first()
     )
-    zone_ = (
+    if class_ is None:
+        return []
+
+    zone = (
         s.query(ShipmentZone)
         .filter(
-            or_(
-                ShipmentZone.country_id == country.id,
-                ShipmentZone.region_id == country.region_id,
-            ),
+            ShipmentZone.countries.any(Country.id == country.id),
             ShipmentZone.is_deleted == false(),
         )
-        .order_by(ShipmentZone.order)
+        .order_by(ShipmentZone.order, ShipmentZone.id)
         .first()
     )
-    if class_ is None or zone_ is None:
+    if zone is None:
         return []
 
     methods = (
         s.query(ShipmentMethod)
-        .filter_by(
-            class_id=class_.id,
-            zone_id=zone_.id,
-            is_deleted=False,
-        )
+        .filter_by(class_id=class_.id, zone_id=zone.id, is_deleted=False)
         .order_by(ShipmentMethod.unit_price)
         .all()
     )

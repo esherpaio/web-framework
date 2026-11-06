@@ -27,20 +27,20 @@ class _Protocol(Protocol):
     DATABASE_MODULE: str | None
     LOCALHOST_URL: str | None
 
+    # TODO: Try to find a better way to do this
     ENDPOINT_HOME: str
     ENDPOINT_ERROR: str
     ENDPOINT_LOGIN: str
     ENDPOINT_PASSWORD_RECOVERY: str
     ENDPOINT_SEARCH: str | None
 
-    LOCALE_LANGUAGE_CODE: str
-    LOCALE_COUNTRY_CODE: str
+    BASE_LANGUAGE_CODE: str
+    BASE_COUNTRY_CODE: str
+    BASE_CURRENCY_CODE: str
 
-    AUTOMATE_EXTERNAL: bool
-    AUTOMATE_STATIC: bool
-    AUTOMATE_TIMEOUT_S: int
-
+    # TODO: Replace with mail event handler, skip if not present
     REVIEW_ENABLED: bool = True
+    # TODO: These should be settings adjustable by admins
     REVIEW_REQUEST_DELAY_DAYS: int = 14
     REVIEW_REQUEST_EXPIRES_DAYS: int = 90
 
@@ -59,11 +59,8 @@ class _Protocol(Protocol):
     AUTH_JWT_ENCODE_ALGORITHM: str
     AUTH_JWT_DECODE_ALGORITHMS: list[str]
     AUTH_JWT_DECODE_LEEWAY_S: int
-
     AUTH_CSRF_COOKIE: str
     AUTH_CSRF_METHODS: CsrfMethods
-
-    AUTH_KEY_HEADER: str
 
     MAIL_METHOD: MailMethod
     MAIL_TIMEOUT_S: int
@@ -101,7 +98,6 @@ class _Protocol(Protocol):
     GOOGLE_CLIENT_ID: str | None
     GOOGLE_PLACE_ID: str | None
     MOLLIE_API_KEY: str | None
-    REST_COUNTRIES_API_KEY: str | None
 
     META_BRAND_NAME: str | None
     META_WEBSITE_NAME: str
@@ -110,6 +106,7 @@ class _Protocol(Protocol):
     META_COLOR_HEX: str
     OG_LOCALE: bool
 
+    # TODO: Use BUSINESS_ prefix and consider using a mapping
     SOCIAL_DISCORD: str | None
     SOCIAL_FACEBOOK: str | None
     SOCIAL_INSTAGRAM: str | None
@@ -124,12 +121,10 @@ class _Protocol(Protocol):
     BUSINESS_VAT_NUMBER: str
     BUSINESS_VAT_REVERSE_RATE: Decimal
     BUSINESS_COUNTRY_CODE: str
-    BUSINESS_LANGUAGE_CODE: str
     BUSINESS_TIMEZONE: str
     BUSINESS_STREET: str
     BUSINESS_CITY: str
     BUSINESS_ZIP_CODE: str
-    BUSINESS_COUNTRY: str
 
 
 class Config:

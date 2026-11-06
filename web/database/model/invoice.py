@@ -14,7 +14,9 @@ class Invoice(IntBase, Attribute):
     payment_url = MC(String(256))
 
     order_id = MC(
-        ForeignKey("order.id", ondelete="RESTRICT"), nullable=False, unique=True
+        ForeignKey("order.id", ondelete="RESTRICT"),
+        nullable=False,
+        unique=True,
     )
 
     order = relationship("Order", back_populates="invoice")

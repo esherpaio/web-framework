@@ -60,8 +60,8 @@ class Translator(metaclass=Singleton):
                 log.error("Unable to get language from locale")
             else:
                 return language.code
-        if config.LOCALE_LANGUAGE_CODE:
-            return config.LOCALE_LANGUAGE_CODE
+        if config.BASE_LANGUAGE_CODE:
+            return config.BASE_LANGUAGE_CODE
         return self.fallback_language_code
 
     def translate_strict(self, key: str, **kwargs) -> str | None:
