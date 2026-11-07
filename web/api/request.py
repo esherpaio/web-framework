@@ -14,14 +14,14 @@ from web.database.error import DbMaxLengthError, DbNullError, DbTypeError
 
 def get_cast_func(type_: Any) -> Any:
     if type_ is bool:
-        return cast_bool
+        return _cast_bool
     elif type_ is Decimal:
-        return cast_decimal
+        return _cast_decimal
     else:
         return type_
 
 
-def cast_bool(value: Any) -> Any:
+def _cast_bool(value: Any) -> Any:
     if isinstance(value, bool):
         return value
     elif isinstance(value, str):
@@ -29,7 +29,7 @@ def cast_bool(value: Any) -> Any:
     return value
 
 
-def cast_decimal(value: Any) -> Any:
+def _cast_decimal(value: Any) -> Any:
     if isinstance(value, (int, float)):
         return Decimal(str(value))
     elif isinstance(value, str):
@@ -49,7 +49,6 @@ def json_get(
     default: Any = None,
     column: InstrumentedAttribute | None = None,
 ) -> tuple[Any, bool]:
-    """Get a value from the request json."""
     if request.is_json and request.json is not None:
         cast = get_cast_func(type_)
         value = request.json.get(key, default)
@@ -71,7 +70,6 @@ def args_get(
     default: Any = None,
     column: InstrumentedAttribute | None = None,
 ) -> tuple[Any, bool]:
-    """Get a value from the request args."""
     cast = get_cast_func(type_)
     value = request.args.get(key, default)
     if value is not None:

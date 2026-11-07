@@ -16,10 +16,6 @@ from ..error import (
     DbPhoneError,
 )
 
-#
-# Types
-#
-
 
 class AutoDecimal(TypeDecorator):
     impl = Numeric
@@ -47,11 +43,6 @@ class AutoDecimal(TypeDecorator):
 default_price = AutoDecimal(10, 2, asdecimal=True)
 default_vat = AutoDecimal(4, 3, asdecimal=True)
 default_rate = AutoDecimal(12, 6, asdecimal=True)
-
-
-#
-# Validation
-#
 
 
 def val_phone(value: str | None) -> None:
@@ -90,11 +81,6 @@ def val_number(
             raise DbMinNumberError(key)
         if max_ is not None and not value <= max_:
             raise DbMaxNumberError(key)
-
-
-#
-# Conversion
-#
 
 
 def get_text(value: str | None) -> str | None:

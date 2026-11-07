@@ -1,9 +1,5 @@
 from web.error import WebError
 
-#
-# Base
-#
-
 
 class DbError(WebError):
     pass
@@ -25,11 +21,6 @@ class _DbFieldMixin:
         if name is not None:
             return translator.translate_strict(f"FIELD_{name.upper()}")
         return None
-
-
-#
-# Validation exceptions
-#
 
 
 class DbTypeError(_DbFieldMixin, DbError):

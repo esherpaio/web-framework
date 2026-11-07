@@ -28,11 +28,6 @@ def cdn_url(*args: str | None, external: bool = False) -> str | None:
     return posixpath.join(config.CDN_BASE_URL, path.lstrip("/"))
 
 
-#
-# Client
-#
-
-
 class Client(ABC):
     @classmethod
     @contextmanager

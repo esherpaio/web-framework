@@ -4,21 +4,12 @@ from logging import Handler, LogRecord
 
 from web.setup import config
 
-#
-# Enums
-#
-
 
 class AnsiColor(Enum):
     DEBUG = 90
     WARNING = 33
     ERROR = 31
     CRITICAL = 41
-
-
-#
-# Formatters
-#
 
 
 class PlainFormatter(logging.Formatter):
@@ -46,11 +37,6 @@ class HtmlFormatter(logging.Formatter):
         return message
 
 
-#
-# Handlers
-#
-
-
 class MailHandler(Handler):
     def __init__(self) -> None:
         super().__init__()
@@ -71,11 +57,6 @@ class MailHandler(Handler):
             raise
         except Exception:
             self.handleError(record)
-
-
-#
-# Logger
-#
 
 
 def _get_logger(name: str) -> logging.Logger:

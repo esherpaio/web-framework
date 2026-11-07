@@ -23,11 +23,6 @@ from .proxy import current_user
 AUTH_KEY_HEADER = "Authorization"
 
 
-#
-# Base
-#
-
-
 class Auth:
     def __init__(self, app: Flask | None = None) -> None:
         if app is not None:
