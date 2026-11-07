@@ -1,6 +1,7 @@
 from typing import Any
 
-from sqlalchemy import Boolean, ForeignKey, String
+from sqlalchemy import Boolean, ForeignKey, String, Text
+from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import mapped_column as MC
 from sqlalchemy.orm import relationship, validates
@@ -15,6 +16,8 @@ from .product_media import ProductMedia
 class Product(IntBase, Attribute):
     __tablename__ = "product"
 
+    content = MC(JSONB)
+    html = MC(Text)
     file_url = MC(String(128))
     is_deleted = MC(Boolean, nullable=False, default=False, server_default="false")
     name = MC(String(64), nullable=False)

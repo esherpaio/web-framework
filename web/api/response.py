@@ -1,4 +1,5 @@
 import json
+from datetime import datetime
 from decimal import ROUND_HALF_UP, Decimal
 from enum import StrEnum
 
@@ -22,6 +23,8 @@ class HttpText(StrEnum):
 
 class JsonEncoder(json.JSONEncoder):
     def default(self, obj):
+        if isinstance(obj, datetime):
+            return obj.isoformat()
         if isinstance(obj, Decimal):
             quantized = obj.quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
             return str(quantized)
