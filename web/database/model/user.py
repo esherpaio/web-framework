@@ -66,18 +66,6 @@ class User(IntBase, Attribute):
     def is_guest(self) -> bool:
         return self.role_id == UserRoleId.GUEST
 
-    @hybrid_property
-    def is_user(self) -> bool:
-        return self.role_id == UserRoleId.USER
-
-    @hybrid_property
-    def is_admin(self) -> bool:
-        return self.role_id == UserRoleId.ADMIN
-
-    @hybrid_property
-    def is_super(self) -> bool:
-        return self.role_id == UserRoleId.SUPER
-
     # Properties - defaults
 
     @property

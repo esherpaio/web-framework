@@ -28,16 +28,6 @@ class _DbFieldMixin:
 
 
 #
-# Database exceptions
-#
-
-
-class ForeignKeyViolationError(WebError):
-    code = 409
-    translation_key = "API_HTTP_409"
-
-
-#
 # Validation exceptions
 #
 
@@ -102,10 +92,3 @@ class DbEmailError(DbError):
 
     code = 400
     translation_key = "DB_EMAIL_ERROR"
-
-
-class DbTimezoneError(DbError):
-    """Timezone cannot be validated."""
-
-    code = 400
-    translation_key = "DB_TIMEZONE_ERROR"

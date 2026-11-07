@@ -60,14 +60,6 @@ class Review(IntBase):
     def is_pending(self) -> bool:
         return self.status_id == ReviewStatusId.PENDING
 
-    @hybrid_property
-    def is_approved(self) -> bool:
-        return self.status_id == ReviewStatusId.APPROVED
-
-    @hybrid_property
-    def is_rejected(self) -> bool:
-        return self.status_id == ReviewStatusId.REJECTED
-
     # Properties - general
 
     @hybrid_property

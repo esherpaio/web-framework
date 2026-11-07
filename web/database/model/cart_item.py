@@ -42,10 +42,6 @@ class CartItem(IntBase):
         return unit_price * self.cart.currency.rate
 
     @hybrid_property
-    def unit_price_vat(self) -> Decimal:
-        return self.unit_price * self.cart.vat_rate
-
-    @hybrid_property
     def total_price(self) -> Decimal:
         return self._get_price(include_vat=False)
 

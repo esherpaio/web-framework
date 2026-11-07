@@ -56,9 +56,5 @@ class Sku(IntBase, Attribute):
     # Properties - details
 
     @hybrid_property
-    def option_ids(self) -> list[int]:
-        return sorted([x.option_id for x in self.details])
-
-    @hybrid_property
     def value_ids(self) -> list[int]:
         return sorted([x.value_id for x in self.details])

@@ -79,15 +79,6 @@ class SeedSyncer(Automator):
             s.flush()
 
 
-class ApiSyncer(Automator):
-    API_URL: str
-    RUN_DEBUG: bool = False
-
-    @classmethod
-    def run(cls) -> None:
-        raise NotImplementedError
-
-
 class Processor(Automator):
     @classmethod
     def run(cls) -> None:

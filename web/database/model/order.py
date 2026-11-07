@@ -97,14 +97,6 @@ class Order(IntBase):
     def is_in_progress(self) -> bool:
         return self.status_id == OrderStatusId.IN_PROGRESS
 
-    @hybrid_property
-    def is_ready(self) -> bool:
-        return self.status_id == OrderStatusId.READY
-
-    @hybrid_property
-    def is_completed(self) -> bool:
-        return self.status_id == OrderStatusId.COMPLETED
-
     @hybrid_method
     def next_statuses(self, order_statuses: list[OrderStatus]) -> list:
         if self.is_paid:

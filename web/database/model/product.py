@@ -10,7 +10,6 @@ from web.utils import none_attrgetter
 from ._base import Attribute, IntBase
 from ._utils import default_price, get_slug, val_number
 from .product_media import ProductMedia
-from .product_type import ProductTypeId
 
 
 class Product(IntBase, Attribute):
@@ -60,12 +59,6 @@ class Product(IntBase, Attribute):
     def validate_unit_price(self, key: str, value: Any) -> Any:
         val_number(key, value, min_=0)
         return value
-
-    # Properties - statuses
-
-    @hybrid_property
-    def is_physical(self) -> bool:
-        return self.type_id == ProductTypeId.PHYSICAL
 
     # Properties - media
 

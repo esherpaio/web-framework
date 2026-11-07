@@ -16,15 +16,7 @@ from web.setup import config
 class SchemaId(StrEnum):
     WEBSITE = "#website"
     ORGANIZATION = "#organization"
-    LOCALBUSINESS = "#localbusiness"
     WEBPAGE = "#webpage"
-
-
-class ListItem(TypedDict):
-    name: str
-    description: str
-    url: str
-    image: NotRequired[str]
 
 
 class BreadcrumbItem(TypedDict):
@@ -330,77 +322,6 @@ class SchemaProduct(Schema):
                 for review in reviews
             ]
 
-        self.data = data
-
-
-class SchemaLocalBusiness(Schema):
-    def __init__(self) -> None:
-        super().__init__()
-        home_url = url_for(
-            config.ENDPOINT_HOME,
-            _external=True,
-            _locale=current_locale.locale,
-        )
-        data = {
-            "@context": "https://schema.org",
-            "@type": "LocalBusiness",
-            "@id": f"{home_url}{SchemaId.LOCALBUSINESS}",
-            "name": config.BUSINESS_NAME,
-            "email": config.BUSINESS_EMAIL,
-            "url": home_url,
-            "address": {
-                "@type": "PostalAddress",
-                "streetAddress": config.BUSINESS_STREET,
-                "addressLocality": config.BUSINESS_CITY,
-                "postalCode": config.BUSINESS_ZIP_CODE,
-                "addressCountry": config.BUSINESS_COUNTRY_CODE,
-            },
-            "logo": {
-                "@type": "ImageObject",
-                "url": config.BUSINESS_LOGO_URL,
-                "caption": f"{config.BUSINESS_NAME} Logo",
-            },
-        }
-        self.data = data
-
-
-class SchemaItemList(Schema):
-    def __init__(
-        self,
-        name: str,
-        items: list[ListItem],
-        description: str,
-    ) -> None:
-        super().__init__()
-        list_items = []
-        for position, item in enumerate(items, 1):
-            thing: dict[str, Any] = {
-                "name": item["name"],
-                "description": item["description"],
-                "url": item["url"],
-            }
-            if "image" in item:
-                thing["image"] = {
-                    "@type": "ImageObject",
-                    "url": item["image"],
-                    "caption": item["name"],
-                }
-            list_item = {
-                "@type": "ListItem",
-                "position": position,
-                "item": thing,
-            }
-            list_items.append(list_item)
-        data = {
-            "@context": "https://schema.org",
-            "@type": "ItemList",
-            "name": name,
-            "description": description,
-            "url": request.base_url,
-            "numberOfItems": len(items),
-            "itemListOrder": "https://schema.org/ItemListOrderAscending",
-            "itemListElement": list_items,
-        }
         self.data = data
 
 

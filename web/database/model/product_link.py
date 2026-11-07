@@ -1,10 +1,8 @@
 from sqlalchemy import ForeignKey, UniqueConstraint
-from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import mapped_column as MC
 from sqlalchemy.orm import relationship
 
 from ._base import IntBase
-from .product_link_type import ProductLinkTypeId
 
 
 class ProductLink(IntBase):
@@ -21,13 +19,3 @@ class ProductLink(IntBase):
     product = relationship("Product")
     sku = relationship("Sku")
     type_ = relationship("ProductLinkType")
-
-    # Properties - types
-
-    @hybrid_property
-    def is_upsell(self) -> bool:
-        return self.type_id == ProductLinkTypeId.UPSELL
-
-    @hybrid_property
-    def is_cross_sell(self) -> bool:
-        return self.type_id == ProductLinkTypeId.CROSS_SELL

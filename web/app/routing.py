@@ -1,30 +1,10 @@
 from typing import Any
 
-from flask import current_app, request
+from flask import request
 from werkzeug.local import LocalProxy
 
 from web.cache import cache
 from web.database.model import AppBlueprint, AppRoute
-
-
-def is_endpoint(endpoint: str) -> bool:
-    """Check if an endpoint exists."""
-    try:
-        current_app.url_map.iter_rules(endpoint)
-    except KeyError:
-        return False
-    return True
-
-
-def has_argument(endpoint: str, arg: str) -> bool:
-    """Check if an endpoint has a specific argument."""
-    try:
-        for rule in current_app.url_map.iter_rules(endpoint):
-            if arg in rule.arguments:
-                return True
-    except KeyError:
-        pass
-    return False
 
 
 def get_route() -> AppRoute | None:

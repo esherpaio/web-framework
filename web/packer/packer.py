@@ -1,7 +1,4 @@
 import hashlib
-import os
-
-from web.logger import log
 
 from .bundle import CssBundle, JsBundle, ScssBundle
 
@@ -30,17 +27,3 @@ class Packer:
         bytes_ = compiled.encode(self.ENCODING)
         hash_ = hashlib.md5(bytes_).hexdigest()
         return compiled, bytes_, hash_
-
-    def write_file(
-        self,
-        data: str,
-        hash_: str,
-        out_dir: str,
-        out_ext: str,
-    ) -> str:
-        out_path = os.path.join(out_dir, f"{hash_}{out_ext}")
-        if not os.path.isfile(out_path):
-            with open(out_path, "w", encoding=self.ENCODING) as file_:
-                file_.write(data)
-            log.info(f"Saved bundle to {out_path}")
-        return out_path
