@@ -46,8 +46,6 @@ class ReviewItem(TypedDict):
 
 
 class Schema:
-    """A class to generate schema.org JSON-LD."""
-
     def __init__(self) -> None:
         self._data: dict = {}
 

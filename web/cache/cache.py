@@ -2,8 +2,6 @@ from typing import Any
 
 
 class Cache(dict):
-    """A simple in-memory cache mechanism."""
-
     def __setattr__(self, key: str, value: Any) -> None:
         self[key] = value
 

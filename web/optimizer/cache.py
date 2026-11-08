@@ -15,8 +15,6 @@ class CacheKey(NamedTuple):
 
 
 class CachedResponse(NamedTuple):
-    """An immutable snapshot, so requests never share a mutable response."""
-
     stored_at: float
     status_code: int
     headers: tuple[tuple[str, str], ...]
@@ -45,8 +43,6 @@ class CachedResponse(NamedTuple):
 
 
 class ResponseCache:
-    """A thread-safe LRU cache whose byte budget counts response payloads only."""
-
     def __init__(self, max_age_s: int, max_bytes: int) -> None:
         self._max_age_s = max_age_s
         self._max_bytes = max_bytes

@@ -48,8 +48,6 @@ class RobotTag(StrEnum):
 
 
 class Meta:
-    """A class to generate meta tags."""
-
     def __init__(
         self,
         title: str | None = None,

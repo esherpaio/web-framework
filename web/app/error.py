@@ -17,7 +17,6 @@ from web.utils.obfuscation import obfuscate_data
 
 
 def handle_error(error: Exception) -> Response:
-    """Handle errors."""
     if request.blueprint is not None and request.blueprint.startswith(
         ("api", "webhook")
     ):
@@ -26,7 +25,6 @@ def handle_error(error: Exception) -> Response:
 
 
 def handle_frontend_error(error: Exception) -> Response:
-    """Handle frontend errors."""
     # Parse error information
     if isinstance(error, HTTPException):
         code = error.code
@@ -50,7 +48,6 @@ def handle_frontend_error(error: Exception) -> Response:
 
 
 def handle_backend_error(error: Exception) -> Response:
-    """Handle backend errors."""
     # Parse error information
     if isinstance(error, WebError):
         code = error.code

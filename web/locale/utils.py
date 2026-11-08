@@ -58,7 +58,6 @@ def lacks_locale(endpoint: str | None, values: dict) -> bool:
 
 
 def parse_locale(locale: str) -> tuple[str | None, str | None]:
-    """Parse locale to get language and country code."""
     match = re.fullmatch(r"^([a-zA-Z]{2})[-_]+([a-zA-Z]{2})$", locale)
     if match is not None:
         language_code, country_code = match.groups()

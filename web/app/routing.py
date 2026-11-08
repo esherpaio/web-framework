@@ -8,7 +8,6 @@ from web.database.model import AppBlueprint, AppRoute
 
 
 def get_route() -> AppRoute | None:
-    """Get a route object for the current request."""
     for route in cache.routes:
         if route.endpoint == request.endpoint:
             return route
@@ -16,7 +15,6 @@ def get_route() -> AppRoute | None:
 
 
 def get_blueprint() -> AppBlueprint | None:
-    """Get a blueprint object for the current request."""
     for blueprint in cache.blueprints:
         if blueprint.name == request.blueprint:
             return blueprint

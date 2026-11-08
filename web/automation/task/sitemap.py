@@ -18,8 +18,6 @@ from ..automator import Processor
 
 @dataclass(frozen=True)
 class SitemapLocationSpec:
-    """Desired sitemap state before it is reconciled with a stored location."""
-
     endpoint_args: dict[str, Any] = field(default_factory=dict)
     content_lastmod: datetime | None = None
     template_hash: str | None = None
@@ -32,7 +30,6 @@ def get_template_hash(
     template_path: str | Path,
     template_dir: str | Path = "templates",
 ) -> str | None:
-    """Hash a template path relative to its application's templates directory."""
     template_file = Path(config.BASE_DIR) / template_dir / template_path
     if not template_file.exists():
         log.warning(f"Template not found: {template_file}")
@@ -57,7 +54,6 @@ class SitemapLocationSyncer(Processor):
 
     @classmethod
     def sync_routes(cls, s: Session) -> None:
-        """Synchronize every non-collection route using its stored metadata."""
         routes = s.query(AppRoute).filter_by(is_collection=False).all()
         for route in routes:
             if not route.in_sitemap:
@@ -82,7 +78,6 @@ class SitemapLocationSyncer(Processor):
         route_id: int,
         specs: list[SitemapLocationSpec],
     ) -> None:
-        """Reconcile one route with the complete list of desired locations."""
         # Match locations by their endpoint arguments, such as {"slug": "about"}.
         existing = {
             cls._key(location.endpoint_args): location
@@ -159,7 +154,6 @@ class SitemapLocationSyncer(Processor):
         location: SitemapLocation,
         image_locs: tuple[str, ...],
     ) -> bool:
-        """Reconcile the images belonging to one sitemap page location."""
         urls = [cdn_url(image_loc, external=True) for image_loc in image_locs]
         image_locs = tuple(x for x in urls if x is not None)
         if len(image_locs) != len(set(image_locs)):

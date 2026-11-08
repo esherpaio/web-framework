@@ -37,7 +37,6 @@ def json_response(
     data: list | dict | None = None,
     links: dict | None = None,
 ) -> Response:
-    """Create a default API response."""
     if message is None:
         message = HttpText.HTTP_200
     if data is None:
